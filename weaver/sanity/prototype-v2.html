@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>weaver — prototype v2 (벽 타기 + 점프)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; background:#0c0c11; overflow:hidden; font-family:-apple-system,'Segoe UI',sans-serif; }
+  canvas { display:block; touch-action:none; }
+  .overlay { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(8,8,12,0.85); color:#eee; text-align:center; padding:24px; z-index:10; }
+  .hidden { display:none !important; }
+  h1 { font-size:30px; letter-spacing:4px; font-weight:700; margin-bottom:6px; }
+  h1 .sub { font-size:12px; letter-spacing:2px; color:#888; display:block; margin-top:6px; font-weight:400; }
+  .legend { text-align:left; font-size:13px; line-height:1.9; margin:18px 0 22px; color:#bbb; max-width:300px; }
+  .legend b { color:#fff; }
+  .btn { background:#fff; color:#111; border:none; padding:13px 34px; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; letter-spacing:1px; }
+  .big { font-size:42px; font-weight:800; margin:4px 0; }
+  .muted { color:#888; font-size:14px; margin-bottom:18px; }
+  #hud { position:fixed; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:14px 18px; color:#fff; font-size:14px; z-index:5; pointer-events:none; font-variant-numeric:tabular-nums; }
+  #hud .right { color:#9aa; }
+  #hint { position:fixed; bottom:20px; left:0; right:0; text-align:center; color:#667; font-size:12px; z-index:5; pointer-events:none; letter-spacing:1px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><div>SCORE <span id="score">0</span></div><div class="right">BEST <span id="best">0</span></div></div>
+<div id="hint">화면 아무 곳이나 탭 / 클릭 / 스페이스 = 점프</div>
+
+<div id="startScreen" class="overlay">
+  <h1>WEAVER<span class="sub">prototype v2 · 벽 타기 + 점프</span></h1>
+  <div class="legend">
+    🧍 <b>캐릭터</b> — 화면 네 벽을 따라 <b>자동으로 달림</b> (모서리에서 다음 벽으로)<br>
+    🔺 <b>장애물</b> — 벽에 솟은 가시. <b>점프로 넘기</b><br>
+    🎮 <b>조작 = 점프 하나</b> (탭/클릭/스페이스)<br>
+    ⏱ 오래 버틸수록 빨라짐 · 넘은 장애물 = 점수
+  </div>
+  <button class="btn" id="startBtn">시작</button>
+  <p class="muted" style="margin-top:16px;">※ 캐릭터는 임시 모양 — 움직임·느낌만 보세요</p>
+</div>
+
+<div id="overScreen" class="overlay hidden">
+  <div class="muted">GAME OVER</div>
+  <div class="big" id="finalScore">0</div>
+  <div class="muted">BEST <span id="finalBest">0</span></div>
+  <button class="btn" id="retryBtn">다시하기</button>
+</div>
+
+<script>
+const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
+let W=0,H=0,DPR=Math.min(window.devicePixelRatio||1,2);
+let M=46;                        // 벽 안쪽 여백 (트랙이 그려지는 위치)
+let TL,TT,TR,TB,trackW,trackH,P; // 트랙 사각형 + 둘레
+function computeTrack(){ TL=M; TT=M; TR=W-M; TB=H-M; trackW=TR-TL; trackH=TB-TT; P=2*(trackW+trackH); }
+function resize(){ W=innerWidth;H=innerHeight; canvas.width=W*DPR;canvas.height=H*DPR; canvas.style.width=W+'px';canvas.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); computeTrack(); }
+addEventListener('resize',resize); resize();
+
+const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best');
+const startScreen=document.getElementById('startScreen'),overScreen=document.getElementById('overScreen');
+let best=+(localStorage.getItem('weaver2_best')||0); bestEl.textContent=best;
+
+let state='start';
+// 둘레거리 d → 화면좌표 + 안쪽 normal(N) + 진행방향(F)
+function pathAt(d){
+  d=((d%P)+P)%P;
+  if(d<trackW)            return {x:TL+d, y:TB, nx:0, ny:-1, fx:1, fy:0};      // 아래벽 →
+  d-=trackW;
+  if(d<trackH)            return {x:TR, y:TB-d, nx:-1, ny:0, fx:0, fy:-1};     // 오른벽 ↑
+  d-=trackH;
+  if(d<trackW)            return {x:TR-d, y:TT, nx:0, ny:1, fx:-1, fy:0};      // 위벽 ←
+  d-=trackW;
+  return {x:TL, y:TT+d, nx:1, ny:0, fx:0, fy:1};                              // 왼벽 ↓
+}
+function wrapDelta(a,b){ let d=((a-b)%P+P)%P; return d; } // a가 b보다 앞선 거리(0..P)
+
+const char={d:0,speed:0,offset:0,vy:0,grounded:true,walk:0};
+let obstacles=[], elapsed=0, score=0;
+const GRAV=2600, JUMPV=600, OBST_H=34, OBST_W=10, CHAR_W=8, CHAR_H=26;
+
+function reset(){
+  char.d=0; char.speed=210; char.offset=0; char.vy=0; char.grounded=true; char.walk=0;
+  elapsed=0; score=0;
+  obstacles=[];
+  let pos=320;
+  for(let i=0;i<4;i++){ obstacles.push({d:pos, scored:false}); pos+=180+Math.random()*220; }
+}
+function jump(){ if(state==='play' && char.grounded){ char.vy=JUMPV; char.grounded=false; } }
+addEventListener('pointerdown',()=>{ if(state==='play')jump(); });
+addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); jump(); } });
+
+function drawChar(p){
+  const bx=p.x+p.nx*char.offset, by=p.y+p.ny*char.offset;
+  const rot=Math.atan2(p.nx, -p.ny);
+  ctx.save(); ctx.translate(bx,by); ctx.rotate(rot);
+  ctx.strokeStyle='#fff'; ctx.fillStyle='#fff'; ctx.lineWidth=3; ctx.lineCap='round';
+  const swing=Math.sin(char.walk)* (char.grounded?6:2);
+  // 다리
+  ctx.beginPath(); ctx.moveTo(0,-9); ctx.lineTo(-swing,0); ctx.moveTo(0,-9); ctx.lineTo(swing,0); ctx.stroke();
+  // 몸통
+  ctx.beginPath(); ctx.moveTo(0,-9); ctx.lineTo(0,-19); ctx.stroke();
+  // 팔
+  ctx.beginPath(); ctx.moveTo(0,-16); ctx.lineTo(swing*0.7,-12); ctx.moveTo(0,-16); ctx.lineTo(-swing*0.7,-12); ctx.stroke();
+  // 머리
+  ctx.beginPath(); ctx.arc(0,-23,4.5,0,7); ctx.fill();
+  ctx.restore();
+}
+function drawObstacle(o){
+  const p=pathAt(o.d);
+  const ax=p.x+p.fx*OBST_W, ay=p.y+p.fy*OBST_W;
+  const bx=p.x-p.fx*OBST_W, by=p.y-p.fy*OBST_W;
+  const cx=p.x+p.nx*OBST_H, cy=p.y+p.ny*OBST_H;
+  ctx.fillStyle='#ff5a5a';
+  ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.lineTo(cx,cy); ctx.closePath(); ctx.fill();
+}
+
+let last=performance.now();
+function loop(now){
+  let dt=(now-last)/1000; last=now; if(dt>0.05)dt=0.05;
+  requestAnimationFrame(loop);
+  ctx.clearRect(0,0,W,H);
+
+  // 트랙(벽) 그리기
+  ctx.strokeStyle='rgba(255,255,255,0.13)'; ctx.lineWidth=2;
+  ctx.strokeRect(TL,TT,trackW,trackH);
+  ctx.fillStyle='rgba(255,255,255,0.02)'; ctx.fillRect(TL,TT,trackW,trackH);
+
+  if(state==='play'){
+    elapsed+=dt;
+    char.speed += dt*7;                          // 점점 빨라짐
+    char.d += char.speed*dt;
+    char.walk += char.speed*dt*0.07;
+    // 점프 물리 (벽 기준 수직)
+    if(!char.grounded){ char.offset+=char.vy*dt; char.vy-=GRAV*dt; if(char.offset<=0){char.offset=0;char.vy=0;char.grounded=true;} }
+    // 충돌 / 통과 판정
+    for(const o of obstacles){
+      const ahead=wrapDelta(o.d,char.d);         // 장애물이 캐릭터보다 앞선 거리
+      const behind=wrapDelta(char.d,o.d);        // 캐릭터가 장애물 지난 거리
+      // 겹침: 캐릭터 위치가 장애물 폭 안 + 점프높이 부족
+      const near = Math.min(ahead,behind);
+      if(near < OBST_W+CHAR_W){
+        if(char.offset < OBST_H-2){ gameOver(); return; }
+      }
+      // 통과 채점 + 재배치
+      if(!o.scored && behind>OBST_W+CHAR_W && behind<P*0.4){ o.scored=true; score++; }
+      if(behind>30 && behind<P*0.5){
+        // 지나간 장애물을 가장 먼 장애물 뒤로 재배치 (무한 루프)
+        let maxAhead=0; for(const x of obstacles){ const a=wrapDelta(x.d,char.d); if(a<P*0.6&&a>maxAhead)maxAhead=a; }
+        o.d=char.d+maxAhead+150+Math.random()*200; o.scored=false;
+      }
+    }
+    scoreEl.textContent=score;
+  }
+
+  for(const o of obstacles) drawObstacle(o);
+  if(state!=='start') drawChar(pathAt(char.d));
+  // 진행 방향 코너 표시(살짝)
+}
+requestAnimationFrame(loop);
+
+function startGame(){ reset(); state='play'; startScreen.classList.add('hidden'); overScreen.classList.add('hidden'); }
+function gameOver(){ state='over'; if(score>best){best=score;localStorage.setItem('weaver2_best',best);} bestEl.textContent=best;
+  document.getElementById('finalScore').textContent=score; document.getElementById('finalBest').textContent=best; overScreen.classList.remove('hidden'); }
+document.getElementById('startBtn').onclick=startGame;
+document.getElementById('retryBtn').onclick=startGame;
+</script>
+</body>
+</html>
