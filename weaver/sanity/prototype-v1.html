@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>weaver — prototype</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; background:#0c0c11; overflow:hidden; font-family:-apple-system,'Segoe UI',sans-serif; }
+  #wrap { position:fixed; inset:0; }
+  canvas { display:block; touch-action:none; }
+  .overlay {
+    position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(8,8,12,0.82); color:#eee; text-align:center; padding:24px; z-index:10;
+  }
+  .hidden { display:none !important; }
+  h1 { font-size:30px; letter-spacing:4px; font-weight:700; margin-bottom:6px; }
+  h1 .sub { font-size:12px; letter-spacing:2px; color:#888; display:block; margin-top:6px; font-weight:400; }
+  .legend { text-align:left; font-size:13px; line-height:1.9; margin:18px 0 22px; color:#bbb; }
+  .legend b { color:#fff; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:7px; vertical-align:middle; }
+  .btn { background:#fff; color:#111; border:none; padding:13px 34px; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; letter-spacing:1px; }
+  .big { font-size:42px; font-weight:800; margin:4px 0; }
+  .muted { color:#888; font-size:14px; margin-bottom:18px; }
+  #hud { position:fixed; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:14px 18px; color:#fff; font-size:14px; z-index:5; pointer-events:none; font-variant-numeric:tabular-nums; }
+  #hud .right { color:#9aa; }
+  #status { position:fixed; top:42px; left:0; right:0; text-align:center; color:#5fd; font-size:13px; z-index:5; pointer-events:none; height:18px; letter-spacing:1px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div id="hud"><div>SCORE <span id="score">0</span></div><div class="right">BEST <span id="best">0</span></div></div>
+  <div id="status"></div>
+
+  <div id="startScreen" class="overlay">
+    <h1>WEAVER<span class="sub">prototype · 컨셉 확인용</span></h1>
+    <div class="legend">
+      <span class="dot" style="background:#fff;"></span><b>나</b> — 마우스/손가락 따라 이동<br>
+      <span class="dot" style="background:#4dd2ff;"></span><b>직선 탄</b> — 가장자리에서 날아옴<br>
+      <span class="dot" style="background:#ff8a4d;"></span><b>조준 탄</b> — 나를 향해 발사<br>
+      <span class="dot" style="background:#7dff9b;"></span><b>실드</b> — 1회 피격 방어 (싼 깊이)<br>
+      <span class="dot" style="background:#b48aff;"></span><b>슬로우</b> — 잠깐 느려짐 (싼 깊이)<br>
+      <span style="color:#ffd84d; margin-right:7px;">✦</span><b>그레이즈</b> — 아슬아슬 회피 시 보너스
+    </div>
+    <button class="btn" id="startBtn">시작</button>
+    <p class="muted" style="margin-top:16px;">데스크톱: 마우스 이동 · 모바일: 손가락 드래그</p>
+  </div>
+
+  <div id="overScreen" class="overlay hidden">
+    <div class="muted">GAME OVER</div>
+    <div class="big" id="finalScore">0</div>
+    <div class="muted">BEST <span id="finalBest">0</span></div>
+    <button class="btn" id="retryBtn">다시하기</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W=0, H=0, DPR=Math.min(window.devicePixelRatio||1, 2);
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize); resize();
+
+const scoreEl=document.getElementById('score'), bestEl=document.getElementById('best');
+const statusEl=document.getElementById('status');
+const startScreen=document.getElementById('startScreen'), overScreen=document.getElementById('overScreen');
+let best = +(localStorage.getItem('weaver_best')||0); bestEl.textContent=best;
+
+let state='start'; // start | play | over
+const player = { x:0, y:0, tx:0, ty:0, r:9, hit:6 };
+let bullets=[], pickups=[], sparks=[];
+let elapsed=0, score=0, spawnT=0, aimT=0, pickT=0;
+let shield=false, slowT=0;
+
+function reset(){
+  player.x=player.tx=W/2; player.y=player.ty=H/2;
+  bullets=[]; pickups=[]; sparks=[];
+  elapsed=0; score=0; spawnT=0; aimT=2; pickT=6;
+  shield=false; slowT=0; statusEl.textContent='';
+}
+
+// pointer
+function setTarget(x,y){ player.tx=x; player.ty=y; }
+canvas.addEventListener('mousemove', e=> setTarget(e.clientX, e.clientY));
+canvas.addEventListener('touchmove', e=>{ e.preventDefault(); const t=e.touches[0]; setTarget(t.clientX,t.clientY); }, {passive:false});
+canvas.addEventListener('touchstart', e=>{ const t=e.touches[0]; setTarget(t.clientX,t.clientY); player.x=t.clientX; player.y=t.clientY; }, {passive:false});
+
+function spawnEdgeBullet(speed){
+  const edge=(Math.random()*4)|0; let x,y,vx,vy;
+  const sp=speed*(0.8+Math.random()*0.5);
+  if(edge===0){ x=Math.random()*W; y=-10; vx=(Math.random()-0.5)*sp*0.5; vy=sp; }
+  else if(edge===1){ x=W+10; y=Math.random()*H; vx=-sp; vy=(Math.random()-0.5)*sp*0.5; }
+  else if(edge===2){ x=Math.random()*W; y=H+10; vx=(Math.random()-0.5)*sp*0.5; vy=-sp; }
+  else { x=-10; y=Math.random()*H; vx=sp; vy=(Math.random()-0.5)*sp*0.5; }
+  bullets.push({x,y,vx,vy,r:6,type:'straight',grazed:false});
+}
+function spawnAimed(speed){
+  const edge=(Math.random()*4)|0; let x,y;
+  if(edge===0){x=Math.random()*W;y=-10;} else if(edge===1){x=W+10;y=Math.random()*H;}
+  else if(edge===2){x=Math.random()*W;y=H+10;} else {x=-10;y=Math.random()*H;}
+  const a=Math.atan2(player.y-y, player.x-x);
+  bullets.push({x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,r:6,type:'aimed',grazed:false});
+}
+function spawnVolley(speed){
+  const edge=(Math.random()*4)|0;
+  for(let i=0;i<7;i++){
+    let x,y,vx,vy;
+    if(edge===0){x=(W/8)*(i+0.5);y=-10;vx=0;vy=speed;}
+    else if(edge===2){x=(W/8)*(i+0.5);y=H+10;vx=0;vy=-speed;}
+    else if(edge===1){x=W+10;y=(H/8)*(i+0.5);vx=-speed;vy=0;}
+    else {x=-10;y=(H/8)*(i+0.5);vx=speed;vy=0;}
+    bullets.push({x,y,vx,vy,r:6,type:'straight',grazed:false});
+  }
+}
+function spawnPickup(){
+  const kind=Math.random()<0.5?'shield':'slow';
+  pickups.push({x:60+Math.random()*(W-120), y:60+Math.random()*(H-120), r:13, kind, life:8});
+}
+function flash(msg,color){ statusEl.textContent=msg; statusEl.style.color=color; clearTimeout(flash._t); flash._t=setTimeout(()=>statusEl.textContent='',1100); }
+
+let last=performance.now();
+function loop(now){
+  let dt=(now-last)/1000; last=now; if(dt>0.05)dt=0.05;
+  requestAnimationFrame(loop);
+  ctx.clearRect(0,0,W,H);
+  // subtle grid backdrop
+  ctx.strokeStyle='rgba(255,255,255,0.03)'; ctx.lineWidth=1;
+  for(let gx=0;gx<W;gx+=44){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+  for(let gy=0;gy<H;gy+=44){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+  if(state==='play'){
+    elapsed+=dt;
+    const tf = slowT>0 ? 0.4 : 1; if(slowT>0) slowT-=dt;
+    const diff = 1 + elapsed*0.06;            // difficulty ramp
+    const bulletSpeed = (140 + elapsed*7);
+
+    // player follow
+    player.x += (player.tx-player.x)*Math.min(1, dt*16);
+    player.y += (player.ty-player.y)*Math.min(1, dt*16);
+    player.x=Math.max(player.r,Math.min(W-player.r,player.x));
+    player.y=Math.max(player.r,Math.min(H-player.r,player.y));
+
+    // spawning
+    spawnT-=dt*diff;
+    if(spawnT<=0){ spawnEdgeBullet(bulletSpeed); spawnT=Math.max(0.18, 0.6-elapsed*0.012); }
+    aimT-=dt;
+    if(aimT<=0){ if(elapsed>6){ if(Math.random()<0.4 && elapsed>16) spawnVolley(bulletSpeed*0.9); else spawnAimed(bulletSpeed*0.95);} aimT=Math.max(1.1, 2.6-elapsed*0.03); }
+    pickT-=dt;
+    if(pickT<=0){ spawnPickup(); pickT=9+Math.random()*5; }
+
+    score += dt*10*diff;
+
+    // update bullets
+    for(let i=bullets.length-1;i>=0;i--){
+      const b=bullets[i];
+      b.x+=b.vx*dt*tf; b.y+=b.vy*dt*tf;
+      if(b.x<-30||b.x>W+30||b.y<-30||b.y>H+30){ bullets.splice(i,1); continue; }
+      const dx=b.x-player.x, dy=b.y-player.y; const d=Math.hypot(dx,dy);
+      if(d < b.r+player.hit){
+        if(shield){ shield=false; bullets.splice(i,1); flash('실드 소모!','#7dff9b'); for(let s=0;s<10;s++)sparks.push({x:player.x,y:player.y,vx:(Math.random()-0.5)*200,vy:(Math.random()-0.5)*200,life:0.5,c:'#7dff9b'}); continue; }
+        gameOver(); return;
+      } else if(d < b.r+player.hit+11 && !b.grazed){
+        b.grazed=true; score+=15; sparks.push({x:b.x,y:b.y,vx:0,vy:0,life:0.4,c:'#ffd84d',graze:true});
+      }
+    }
+    // pickups
+    for(let i=pickups.length-1;i>=0;i--){
+      const p=pickups[i]; p.life-=dt;
+      if(p.life<=0){ pickups.splice(i,1); continue; }
+      if(Math.hypot(p.x-player.x,p.y-player.y) < p.r+player.r){
+        if(p.kind==='shield'){ shield=true; flash('실드 획득','#7dff9b'); }
+        else { slowT=3; flash('슬로우 3초','#b48aff'); }
+        pickups.splice(i,1);
+      }
+    }
+    scoreEl.textContent=Math.floor(score);
+  }
+
+  // draw pickups
+  for(const p of pickups){
+    ctx.globalAlpha = p.life<2 ? (0.4+0.6*Math.abs(Math.sin(p.life*8))) : 1;
+    ctx.strokeStyle = p.kind==='shield'?'#7dff9b':'#b48aff'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+  // draw bullets
+  for(const b of bullets){
+    ctx.fillStyle = b.type==='aimed'?'#ff8a4d':'#4dd2ff';
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,7); ctx.fill();
+  }
+  // sparks
+  for(let i=sparks.length-1;i>=0;i--){
+    const s=sparks[i]; s.life-=1/60; s.x+=(s.vx||0)/60; s.y+=(s.vy||0)/60;
+    if(s.life<=0){sparks.splice(i,1);continue;}
+    ctx.globalAlpha=Math.max(0,s.life*2); ctx.fillStyle=s.c;
+    if(s.graze){ ctx.font='16px sans-serif'; ctx.fillText('✦',s.x-6,s.y); }
+    else { ctx.beginPath(); ctx.arc(s.x,s.y,2.5,0,7); ctx.fill(); }
+    ctx.globalAlpha=1;
+  }
+  // draw player
+  if(state!=='start'){
+    if(shield){ ctx.strokeStyle='#7dff9b'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(player.x,player.y,player.r+6,0,7); ctx.stroke(); }
+    ctx.shadowColor='#fff'; ctx.shadowBlur=14; ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(player.x,player.y,player.r,0,7); ctx.fill(); ctx.shadowBlur=0;
+  }
+}
+requestAnimationFrame(loop);
+
+function startGame(){ reset(); state='play'; startScreen.classList.add('hidden'); overScreen.classList.add('hidden'); }
+function gameOver(){
+  state='over'; const sc=Math.floor(score);
+  if(sc>best){ best=sc; localStorage.setItem('weaver_best',best); }
+  bestEl.textContent=best;
+  document.getElementById('finalScore').textContent=sc;
+  document.getElementById('finalBest').textContent=best;
+  overScreen.classList.remove('hidden');
+}
+document.getElementById('startBtn').onclick=startGame;
+document.getElementById('retryBtn').onclick=startGame;
+</script>
+</body>
+</html>

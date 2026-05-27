@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 미리보기</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    background: #f8f5f0; color: #1a1a1a; line-height: 1.5; padding: 32px 24px; min-height: 100vh;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .breadcrumb { color: #888; font-size: 13px; margin-bottom: 16px; }
+  .breadcrumb a { color: #2c4e80; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid #1a1a1a; }
+  h1 { font-size: 28px; margin-bottom: 6px; }
+  .codename { font-size: 13px; color: #888; font-family: ui-monospace, "SF Mono", monospace; }
+  .description { color: #555; margin-top: 8px; font-size: 14px; }
+  h2 { font-size: 16px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 14px; }
+  .section-note { font-size: 13px; color: #888; margin-bottom: 16px; padding: 10px 14px; background: #fff; border-radius: 8px; border-left: 3px solid #ffd43b; }
+  .files { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  @media (min-width: 700px) { .files { grid-template-columns: 1fr 1fr; } }
+  .file-link { background: #fff; border: 1px solid #e8e5e0; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1a1a1a; display: flex; align-items: center; justify-content: space-between; transition: all 0.15s; }
+  .file-link:hover { border-color: #2c4e80; transform: translateY(-1px); }
+  .file-name { font-weight: 600; font-size: 14px; }
+  .file-meta { font-size: 11px; color: #888; margin-top: 2px; }
+  .file-arrow { color: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb">
+    <a href="../">byiryu studio</a> / weaver
+  </div>
+
+  <header>
+    <h1>weaver</h1>
+    <div class="codename">codename: weaver (앱 이름 미정)</div>
+    <p class="description">미니멀 사방 회피 아케이드 게임 — Stage 1 (기획) · 컨셉 프로토타입 확인용</p>
+  </header>
+
+  <h2>검증 자료 (Sanity)</h2>
+  <div class="section-note">
+    🎮 <b>컨셉 확인용 플레이 프로토타입</b> — `/spec` 진입 전, 핵심 회피 루프 + "싼 깊이" 요소(파워업·조준탄/일제사격 패턴·그레이즈 보너스)를
+    직접 만져보고 방향을 결정하기 위한 의사결정 자료. 인게임 아트는 미니멀 도형(ComfyUI 미사용 전략 검증).
+  </div>
+  <div class="files">
+
+    <a href="sanity/prototype-v1.html" class="file-link">
+      <div>
+        <div class="file-name">▶ 플레이 프로토타입 v1 (회피 코어 + 파워업 + 그레이즈)</div>
+        <div class="file-meta">2026-05-27 · 데스크톱 마우스 / 모바일 드래그 · HTML 캔버스</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+
+  </div>
+
+  <h2>디자인 (Design)</h2>
+  <div class="section-note released" style="border-left-color:#51cf66;">
+    최종 디자인 (`design/`) 은 출시 시점에 공개됩니다.
+  </div>
+</div>
+</body>
+</html>
