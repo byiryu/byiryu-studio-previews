@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weather-outfit v1.1 M7 step-1 — 앵커 의류 시그니처 색 매트릭스 (V_clothing_color_matrix)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --muted: #666;
+    --card: #fff;
+    --border: #e0e0e0;
+    --accent: #2c4e80;
+    --role-top: #4a90e2;
+    --role-bottom: #2e4f7c;
+    --role-outer: #8b6f47;
+    --role-dress: #d4869a;
+    --role-shoes: #555;
+  }
+  body.dark {
+    --bg: #1a1a1a;
+    --fg: #f0f0f0;
+    --muted: #aaa;
+    --card: #2a2a2a;
+    --border: #3a3a3a;
+    --accent: #80b3ff;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+    padding: 24px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .container { max-width: 1280px; margin: 0 auto; }
+  .breadcrumb { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  header {
+    border-bottom: 2px solid var(--fg);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .meta { color: var(--muted); font-size: 12px; font-family: ui-monospace, "SF Mono", monospace; }
+  .toggle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .toggle:hover { border-color: var(--accent); }
+
+  .legend {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--fg);
+  }
+  .legend h3 { font-size: 15px; margin-bottom: 10px; color: var(--fg); }
+  .legend p { margin-bottom: 8px; color: var(--muted); }
+  .legend .stats {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+  }
+  .legend .stat {
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--fg);
+  }
+  .legend .stat strong { color: var(--accent); }
+  .legend ul { margin: 8px 0 0 18px; color: var(--muted); }
+  .legend li { margin-bottom: 4px; font-size: 12px; }
+
+  .role-section { margin-bottom: 42px; }
+  .role-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid;
+  }
+  .role-section[data-role="top"] .role-header { border-color: var(--role-top); }
+  .role-section[data-role="bottom"] .role-header { border-color: var(--role-bottom); }
+  .role-section[data-role="outer"] .role-header { border-color: var(--role-outer); }
+  .role-section[data-role="dress"] .role-header { border-color: var(--role-dress); }
+  .role-section[data-role="shoes"] .role-header { border-color: var(--role-shoes); }
+
+  .role-name {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .role-section[data-role="top"] .role-name { color: var(--role-top); }
+  .role-section[data-role="bottom"] .role-name { color: var(--role-bottom); }
+  .role-section[data-role="outer"] .role-name { color: var(--role-outer); }
+  .role-section[data-role="dress"] .role-name { color: var(--role-dress); }
+  .role-section[data-role="shoes"] .role-name { color: var(--role-shoes); }
+  body.dark .role-section[data-role="bottom"] .role-name { color: #6d96d1; }
+  body.dark .role-section[data-role="outer"] .role-name { color: #c9a374; }
+
+  .role-meta { color: var(--muted); font-size: 13px; }
+
+  .items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px;
+  }
+  .item-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .item-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .item-name .en {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 6px;
+    font-family: ui-monospace, monospace;
+  }
+  .item-id {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+  }
+  .item-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: 6px;
+    font-weight: 600;
+  }
+
+  .tones {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 720px) {
+    .tones { grid-template-columns: repeat(2, 1fr); }
+  }
+  .tone {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    background: var(--card);
+  }
+  .tone:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  body.dark .tone:hover { box-shadow: 0 2px 8px rgba(255,255,255,0.06); }
+  .swatch {
+    height: 56px;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  body.dark .swatch { border-bottom-color: rgba(255,255,255,0.1); }
+  .swatch.null {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--bg),
+      var(--bg) 8px,
+      var(--border) 8px,
+      var(--border) 16px
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .tone-meta {
+    padding: 8px 10px;
+  }
+  .tone-key {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .tone-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 2px;
+  }
+  .tone-hex {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .tooltip {
+    position: fixed;
+    background: rgba(0,0,0,0.94);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    line-height: 1.5;
+    display: none;
+    max-width: 360px;
+  }
+  .tooltip.show { display: block; }
+  .tooltip .tt-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .tooltip .tt-source {
+    color: #ffd966;
+    font-size: 11px;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+  .tooltip .tt-notes {
+    color: rgba(255,255,255,0.75);
+    font-size: 11px;
+    font-style: italic;
+  }
+
+  .copied {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #22c55e;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 200;
+  }
+  .copied.show { opacity: 1; }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../../../">previews</a> /
+      <a href="../../">weather-outfit</a> /
+      <a href="../">sanity</a> /
+      <strong>anchor-color-palette</strong>
+    </div>
+
+    <header>
+      <div>
+        <h1>weather-outfit v1.1 — 앵커 의류 시그니처 색 매트릭스</h1>
+        <div class="meta">M7 step-1 · V_clothing_color_matrix sanity · spec §10.9</div>
+      </div>
+      <button class="toggle" onclick="document.body.classList.toggle('dark')">🌓 dark/light</button>
+    </header>
+
+    <div class="legend">
+      <h3>본 페이지의 역할</h3>
+      <p>
+        v1.1 메이저 = color-first → <strong>anchor-first 부분 전환</strong>. 사용자 테마 색 풀(<code>matrix.ts 320</code>)
+        과 별개로 <strong>의류 시그니처 색 매트릭스</strong>(<code>clothing_color_matrix.ts</code>) 신설.
+        앵커 의류 색 = 본 매트릭스 lookup (사용자 테마 무시), 나머지 3색 = matrix.ts 풀에서 Claude 선택 (테마 정합).
+      </p>
+      <p>
+        예시: <strong>pastel 테마 + 청바지 앵커</strong> → 청바지 색 = denim blue 시그니처 (테마 무시),
+        상의·외투·신발 = pastel 풀에서 denim blue 와 어울리는 색 매칭.
+      </p>
+      <p style="margin-top:10px;">
+        <strong>출처 비중:</strong> 무신사 매거진/스토어/뉴스룸 직접 ≥ 60%,
+        Vogue Korea/Allure Korea 보조 ~15%, 무신사 공식 Facebook ~5%, 보조 매체 (W Korea/브런치 등) ~10%.
+        2025 Pantone Mocha Mousse 트렌드 정합 — 브라운·베이지 톤 강세.
+      </p>
+      <div class="stats">
+        <span class="stat">총 entries <strong>69</strong></span>
+        <span class="stat">상의 <strong>17</strong></span>
+        <span class="stat">하의 <strong>14</strong></span>
+        <span class="stat">외투 <strong>19</strong></span>
+        <span class="stat">원피스 <strong>4</strong></span>
+        <span class="stat">신발 <strong>15</strong></span>
+        <span class="stat">의류 <strong>20</strong>종</span>
+        <span class="stat">평균 <strong>3.45</strong> tone/의류</span>
+      </div>
+      <ul style="margin-top:14px;">
+        <li><strong>swatch hover</strong> = 출처 URL + 근거 노트</li>
+        <li><strong>swatch click</strong> = hex 클립보드 복사</li>
+        <li><strong>대각선 줄무늬</strong> = hex:null (컨텍스트 자유 — Claude 가 사용자 테마·계절 정합 동적 결정)</li>
+        <li><strong>여성 태그</strong> = <code>linen_dress</code> gender_lock="F" (남성 비노출)</li>
+      </ul>
+    </div>
+
+    <main id="root"></main>
+
+    <footer>
+      <p>
+        ★ <strong>V_clothing_color_matrix sanity 사이클 (spec §10.9)</strong>:
+        1차 시각 검토 → 의류별 수정 의견 반영 → 재검토 PASS → spec 본문 hex 확정.
+      </p>
+      <p style="margin-top:8px;">
+        Generated from <code>server/supabase/functions/_shared/clothing_color_matrix.ts</code>
+        · Unit tests (Deno): 17 PASS (회귀 290 PASS)
+      </p>
+      <p style="margin-top:8px;">
+        Related: <a href="color-matrix.html">color-matrix.html</a> (matrix.ts 320 풀 — 사용자 테마 색)
+        · <a href="themes.html">themes.html</a>
+        · <a href="recommendation-samples.html">recommendation-samples.html</a>
+      </p>
+    </footer>
+  </div>
+
+  <div class="tooltip" id="tooltip">
+    <div class="tt-label" id="tt-label"></div>
+    <div class="tt-source" id="tt-source"></div>
+    <div class="tt-notes" id="tt-notes"></div>
+  </div>
+
+  <div class="copied" id="copied">hex 복사됨</div>
+
+<script>
+// 카탈로그 메타 (spec §10.3) — id, label_ko, label_en, role, gender_lock
+const CATALOG = [
+  // 상의
+  { id: "tshirt_white",      role: "top",    label_ko: "흰 면 티",       label_en: "White Cotton Tee" },
+  { id: "knit_basic",        role: "top",    label_ko: "무지 니트",       label_en: "Basic Knit" },
+  { id: "shirt_pastel",      role: "top",    label_ko: "셔츠",            label_en: "Shirt" },
+  { id: "hoodie",            role: "top",    label_ko: "후드",            label_en: "Hoodie" },
+  { id: "linen_shirt",       role: "top",    label_ko: "린넨 셔츠",       label_en: "Linen Shirt" },
+  // 하의
+  { id: "jeans",             role: "bottom", label_ko: "청바지",          label_en: "Jeans (Denim)" },
+  { id: "slacks",            role: "bottom", label_ko: "슬랙스",          label_en: "Slacks" },
+  { id: "wide_pants",        role: "bottom", label_ko: "와이드 팬츠",     label_en: "Wide Pants" },
+  { id: "jogger",            role: "bottom", label_ko: "조거 팬츠",       label_en: "Jogger" },
+  // 외투
+  { id: "cardigan",          role: "outer",  label_ko: "카디건",          label_en: "Cardigan" },
+  { id: "blazer",            role: "outer",  label_ko: "블레이저",        label_en: "Blazer" },
+  { id: "trench",            role: "outer",  label_ko: "트렌치코트",      label_en: "Trench Coat" },
+  { id: "oversize_coat",     role: "outer",  label_ko: "오버사이즈 코트", label_en: "Oversize Coat" },
+  { id: "padding",           role: "outer",  label_ko: "패딩",            label_en: "Padding" },
+  // 원피스 (여성 한정)
+  { id: "linen_dress",       role: "dress",  label_ko: "린넨 원피스",     label_en: "Linen Dress", gender_lock: "F" },
+  // 신발
+  { id: "sneakers_canvas",   role: "shoes",  label_ko: "캔버스 스니커즈", label_en: "Canvas Sneakers" },
+  { id: "sneakers_athletic", role: "shoes",  label_ko: "운동화",          label_en: "Athletic Sneakers" },
+  { id: "loafer",            role: "shoes",  label_ko: "로퍼",            label_en: "Loafer" },
+  { id: "boots_winter",      role: "shoes",  label_ko: "부츠",            label_en: "Winter Boots" },
+  { id: "sandals",           role: "shoes",  label_ko: "샌들",            label_en: "Sandals" },
+];
+
+// 매트릭스 = clothing_color_matrix.ts 정합 (수동 sync; 향후 M7 step-9 build script 가 강제)
+const MATRIX = {
+  tshirt_white: [
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"Vogue Korea 2021-06-15 [주우재가 픽한 흰색 무지 티셔츠 5] (vogue.co.kr/2021/06/15/주우재가-픽한-흰색-무지-티셔츠-5/)", notes:"한국 일상복에서 가장 보편적인 화이트 무지 티 시그니처. 무신사 스탠다드 베이직 라인 화이트 동일 톤." },
+    { key:"ivory", label_ko:"아이보리", hex:"#F5F1E8", source:"무신사 매거진 [2025 봄/여름 룩북] (musinsa.com/content/mz/111329) + 아이보리 팬츠/티 검색 (musinsa.com/search/goods?keyword=아이보리)", notes:"Facebook 무신사 공식 '올 봄엔 아이보리 컬러 팬츠 도전' 캠페인 정합." },
+  ],
+  knit_basic: [
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 매거진 [가을부터 겨울까지, 인기 니트 다 골라줌] (musinsa.com/content/mz/48390)", notes:"한국 캐주얼 니트 시장에서 그레이는 블랙·아이보리와 함께 3대 베이직." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 매거진 [2026 컬러 트렌드, 니트 한 장이면 충분] (musinsa.com/content/1460825320132924732)", notes:"2025 트렌드 컬러 Mocha Mousse (Pantone 2025) 영향으로 베이지·브라운 톤다운 강세." },
+    { key:"ivory", label_ko:"아이보리", hex:"#F5F1E8", source:"무신사 [아이보리 니트] (musinsa.com/search/goods?keyword=아이보리+니트) + brunch.co.kr/@ansyd/2092", notes:"무신사 스탠다드 워셔블 니트 아이보리 라인업 (2026-01-14 발매) 동일 톤." },
+    { key:"brown", label_ko:"브라운", hex:"#8B6F47", source:"무신사 매거진 [출근룩부터 하객룩까지 가을 코디 완벽 공략] (musinsa.com/content/1418460928474149827)", notes:"Pantone Color of the Year 2025 'Mocha Mousse' 정합 — 한국 가을 니트 대표 톤." },
+  ],
+  shirt_pastel: [
+    { key:"pink", label_ko:"연핑크", hex:"#FAD1D1", source:"무신사 [연핑크 셔츠] (musinsa.com/search/goods?keyword=연핑크+셔츠) + 무신사 스탠다드 여름셔츠 [오픈 칼라 쇼트 슬리브 셔츠 스모크 핑크] (musinsa.com/app/specialissue/views/550/0)", notes:"한국 봄 파스텔 셔츠 보편 톤. 무신사 스탠다드 PB 정합." },
+    { key:"sky", label_ko:"하늘", hex:"#C8E0F4", source:"무신사 [하늘색 셔츠] (musinsa.com/search/goods?keyword=하늘색+셔츠) + 무신사 스냅 (musinsa.com/search/snap?keyword=하늘색셔츠)", notes:"한국 봄/여름 파스텔 셔츠 대표 톤. 옥스포드 라이트 블루 시그니처." },
+    { key:"mint", label_ko:"민트", hex:"#C5E8D4", source:"무신사 매거진 [다채로운 매력의 반소매 셔츠 코디] (musinsa.com/mz/magazine/view/111565)", notes:"한국 봄 파스텔 셔츠 라인업의 민트 톤 — 무신사 스탠다드 봄 컬렉션 정합." },
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"무신사 스탠다드 여름셔츠 [오픈 칼라 쇼트 슬리브 셔츠 화이트] (musinsa.com/app/specialissue/views/550/0)", notes:"셔츠 베이직 화이트 — 한국 캐주얼/세미포멀 양쪽 표준." },
+  ],
+  hoodie: [
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 [실패 없는 인기 후드 티셔츠 랭킹] (musinsa.com/cms/news/view/3030)", notes:"한국 캐주얼 후드티 가장 보편적 컬러. 아이비리그 룩 트렌드 정합." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [지금 핫한 후드 티셔츠 맛집은 어디?] (musinsa.com/content/cms/9757)", notes:"후드티 블랙은 한국 캐주얼 베이직 톱2. #1F1F1F (jet black 아닌 약간 부드러운 톤) 한국 표준." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 [무지후드티] (musinsa.com/search/goods?keyword=무지후드티) + 트렌드 결산 리포트 (musinsa.com/content/1452880391798882205)", notes:"2024-2025 한국 캐주얼 후드티 트렌드 — 톤다운 베이지 인기." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [네이비 후드티] (musinsa.com/search/goods?keyword=네이비+후드티)", notes:"한국 대학생 캠퍼스 룩 — 네이비 후드티 시그니처. 아이비리그/프레피 트렌드 정합." },
+  ],
+  linen_shirt: [
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"무신사 스탠다드 [여름셔츠 컬렉션 화이트] (musinsa.com/app/specialissue/views/550/0) + [린넨 셔츠] (musinsa.com/search/goods?keyword=린넨+셔츠)", notes:"한국 여름 린넨 셔츠 가장 보편적 컬러. 화이트 린넨이 여름 베이직." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 스탠다드 여름셔츠 [스트라이프 코튼 린넨 풀오버 셔츠 베이지] (musinsa.com/app/specialissue/views/550/0)", notes:"무신사 PB 린넨 베이지 시그니처. 한국 여름 캐주얼 베이지 표준." },
+    { key:"pink", label_ko:"연핑크", hex:"#FAD1D1", source:"무신사 스탠다드 여름셔츠 [스모크 핑크 오픈 칼라 쇼트 슬리브 셔츠] (musinsa.com/app/specialissue/views/550/0)", notes:"한국 봄/여름 파스텔 린넨 셔츠 시그니처. 무신사 PB 정합." },
+  ],
+  jeans: [
+    { key:"washed", label_ko:"연청", hex:"#7BA0CC", source:"무신사 [2025 청바지 공식] (musinsa.com/content/1344519141325010699) + Vogue Korea [2025년 봄 데님] (vogue.co.kr/2025/02/12/2025년-봄-우리가-입게-될-모든-데님/)", notes:"한국 봄/여름 일상복 압도적 비중. Vogue Korea 2025-02 '산뜻 연청' 명시." },
+    { key:"mid", label_ko:"미드", hex:"#5A7BA8", source:"무신사 [2025년 유행할 청바지는?] (musinsa.com/cms/news/view/14650) + Allure Korea [2025 데님 트렌드 총집합] (allurekorea.com/2025/01/13/2025년-데님-트렌드-총집합/)", notes:"Allure 2025-01 데님 트렌드 기획에서 미드워싱 인디고를 '데일리 데님 표준'으로 분류." },
+    { key:"dark", label_ko:"찐청", hex:"#2E4F7C", source:"무신사 [2025년 유행할 청바지는?] (musinsa.com/cms/news/view/14650) + Vogue Korea [2026까지 활용할 청바지 스타일링 8] (vogue.co.kr/2025/12/15/2026년까지-두고두고-활용할-청바지-스타일링-8/)", notes:"무신사 2025년 다크 워싱(짙은 푸른빛)이 트렌드 키 컬러로 명시. dark indigo 정합." },
+    { key:"black", label_ko:"블랙", hex:"#1B2F4A", source:"무신사 [워싱 데님] (musinsa.com/search/goods?keyword=워싱+데님) + Allure Korea [2025 데님 트렌드] (allurekorea.com/2025/01/13)", notes:"순수 블랙(#000000)이 아닌 약간 푸른빛 도는 블랙 데님(블루-블랙). 한국 데님 표준." },
+  ],
+  slacks: [
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [엠엠지엘 롤업 슬랙스 (블랙/네이비)] (store.musinsa.com/app/product/detail/762359/0)", notes:"네이비 슬랙스 = 한국 직장인/세미포멀 표준. 무신사 슬랙스 인기 컬러." },
+    { key:"charcoal", label_ko:"차콜", hex:"#3F3F3F", source:"무신사 스탠다드 [와이드 히든 밴딩 슬랙스 차콜 그레이] (musinsa.com/products/1222183) + [차콜슬랙스] (musinsa.com/search/goods?keyword=차콜슬랙스)", notes:"차콜 그레이 = 한국 슬랙스 베이직 톱3 (네이비·블랙·차콜). 무신사 PB 정합." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [검정 슬랙스] (musinsa.com/search/musinsa/integration?q=검정슬랙스) + Facebook 무신사 [유니스디자인 차콜·블랙 슬랙스] (facebook.com/musinsa/posts/2048455715232828)", notes:"한국 슬랙스 가장 보편적 블랙 — 면접/오피스/하객 만능 시그니처." },
+    { key:"beige", label_ko:"베이지", hex:"#A89478", source:"무신사 [당신이 원하는 슬랙스의 모든 것] (musinsa.com/app/specialissue/views/990/0)", notes:"치노/슬랙스 더스티 베이지 — 한국 캐주얼 비즈니스 표준." },
+  ],
+  wide_pants: [
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 스탠다드 [와이드 치노 팬츠 베이지] (musinsa.com/products/1115290) + [베이지 와이드 팬츠] (musinsa.com/search/goods?keyword=베이지+와이드+팬츠)", notes:"무신사 스탠다드 와이드 치노 베이지 = 한국 와이드 팬츠 인기 1위. 39,900원 베이직." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 스탠다드 [와이드 코듀로이 팬츠 블랙] (musinsa.com/products/1176326) + [와이드팬츠 블랙] (musinsa.com/search/goods?keyword=와이드팬츠+블랙)", notes:"와이드 팬츠 블랙 = 한국 캐주얼 만능 베이직." },
+    { key:"ivory", label_ko:"아이보리", hex:"#F5F1E8", source:"무신사 [아이보리 팬츠] (musinsa.com/search/goods?keyword=아이보리+팬츠) + Facebook 무신사 공식 [올 봄엔 아이보리 컬러 팬츠 도전] (facebook.com/119546338123785/posts/2197245553687176)", notes:"무신사 공식 채널이 '올 봄 아이보리 팬츠' 캠페인 진행. 한국 봄 와이드 팬츠 시그니처." },
+  ],
+  jogger: [
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 [트레이닝/조거 팬츠] (musinsa.com/category/003004/goods)", notes:"한국 캐주얼 조거 그레이 = 후드티 그레이와 셋업 매칭 정합." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [트레이닝/조거 팬츠] (musinsa.com/category/003004/goods)", notes:"한국 캐주얼 운동/일상복 만능. 후드티 블랙과 셋업 정합." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [트레이닝/조거 팬츠] (musinsa.com/category/003004/goods) + 트렌드 결산 리포트 [블루 키컬러] (musinsa.com/content/1452880391798882205)", notes:"무신사 무진장 25 겨울 블프 키 컬러가 블루 — 네이비 조거 트렌드 정합." },
+  ],
+  cardigan: [
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 매거진 [카디건으로 시작하는 가을 코디] (musinsa.com/cms/magazine/view/2921)", notes:"무신사 가을 코디 매거진 — '베이지·브라운 컬러는 격식 지키며 화사함 더하는 탁월한 선택' 명시." },
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 [카디건] (musinsa.com/category/002020/goods) + 매거진 [58만 조회수가 알려주는 올봄 인기 코디] (musinsa.com/content/1475353204361786440)", notes:"한국 봄·가을 카디건 베이직 톱3 (베이지·그레이·블랙)." },
+    { key:"brown", label_ko:"브라운", hex:"#8B6F47", source:"무신사 매거진 [출근룩부터 하객룩까지 가을 코디 완벽 공략] (musinsa.com/content/1418460928474149827)", notes:"무신사 워크&포멀 베이지·브라운 웜톤 코디 순위권 — 2025 Pantone Mocha Mousse 트렌드 정합." },
+    { key:"pink", label_ko:"연핑크", hex:"#FAD1D1", source:"무신사 매거진 [무탠다드가 제안하는 스타일리시한 봄 코디] (musinsa.com/content/1346741845005779781)", notes:"한국 봄 페미닌 카디건 표준 톤. 무신사 스탠다드 봄 컬렉션 정합." },
+  ],
+  blazer: [
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 스탠다드 [베이식 블레이저 네이비] (store.musinsa.com/app/goods/1181054)", notes:"한국 블레이저 가장 보편적 컬러. 면접/세미포멀/하객 만능. 70,900원 PB 시그니처." },
+    { key:"charcoal", label_ko:"차콜", hex:"#3F3F3F", source:"무신사 스탠다드 [베이식 블레이저 차콜 그레이] (musinsa.com/products/1167428)", notes:"한국 비즈니스 블레이저 표준 차콜 그레이. T/R 원단 시그니처. 63,790원 PB 정합." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 스탠다드 [베이식 블레이저 블랙] (musinsa.com/products/1108007)", notes:"한국 블랙 블레이저 = 면접·하객·세미정장 만능 베이직. 67,990원 PB 베스트셀러." },
+    { key:"beige", label_ko:"베이지", hex:"#A89478", source:"무신사 스탠다드 베이식 블레이저 [더스티 베이지/라이트 베이지] (store.musinsa.com/app/goods/1181054)", notes:"더스티 베이지 = 봄 한국 비즈니스 캐주얼 시그니처." },
+  ],
+  trench: [
+    { key:"beige", label_ko:"베이지", hex:"#D2B48C", source:"무신사 스탠다드 [트렌치 코트 베이지] (store.musinsa.com/app/product/detail/926996/0)", notes:"한국 트렌치코트 가장 보편적 베이지 톤. 클래식 burberry-like 베이지. 119,000원 시그니처." },
+    { key:"camel", label_ko:"카멜", hex:"#A88B5F", source:"무신사 [카멜코트] (musinsa.com/search/goods?keyword=카멜코트) + Facebook 무신사 [평생 한 가지 코트만 입을 수 있다면 카멜] (facebook.com/musinsa/posts/3635243373220713)", notes:"무신사 공식 채널 '클래식한 컬러라 유행 타지 않고 입을 수 있는 카멜 코트의 매력' 명시." },
+    { key:"khaki", label_ko:"카키", hex:"#6B7A4A", source:"무신사 [코디갤러리 카키 세미오버핏 트렌치코트] (musinsa.com/products/2241537)", notes:"한국 가을 트렌치 카키 톤 — 밀리터리 트렌치 트렌드 정합." },
+  ],
+  oversize_coat: [
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 스탠다드 [캐시미어 블렌드 오버사이즈 더블 코트 블랙] (store.musinsa.com/app/goods/879625)", notes:"한국 겨울 오버사이즈 코트 가장 인기 컬러. 캐시미어 25oz 블랙. 159,900원 PB 베스트셀러." },
+    { key:"camel", label_ko:"카멜", hex:"#A88B5F", source:"무신사 스탠다드 [캐시미어 블렌드 오버사이즈 더블 코트 카멜] (store.musinsa.com/app/product/detail/879627/0)", notes:"한국 겨울 오버사이즈 코트 클래식 컬러. 톤다운 카멜 시그니처." },
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 스탠다드 [캐시미어 블렌드 오버사이즈 싱글 코트 차콜 그레이] (store.musinsa.com/app/product/detail/865863/0)", notes:"무신사 PB 오버사이즈 코트 다크/미디엄 그레이 라인업 — 한국 캐주얼 코트 베이직." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 스탠다드 [캐시미어 블렌드 오버사이즈 싱글 코트 네이비] (store.musinsa.com/app/product/detail/865864/0) + [네이비코트] (musinsa.com/search/goods?keyword=네이비코트)", notes:"한국 네이비 오버사이즈 코트 = 격식 있는 캐주얼 코트 시그니처." },
+  ],
+  padding: [
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [숏패딩/헤비 아우터] (musinsa.com/category/002012/goods) + [인기 다운/패딩 모음전] (musinsa.com/campaign/lightdown25/0)", notes:"한국 겨울 패딩 압도적 1위 컬러. 영하 날씨 만능 시그니처." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [경량 패딩/패딩 베스트] (musinsa.com/category/002027/goods) + 트렌드 결산 리포트 [블루 키컬러] (musinsa.com/content/1452880391798882205)", notes:"한국 겨울 패딩 톱2 컬러. 무신사 2025 키컬러 블루 정합." },
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 [패딩] (musinsa.com/search/goods?keyword=패딩)", notes:"그레이 패딩 = 블랙·네이비 다음 3순위 베이직. 한국 캐주얼 패딩 표준." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 [패딩베스트] (musinsa.com/search/goods?keyword=패딩베스트) + 무진장 25 겨울 블프 (musinsa.com/campaign/mujinjangsale/ranking)", notes:"한국 패딩 봄/가을 간절기 베이지 — 톤다운 카키-베이지 트렌드 정합." },
+  ],
+  linen_dress: [
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"무신사 [코엣 화이트 린넨 원피스] (musinsa.com/products/1501893)", notes:"한국 여성 여름 린넨 원피스 가장 보편적 컬러. 179,000원 시그니처." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 [린넨원피스] (musinsa.com/search/goods?keyword=린넨원피스) + 블레스러브 [여성 린넨 봄 여름 핑크 베이지] (m.blesslove.net)", notes:"한국 여름 페미닌 린넨 베이지 = 화이트 다음 인기 톤." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [베이비센토르 로고 원피스 핑크/페일핑크/네이비] (m.store.musinsa.com/app/goods/537448/0)", notes:"한국 여성 여름 네이비 원피스 = 클래식 마린 룩 시그니처." },
+    { key:"pink", label_ko:"연핑크", hex:"#FAD1D1", source:"무신사 [베이비센토르 로고 원피스 페일핑크] (m.store.musinsa.com/app/goods/537448/0) + 체리코코 [CRKO 라비 린넨 가디건 하객룩] (m.cherrykoko.com)", notes:"한국 여성 봄/여름 페일 핑크 원피스 — 페미닌 시그니처." },
+  ],
+  sneakers_canvas: [
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"무신사 [컨버스 척테일러 올스타 캔버스 리프트 화이트 560251C] (musinsa.com/products/1494180)", notes:"한국 캐주얼 캔버스 스니커즈 압도적 1위 컬러. 컨버스 화이트 척테일러 표준. 71,100원 시그니처." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [캔버스/단화] (musinsa.com/category/103004001/goods) + 컨버스 척테일러 올스타 블랙 하이", notes:"한국 캔버스 스니커즈 블랙 톱2. 컨버스 블랙 하이 시그니처." },
+    { key:"navy", label_ko:"네이비", hex:"#2E4F7C", source:"무신사 [캔버스 스니커즈] (musinsa.com/search/musinsa/integration?q=캔버스스니커즈) + 컨버스 네이비 캔버스 라인업", notes:"한국 캔버스 스니커즈 네이비 — 아이비리그/캠퍼스 룩 시그니처." },
+    { key:"beige", label_ko:"베이지", hex:"#D2C4A8", source:"무신사 [단화, 캔버스화] (search.musinsa.com/category/018002)", notes:"한국 캔버스 스니커즈 봄/여름 베이지 — 톤다운 트렌드 정합." },
+  ],
+  sneakers_athletic: [
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"Vogue Korea [아디다스? 뉴발란스? 2025 트렌드가 될 운동화 35] (vogue.co.kr/2025/02/27/아디다스-뉴발란스-2025년-트렌드가-될-운동화-35/)", notes:"Vogue Korea 명시: '뉴발란스 가장 인기 스니커즈는 흰색과 베이지 같은 뉴트럴 톤'." },
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [킥스] (musinsa.com/main/sneaker/recommend) + Vogue Korea [2025 유행할 콜라보 운동화] (vogue.co.kr/2025/04/02)", notes:"한국 운동화 블랙 — 모든 코디 만능. 반스 블랙 시그니처 정합." },
+    { key:"gray", label_ko:"그레이", hex:"#7F7F7F", source:"무신사 [2025 주목할 스니커즈 트렌드 3] (musinsa.com/cms/news/view/14695)", notes:"한국 운동화 그레이 — 뉴발란스 990/2002R 시그니처." },
+    { key:"color", label_ko:"컬러 포인트", hex:null, source:"컨텍스트 매칭 자유 — Claude 가 사용자 테마·계절 정합으로 동적 결정", notes:"v1.1 1차 신발 컬러 포인트 옵션 (출시 후 사용자 데이터로 시그니처 확장 검토). Vogue Korea 2025 SS 컬러풀한 스니커즈 트렌드 정합." },
+  ],
+  loafer: [
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [브라운로퍼] 카테고리 + 찰스앤키스 [로퍼+청바지 코디] (charleskeith.com/us/guides/style-loafers-with-jeans.html)", notes:"한국 로퍼 가장 보편적 컬러. 면접/오피스/세미포멀 만능." },
+    { key:"brown", label_ko:"브라운", hex:"#5A4030", source:"무신사 [브라운로퍼] (musinsa.com/search/goods?keyword=브라운로퍼) + 스탠다드 봄 캠페인 [신세틱 레더 소재 아우터·로퍼] (musinsa.com/content/1346741845005779781)", notes:"한국 로퍼 톱2 컬러. 다크 브라운 — 캐주얼 정장 만능." },
+  ],
+  boots_winter: [
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 스탠다드 [플레인 첼시 부츠 블랙] (musinsa.com/products/2101922) + [스퀘어 첼시 부츠 블랙] (musinsa.com/products/2355319)", notes:"한국 겨울 부츠 압도적 1위 컬러. 첼시 블랙 시그니처. 113,890원 베스트셀러." },
+    { key:"brown", label_ko:"브라운", hex:"#5A4030", source:"무신사 [부츠/워커] (musinsa.com/category/103002/goods)", notes:"한국 겨울 부츠 브라운 — 워커·첼시 다크 브라운 시그니처. 보온 캐주얼 정합." },
+  ],
+  sandals: [
+    { key:"black", label_ko:"블랙", hex:"#1F1F1F", source:"무신사 [올여름 우신사 트렌드 샌들 톱 10] (musinsa.com/cms/news/view/1821)", notes:"한국 여름 샌들 압도적 1위 컬러. '야세 산토리니 샌들 레더 블랙' 1위. 레더 블랙 미니멀 샌들 시그니처." },
+    { key:"brown", label_ko:"브라운", hex:"#5A4030", source:"무신사 [신발 > 샌들] (search.musinsa.com/category/005004) + W Korea [가을까지 잘 신을 여름 샌들] (wkorea.com/2025/08/09/지금-사도-돼요-가을까지-잘-신을-여름-샌들-리스트)", notes:"한국 여름 샌들 브라운 — 가을 환절기까지 활용 가능한 다크 브라운 가죽 샌들 시그니처." },
+    { key:"white", label_ko:"흰색", hex:"#FFFFFF", source:"무신사 [여름샌들] (musinsa.com/search/musinsa/integration?q=여름샌들) + 뉴스룸 [레인부츠에 이어 레인 샌들 인기] (newsroom.musinsa.com/newsroom-menu/2024-0529)", notes:"한국 여름 페미닌 화이트 샌들 — 베이직 캐주얼/리조트 시그니처." },
+  ],
+};
+
+const ROLE_NAMES = {
+  top: { ko: "상의", count: 5 },
+  bottom: { ko: "하의", count: 4 },
+  outer: { ko: "외투", count: 5 },
+  dress: { ko: "원피스", count: 1 },
+  shoes: { ko: "신발", count: 5 },
+};
+
+const ROLE_ORDER = ["top", "bottom", "outer", "dress", "shoes"];
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[c]);
+}
+
+function isLightColor(hex) {
+  if (!hex) return true;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.6;
+}
+
+function render() {
+  const root = document.getElementById("root");
+  const sections = ROLE_ORDER.map((role) => {
+    const items = CATALOG.filter((c) => c.role === role);
+    const roleEntries = items.reduce((acc, c) => acc + (MATRIX[c.id]?.length ?? 0), 0);
+
+    const itemCards = items
+      .map((item) => {
+        const tones = MATRIX[item.id] ?? [];
+        const tonesHtml = tones
+          .map((t) => {
+            const isNull = t.hex === null;
+            const textColor = isNull
+              ? ""
+              : isLightColor(t.hex)
+              ? "rgba(0,0,0,0.7)"
+              : "rgba(255,255,255,0.85)";
+            const swatchStyle = isNull
+              ? 'class="swatch null"'
+              : `class="swatch" style="background:${t.hex};color:${textColor};"`;
+            const swatchContent = isNull ? "동적 결정" : "";
+            return `
+              <div class="tone"
+                   data-hex="${escapeHtml(t.hex ?? "null")}"
+                   data-label="${escapeHtml(item.label_ko + " · " + t.label_ko)}"
+                   data-source="${escapeHtml(t.source)}"
+                   data-notes="${escapeHtml(t.notes ?? "")}">
+                <div ${swatchStyle}>${swatchContent}</div>
+                <div class="tone-meta">
+                  <div class="tone-key">${escapeHtml(t.key)}</div>
+                  <div class="tone-label">${escapeHtml(t.label_ko)}</div>
+                  <div class="tone-hex">${escapeHtml(t.hex ?? "null")}</div>
+                </div>
+              </div>`;
+          })
+          .join("");
+
+        const genderTag = item.gender_lock === "F"
+          ? '<span class="item-tag" style="background:#d4869a;">여성</span>'
+          : "";
+
+        return `
+          <div class="item-card">
+            <div class="item-head">
+              <div>
+                <span class="item-name">
+                  ${escapeHtml(item.label_ko)}${genderTag}
+                  <span class="en">${escapeHtml(item.label_en)}</span>
+                </span>
+              </div>
+              <div class="item-id">${escapeHtml(item.id)} · ${tones.length} tone</div>
+            </div>
+            <div class="tones">${tonesHtml}</div>
+          </div>`;
+      })
+      .join("");
+
+    return `
+      <section class="role-section" data-role="${role}">
+        <div class="role-header">
+          <span class="role-name">${ROLE_NAMES[role].ko}</span>
+          <span class="role-meta">${items.length} 의류 · ${roleEntries} entries</span>
+        </div>
+        <div class="items">${itemCards}</div>
+      </section>`;
+  }).join("");
+
+  root.innerHTML = sections;
+}
+
+function setupTooltip() {
+  const tt = document.getElementById("tooltip");
+  const ttLabel = document.getElementById("tt-label");
+  const ttSource = document.getElementById("tt-source");
+  const ttNotes = document.getElementById("tt-notes");
+
+  document.body.addEventListener("mouseover", (e) => {
+    const tone = e.target.closest(".tone");
+    if (!tone) return;
+    ttLabel.textContent = tone.dataset.label + " — " + tone.dataset.hex;
+    ttSource.textContent = "출처: " + tone.dataset.source;
+    ttNotes.textContent = tone.dataset.notes ? "근거: " + tone.dataset.notes : "";
+    tt.classList.add("show");
+  });
+
+  document.body.addEventListener("mousemove", (e) => {
+    const tone = e.target.closest(".tone");
+    if (!tone) return;
+    const rect = tt.getBoundingClientRect();
+    let x = e.clientX + 14;
+    let y = e.clientY + 14;
+    if (x + rect.width > window.innerWidth - 12) x = e.clientX - rect.width - 14;
+    if (y + rect.height > window.innerHeight - 12) y = e.clientY - rect.height - 14;
+    tt.style.left = x + "px";
+    tt.style.top = y + "px";
+  });
+
+  document.body.addEventListener("mouseout", (e) => {
+    if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".tone")) return;
+    tt.classList.remove("show");
+  });
+}
+
+function setupCopy() {
+  const copied = document.getElementById("copied");
+  let timer = null;
+  document.body.addEventListener("click", async (e) => {
+    const tone = e.target.closest(".tone");
+    if (!tone) return;
+    const hex = tone.dataset.hex;
+    if (hex === "null") return;
+    try {
+      await navigator.clipboard.writeText(hex);
+      copied.textContent = `${hex} 복사됨`;
+      copied.classList.add("show");
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => copied.classList.remove("show"), 1200);
+    } catch {
+      /* silent */
+    }
+  });
+}
+
+render();
+setupTooltip();
+setupCopy();
+</script>
+</body>
+</html>
