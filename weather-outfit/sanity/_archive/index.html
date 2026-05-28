@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weather-outfit — 검증 자료 아카이브</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Pretendard", "Segoe UI", sans-serif; background: #f8f5f0; color: #1a1a1a; line-height: 1.6; padding: 32px 24px; }
+  .container { max-width: 820px; margin: 0 auto; }
+  .breadcrumb { color: #888; font-size: 13px; margin-bottom: 16px; }
+  .breadcrumb a { color: #2c4e80; text-decoration: none; }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .note { color: #888; font-size: 13px; margin: 8px 0 24px; padding: 10px 14px; background: #fff; border-left: 3px solid #aaa; border-radius: 8px; }
+  ul { list-style: none; }
+  li { background: #fff; border: 1px solid #e8e5e0; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; }
+  li a { color: #2c4e80; text-decoration: none; font-weight: 600; }
+  .why { color: #888; font-size: 12px; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="../../">PALETI</a> / sanity / _archive</div>
+  <h1>검증 자료 아카이브</h1>
+  <div class="note">
+    ⚠️ <b>폐기·상이 자료 보존 (의사결정 흔적).</b> 실제 구현(v1.0)과 다르거나 옛 탐색 단계 자료입니다. 현재 정합 자료는 <a href="../../">PALETI 미리보기</a> 참조. (2026-05-28 정리)
+  </div>
+  <ul>
+    <li><a href="m5-step3-32cases.html">m5-step3-32cases</a> + 32cases / 32cases-ios PNG
+      <div class="why">구 스키마 <code>analogous</code> 사용 — 실제 SCHEME_IDS(<code>base-point</code>)와 <b>상이</b>. scheme은 앱 미노출.</div></li>
+    <li><a href="v4-1.html">v4-1</a> <div class="why">매트릭스 이전 "Claude 즉답" 색상 알고리즘 — 폐기된 접근.</div></li>
+    <li><a href="v4-2a.html">v4-2a</a> <div class="why">server 원본 8케이스 — 클라 버전(recommendation-samples)이 실제 화면 반영해 대체.</div></li>
+    <li><a href="v4-3a.html">v4-3a</a> <div class="why">나이 변수 — v1.0 미구현(v1.x M8 예정).</div></li>
+    <li><a href="design-system-v1.html">design-system v1</a> / <a href="design-system-v2.html">v2</a> / <a href="design-system-concepts.html">concepts</a> / <a href="design-system-y-variants.html">y-variants</a> / <a href="design-system-y-matrix.html">y-matrix</a>
+      <div class="why">UI 디자인 시스템 옵션 탐색 — 최종 Y1 인디고 토큰으로 수렴.</div></li>
+    <li>m5-step4-10themes-ios / m5-step9-v4-2a-client-ios PNG
+      <div class="why">미사용 iOS 스크린샷 — 메인은 aos 버전 채택(같은 server 추천, 플랫폼 chrome만 차이).</div></li>
+  </ul>
+</div>
+</body>
+</html>

@@ -8,56 +8,23 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
-    background: #f8f5f0;
-    color: #1a1a1a;
-    line-height: 1.5;
-    padding: 32px 24px;
-    min-height: 100vh;
+    background: #f8f5f0; color: #1a1a1a; line-height: 1.5; padding: 32px 24px; min-height: 100vh;
   }
   .container { max-width: 880px; margin: 0 auto; }
   .breadcrumb { color: #888; font-size: 13px; margin-bottom: 16px; }
   .breadcrumb a { color: #2c4e80; text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
-
   header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid #1a1a1a; }
   h1 { font-size: 28px; margin-bottom: 6px; }
   .codename { font-size: 13px; color: #888; font-family: ui-monospace, "SF Mono", monospace; }
   .description { color: #555; margin-top: 8px; font-size: 14px; }
-
-  h2 {
-    font-size: 16px;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 32px 0 14px;
-  }
-
-  .section-note {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 16px;
-    padding: 10px 14px;
-    background: #fff;
-    border-radius: 8px;
-    border-left: 3px solid #ffd43b;
-  }
+  h2 { font-size: 16px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 14px; }
+  .section-note { font-size: 13px; color: #888; margin-bottom: 16px; padding: 10px 14px; background: #fff; border-radius: 8px; border-left: 3px solid #ffd43b; }
   .section-note.released { border-left-color: #51cf66; }
-
+  .section-note a { color: #2c4e80; }
   .files { display: grid; grid-template-columns: 1fr; gap: 8px; }
   @media (min-width: 700px) { .files { grid-template-columns: 1fr 1fr; } }
-
-  .file-link {
-    background: #fff;
-    border: 1px solid #e8e5e0;
-    border-radius: 10px;
-    padding: 14px 16px;
-    text-decoration: none;
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.15s;
-  }
+  .file-link { background: #fff; border: 1px solid #e8e5e0; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1a1a1a; display: flex; align-items: center; justify-content: space-between; transition: all 0.15s; }
   .file-link:hover { border-color: #2c4e80; transform: translateY(-1px); }
   .file-name { font-weight: 600; font-size: 14px; }
   .file-meta { font-size: 11px; color: #888; margin-top: 2px; }
@@ -73,25 +40,59 @@
   <header>
     <h1>PALETI</h1>
     <div class="codename">codename: weather-outfit</div>
-    <p class="description">GPS 날씨 기반 색상·옷종류 추천 앱 — Stage 3 (디자인) 진행 중</p>
+    <p class="description">GPS 날씨·미세먼지 기반 컬러 코디 추천 앱 — <b>v1.0 출시</b> (iOS 2026-05-27 / Android 재심사 중)</p>
   </header>
 
-  <h2>디자인 (Design)</h2>
-  <div class="section-note">
-    ⚠️ <b>최종 디자인 (`design/`) 는 출시 시점에 공개</b>됩니다. 출시(M6 Android, M7 iOS) 이후 이 디렉토리에 추가됩니다.
+  <h2>검증 자료 (Sanity)</h2>
+  <div class="section-note released">
+    ✅ <b>실제 구현 정합 검증 자료.</b> 색상 매트릭스 320 = server <code>matrix.ts</code> 완전 일치 확인 (2026-05-28). 폐기·상이 자료(옛 알고리즘·디자인 옵션 탐색·구 스키마)는 <a href="sanity/_archive/">_archive →</a>
+  </div>
+  <div class="files">
+
+    <a href="sanity/themes.html" class="file-link">
+      <div>
+        <div class="file-name">컬러 테마 10종</div>
+        <div class="file-meta">실제 앱 화면 (Light / Dark) · original·monochrome·pop·pastel·earth-tone·romantic·cool-street·marine·vintage·forest</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+
+    <a href="sanity/recommendation-samples.html" class="file-link">
+      <div>
+        <div class="file-name">추천 결과 샘플 8케이스</div>
+        <div class="file-meta">실제 앱 화면 · 계절·날씨·성별·테마·미세먼지 조합 golden 케이스</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+
+    <a href="sanity/color-matrix.html" class="file-link">
+      <div>
+        <div class="file-name">HSL 색상 매트릭스 (320)</div>
+        <div class="file-meta">10 테마 × 4 계절톤 × 8 색상 = 320 · matrix.ts 단일진실 정합</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+
+    <a href="sanity/matrix-fallback.html" class="file-link">
+      <div>
+        <div class="file-name">매트릭스 폴백 (Claude 다운 안전망)</div>
+        <div class="file-meta">AI 실패 시 매트릭스 기반 결정성 추천 폴백 20 케이스</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+
   </div>
 
-  <h2>현재 디자인 프로토타입 (1회성 예외 공개)</h2>
+  <h2>디자인 프로토타입 (참고)</h2>
   <div class="section-note">
-    🚧 <b>M6 전 임시 공개</b> — workflow.md §8.2 정책상 design 자료는 출시 후 공개가 원칙이나,
-    검색 UI · 권한 분기 dialog 등 인터랙션 검토용 1회성 예외로 공개. 최종 출시 시점에 <code>design/</code> 로 이동 예정.
+    🚧 <b>M3 출시-전 프로토타입</b> (인터랙션·spacing 검토용). 최종 출시 디자인은 추후 <code>design/</code> 로 정리 예정. 실제 출시 UI는 위 검증 자료의 앱 화면 참조.
   </div>
   <div class="files">
 
     <a href="design-preview-current/index.html" class="file-link">
       <div>
-        <div class="file-name">디자인 미리보기 인덱스 (디자인 시스템 · 컴포넌트 · 프로토타입 · 위젯)</div>
-        <div class="file-meta">2026-05-14 · M3 step-13~18 검토용</div>
+        <div class="file-name">디자인 미리보기 인덱스 (시스템·컴포넌트·프로토타입·위젯)</div>
+        <div class="file-meta">2026-05-14 · M3 검토용</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
@@ -99,7 +100,7 @@
     <a href="design-preview-current/prototype.html" class="file-link">
       <div>
         <div class="file-name">인터랙티브 프로토타입 (8 화면)</div>
-        <div class="file-meta">2026-05-14 · 검색 자동완성 + GPS 권한 분기 dialog 흡수</div>
+        <div class="file-meta">2026-05-14 · 검색 자동완성 + GPS 권한 분기</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
@@ -112,107 +113,10 @@
       <div class="file-arrow">→</div>
     </a>
 
-    <a href="design-preview-current/components.html" class="file-link">
-      <div>
-        <div class="file-name">컴포넌트 카탈로그</div>
-        <div class="file-meta">2026-05-11</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
     <a href="design-preview-current/widgets.html" class="file-link">
       <div>
-        <div class="file-name">위젯 mockup (Lock Screen · Home Small · Home Medium)</div>
+        <div class="file-name">위젯 mockup (Lock Screen · Home Small · Medium)</div>
         <div class="file-meta">2026-05-11</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-  </div>
-
-  <h2>검증 자료 (Sanity)</h2>
-  <div class="section-note">
-    의사결정 흔적 — 색상 검증, 추천 엔진 sanity, 디자인 시스템 옵션 비교 등.
-    출시 전 작업물이지만 의사결정 추적용으로 공개 보존.
-  </div>
-  <div class="files">
-
-    <a href="sanity/v4-1.html" class="file-link">
-      <div>
-        <div class="file-name">V4-1 — Claude즉답 색상 5 시나리오</div>
-        <div class="file-meta">2026-05-10 · PASS 5/5</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/v4-2a.html" class="file-link">
-      <div>
-        <div class="file-name">V4-2a — 매트릭스+Opus 8 케이스</div>
-        <div class="file-meta">2026-05-10 · PASS 8/8</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/v4-3a.html" class="file-link">
-      <div>
-        <div class="file-name">V4-3a — 나이 변수 6 케이스</div>
-        <div class="file-meta">2026-05-11 · 결정: 1문항 유지</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/design-system-v1.html" class="file-link">
-      <div>
-        <div class="file-name">디자인 시스템 v1 (4 옵션 비교)</div>
-        <div class="file-meta">2026-05-11 · UI 컬러 톤 초안</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/design-system-v2.html" class="file-link">
-      <div>
-        <div class="file-name">디자인 시스템 v2 (3 옵션 단순화)</div>
-        <div class="file-meta">2026-05-11 · 토큰 수 축소</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/design-system-y-variants.html" class="file-link">
-      <div>
-        <div class="file-name">Y 옵션 brand 컬러 5 변주</div>
-        <div class="file-meta">2026-05-11</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/design-system-y-matrix.html" class="file-link">
-      <div>
-        <div class="file-name">Y 옵션 3×3 매트릭스</div>
-        <div class="file-meta">2026-05-11</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/design-system-concepts.html" class="file-link">
-      <div>
-        <div class="file-name">6가지 컨셉 (폭 넓게)</div>
-        <div class="file-meta">2026-05-11 · 미적 만족 도달 실패</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/m1-matrix-10themes.html" class="file-link">
-      <div>
-        <div class="file-name">M1 step-1+1b 매트릭스 — 10 테마 × 4 톤 × 8 색상 (320)</div>
-        <div class="file-meta">2026-05-12 · 1차 4 + 확장 6 (earth/romantic/cool-street/marine/vintage/forest)</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/m1-step6-v4-2b-fallback.html" class="file-link">
-      <div>
-        <div class="file-name">M1 step-6 V4-2b — 매트릭스 폴백 20 케이스</div>
-        <div class="file-meta">2026-05-12 · V4-2a 8 변형 + 신규 12 · Claude 다운 안전망 시각 검증</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
