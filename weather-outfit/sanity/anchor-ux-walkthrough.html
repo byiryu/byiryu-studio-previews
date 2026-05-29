@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weather-outfit v1.1 — 앵커 의류 UX walkthrough (모드 1·2·3 sanity)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --muted: #666;
+    --card: #fff;
+    --border: #e0e0e0;
+    --accent: #2c4e80;
+    --anchor-tint: #ffe6a8;
+    --anchor-border: #c89a3a;
+    --device-bezel: #2a2a2a;
+    --device-screen: #ffffff;
+    --mode-1: #6db26d;
+    --mode-2: #4a90e2;
+    --mode-3: #c89a3a;
+    --edge: #b85a7a;
+  }
+  body.dark {
+    --bg: #1a1a1a;
+    --fg: #f0f0f0;
+    --muted: #aaa;
+    --card: #2a2a2a;
+    --border: #3a3a3a;
+    --accent: #80b3ff;
+    --anchor-tint: #5a4a1a;
+    --anchor-border: #c89a3a;
+    --device-bezel: #4a4a4a;
+    --device-screen: #1f1f1f;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.55;
+    padding: 24px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .breadcrumb { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  header {
+    border-bottom: 2px solid var(--fg);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .meta { color: var(--muted); font-size: 12px; font-family: ui-monospace, "SF Mono", monospace; }
+  .toggle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .toggle:hover { border-color: var(--accent); }
+
+  .legend {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    font-size: 13px;
+  }
+  .legend h3 { font-size: 15px; margin-bottom: 10px; }
+  .legend p { margin-bottom: 8px; color: var(--muted); }
+  .legend .stats {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+  }
+  .legend .stat {
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .legend .stat strong { color: var(--accent); }
+
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    margin-right: 8px;
+    text-decoration: none;
+    color: var(--fg);
+    font-size: 13px;
+  }
+  .nav-pill:hover { border-color: var(--accent); }
+  .nav-pill.m1::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-1); }
+  .nav-pill.m2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-2); }
+  .nav-pill.m3::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-3); }
+  .nav-pill.edge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--edge); }
+
+  /* ===== Section ===== */
+  .section {
+    margin-bottom: 56px;
+    scroll-margin-top: 24px;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid;
+  }
+  .section[data-mode="m1"] .section-head { border-color: var(--mode-1); }
+  .section[data-mode="m2"] .section-head { border-color: var(--mode-2); }
+  .section[data-mode="m3"] .section-head { border-color: var(--mode-3); }
+  .section[data-mode="edge"] .section-head { border-color: var(--edge); }
+  .section[data-mode="my"] .section-head { border-color: var(--accent); }
+  .section[data-mode="check"] .section-head { border-color: var(--fg); }
+
+  .section-name {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .section[data-mode="m1"] .section-name { color: var(--mode-1); }
+  .section[data-mode="m2"] .section-name { color: var(--mode-2); }
+  .section[data-mode="m3"] .section-name { color: var(--mode-3); }
+  .section[data-mode="edge"] .section-name { color: var(--edge); }
+  .section[data-mode="my"] .section-name { color: var(--accent); }
+  .section-meta { color: var(--muted); font-size: 13px; }
+
+  .section-intro {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 16px;
+    max-width: 980px;
+  }
+
+  /* ===== Mock layout ===== */
+  .mock-row {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .mock-row { grid-template-columns: 1fr; }
+  }
+
+  .device {
+    background: var(--device-bezel);
+    border-radius: 36px;
+    padding: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    width: 320px;
+  }
+  body.dark .device { box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
+  .device-screen {
+    background: var(--device-screen);
+    border-radius: 28px;
+    overflow: hidden;
+    color: #1a1a1a;
+    font-size: 12.5px;
+  }
+  body.dark .device-screen { color: #1a1a1a; }
+
+  /* device 화면은 항상 light tone — 시각 정합용 */
+  .device-screen .top-bar {
+    height: 28px;
+    background: #fafafa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    font-size: 10px;
+    color: #888;
+    border-bottom: 1px solid #eee;
+  }
+  .device-screen .app-header {
+    padding: 12px 16px 10px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .device-screen .app-title { font-weight: 700; font-size: 13px; color: #1a1a1a; }
+  .device-screen .header-pill {
+    font-size: 10px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    color: #555;
+    background: #fff;
+    cursor: pointer;
+  }
+  .device-screen .anchor-caption {
+    padding: 10px 14px;
+    background: #fff;
+    color: #333;
+    font-size: 11.5px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .device-screen .anchor-caption strong { color: #1a1a1a; }
+  .device-screen .body {
+    padding: 12px 14px 16px;
+    background: #fafafa;
+  }
+  .device-screen .body.dense { padding: 8px 12px 12px; }
+
+  /* 결과 카드 (모드 3) */
+  .result-cards {
+    display: grid;
+    gap: 10px;
+  }
+  .result-card {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .result-card.anchor {
+    background: linear-gradient(135deg, var(--anchor-tint) 0%, #fff8e1 100%);
+    border: 2px solid var(--anchor-border);
+    position: relative;
+  }
+  .result-card.anchor::before {
+    content: "📌 기준";
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    background: var(--anchor-border);
+    color: #fff;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .swatch-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .result-info { flex: 1; }
+  .result-role {
+    font-size: 9px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .result-name {
+    font-weight: 600;
+    font-size: 12px;
+    color: #1a1a1a;
+  }
+  .result-tone {
+    font-size: 11px;
+    color: #666;
+    font-family: ui-monospace, monospace;
+  }
+
+  /* 라디오 (모드 2 카테고리) */
+  .radio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #333;
+  }
+  .radio-item.selected {
+    border-color: var(--mode-2);
+    background: #f0f6ff;
+  }
+  .radio-dot {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #999;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .radio-item.selected .radio-dot {
+    border-color: var(--mode-2);
+  }
+  .radio-item.selected .radio-dot::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 6px; height: 6px;
+    background: var(--mode-2);
+    border-radius: 50%;
+  }
+
+  /* 그리드 (의류 / 색 톤) */
+  .step-label {
+    font-size: 11px;
+    color: #888;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .step-hint {
+    font-size: 10.5px;
+    color: #888;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .item-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .item-chip {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    cursor: pointer;
+  }
+  .item-chip.selected {
+    border-color: var(--mode-2);
+    background: #f0f6ff;
+    color: var(--mode-2);
+    font-weight: 600;
+  }
+  .tone-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .tone-chip {
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #fff;
+  }
+  .tone-chip.selected { border: 2px solid var(--mode-2); }
+  .tone-swatch {
+    height: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .tone-swatch.null {
+    background: repeating-linear-gradient(45deg, #fafafa, #fafafa 6px, #e0e0e0 6px, #e0e0e0 12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #888;
+  }
+  .tone-meta {
+    padding: 4px 6px;
+    text-align: center;
+  }
+  .tone-label {
+    font-size: 10px;
+    color: #333;
+    font-weight: 500;
+  }
+  .tone-hex {
+    font-size: 9px;
+    color: #999;
+    font-family: ui-monospace, monospace;
+  }
+  .cta {
+    background: var(--mode-2);
+    color: #fff;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* 마이페이지 */
+  .my-list { background: #fff; }
+  .my-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #1a1a1a;
+  }
+  .my-item .label { display: flex; align-items: center; gap: 8px; }
+  .my-item .new-badge {
+    font-size: 9px;
+    background: var(--mode-2);
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .my-item .value { color: #888; font-size: 11px; }
+  .my-item .chevron { color: #ccc; font-size: 14px; }
+  .my-sub {
+    padding: 10px 16px;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .my-sub-radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 11.5px;
+    color: #555;
+  }
+  .my-sub-radio .radio-dot { width: 12px; height: 12px; }
+  .my-sub-radio.selected .radio-dot::after { width: 5px; height: 5px; }
+
+  /* 명세 박스 */
+  .spec-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    font-size: 13px;
+  }
+  .spec-card h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+  .spec-card ul {
+    margin: 0 0 12px 18px;
+    color: var(--fg);
+  }
+  .spec-card li { margin-bottom: 6px; }
+  .spec-card .crossplat {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .spec-card .platform {
+    font-size: 12px;
+    background: var(--bg);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .spec-card .platform h5 {
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .spec-card code {
+    background: var(--bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+  }
+
+  /* 엣지 */
+  .edge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 14px;
+  }
+  .edge-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+  .edge-card h5 {
+    font-size: 13px;
+    color: var(--edge);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .edge-card h5::before {
+    content: "⚠️";
+    font-size: 12px;
+  }
+  .edge-card p { color: var(--muted); margin-bottom: 6px; }
+  .edge-card .handler {
+    background: var(--bg);
+    padding: 8px 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--edge);
+    color: var(--fg);
+    font-size: 12px;
+  }
+  .edge-card .handler strong { color: var(--edge); }
+
+  /* 검증 체크리스트 */
+  .checklist {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+  }
+  .checklist h4 { font-size: 15px; margin-bottom: 12px; }
+  .checklist ol { margin: 0 0 0 22px; }
+  .checklist li { margin-bottom: 8px; color: var(--fg); font-size: 13.5px; line-height: 1.6; }
+  .checklist li code {
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+  }
+  .checklist .next {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .checklist .next strong { color: var(--accent); }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../../../index.html">previews</a> /
+      <a href="../">weather-outfit</a> /
+      <a href="./">sanity</a> /
+      anchor-ux-walkthrough.html
+    </div>
+
+    <header>
+      <div>
+        <h1>weather-outfit v1.1 — 앵커 의류 UX walkthrough</h1>
+        <p class="meta">spec §10.6 · server M7 step-2 흐름 정합 (V_anchor_ux sanity) · cross-plat 단일 명세 · 2026-05-29</p>
+      </div>
+      <button class="toggle" id="themeToggle">🌙 다크 모드</button>
+    </header>
+
+    <div class="legend">
+      <h3>본 페이지 목적</h3>
+      <p>
+        v1.1 메이저 = 앵커 의류 본격 도입. <strong>UI 코딩 진입 전 시각 검증</strong> — wireframes.md 정합 갱신 트리거.
+        V_clothing_color_matrix sanity (140 hex) 흐름 정합 — 데이터 검증 PASS 후 UX 검증.
+      </p>
+      <p>
+        spec §10.6 의 3 모드 (자동/수동/표시) + 마이페이지 신규 2 항목 + 엣지 케이스 4 종 모바일 mock + cross-plat 분기 명세.
+        <strong>이 페이지의 PASS = wireframes.md 정합 갱신 트리거 + UI 코딩 진입 게이트 해소</strong>.
+      </p>
+      <div class="stats">
+        <span class="stat">모드 <strong>3</strong>종</span>
+        <span class="stat">마이페이지 신규 <strong>2</strong>항목</span>
+        <span class="stat">엣지 케이스 <strong>4</strong>종</span>
+        <span class="stat">cross-plat <strong>aos + ios</strong> 단일 명세</span>
+        <span class="stat">의류 카탈로그 <strong>20</strong>종 (anchor_eligible)</span>
+      </div>
+      <div style="margin-top: 14px;">
+        <a class="nav-pill m3" href="#mode-3">모드 3 (디폴트)</a>
+        <a class="nav-pill m2" href="#mode-2-entry">모드 2 진입점</a>
+        <a class="nav-pill m2" href="#mode-2-flow">모드 2 3-단계</a>
+        <a class="nav-pill m1" href="#mode-1">모드 1 (마이페이지)</a>
+        <a class="nav-pill m3" href="#my-page">마이페이지 신규</a>
+        <a class="nav-pill edge" href="#edge-cases">엣지 케이스</a>
+        <a class="nav-pill" href="#checklist">검증 체크리스트</a>
+      </div>
+    </div>
+
+    <!-- ===== 모드 3 (디폴트 — 사용자 99% 흐름) ===== -->
+    <section class="section" data-mode="m3" id="mode-3">
+      <div class="section-head">
+        <span class="section-name">모드 3 — 자동 (디폴트, 표시)</span>
+        <span class="section-meta">사용자 99% 흐름 · 메인 화면 첫 진입 = 앵커 카드 배지 + 헤더 캡션</span>
+      </div>
+      <p class="section-intro">
+        v1.0 과 동일한 자동 추천 결과 + <strong>앵커 1 카드 시각 강조</strong>. 첫 인상 = 빠름 (마찰 0).
+        시나리오: 영하 5°C / 흐림 / 사용자 테마 = earth-tone / 자동 앵커 = 청바지 / 시그니처 색 = 연청.
+      </p>
+
+      <div class="mock-row">
+        <!-- Device mock -->
+        <div class="device">
+          <div class="device-screen">
+            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
+            <div class="app-header">
+              <span class="app-title">PALETI</span>
+              <button class="header-pill">▼ 다른 옷 기준</button>
+            </div>
+            <div class="anchor-caption">
+              📌 오늘은 <strong>연청 청바지</strong> 기준 — 다른 옷은 이에 맞춤
+            </div>
+            <div class="body">
+              <div class="result-cards">
+                <div class="result-card anchor">
+                  <div class="swatch-circle" style="background:#7BA0CC"></div>
+                  <div class="result-info">
+                    <div class="result-role">하의 · 앵커</div>
+                    <div class="result-name">청바지</div>
+                    <div class="result-tone">연청 #7BA0CC</div>
+                  </div>
+                </div>
+                <div class="result-card">
+                  <div class="swatch-circle" style="background:#D2C4A8"></div>
+                  <div class="result-info">
+                    <div class="result-role">상의</div>
+                    <div class="result-name">무지 니트</div>
+                    <div class="result-tone">베이지 #D2C4A8</div>
+                  </div>
+                </div>
+                <div class="result-card">
+                  <div class="swatch-circle" style="background:#A88B5F"></div>
+                  <div class="result-info">
+                    <div class="result-role">외투</div>
+                    <div class="result-name">트렌치코트</div>
+                    <div class="result-tone">카멜 #A88B5F</div>
+                  </div>
+                </div>
+                <div class="result-card">
+                  <div class="swatch-circle" style="background:#FFFFFF"></div>
+                  <div class="result-info">
+                    <div class="result-role">신발</div>
+                    <div class="result-name">캔버스 스니커즈</div>
+                    <div class="result-tone">흰색 #FFFFFF</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spec -->
+        <div class="spec-card">
+          <h4>모드 3 시각 명세</h4>
+          <ul>
+            <li><strong>헤더 캡션</strong> — "📌 오늘은 <code>{color_tone} {label_ko}</code> 기준 — 다른 옷은 이에 맞춤" (앵커 색 톤 + 의류명, 12px gray-700)</li>
+            <li><strong>앵커 카드</strong> — 배지 (📌 + "기준", 우측 상단) + 보더 (테마 색 강조, 2px) + 배경 살짝 (linear-gradient warm tint). z-order = 다른 카드보다 위 (살짝 부각)</li>
+            <li><strong>일반 카드</strong> — 1px 보더 + 흰 배경. 좌측 색 swatch circle (36×36 + 1.5px 보더) + role 라벨 (9px gray) + 의류명 (12px gray-900 700) + 색 톤 + hex (11px gray-700 mono)</li>
+            <li><strong>탭 동작</strong> — 앵커 카드 사용자 탭 = <strong>동작 X</strong> (정보 표시만, ★ 2026-05-28 인터뷰 결정). 모드 2 재진입은 헤더 ▼ 버튼만</li>
+            <li><strong>v1.0 cache 자연 graceful</strong> — anchor 필드 부재 응답은 v1.0 시각 (배지·캡션 비노출)</li>
+          </ul>
+          <div class="crossplat">
+            <div class="platform">
+              <h5>Android (Material 3)</h5>
+              <code>Card</code> + 보더 <code>BorderStroke(2.dp, themeColor)</code> + 헤더 <code>Surface(tonalElevation=1.dp)</code> + 캡션 <code>Text(MaterialTheme.typography.bodySmall)</code>
+            </div>
+            <div class="platform">
+              <h5>iOS (HIG / SwiftUI)</h5>
+              <code>RoundedRectangle</code> + <code>.overlay(stroke:lineWidth:2)</code> + 캡션 <code>Text(...).font(.footnote)</code> + 앵커 보더 <code>themeColor.opacity(0.9)</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 모드 2 진입점 ===== -->
+    <section class="section" data-mode="m2" id="mode-2-entry">
+      <div class="section-head">
+        <span class="section-name">모드 2 — 수동 진입점 (2 곳)</span>
+        <span class="section-meta">저마찰 옵션 · 메인 헤더 작은 버튼 + 마이페이지 deeplink</span>
+      </div>
+      <p class="section-intro">
+        모드 2 = 사용자 능동 (오늘은 청바지가 기준이었으면 좋겠는데). 진입점 2 곳 분산 — 메인 = 저마찰 (한 번에 1탭), 마이페이지 = "기본 앵커 = 매번 묻기" 사용자.
+      </p>
+
+      <div class="mock-row">
+        <div class="device">
+          <div class="device-screen">
+            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
+            <div class="app-header">
+              <span class="app-title">PALETI</span>
+              <button class="header-pill" style="border-color:#4a90e2;color:#4a90e2;">▼ 다른 옷 기준</button>
+            </div>
+            <div class="anchor-caption" style="background:#f0f6ff;border-left:3px solid #4a90e2;">
+              ↑ 헤더 우측 작은 버튼 = 진입점 ①
+            </div>
+            <div class="body">
+              <div class="result-cards" style="opacity:0.4;">
+                <div class="result-card"><div class="swatch-circle" style="background:#7BA0CC"></div><div class="result-info"><div class="result-role">하의</div><div class="result-name">청바지</div></div></div>
+                <div class="result-card"><div class="swatch-circle" style="background:#D2C4A8"></div><div class="result-info"><div class="result-role">상의</div><div class="result-name">무지 니트</div></div></div>
+              </div>
+              <p style="margin-top:14px;text-align:center;font-size:11px;color:#888;">(추천 결과는 회색 처리 — 진입점 강조)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <h4>모드 2 진입점 명세</h4>
+          <ul>
+            <li><strong>진입점 ① 메인 헤더 우측</strong> — 작은 outlined button "▼ 다른 옷 기준" (10px 폰트, 4px 9px 패딩, 1px 보더). 저마찰 옵션 명시 — 사용자가 자주 사용 안 한다는 가정</li>
+            <li><strong>진입점 ② 마이페이지 항목</strong> — 신규 ★ 다른 옷 기준 (모드 2 진입 deeplink). 마이페이지 → 앵커 선택 화면 직진</li>
+            <li><strong>왜 2 곳?</strong> — 메인 = 즉시 사용 (오늘 한 번만 변경), 마이페이지 = "매번 묻기" 사용자 (default_anchor_mode='ask') 가 늘 진입</li>
+            <li><strong>★ 모드 3 앵커 카드 탭은 진입 X</strong> (★ 2026-05-28 인터뷰 결정) — 헤더 ▼ 만 진입 path. 정보 표시와 액션 진입 분리 = HIG / Material 3 정합</li>
+          </ul>
+          <div class="crossplat">
+            <div class="platform">
+              <h5>Android</h5>
+              <code>TextButton</code> + 우측 <code>Icon(Icons.Filled.ExpandMore)</code> + 마이페이지 <code>ListItem</code>
+            </div>
+            <div class="platform">
+              <h5>iOS</h5>
+              <code>Button</code> + <code>Image(systemName: "chevron.down")</code> + 마이페이지 <code>NavigationLink</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 모드 2 3-단계 화면 ===== -->
+    <section class="section" data-mode="m2" id="mode-2-flow">
+      <div class="section-head">
+        <span class="section-name">모드 2 — 앵커 선택 화면 (3-단계 단일 화면, 위→아래 스크롤)</span>
+        <span class="section-meta">spec §10.6 ASCII mock 시각화 · 카탈로그 + 색 톤 = GET /v1/catalog 단일 진실</span>
+      </div>
+      <p class="section-intro">
+        한 화면에 3 단계 모두 표시 (이전/다음 navigation 없음). 위→아래 자연 스크롤. 사용자 흐름:
+        카테고리 → 의류 종류 → 색 톤 → "이걸로 추천 받기" CTA.
+      </p>
+
+      <div class="mock-row">
+        <div class="device">
+          <div class="device-screen">
+            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
+            <div class="app-header" style="justify-content:flex-start;gap:10px;">
+              <span style="color:#888;font-size:14px;">←</span>
+              <span class="app-title">다른 옷 기준</span>
+            </div>
+            <div class="body dense">
+              <div class="step-label">[1] 카테고리</div>
+              <div class="step-title">어떤 의류를 기준으로?</div>
+              <div class="step-hint" style="margin-bottom:8px;">앵커 의류 종류 선택</div>
+              <div class="radio-grid">
+                <div class="radio-item"><div class="radio-dot"></div>외투</div>
+                <div class="radio-item selected"><div class="radio-dot"></div>하의</div>
+                <div class="radio-item"><div class="radio-dot"></div>상의</div>
+                <div class="radio-item"><div class="radio-dot"></div>신발</div>
+              </div>
+              <div class="radio-item" style="margin-top:4px;"><div class="radio-dot"></div>자동으로 맡김 (모드 1 회귀)</div>
+
+              <div class="step-label">[2] 의류 종류</div>
+              <div class="step-title">하의 4종</div>
+              <div class="step-hint">anchor_eligible + gender_lock 필터링</div>
+              <div class="item-grid">
+                <div class="item-chip selected">청바지</div>
+                <div class="item-chip">슬랙스</div>
+                <div class="item-chip">와이드 팬츠</div>
+                <div class="item-chip">조거 팬츠</div>
+                <div class="item-chip" style="opacity:0.4;">—</div>
+                <div class="item-chip" style="opacity:0.4;">—</div>
+              </div>
+
+              <div class="step-label">[3] 색 톤</div>
+              <div class="step-title">청바지 색 톤</div>
+              <div class="step-hint">이 추천에서 <strong>다른 옷 색은 이에 맞춰 자동</strong> 추천돼요</div>
+              <div class="tone-grid">
+                <div class="tone-chip selected"><div class="tone-swatch" style="background:#7BA0CC"></div><div class="tone-meta"><div class="tone-label">연청</div><div class="tone-hex">#7BA0CC</div></div></div>
+                <div class="tone-chip"><div class="tone-swatch" style="background:#5A7BA8"></div><div class="tone-meta"><div class="tone-label">미드</div><div class="tone-hex">#5A7BA8</div></div></div>
+                <div class="tone-chip"><div class="tone-swatch" style="background:#2E4F7C"></div><div class="tone-meta"><div class="tone-label">찐청</div><div class="tone-hex">#2E4F7C</div></div></div>
+                <div class="tone-chip"><div class="tone-swatch" style="background:#1B2F4A"></div><div class="tone-meta"><div class="tone-label">블랙</div><div class="tone-hex">#1B2F4A</div></div></div>
+                <div class="tone-chip"><div class="tone-swatch null">맡김</div><div class="tone-meta"><div class="tone-label">추천에 맡김</div><div class="tone-hex">디폴트</div></div></div>
+                <div class="tone-chip"><div class="tone-swatch" style="background:#A8C5DD"></div><div class="tone-meta"><div class="tone-label">라이트</div><div class="tone-hex">#A8C5DD</div></div></div>
+              </div>
+              <div class="cta">이걸로 추천 받기</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <h4>모드 2 3-단계 명세</h4>
+          <ul>
+            <li><strong>[1] 카테고리 4 라디오 + "자동으로 맡김"</strong> — 4 카테고리 + 자동 (5번째 옵션, 모드 1 회귀). gender_lock 카테고리는 사용자 성별 정합 필터 (남성: dress 비노출)</li>
+            <li><strong>[2] 의류 종류 그리드</strong> — 데이터 = <code>getCatalogByRole(role, gender)</code>. anchor_eligible=true 만 노출 (20/20 모두 true). 빈 셀 = "—" 비활성</li>
+            <li><strong>[3] 색 톤 그리드</strong> — 데이터 = <code>getToneOptions(catalog_id)</code> (matrix.ts 정합). 의류당 정확히 7 entry. hex swatch + 한글 label + hex 값. "추천에 맡김" 디폴트 (null hex, hatched 패턴) — 사용자 무선택 시 server 자동 결정</li>
+            <li><strong>의미 명확화</strong> — [3] 헤더 = "{label_ko} 색 톤" (앵커 의류명) + 안내 문구 "이 추천에서 다른 옷 색은 이에 맞춰 자동" (이중 안전망)</li>
+            <li><strong>CTA</strong> — "이걸로 추천 받기" → <code>fetchRecommendation(userAnchor:{role,id,color_tone})</code></li>
+          </ul>
+          <div class="crossplat">
+            <div class="platform">
+              <h5>Android</h5>
+              <code>LazyColumn</code> + <code>RadioGroup</code> + <code>FilterChip Grid</code> + <code>Button(modifier=fillMaxWidth)</code>
+            </div>
+            <div class="platform">
+              <h5>iOS</h5>
+              <code>ScrollView</code> + <code>Picker(.radioGroup)</code> + <code>LazyVGrid(GridItem(.flexible(), count:3))</code> + <code>Button(.borderedProminent)</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 모드 1 (마이페이지 기본 = auto/ask) ===== -->
+    <section class="section" data-mode="m1" id="mode-1">
+      <div class="section-head">
+        <span class="section-name">모드 1 — 마이페이지 기본 앵커 (auto / ask)</span>
+        <span class="section-meta">default_anchor_mode 설정 · 'ask' 사용자만 모드 2 매번 진입</span>
+      </div>
+      <p class="section-intro">
+        디폴트 = 'auto' (자동 룰 4-way). 'ask' 설정 시 메인 진입마다 모드 2 강제 진입 (헤비 사용자 옵션, 마찰 ↑ 알면서 선택).
+      </p>
+
+      <div class="mock-row">
+        <div class="device">
+          <div class="device-screen">
+            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
+            <div class="app-header" style="justify-content:flex-start;gap:10px;">
+              <span style="color:#888;font-size:14px;">←</span>
+              <span class="app-title">기본 앵커</span>
+            </div>
+            <div class="body" style="padding:0;">
+              <div class="my-list">
+                <div class="my-sub">
+                  <div class="my-sub-radio selected"><div class="radio-dot" style="border-color:#6db26d;"></div>자동 (디폴트, 권장)</div>
+                  <div style="font-size:10.5px;color:#888;margin-left:20px;line-height:1.5;">날씨에 따라 자동으로 외투/상의/하의/신발 중 하나가 기준이 돼요.</div>
+                </div>
+                <div class="my-sub">
+                  <div class="my-sub-radio"><div class="radio-dot"></div>매번 묻기</div>
+                  <div style="font-size:10.5px;color:#888;margin-left:20px;line-height:1.5;">메인 진입 때마다 의류·색 톤 선택 화면이 떠요. (모드 2)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <h4>모드 1 명세 (마이페이지 기본 앵커 설정)</h4>
+          <ul>
+            <li><strong>auto (디폴트)</strong> — 자동 룰 4-way (체감 ≤ 5°C → outer / ≥ 25°C → top / 비·눈 → shoes / 기본 → bottom). v1.0 과 동일 마찰 0</li>
+            <li><strong>ask</strong> — 메인 진입 시 모드 2 강제 진입 (옵션 X 한 사용자만 선택). 마찰 인지 후 능동 선택</li>
+            <li><strong>저장 위치</strong> — server `weather_outfit_users.default_anchor_mode` enum ('auto'|'ask'). 클라 변경 시 즉시 fire-and-forget POST</li>
+            <li><strong>설명 문구</strong> — 각 옵션 하단 작은 설명 (마찰 차이 명시)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 마이페이지 신규 항목 ===== -->
+    <section class="section" data-mode="my" id="my-page">
+      <div class="section-head">
+        <span class="section-name">마이페이지 신규 v1.1 — 2 항목</span>
+        <span class="section-meta">★ 기본 앵커 · ★ 다른 옷 기준 (deeplink)</span>
+      </div>
+      <p class="section-intro">
+        기존 마이페이지 (컬러 테마 / 위치 / 알림 / 로그인 / 약관) 사이에 신규 2 항목 추가. 위치 = 알림 다음 (코어 설정 그룹).
+      </p>
+
+      <div class="mock-row">
+        <div class="device">
+          <div class="device-screen">
+            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
+            <div class="app-header" style="justify-content:flex-start;gap:10px;">
+              <span style="color:#888;font-size:14px;">←</span>
+              <span class="app-title">마이페이지</span>
+            </div>
+            <div class="body" style="padding:0;">
+              <div class="my-list">
+                <div class="my-item"><div class="label">컬러 테마</div><div class="value">earth-tone <span class="chevron">›</span></div></div>
+                <div class="my-item"><div class="label">위치</div><div class="value">서울 강남구 <span class="chevron">›</span></div></div>
+                <div class="my-item"><div class="label">알림</div><div class="value">아침 8시 <span class="chevron">›</span></div></div>
+                <div class="my-item" style="background:#fffdf5;">
+                  <div class="label">기본 앵커 <span class="new-badge">NEW</span></div>
+                  <div class="value">자동 <span class="chevron">›</span></div>
+                </div>
+                <div class="my-item" style="background:#fffdf5;">
+                  <div class="label">다른 옷 기준 <span class="new-badge">NEW</span></div>
+                  <div class="value"><span class="chevron">›</span></div>
+                </div>
+                <div class="my-item"><div class="label">로그인</div><div class="value">byiryu@... <span class="chevron">›</span></div></div>
+                <div class="my-item"><div class="label">약관 / 처리방침</div><div class="value"><span class="chevron">›</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <h4>마이페이지 신규 명세</h4>
+          <ul>
+            <li><strong>위치</strong> — 알림 ↔ 로그인 사이 (코어 설정 그룹). NEW 배지 (mode-2 색 #4a90e2) 신규성 강조</li>
+            <li><strong>기본 앵커</strong> — value = "자동" 또는 "매번 묻기" (default_anchor_mode 정합). tap → 모드 1 화면</li>
+            <li><strong>다른 옷 기준</strong> — value 영역 비움 (액션 진입만). tap → 모드 2 앵커 선택 화면 (3-단계, deeplink)</li>
+            <li><strong>일관성</strong> — 다른 항목과 동일 padding (12px 14px) + 우측 chevron + 한 줄 라벨 + 우측 현재 값</li>
+            <li><strong>★ NEW 배지 일시성</strong> — v1.1 출시 후 7~14일 자연 제거 (or 사용자 첫 진입 후 자동 제거) — UX 결정 (★ 미해결, 백로그)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 엣지 케이스 ===== -->
+    <section class="section" data-mode="edge" id="edge-cases">
+      <div class="section-head">
+        <span class="section-name">엣지 케이스 — 4 종 (spec §5 정합)</span>
+        <span class="section-meta">사용자 사전 차단 + server 안전망 정합</span>
+      </div>
+      <p class="section-intro">
+        spec §5 의 v1.1 신규 엣지 케이스 4 종. 클라 UI = 사전 차단 (가시화·접근 봉쇄), server = 안전망 (zod 검증 + 폴백).
+      </p>
+
+      <div class="edge-grid">
+        <div class="edge-card">
+          <h5>카테고리만 선택 + 의류 미선택</h5>
+          <p>모드 2 [1] 카테고리 선택 + [2] 의류 그리드 무탭 + CTA 진입 시.</p>
+          <div class="handler">
+            <strong>처리</strong>: server 룰 = 그 카테고리에서 컨텍스트 매칭 최고점 의류 자동 선택. envelope <code>anchor.source="auto-partial"</code>. 클라 UI 결과 = 일반 모드 3 + 카테고리만 사용자 의도 반영
+          </div>
+        </div>
+
+        <div class="edge-card">
+          <h5>user_anchor 색 톤 안 풀에 색 없음</h5>
+          <p>사용자가 [3] 에서 색 톤 선택했는데 server allowed_color_hex_ranges 미포함 (예외 케이스).</p>
+          <div class="handler">
+            <strong>처리</strong>: 카탈로그 시그니처 색 폴백 (청바지 = denim blue 기본값). envelope <code>anchor.fallback_used=true</code> + 클라 silent (사용자 메시지 X — UI 결과만 자연)
+          </div>
+        </div>
+
+        <div class="edge-card">
+          <h5>anchor_eligible=false 의류 선택 시도</h5>
+          <p>v1.1 = 20/20 모두 anchor_eligible. 향후 카탈로그 확장 시 발생 가능.</p>
+          <div class="handler">
+            <strong>처리</strong>: <strong>클라 UI 사전 차단</strong> — [2] 의류 그리드에 anchor_eligible=true 만 노출. server 도 zod 검증 안전망 (400 INVALID_ANCHOR)
+          </div>
+        </div>
+
+        <div class="edge-card">
+          <h5>여성 한정 의류 (linen_dress) 남성 사용자 노출</h5>
+          <p>spec gender_lock="F" 의류 (린넨 원피스). users.gender='M' 사용자가 [2] 에서 시도.</p>
+          <div class="handler">
+            <strong>처리</strong>: <strong>클라 UI 비노출</strong> — <code>getCatalogByRole('dress', 'M')</code> = 빈 배열 → 카테고리 [1] '원피스' 라디오 자체 비노출. server 안전망 (400 INVALID_ANCHOR)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 검증 체크리스트 ===== -->
+    <section class="section" data-mode="check" id="checklist">
+      <div class="section-head">
+        <span class="section-name">검증 체크리스트 (시각 PASS 기준)</span>
+        <span class="section-meta">본 페이지 PASS = wireframes.md 정합 갱신 + UI 코딩 진입 게이트 해소</span>
+      </div>
+
+      <div class="checklist">
+        <h4>1. 모드 3 (디폴트, 99% 흐름)</h4>
+        <ol>
+          <li>앵커 카드 시각 강조가 <strong>한눈에 식별</strong> 가능한가? (배지 📌 + 보더 + 배경) — 다른 카드와 구분이 명확</li>
+          <li>헤더 캡션 "📌 오늘은 <strong>연청 청바지</strong> 기준" — 색 톤 + 의류명 + 안내가 자연 한 문장</li>
+          <li>앵커 카드 외 3 카드의 색이 앵커 색과 <strong>조화</strong> 인가? — denim blue ↔ 베이지 니트 ↔ 카멜 트렌치 ↔ 화이트 스니커즈 매칭 정합</li>
+        </ol>
+
+        <h4>2. 모드 2 진입점 (2 곳)</h4>
+        <ol>
+          <li>헤더 우측 "▼ 다른 옷 기준" 버튼이 <strong>저마찰</strong> 인지? (작아서 무시 가능 + 의도 시 식별 가능 — 균형)</li>
+          <li>마이페이지 신규 2 항목 위치 (NEW 배지) 가 자연 — 다른 설정 항목과 톤 정합</li>
+          <li>★ 모드 3 앵커 카드 탭이 진입점 X = 정보·액션 분리 인식이 명확한가? (시각적으로 "이건 탭 X" 신호 — 보더만 + 인터랙티브 cue X)</li>
+        </ol>
+
+        <h4>3. 모드 2 3-단계 화면</h4>
+        <ol>
+          <li>3 단계가 한 화면 위→아래 = <strong>흐름이 자연</strong>? (이전/다음 navigation 없이 스크롤 = OK)</li>
+          <li>[1] → [2] → [3] 의미 연결 — 카테고리 선택 → 의류 그리드 동적 갱신 → 색 톤 그리드 헤더 = 의류명</li>
+          <li>색 톤 그리드의 hex 시각 시그니처 = 사용자가 "이게 연청이구나" 식별 가능 (140 hex sanity PASS 정합)</li>
+          <li>"추천에 맡김" 디폴트 옵션이 <strong>명확</strong> — hatched 패턴 + label "추천에 맡김" + "디폴트" 표기</li>
+          <li>CTA "이걸로 추천 받기" 문구가 자연 (한국어 톤)</li>
+        </ol>
+
+        <h4>4. 마이페이지 + 모드 1</h4>
+        <ol>
+          <li>기본 앵커 설정 (auto/ask) 의미가 명확 — 각 옵션 하단 작은 설명이 충분</li>
+          <li>'매번 묻기' 선택 시 마찰 인지 — 설명 문구 "메인 진입 때마다 의류·색 톤 선택 화면이 떠요" 명확</li>
+        </ol>
+
+        <h4>5. 엣지 케이스 4 종</h4>
+        <ol>
+          <li>사전 차단 (anchor_eligible=false / gender_lock) 처리 자연 — 빈 배열 → 옵션 비노출 = 마찰 0</li>
+          <li>server 안전망 (auto-partial / fallback_used / INVALID_ANCHOR 400) 의 사용자 UX 영향 0 (silent 또는 자연 결과)</li>
+        </ol>
+
+        <div class="next">
+          <strong>PASS 시 다음:</strong> wireframes.md 정합 갱신 (cross-plat 단일 명세, 본 페이지 시각 + 명세 본문 흡수) → PLAN aos M7 step-8 / ios M7 step-7 의 wireframes deferral 해소 → 본격 UI 코딩 진입 (server step-4~12 + aos step-2~7 + ios step-3~10)
+          <br><br>
+          <strong>FAIL / 의견:</strong> 의류·색·문구·진입점 위치·NEW 배지·엣지 처리 등 구체 변경 의견 → 본 HTML 갱신 + wireframes.md 정합 (사이클)
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        ★ <strong>V_anchor_ux sanity 사이클 (spec §10.6 + §10.9 V_anchor_sanity 정합)</strong>:
+        시각 검토 → 의견 반영 → 재검토 PASS → wireframes.md 정합 갱신 → UI 코딩 진입.
+      </p>
+      <p style="margin-top:8px;">
+        Source: <code>_docs/specs/weather-outfit-spec.md §10.6</code> · 카탈로그·매트릭스 = <code>server/supabase/functions/_shared/clothing_catalog.ts</code> + <code>clothing_color_matrix.ts</code> (140 entries) · <a href="anchor-color-palette.html">anchor-color-palette.html (의류 시그니처 색)</a>
+      </p>
+      <p style="margin-top:8px;">
+        Related: <a href="recommendation-samples.html">recommendation-samples.html</a> (추천 8 케이스 충돌 회피 시각, V_anchor_sanity) · <a href="color-matrix.html">color-matrix.html</a> (matrix.ts 320 사용자 테마 풀) · <a href="themes.html">themes.html</a>
+      </p>
+    </footer>
+  </div>
+
+<script>
+  const root = document.documentElement;
+  const body = document.body;
+  const toggle = document.getElementById('themeToggle');
+  function applyTheme(mode) {
+    if (mode === 'dark') {
+      body.classList.add('dark');
+      toggle.textContent = '☀️ 라이트 모드';
+    } else {
+      body.classList.remove('dark');
+      toggle.textContent = '🌙 다크 모드';
+    }
+    try { localStorage.setItem('anchor-ux-theme', mode); } catch (e) {}
+  }
+  toggle.addEventListener('click', () => {
+    applyTheme(body.classList.contains('dark') ? 'light' : 'dark');
+  });
+  try {
+    const saved = localStorage.getItem('anchor-ux-theme');
+    if (saved) applyTheme(saved);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+  } catch (e) {}
+</script>
+</body>
+</html>
