@@ -3,1073 +3,1328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>weather-outfit v1.1 — 앵커 의류 UX walkthrough (모드 1·2·3 sanity)</title>
+<title>PALETI v1.1 — 앵커 의류 UX 인터랙티브 프로토타입</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #fafafa;
-    --fg: #1a1a1a;
-    --muted: #666;
-    --card: #fff;
-    --border: #e0e0e0;
-    --accent: #2c4e80;
-    --anchor-tint: #ffe6a8;
-    --anchor-border: #c89a3a;
-    --device-bezel: #2a2a2a;
-    --device-screen: #ffffff;
-    --mode-1: #6db26d;
-    --mode-2: #4a90e2;
-    --mode-3: #c89a3a;
-    --edge: #b85a7a;
+    --bg: #F8F5F0; --surface: #FFFFFF; --text: #1A1A1A; --textMuted: #7A7468;
+    --brand: #2C4E80; --border: #E8E5E0; --error: #FF6B6B; --warning: #FFD43B;
+    --mode2: #4A90E2; --mode3: #C89A3A; --anchor-tint: #FFF4D6;
   }
-  body.dark {
-    --bg: #1a1a1a;
-    --fg: #f0f0f0;
-    --muted: #aaa;
-    --card: #2a2a2a;
-    --border: #3a3a3a;
-    --accent: #80b3ff;
-    --anchor-tint: #5a4a1a;
-    --anchor-border: #c89a3a;
-    --device-bezel: #4a4a4a;
-    --device-screen: #1f1f1f;
+  [data-theme="dark"] {
+    --bg: #1A1815; --surface: #2A2520; --text: #F0EDE8; --textMuted: #A89B8C;
+    --brand: #8FA9C9; --border: #3A352F; --anchor-tint: #3A3220;
   }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--fg);
-    line-height: 1.55;
-    padding: 24px;
-    transition: background 0.2s, color 0.2s;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+    background: #d8d8db; line-height: 1.5;
+    padding: 24px; min-height: 100vh;
   }
-  .container { max-width: 1400px; margin: 0 auto; }
-
-  .breadcrumb { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
-  .breadcrumb a { color: var(--accent); text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-
-  header {
-    border-bottom: 2px solid var(--fg);
-    padding-bottom: 16px;
-    margin-bottom: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  h1 { font-size: 24px; margin-bottom: 6px; }
-  .meta { color: var(--muted); font-size: 12px; font-family: ui-monospace, "SF Mono", monospace; }
-  .toggle {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--fg);
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
-  }
-  .toggle:hover { border-color: var(--accent); }
-
-  .legend {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 22px;
-    margin-bottom: 28px;
-    font-size: 13px;
-  }
-  .legend h3 { font-size: 15px; margin-bottom: 10px; }
-  .legend p { margin-bottom: 8px; color: var(--muted); }
-  .legend .stats {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-    font-size: 12px;
-    font-family: ui-monospace, monospace;
-  }
-  .legend .stat {
-    background: var(--bg);
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-  }
-  .legend .stat strong { color: var(--accent); }
-
-  .nav-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    margin-right: 8px;
-    text-decoration: none;
-    color: var(--fg);
-    font-size: 13px;
-  }
-  .nav-pill:hover { border-color: var(--accent); }
-  .nav-pill.m1::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-1); }
-  .nav-pill.m2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-2); }
-  .nav-pill.m3::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mode-3); }
-  .nav-pill.edge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--edge); }
-
-  /* ===== Section ===== */
-  .section {
-    margin-bottom: 56px;
-    scroll-margin-top: 24px;
-  }
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid;
-  }
-  .section[data-mode="m1"] .section-head { border-color: var(--mode-1); }
-  .section[data-mode="m2"] .section-head { border-color: var(--mode-2); }
-  .section[data-mode="m3"] .section-head { border-color: var(--mode-3); }
-  .section[data-mode="edge"] .section-head { border-color: var(--edge); }
-  .section[data-mode="my"] .section-head { border-color: var(--accent); }
-  .section[data-mode="check"] .section-head { border-color: var(--fg); }
-
-  .section-name {
-    font-size: 22px;
-    font-weight: 700;
-  }
-  .section[data-mode="m1"] .section-name { color: var(--mode-1); }
-  .section[data-mode="m2"] .section-name { color: var(--mode-2); }
-  .section[data-mode="m3"] .section-name { color: var(--mode-3); }
-  .section[data-mode="edge"] .section-name { color: var(--edge); }
-  .section[data-mode="my"] .section-name { color: var(--accent); }
-  .section-meta { color: var(--muted); font-size: 13px; }
-
-  .section-intro {
-    color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 16px;
-    max-width: 980px;
-  }
-
-  /* ===== Mock layout ===== */
-  .mock-row {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 24px;
+  .layout {
+    max-width: 1240px; margin: 0 auto;
+    display: grid; grid-template-columns: 260px 1fr; gap: 24px;
     align-items: start;
   }
-  @media (max-width: 900px) {
-    .mock-row { grid-template-columns: 1fr; }
+  @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Sidebar */
+  .sidebar {
+    background: #fff; border-radius: 12px; padding: 20px; position: sticky; top: 24px;
+    max-height: calc(100vh - 48px); overflow-y: auto;
+  }
+  .breadcrumb { font-size: 12px; color: #555; margin-bottom: 14px; }
+  .breadcrumb a { color: #2C4E80; text-decoration: none; }
+  .sidebar h2 {
+    font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase;
+    letter-spacing: 1px; margin: 18px 0 8px;
+  }
+  .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .nav-item {
+    padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    font-size: 12.5px; color: #1a1a1a; display: flex; align-items: center; gap: 8px;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: #f5f5f5; }
+  .nav-item.active { background: #1a1a1a; color: #fff; }
+  .nav-item .num { font-size: 10px; opacity: 0.6; font-family: ui-monospace, monospace; min-width: 16px; }
+  .nav-item .mode-dot {
+    width: 7px; height: 7px; border-radius: 50%; margin-left: auto; flex-shrink: 0;
+  }
+  .nav-item .mode-dot.m1 { background: #6db26d; }
+  .nav-item .mode-dot.m2 { background: #4A90E2; }
+  .nav-item .mode-dot.m3 { background: #C89A3A; }
+
+  .sim-section {
+    padding: 12px; background: #fafafa; border-radius: 8px; margin-top: 8px;
+  }
+  .sim-row { margin-bottom: 10px; }
+  .sim-row:last-child { margin-bottom: 0; }
+  .sim-label { font-size: 11px; color: #555; margin-bottom: 5px; font-weight: 600; }
+  .sim-toggle { display: flex; gap: 4px; }
+  .sim-toggle button {
+    flex: 1; padding: 6px 4px; border: 1px solid #ccc; background: #fff;
+    color: #1a1a1a; border-radius: 6px; font-size: 11px; cursor: pointer;
+  }
+  .sim-toggle button.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+  .theme-toggle { display: flex; gap: 4px; margin-top: 6px; }
+  .theme-toggle button {
+    flex: 1; padding: 6px; border: 1px solid #ccc; background: #fff;
+    color: #1a1a1a; border-radius: 6px; font-size: 11px; cursor: pointer;
+  }
+  .theme-toggle button.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .sidebar-meta {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid #eee;
+    font-size: 10.5px; color: #888; line-height: 1.5;
+  }
+  .sidebar-meta a { color: #2C4E80; }
+
+  /* Main */
+  .main {
+    background: #fff; border-radius: 16px; padding: 28px;
+    min-height: 600px;
+  }
+  .screen-header {
+    border-bottom: 1px solid #eee; padding-bottom: 14px; margin-bottom: 18px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .screen-title { font-size: 20px; font-weight: 700; }
+  .screen-mode-badge {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    color: #fff; font-weight: 600; margin-left: 6px; vertical-align: 3px;
+  }
+  .screen-mode-badge.m1 { background: #6db26d; }
+  .screen-mode-badge.m2 { background: #4A90E2; }
+  .screen-mode-badge.m3 { background: #C89A3A; }
+  .screen-id { font-size: 11px; color: #888; font-family: ui-monospace, monospace; }
+  .screen-description {
+    font-size: 13px; color: #555; margin-bottom: 18px; line-height: 1.55;
+    max-width: 720px;
   }
 
-  .device {
-    background: var(--device-bezel);
-    border-radius: 36px;
-    padding: 10px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
-    width: 320px;
+  /* Phone frame */
+  .phone-stage { display: flex; justify-content: center; padding: 14px 0 8px; }
+  .phone-frame {
+    width: 320px; aspect-ratio: 9/19.5;
+    background: #1a1a1a; border-radius: 32px; padding: 8px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
   }
-  body.dark .device { box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
-  .device-screen {
-    background: var(--device-screen);
-    border-radius: 28px;
-    overflow: hidden;
-    color: #1a1a1a;
-    font-size: 12.5px;
+  .phone-screen {
+    background: var(--bg); color: var(--text);
+    border-radius: 26px; height: 100%; overflow-y: auto; overflow-x: hidden;
+    display: flex; flex-direction: column; position: relative;
+    transition: background 0.2s, color 0.2s;
   }
-  body.dark .device-screen { color: #1a1a1a; }
 
-  /* device 화면은 항상 light tone — 시각 정합용 */
-  .device-screen .top-bar {
-    height: 28px;
-    background: #fafafa;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 18px;
-    font-size: 10px;
-    color: #888;
-    border-bottom: 1px solid #eee;
+  .status-bar {
+    height: 32px; display: flex; justify-content: space-between; align-items: center;
+    padding: 0 22px; font-size: 12px; font-weight: 600; color: var(--text);
   }
-  .device-screen .app-header {
-    padding: 12px 16px 10px;
-    background: #fff;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .screen-body {
+    flex: 1; padding: 6px 14px 14px;
+    display: flex; flex-direction: column;
   }
-  .device-screen .app-title { font-weight: 700; font-size: 13px; color: #1a1a1a; }
-  .device-screen .header-pill {
-    font-size: 10px;
-    padding: 4px 9px;
-    border-radius: 999px;
-    border: 1px solid #ccc;
-    color: #555;
-    background: #fff;
-    cursor: pointer;
-  }
-  .device-screen .anchor-caption {
-    padding: 10px 14px;
-    background: #fff;
-    color: #333;
-    font-size: 11.5px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .device-screen .anchor-caption strong { color: #1a1a1a; }
-  .device-screen .body {
-    padding: 12px 14px 16px;
-    background: #fafafa;
-  }
-  .device-screen .body.dense { padding: 8px 12px 12px; }
+  .center-vh { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; }
 
-  /* 결과 카드 (모드 3) */
-  .result-cards {
-    display: grid;
-    gap: 10px;
+  .btn-primary {
+    background: var(--brand); color: var(--bg); padding: 12px 16px;
+    border-radius: 12px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; width: 100%;
   }
-  .result-card {
-    background: #fff;
-    border: 1px solid #ececec;
+  .btn-primary.mode2 { background: var(--mode2); color: #fff; }
+  .btn-secondary {
+    background: transparent; color: var(--text); padding: 12px 16px;
+    border: 1px solid var(--border); border-radius: 12px; font-weight: 500; font-size: 14px; cursor: pointer; width: 100%;
+  }
+  .btn-disabled { opacity: 0.35; pointer-events: none; }
+
+  /* ===== Main 화면 (모드 3) ===== */
+  .main-header {
+    padding: 12px 4px 0; display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .main-location-block { flex: 1; min-width: 0; }
+  .main-location { font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -0.3px; }
+  .main-weather { font-size: 12px; color: var(--textMuted); margin-top: 3px; }
+  .main-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .main-settings { font-size: 20px; cursor: pointer; line-height: 1; padding: 2px; }
+  .anchor-entry-pill {
+    font-size: 10px; padding: 5px 10px; border-radius: 999px;
+    border: 1px solid var(--mode2); color: var(--mode2);
+    background: transparent; cursor: pointer; font-weight: 500;
+    white-space: nowrap; transition: background 0.12s;
+  }
+  .anchor-entry-pill:hover { background: rgba(74,144,226,0.08); }
+
+  .anchor-caption {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--anchor-tint);
     border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
+    font-size: 11.5px; color: var(--text); line-height: 1.5;
   }
-  .result-card.anchor {
-    background: linear-gradient(135deg, var(--anchor-tint) 0%, #fff8e1 100%);
-    border: 2px solid var(--anchor-border);
+  .anchor-caption strong { color: var(--mode3); font-weight: 700; }
+
+  .items-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .item-card {
+    background: var(--surface); border-radius: 12px;
+    padding: 11px 13px; display: flex; gap: 11px; align-items: center;
+    border: 1px solid var(--border);
     position: relative;
   }
-  .result-card.anchor::before {
+  [data-theme="light"] .item-card { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  [data-theme="dark"] .item-card { box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .item-card.anchor {
+    background: linear-gradient(135deg, var(--anchor-tint) 0%, var(--surface) 100%);
+    border: 2px solid var(--mode3);
+    padding: 10px 12px;
+  }
+  .item-card.anchor::before {
     content: "📌 기준";
-    position: absolute;
-    top: -8px;
-    left: 8px;
-    background: var(--anchor-border);
-    color: #fff;
-    font-size: 9px;
-    padding: 2px 7px;
-    border-radius: 999px;
-    font-weight: 600;
-  }
-  .swatch-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(0,0,0,0.08);
-    flex-shrink: 0;
-  }
-  .result-info { flex: 1; }
-  .result-role {
-    font-size: 9px;
-    color: #999;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .result-name {
-    font-weight: 600;
-    font-size: 12px;
-    color: #1a1a1a;
-  }
-  .result-tone {
-    font-size: 11px;
-    color: #666;
-    font-family: ui-monospace, monospace;
-  }
-
-  /* 라디오 (모드 2 카테고리) */
-  .radio-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .radio-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: #fff;
-    border: 1px solid #ececec;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #333;
-  }
-  .radio-item.selected {
-    border-color: var(--mode-2);
-    background: #f0f6ff;
-  }
-  .radio-dot {
-    width: 14px;
-    height: 14px;
-    border: 1.5px solid #999;
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .radio-item.selected .radio-dot {
-    border-color: var(--mode-2);
-  }
-  .radio-item.selected .radio-dot::after {
-    content: "";
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 6px; height: 6px;
-    background: var(--mode-2);
-    border-radius: 50%;
-  }
-
-  /* 그리드 (의류 / 색 톤) */
-  .step-label {
-    font-size: 11px;
-    color: #888;
-    margin-top: 12px;
-    margin-bottom: 6px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .step-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-  }
-  .step-hint {
-    font-size: 10.5px;
-    color: #888;
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
-  .item-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 4px;
+    position: absolute; top: -7px; left: 10px;
+    background: var(--mode3); color: #fff;
+    font-size: 9px; padding: 2px 7px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.2px;
   }
   .item-chip {
-    background: #fff;
-    border: 1px solid #ececec;
-    border-radius: 8px;
-    padding: 10px 6px;
-    text-align: center;
-    font-size: 11px;
-    color: #333;
-    cursor: pointer;
+    width: 44px; height: 44px; border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0;
   }
-  .item-chip.selected {
-    border-color: var(--mode-2);
-    background: #f0f6ff;
-    color: var(--mode-2);
-    font-weight: 600;
+  .item-info { flex: 1; min-width: 0; }
+  .item-role { font-size: 9.5px; color: var(--textMuted); text-transform: uppercase; font-weight: 600; margin-bottom: 1px; letter-spacing: 0.4px; }
+  .item-role.anchor-role { color: var(--mode3); }
+  .item-name { font-size: 13.5px; font-weight: 600; }
+  .item-name .hex {
+    font-family: ui-monospace, monospace; font-size: 10.5px;
+    color: var(--textMuted); font-weight: 500; margin-left: 4px;
   }
-  .tone-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+  .item-clothing { font-size: 11px; color: var(--textMuted); margin-top: 1px; }
+
+  /* ===== Anchor select 화면 (모드 2) ===== */
+  .as-back { display: inline-block; padding: 6px 0; font-size: 18px; cursor: pointer; }
+  .as-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+
+  .as-step {
+    margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--border);
   }
-  .tone-chip {
-    border: 1px solid #ececec;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    background: #fff;
+  .as-step:last-of-type { border-bottom: none; }
+  .as-step-num {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    color: var(--mode2); background: rgba(74,144,226,0.1);
+    padding: 2px 7px; border-radius: 4px; margin-bottom: 6px;
   }
-  .tone-chip.selected { border: 2px solid var(--mode-2); }
-  .tone-swatch {
-    height: 30px;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
+  .as-step-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .as-step-hint { font-size: 11px; color: var(--textMuted); margin-bottom: 10px; line-height: 1.5; }
+  .as-step-hint strong { color: var(--text); font-weight: 600; }
+
+  .as-radio-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
   }
-  .tone-swatch.null {
-    background: repeating-linear-gradient(45deg, #fafafa, #fafafa 6px, #e0e0e0 6px, #e0e0e0 12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    color: #888;
+  .as-radio-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    font-size: 12.5px; cursor: pointer; transition: border-color 0.12s, background 0.12s;
   }
-  .tone-meta {
-    padding: 4px 6px;
-    text-align: center;
+  .as-radio-item.full { grid-column: 1 / -1; }
+  .as-radio-item.selected {
+    border-color: var(--mode2); background: rgba(74,144,226,0.08); color: var(--mode2); font-weight: 600;
   }
-  .tone-label {
-    font-size: 10px;
-    color: #333;
-    font-weight: 500;
+  .as-radio-dot {
+    width: 14px; height: 14px; border: 1.5px solid var(--textMuted); border-radius: 50%;
+    position: relative; flex-shrink: 0;
   }
-  .tone-hex {
-    font-size: 9px;
-    color: #999;
-    font-family: ui-monospace, monospace;
-  }
-  .cta {
-    background: var(--mode-2);
-    color: #fff;
-    text-align: center;
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+  .as-radio-item.selected .as-radio-dot { border-color: var(--mode2); }
+  .as-radio-item.selected .as-radio-dot::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 6px; height: 6px; background: var(--mode2); border-radius: 50%;
   }
 
-  /* 마이페이지 */
-  .my-list { background: #fff; }
-  .my-item {
-    padding: 12px 14px;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #1a1a1a;
+  .as-item-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
   }
-  .my-item .label { display: flex; align-items: center; gap: 8px; }
-  .my-item .new-badge {
-    font-size: 9px;
-    background: var(--mode-2);
-    color: #fff;
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-weight: 600;
+  .as-item-chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 6px; text-align: center; font-size: 11.5px; cursor: pointer;
+    color: var(--text); transition: border-color 0.12s, background 0.12s;
+    min-height: 36px; display: flex; align-items: center; justify-content: center;
   }
-  .my-item .value { color: #888; font-size: 11px; }
-  .my-item .chevron { color: #ccc; font-size: 14px; }
-  .my-sub {
-    padding: 10px 16px;
-    background: #fafafa;
-    border-bottom: 1px solid #f0f0f0;
+  .as-item-chip.selected {
+    border-color: var(--mode2); background: rgba(74,144,226,0.08);
+    color: var(--mode2); font-weight: 600;
   }
-  .my-sub-radio {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0;
-    font-size: 11.5px;
-    color: #555;
-  }
-  .my-sub-radio .radio-dot { width: 12px; height: 12px; }
-  .my-sub-radio.selected .radio-dot::after { width: 5px; height: 5px; }
-
-  /* 명세 박스 */
-  .spec-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    font-size: 13px;
-  }
-  .spec-card h4 {
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: var(--accent);
-  }
-  .spec-card ul {
-    margin: 0 0 12px 18px;
-    color: var(--fg);
-  }
-  .spec-card li { margin-bottom: 6px; }
-  .spec-card .crossplat {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--border);
-  }
-  .spec-card .platform {
-    font-size: 12px;
-    background: var(--bg);
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-  .spec-card .platform h5 {
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-  .spec-card code {
-    background: var(--bg);
-    padding: 1px 4px;
-    border-radius: 3px;
-    font-family: ui-monospace, monospace;
-    font-size: 11.5px;
+  .as-item-chip.empty {
+    background: transparent; border-style: dashed; color: var(--textMuted);
+    cursor: default;
   }
 
-  /* 엣지 */
-  .edge-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 14px;
+  .as-tone-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
   }
-  .edge-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 13px;
+  .as-tone-chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; cursor: pointer; transition: border-color 0.12s;
   }
-  .edge-card h5 {
-    font-size: 13px;
-    color: var(--edge);
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .as-tone-chip.selected { border: 2px solid var(--mode2); }
+  .as-tone-swatch {
+    height: 32px; border-bottom: 1px solid rgba(0,0,0,0.05);
   }
-  .edge-card h5::before {
-    content: "⚠️";
-    font-size: 12px;
+  .as-tone-swatch.null {
+    background: repeating-linear-gradient(45deg, var(--border) 0 6px, transparent 6px 12px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--textMuted);
   }
-  .edge-card p { color: var(--muted); margin-bottom: 6px; }
-  .edge-card .handler {
-    background: var(--bg);
-    padding: 8px 10px;
-    border-radius: 6px;
-    border-left: 3px solid var(--edge);
-    color: var(--fg);
-    font-size: 12px;
-  }
-  .edge-card .handler strong { color: var(--edge); }
+  .as-tone-meta { padding: 5px 6px; text-align: center; }
+  .as-tone-label { font-size: 10.5px; color: var(--text); font-weight: 500; }
+  .as-tone-hex { font-size: 9.5px; color: var(--textMuted); font-family: ui-monospace, monospace; }
 
-  /* 검증 체크리스트 */
-  .checklist {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 22px 26px;
-  }
-  .checklist h4 { font-size: 15px; margin-bottom: 12px; }
-  .checklist ol { margin: 0 0 0 22px; }
-  .checklist li { margin-bottom: 8px; color: var(--fg); font-size: 13.5px; line-height: 1.6; }
-  .checklist li code {
-    background: var(--bg);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 12px;
-    font-family: ui-monospace, monospace;
-  }
-  .checklist .next {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--border);
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .checklist .next strong { color: var(--accent); }
+  .as-cta-area { margin-top: 14px; padding-top: 4px; }
 
-  footer {
-    margin-top: 56px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 12px;
+  /* ===== My page ===== */
+  .myp-back { display: inline-block; padding: 6px 0; font-size: 18px; cursor: pointer; }
+  .myp-title { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .myp-section { margin-bottom: 18px; }
+  .myp-section-h {
+    font-size: 10px; color: var(--textMuted); text-transform: uppercase;
+    font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px;
   }
-  footer a { color: var(--accent); }
+  .myp-list-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 13px; font-size: 13px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 5px; cursor: pointer; transition: border-color 0.12s;
+  }
+  .myp-list-row:hover { border-color: var(--brand); }
+  .myp-list-row.new {
+    background: linear-gradient(90deg, var(--anchor-tint) 0%, var(--surface) 60%);
+  }
+  .myp-list-row .new-badge {
+    display: inline-block;
+    background: var(--mode2); color: #fff;
+    font-size: 8.5px; padding: 1px 5px; border-radius: 4px;
+    font-weight: 700; margin-left: 6px; letter-spacing: 0.2px;
+    vertical-align: 1px;
+  }
+  .myp-list-row .myp-value { color: var(--textMuted); font-size: 12px; }
+  .myp-list-row .myp-chevron { color: var(--textMuted); margin-left: 6px; font-size: 14px; }
+
+  /* Default anchor (모드 1 설정 화면) */
+  .da-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 14px; margin-bottom: 8px;
+    cursor: pointer; transition: border-color 0.12s;
+  }
+  .da-card.selected { border-color: var(--brand); }
+  .da-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+  .da-card .as-radio-dot { width: 18px; height: 18px; border-width: 2px; }
+  .da-card.selected .as-radio-dot { border-color: var(--brand); }
+  .da-card.selected .as-radio-dot::after {
+    width: 8px; height: 8px; top: 3px; left: 3px; background: var(--brand);
+  }
+  .da-card-title { font-size: 14px; font-weight: 700; }
+  .da-card-default-tag {
+    font-size: 9px; background: var(--brand); color: #fff;
+    padding: 1.5px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px;
+  }
+  .da-card-desc { font-size: 11.5px; color: var(--textMuted); line-height: 1.5; padding-left: 28px; }
+
+  /* Toast */
+  .toast {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.84); color: #fff;
+    padding: 9px 16px; border-radius: 999px;
+    font-size: 11.5px; opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 100;
+    max-width: 280px; text-align: center;
+  }
+  .toast.show { opacity: 1; }
+
+  /* Inspector card (오른쪽 옆 박스) */
+  .inspector {
+    margin-top: 24px; background: #fafafa; border: 1px solid #eee;
+    border-radius: 12px; padding: 18px;
+  }
+  .inspector h4 {
+    font-size: 13px; color: #444; margin-bottom: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .inspector .row {
+    display: flex; justify-content: space-between; padding: 5px 0;
+    border-bottom: 1px dashed #e0e0e0; font-size: 12.5px;
+  }
+  .inspector .row:last-child { border-bottom: none; }
+  .inspector .row .k { color: #888; }
+  .inspector .row .v { color: #1a1a1a; font-family: ui-monospace, monospace; font-size: 11.5px; max-width: 60%; text-align: right; word-break: break-all; }
+  .inspector .row .v.code { background: #f0f0f0; padding: 0 5px; border-radius: 3px; }
+  .inspector .crossplat {
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .inspector .platform {
+    font-size: 11px; background: #fff; padding: 8px 10px;
+    border-radius: 6px; border: 1px solid #eee;
+  }
+  .inspector .platform h5 {
+    font-size: 11px; color: #2C4E80; margin-bottom: 4px; font-weight: 700;
+  }
+  .inspector .platform code {
+    background: #f0f0f0; padding: 1px 4px; border-radius: 3px;
+    font-family: ui-monospace, monospace; font-size: 10.5px; display: inline-block; margin: 1px 1px 0 0;
+  }
 </style>
 </head>
-<body>
-  <div class="container">
+<body data-theme="light">
+<div class="layout">
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
     <div class="breadcrumb">
       <a href="../../../index.html">previews</a> /
       <a href="../">weather-outfit</a> /
       <a href="./">sanity</a> /
-      anchor-ux-walkthrough.html
+      anchor-ux
+    </div>
+    <h2>화면 (5)</h2>
+    <ul class="nav-list" id="nav-list"></ul>
+
+    <h2>사용자 상태 시뮬</h2>
+    <div class="sim-section">
+      <div class="sim-row">
+        <div class="sim-label">성별 (gender_lock 영향)</div>
+        <div class="sim-toggle" data-sim="gender">
+          <button data-val="M" class="active">남성</button>
+          <button data-val="F">여성</button>
+        </div>
+      </div>
+      <div class="sim-row">
+        <div class="sim-label">기본 앵커 (default_anchor_mode)</div>
+        <div class="sim-toggle" data-sim="anchorMode">
+          <button data-val="auto" class="active">auto</button>
+          <button data-val="ask">ask</button>
+        </div>
+      </div>
+      <div class="sim-row">
+        <div class="sim-label">자동 룰 시뮬 (체감 온도)</div>
+        <div class="sim-toggle" data-sim="autoRule">
+          <button data-val="cold" class="active">≤5°C<br>외투</button>
+          <button data-val="mid">중간<br>하의</button>
+          <button data-val="hot">≥25°C<br>상의</button>
+          <button data-val="rain">비/눈<br>신발</button>
+        </div>
+      </div>
     </div>
 
-    <header>
+    <h2>테마</h2>
+    <div class="theme-toggle">
+      <button data-theme-btn="light" class="active">라이트</button>
+      <button data-theme-btn="dark">다크</button>
+    </div>
+
+    <div class="sidebar-meta">
+      <strong>spec §10.6</strong> 모드 1/2/3 + 마이페이지 2 항목<br>
+      <strong>데이터:</strong> CLOTHING_CATALOG 20종 + clothing_color_matrix 140 entries (정확히 7 × 20)<br>
+      <strong>관련:</strong> <a href="anchor-color-palette.html">color palette</a><br>
+      <strong>cross-plat 단일 명세</strong> · 2026-05-29
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main">
+    <div class="screen-header">
       <div>
-        <h1>weather-outfit v1.1 — 앵커 의류 UX walkthrough</h1>
-        <p class="meta">spec §10.6 · server M7 step-2 흐름 정합 (V_anchor_ux sanity) · cross-plat 단일 명세 · 2026-05-29</p>
+        <span class="screen-title" id="screen-title">메인 화면 (모드 3)</span>
+        <span class="screen-mode-badge m3" id="screen-mode-badge">M3</span>
       </div>
-      <button class="toggle" id="themeToggle">🌙 다크 모드</button>
-    </header>
+      <span class="screen-id" id="screen-id">screen 0</span>
+    </div>
+    <p class="screen-description" id="screen-description">기본 진입 화면. 앵커 1 카드 시각 강조 + 헤더 캡션. v1.0 과 동일한 마찰 0 흐름.</p>
 
-    <div class="legend">
-      <h3>본 페이지 목적</h3>
-      <p>
-        v1.1 메이저 = 앵커 의류 본격 도입. <strong>UI 코딩 진입 전 시각 검증</strong> — wireframes.md 정합 갱신 트리거.
-        V_clothing_color_matrix sanity (140 hex) 흐름 정합 — 데이터 검증 PASS 후 UX 검증.
-      </p>
-      <p>
-        spec §10.6 의 3 모드 (자동/수동/표시) + 마이페이지 신규 2 항목 + 엣지 케이스 4 종 모바일 mock + cross-plat 분기 명세.
-        <strong>이 페이지의 PASS = wireframes.md 정합 갱신 트리거 + UI 코딩 진입 게이트 해소</strong>.
-      </p>
-      <div class="stats">
-        <span class="stat">모드 <strong>3</strong>종</span>
-        <span class="stat">마이페이지 신규 <strong>2</strong>항목</span>
-        <span class="stat">엣지 케이스 <strong>4</strong>종</span>
-        <span class="stat">cross-plat <strong>aos + ios</strong> 단일 명세</span>
-        <span class="stat">의류 카탈로그 <strong>20</strong>종 (anchor_eligible)</span>
-      </div>
-      <div style="margin-top: 14px;">
-        <a class="nav-pill m3" href="#mode-3">모드 3 (디폴트)</a>
-        <a class="nav-pill m2" href="#mode-2-entry">모드 2 진입점</a>
-        <a class="nav-pill m2" href="#mode-2-flow">모드 2 3-단계</a>
-        <a class="nav-pill m1" href="#mode-1">모드 1 (마이페이지)</a>
-        <a class="nav-pill m3" href="#my-page">마이페이지 신규</a>
-        <a class="nav-pill edge" href="#edge-cases">엣지 케이스</a>
-        <a class="nav-pill" href="#checklist">검증 체크리스트</a>
+    <div class="phone-stage">
+      <div class="phone-frame">
+        <div class="phone-screen" id="phone-screen">
+          <!-- rendered by JS -->
+        </div>
       </div>
     </div>
 
-    <!-- ===== 모드 3 (디폴트 — 사용자 99% 흐름) ===== -->
-    <section class="section" data-mode="m3" id="mode-3">
-      <div class="section-head">
-        <span class="section-name">모드 3 — 자동 (디폴트, 표시)</span>
-        <span class="section-meta">사용자 99% 흐름 · 메인 화면 첫 진입 = 앵커 카드 배지 + 헤더 캡션</span>
-      </div>
-      <p class="section-intro">
-        v1.0 과 동일한 자동 추천 결과 + <strong>앵커 1 카드 시각 강조</strong>. 첫 인상 = 빠름 (마찰 0).
-        시나리오: 영하 5°C / 흐림 / 사용자 테마 = earth-tone / 자동 앵커 = 청바지 / 시그니처 색 = 연청.
-      </p>
-
-      <div class="mock-row">
-        <!-- Device mock -->
-        <div class="device">
-          <div class="device-screen">
-            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
-            <div class="app-header">
-              <span class="app-title">PALETI</span>
-              <button class="header-pill">▼ 다른 옷 기준</button>
-            </div>
-            <div class="anchor-caption">
-              📌 오늘은 <strong>연청 청바지</strong> 기준 — 다른 옷은 이에 맞춤
-            </div>
-            <div class="body">
-              <div class="result-cards">
-                <div class="result-card anchor">
-                  <div class="swatch-circle" style="background:#7BA0CC"></div>
-                  <div class="result-info">
-                    <div class="result-role">하의 · 앵커</div>
-                    <div class="result-name">청바지</div>
-                    <div class="result-tone">연청 #7BA0CC</div>
-                  </div>
-                </div>
-                <div class="result-card">
-                  <div class="swatch-circle" style="background:#D2C4A8"></div>
-                  <div class="result-info">
-                    <div class="result-role">상의</div>
-                    <div class="result-name">무지 니트</div>
-                    <div class="result-tone">베이지 #D2C4A8</div>
-                  </div>
-                </div>
-                <div class="result-card">
-                  <div class="swatch-circle" style="background:#A88B5F"></div>
-                  <div class="result-info">
-                    <div class="result-role">외투</div>
-                    <div class="result-name">트렌치코트</div>
-                    <div class="result-tone">카멜 #A88B5F</div>
-                  </div>
-                </div>
-                <div class="result-card">
-                  <div class="swatch-circle" style="background:#FFFFFF"></div>
-                  <div class="result-info">
-                    <div class="result-role">신발</div>
-                    <div class="result-name">캔버스 스니커즈</div>
-                    <div class="result-tone">흰색 #FFFFFF</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Spec -->
-        <div class="spec-card">
-          <h4>모드 3 시각 명세</h4>
-          <ul>
-            <li><strong>헤더 캡션</strong> — "📌 오늘은 <code>{color_tone} {label_ko}</code> 기준 — 다른 옷은 이에 맞춤" (앵커 색 톤 + 의류명, 12px gray-700)</li>
-            <li><strong>앵커 카드</strong> — 배지 (📌 + "기준", 우측 상단) + 보더 (테마 색 강조, 2px) + 배경 살짝 (linear-gradient warm tint). z-order = 다른 카드보다 위 (살짝 부각)</li>
-            <li><strong>일반 카드</strong> — 1px 보더 + 흰 배경. 좌측 색 swatch circle (36×36 + 1.5px 보더) + role 라벨 (9px gray) + 의류명 (12px gray-900 700) + 색 톤 + hex (11px gray-700 mono)</li>
-            <li><strong>탭 동작</strong> — 앵커 카드 사용자 탭 = <strong>동작 X</strong> (정보 표시만, ★ 2026-05-28 인터뷰 결정). 모드 2 재진입은 헤더 ▼ 버튼만</li>
-            <li><strong>v1.0 cache 자연 graceful</strong> — anchor 필드 부재 응답은 v1.0 시각 (배지·캡션 비노출)</li>
-          </ul>
-          <div class="crossplat">
-            <div class="platform">
-              <h5>Android (Material 3)</h5>
-              <code>Card</code> + 보더 <code>BorderStroke(2.dp, themeColor)</code> + 헤더 <code>Surface(tonalElevation=1.dp)</code> + 캡션 <code>Text(MaterialTheme.typography.bodySmall)</code>
-            </div>
-            <div class="platform">
-              <h5>iOS (HIG / SwiftUI)</h5>
-              <code>RoundedRectangle</code> + <code>.overlay(stroke:lineWidth:2)</code> + 캡션 <code>Text(...).font(.footnote)</code> + 앵커 보더 <code>themeColor.opacity(0.9)</code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 모드 2 진입점 ===== -->
-    <section class="section" data-mode="m2" id="mode-2-entry">
-      <div class="section-head">
-        <span class="section-name">모드 2 — 수동 진입점 (2 곳)</span>
-        <span class="section-meta">저마찰 옵션 · 메인 헤더 작은 버튼 + 마이페이지 deeplink</span>
-      </div>
-      <p class="section-intro">
-        모드 2 = 사용자 능동 (오늘은 청바지가 기준이었으면 좋겠는데). 진입점 2 곳 분산 — 메인 = 저마찰 (한 번에 1탭), 마이페이지 = "기본 앵커 = 매번 묻기" 사용자.
-      </p>
-
-      <div class="mock-row">
-        <div class="device">
-          <div class="device-screen">
-            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
-            <div class="app-header">
-              <span class="app-title">PALETI</span>
-              <button class="header-pill" style="border-color:#4a90e2;color:#4a90e2;">▼ 다른 옷 기준</button>
-            </div>
-            <div class="anchor-caption" style="background:#f0f6ff;border-left:3px solid #4a90e2;">
-              ↑ 헤더 우측 작은 버튼 = 진입점 ①
-            </div>
-            <div class="body">
-              <div class="result-cards" style="opacity:0.4;">
-                <div class="result-card"><div class="swatch-circle" style="background:#7BA0CC"></div><div class="result-info"><div class="result-role">하의</div><div class="result-name">청바지</div></div></div>
-                <div class="result-card"><div class="swatch-circle" style="background:#D2C4A8"></div><div class="result-info"><div class="result-role">상의</div><div class="result-name">무지 니트</div></div></div>
-              </div>
-              <p style="margin-top:14px;text-align:center;font-size:11px;color:#888;">(추천 결과는 회색 처리 — 진입점 강조)</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="spec-card">
-          <h4>모드 2 진입점 명세</h4>
-          <ul>
-            <li><strong>진입점 ① 메인 헤더 우측</strong> — 작은 outlined button "▼ 다른 옷 기준" (10px 폰트, 4px 9px 패딩, 1px 보더). 저마찰 옵션 명시 — 사용자가 자주 사용 안 한다는 가정</li>
-            <li><strong>진입점 ② 마이페이지 항목</strong> — 신규 ★ 다른 옷 기준 (모드 2 진입 deeplink). 마이페이지 → 앵커 선택 화면 직진</li>
-            <li><strong>왜 2 곳?</strong> — 메인 = 즉시 사용 (오늘 한 번만 변경), 마이페이지 = "매번 묻기" 사용자 (default_anchor_mode='ask') 가 늘 진입</li>
-            <li><strong>★ 모드 3 앵커 카드 탭은 진입 X</strong> (★ 2026-05-28 인터뷰 결정) — 헤더 ▼ 만 진입 path. 정보 표시와 액션 진입 분리 = HIG / Material 3 정합</li>
-          </ul>
-          <div class="crossplat">
-            <div class="platform">
-              <h5>Android</h5>
-              <code>TextButton</code> + 우측 <code>Icon(Icons.Filled.ExpandMore)</code> + 마이페이지 <code>ListItem</code>
-            </div>
-            <div class="platform">
-              <h5>iOS</h5>
-              <code>Button</code> + <code>Image(systemName: "chevron.down")</code> + 마이페이지 <code>NavigationLink</code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 모드 2 3-단계 화면 ===== -->
-    <section class="section" data-mode="m2" id="mode-2-flow">
-      <div class="section-head">
-        <span class="section-name">모드 2 — 앵커 선택 화면 (3-단계 단일 화면, 위→아래 스크롤)</span>
-        <span class="section-meta">spec §10.6 ASCII mock 시각화 · 카탈로그 + 색 톤 = GET /v1/catalog 단일 진실</span>
-      </div>
-      <p class="section-intro">
-        한 화면에 3 단계 모두 표시 (이전/다음 navigation 없음). 위→아래 자연 스크롤. 사용자 흐름:
-        카테고리 → 의류 종류 → 색 톤 → "이걸로 추천 받기" CTA.
-      </p>
-
-      <div class="mock-row">
-        <div class="device">
-          <div class="device-screen">
-            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
-            <div class="app-header" style="justify-content:flex-start;gap:10px;">
-              <span style="color:#888;font-size:14px;">←</span>
-              <span class="app-title">다른 옷 기준</span>
-            </div>
-            <div class="body dense">
-              <div class="step-label">[1] 카테고리</div>
-              <div class="step-title">어떤 의류를 기준으로?</div>
-              <div class="step-hint" style="margin-bottom:8px;">앵커 의류 종류 선택</div>
-              <div class="radio-grid">
-                <div class="radio-item"><div class="radio-dot"></div>외투</div>
-                <div class="radio-item selected"><div class="radio-dot"></div>하의</div>
-                <div class="radio-item"><div class="radio-dot"></div>상의</div>
-                <div class="radio-item"><div class="radio-dot"></div>신발</div>
-              </div>
-              <div class="radio-item" style="margin-top:4px;"><div class="radio-dot"></div>자동으로 맡김 (모드 1 회귀)</div>
-
-              <div class="step-label">[2] 의류 종류</div>
-              <div class="step-title">하의 4종</div>
-              <div class="step-hint">anchor_eligible + gender_lock 필터링</div>
-              <div class="item-grid">
-                <div class="item-chip selected">청바지</div>
-                <div class="item-chip">슬랙스</div>
-                <div class="item-chip">와이드 팬츠</div>
-                <div class="item-chip">조거 팬츠</div>
-                <div class="item-chip" style="opacity:0.4;">—</div>
-                <div class="item-chip" style="opacity:0.4;">—</div>
-              </div>
-
-              <div class="step-label">[3] 색 톤</div>
-              <div class="step-title">청바지 색 톤</div>
-              <div class="step-hint">이 추천에서 <strong>다른 옷 색은 이에 맞춰 자동</strong> 추천돼요</div>
-              <div class="tone-grid">
-                <div class="tone-chip selected"><div class="tone-swatch" style="background:#7BA0CC"></div><div class="tone-meta"><div class="tone-label">연청</div><div class="tone-hex">#7BA0CC</div></div></div>
-                <div class="tone-chip"><div class="tone-swatch" style="background:#5A7BA8"></div><div class="tone-meta"><div class="tone-label">미드</div><div class="tone-hex">#5A7BA8</div></div></div>
-                <div class="tone-chip"><div class="tone-swatch" style="background:#2E4F7C"></div><div class="tone-meta"><div class="tone-label">찐청</div><div class="tone-hex">#2E4F7C</div></div></div>
-                <div class="tone-chip"><div class="tone-swatch" style="background:#1B2F4A"></div><div class="tone-meta"><div class="tone-label">블랙</div><div class="tone-hex">#1B2F4A</div></div></div>
-                <div class="tone-chip"><div class="tone-swatch null">맡김</div><div class="tone-meta"><div class="tone-label">추천에 맡김</div><div class="tone-hex">디폴트</div></div></div>
-                <div class="tone-chip"><div class="tone-swatch" style="background:#A8C5DD"></div><div class="tone-meta"><div class="tone-label">라이트</div><div class="tone-hex">#A8C5DD</div></div></div>
-              </div>
-              <div class="cta">이걸로 추천 받기</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="spec-card">
-          <h4>모드 2 3-단계 명세</h4>
-          <ul>
-            <li><strong>[1] 카테고리 4 라디오 + "자동으로 맡김"</strong> — 4 카테고리 + 자동 (5번째 옵션, 모드 1 회귀). gender_lock 카테고리는 사용자 성별 정합 필터 (남성: dress 비노출)</li>
-            <li><strong>[2] 의류 종류 그리드</strong> — 데이터 = <code>getCatalogByRole(role, gender)</code>. anchor_eligible=true 만 노출 (20/20 모두 true). 빈 셀 = "—" 비활성</li>
-            <li><strong>[3] 색 톤 그리드</strong> — 데이터 = <code>getToneOptions(catalog_id)</code> (matrix.ts 정합). 의류당 정확히 7 entry. hex swatch + 한글 label + hex 값. "추천에 맡김" 디폴트 (null hex, hatched 패턴) — 사용자 무선택 시 server 자동 결정</li>
-            <li><strong>의미 명확화</strong> — [3] 헤더 = "{label_ko} 색 톤" (앵커 의류명) + 안내 문구 "이 추천에서 다른 옷 색은 이에 맞춰 자동" (이중 안전망)</li>
-            <li><strong>CTA</strong> — "이걸로 추천 받기" → <code>fetchRecommendation(userAnchor:{role,id,color_tone})</code></li>
-          </ul>
-          <div class="crossplat">
-            <div class="platform">
-              <h5>Android</h5>
-              <code>LazyColumn</code> + <code>RadioGroup</code> + <code>FilterChip Grid</code> + <code>Button(modifier=fillMaxWidth)</code>
-            </div>
-            <div class="platform">
-              <h5>iOS</h5>
-              <code>ScrollView</code> + <code>Picker(.radioGroup)</code> + <code>LazyVGrid(GridItem(.flexible(), count:3))</code> + <code>Button(.borderedProminent)</code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 모드 1 (마이페이지 기본 = auto/ask) ===== -->
-    <section class="section" data-mode="m1" id="mode-1">
-      <div class="section-head">
-        <span class="section-name">모드 1 — 마이페이지 기본 앵커 (auto / ask)</span>
-        <span class="section-meta">default_anchor_mode 설정 · 'ask' 사용자만 모드 2 매번 진입</span>
-      </div>
-      <p class="section-intro">
-        디폴트 = 'auto' (자동 룰 4-way). 'ask' 설정 시 메인 진입마다 모드 2 강제 진입 (헤비 사용자 옵션, 마찰 ↑ 알면서 선택).
-      </p>
-
-      <div class="mock-row">
-        <div class="device">
-          <div class="device-screen">
-            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
-            <div class="app-header" style="justify-content:flex-start;gap:10px;">
-              <span style="color:#888;font-size:14px;">←</span>
-              <span class="app-title">기본 앵커</span>
-            </div>
-            <div class="body" style="padding:0;">
-              <div class="my-list">
-                <div class="my-sub">
-                  <div class="my-sub-radio selected"><div class="radio-dot" style="border-color:#6db26d;"></div>자동 (디폴트, 권장)</div>
-                  <div style="font-size:10.5px;color:#888;margin-left:20px;line-height:1.5;">날씨에 따라 자동으로 외투/상의/하의/신발 중 하나가 기준이 돼요.</div>
-                </div>
-                <div class="my-sub">
-                  <div class="my-sub-radio"><div class="radio-dot"></div>매번 묻기</div>
-                  <div style="font-size:10.5px;color:#888;margin-left:20px;line-height:1.5;">메인 진입 때마다 의류·색 톤 선택 화면이 떠요. (모드 2)</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="spec-card">
-          <h4>모드 1 명세 (마이페이지 기본 앵커 설정)</h4>
-          <ul>
-            <li><strong>auto (디폴트)</strong> — 자동 룰 4-way (체감 ≤ 5°C → outer / ≥ 25°C → top / 비·눈 → shoes / 기본 → bottom). v1.0 과 동일 마찰 0</li>
-            <li><strong>ask</strong> — 메인 진입 시 모드 2 강제 진입 (옵션 X 한 사용자만 선택). 마찰 인지 후 능동 선택</li>
-            <li><strong>저장 위치</strong> — server `weather_outfit_users.default_anchor_mode` enum ('auto'|'ask'). 클라 변경 시 즉시 fire-and-forget POST</li>
-            <li><strong>설명 문구</strong> — 각 옵션 하단 작은 설명 (마찰 차이 명시)</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 마이페이지 신규 항목 ===== -->
-    <section class="section" data-mode="my" id="my-page">
-      <div class="section-head">
-        <span class="section-name">마이페이지 신규 v1.1 — 2 항목</span>
-        <span class="section-meta">★ 기본 앵커 · ★ 다른 옷 기준 (deeplink)</span>
-      </div>
-      <p class="section-intro">
-        기존 마이페이지 (컬러 테마 / 위치 / 알림 / 로그인 / 약관) 사이에 신규 2 항목 추가. 위치 = 알림 다음 (코어 설정 그룹).
-      </p>
-
-      <div class="mock-row">
-        <div class="device">
-          <div class="device-screen">
-            <div class="top-bar"><span>9:41</span><span>📶 5G  🔋</span></div>
-            <div class="app-header" style="justify-content:flex-start;gap:10px;">
-              <span style="color:#888;font-size:14px;">←</span>
-              <span class="app-title">마이페이지</span>
-            </div>
-            <div class="body" style="padding:0;">
-              <div class="my-list">
-                <div class="my-item"><div class="label">컬러 테마</div><div class="value">earth-tone <span class="chevron">›</span></div></div>
-                <div class="my-item"><div class="label">위치</div><div class="value">서울 강남구 <span class="chevron">›</span></div></div>
-                <div class="my-item"><div class="label">알림</div><div class="value">아침 8시 <span class="chevron">›</span></div></div>
-                <div class="my-item" style="background:#fffdf5;">
-                  <div class="label">기본 앵커 <span class="new-badge">NEW</span></div>
-                  <div class="value">자동 <span class="chevron">›</span></div>
-                </div>
-                <div class="my-item" style="background:#fffdf5;">
-                  <div class="label">다른 옷 기준 <span class="new-badge">NEW</span></div>
-                  <div class="value"><span class="chevron">›</span></div>
-                </div>
-                <div class="my-item"><div class="label">로그인</div><div class="value">byiryu@... <span class="chevron">›</span></div></div>
-                <div class="my-item"><div class="label">약관 / 처리방침</div><div class="value"><span class="chevron">›</span></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="spec-card">
-          <h4>마이페이지 신규 명세</h4>
-          <ul>
-            <li><strong>위치</strong> — 알림 ↔ 로그인 사이 (코어 설정 그룹). NEW 배지 (mode-2 색 #4a90e2) 신규성 강조</li>
-            <li><strong>기본 앵커</strong> — value = "자동" 또는 "매번 묻기" (default_anchor_mode 정합). tap → 모드 1 화면</li>
-            <li><strong>다른 옷 기준</strong> — value 영역 비움 (액션 진입만). tap → 모드 2 앵커 선택 화면 (3-단계, deeplink)</li>
-            <li><strong>일관성</strong> — 다른 항목과 동일 padding (12px 14px) + 우측 chevron + 한 줄 라벨 + 우측 현재 값</li>
-            <li><strong>★ NEW 배지 일시성</strong> — v1.1 출시 후 7~14일 자연 제거 (or 사용자 첫 진입 후 자동 제거) — UX 결정 (★ 미해결, 백로그)</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 엣지 케이스 ===== -->
-    <section class="section" data-mode="edge" id="edge-cases">
-      <div class="section-head">
-        <span class="section-name">엣지 케이스 — 4 종 (spec §5 정합)</span>
-        <span class="section-meta">사용자 사전 차단 + server 안전망 정합</span>
-      </div>
-      <p class="section-intro">
-        spec §5 의 v1.1 신규 엣지 케이스 4 종. 클라 UI = 사전 차단 (가시화·접근 봉쇄), server = 안전망 (zod 검증 + 폴백).
-      </p>
-
-      <div class="edge-grid">
-        <div class="edge-card">
-          <h5>카테고리만 선택 + 의류 미선택</h5>
-          <p>모드 2 [1] 카테고리 선택 + [2] 의류 그리드 무탭 + CTA 진입 시.</p>
-          <div class="handler">
-            <strong>처리</strong>: server 룰 = 그 카테고리에서 컨텍스트 매칭 최고점 의류 자동 선택. envelope <code>anchor.source="auto-partial"</code>. 클라 UI 결과 = 일반 모드 3 + 카테고리만 사용자 의도 반영
-          </div>
-        </div>
-
-        <div class="edge-card">
-          <h5>user_anchor 색 톤 안 풀에 색 없음</h5>
-          <p>사용자가 [3] 에서 색 톤 선택했는데 server allowed_color_hex_ranges 미포함 (예외 케이스).</p>
-          <div class="handler">
-            <strong>처리</strong>: 카탈로그 시그니처 색 폴백 (청바지 = denim blue 기본값). envelope <code>anchor.fallback_used=true</code> + 클라 silent (사용자 메시지 X — UI 결과만 자연)
-          </div>
-        </div>
-
-        <div class="edge-card">
-          <h5>anchor_eligible=false 의류 선택 시도</h5>
-          <p>v1.1 = 20/20 모두 anchor_eligible. 향후 카탈로그 확장 시 발생 가능.</p>
-          <div class="handler">
-            <strong>처리</strong>: <strong>클라 UI 사전 차단</strong> — [2] 의류 그리드에 anchor_eligible=true 만 노출. server 도 zod 검증 안전망 (400 INVALID_ANCHOR)
-          </div>
-        </div>
-
-        <div class="edge-card">
-          <h5>여성 한정 의류 (linen_dress) 남성 사용자 노출</h5>
-          <p>spec gender_lock="F" 의류 (린넨 원피스). users.gender='M' 사용자가 [2] 에서 시도.</p>
-          <div class="handler">
-            <strong>처리</strong>: <strong>클라 UI 비노출</strong> — <code>getCatalogByRole('dress', 'M')</code> = 빈 배열 → 카테고리 [1] '원피스' 라디오 자체 비노출. server 안전망 (400 INVALID_ANCHOR)
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== 검증 체크리스트 ===== -->
-    <section class="section" data-mode="check" id="checklist">
-      <div class="section-head">
-        <span class="section-name">검증 체크리스트 (시각 PASS 기준)</span>
-        <span class="section-meta">본 페이지 PASS = wireframes.md 정합 갱신 + UI 코딩 진입 게이트 해소</span>
-      </div>
-
-      <div class="checklist">
-        <h4>1. 모드 3 (디폴트, 99% 흐름)</h4>
-        <ol>
-          <li>앵커 카드 시각 강조가 <strong>한눈에 식별</strong> 가능한가? (배지 📌 + 보더 + 배경) — 다른 카드와 구분이 명확</li>
-          <li>헤더 캡션 "📌 오늘은 <strong>연청 청바지</strong> 기준" — 색 톤 + 의류명 + 안내가 자연 한 문장</li>
-          <li>앵커 카드 외 3 카드의 색이 앵커 색과 <strong>조화</strong> 인가? — denim blue ↔ 베이지 니트 ↔ 카멜 트렌치 ↔ 화이트 스니커즈 매칭 정합</li>
-        </ol>
-
-        <h4>2. 모드 2 진입점 (2 곳)</h4>
-        <ol>
-          <li>헤더 우측 "▼ 다른 옷 기준" 버튼이 <strong>저마찰</strong> 인지? (작아서 무시 가능 + 의도 시 식별 가능 — 균형)</li>
-          <li>마이페이지 신규 2 항목 위치 (NEW 배지) 가 자연 — 다른 설정 항목과 톤 정합</li>
-          <li>★ 모드 3 앵커 카드 탭이 진입점 X = 정보·액션 분리 인식이 명확한가? (시각적으로 "이건 탭 X" 신호 — 보더만 + 인터랙티브 cue X)</li>
-        </ol>
-
-        <h4>3. 모드 2 3-단계 화면</h4>
-        <ol>
-          <li>3 단계가 한 화면 위→아래 = <strong>흐름이 자연</strong>? (이전/다음 navigation 없이 스크롤 = OK)</li>
-          <li>[1] → [2] → [3] 의미 연결 — 카테고리 선택 → 의류 그리드 동적 갱신 → 색 톤 그리드 헤더 = 의류명</li>
-          <li>색 톤 그리드의 hex 시각 시그니처 = 사용자가 "이게 연청이구나" 식별 가능 (140 hex sanity PASS 정합)</li>
-          <li>"추천에 맡김" 디폴트 옵션이 <strong>명확</strong> — hatched 패턴 + label "추천에 맡김" + "디폴트" 표기</li>
-          <li>CTA "이걸로 추천 받기" 문구가 자연 (한국어 톤)</li>
-        </ol>
-
-        <h4>4. 마이페이지 + 모드 1</h4>
-        <ol>
-          <li>기본 앵커 설정 (auto/ask) 의미가 명확 — 각 옵션 하단 작은 설명이 충분</li>
-          <li>'매번 묻기' 선택 시 마찰 인지 — 설명 문구 "메인 진입 때마다 의류·색 톤 선택 화면이 떠요" 명확</li>
-        </ol>
-
-        <h4>5. 엣지 케이스 4 종</h4>
-        <ol>
-          <li>사전 차단 (anchor_eligible=false / gender_lock) 처리 자연 — 빈 배열 → 옵션 비노출 = 마찰 0</li>
-          <li>server 안전망 (auto-partial / fallback_used / INVALID_ANCHOR 400) 의 사용자 UX 영향 0 (silent 또는 자연 결과)</li>
-        </ol>
-
-        <div class="next">
-          <strong>PASS 시 다음:</strong> wireframes.md 정합 갱신 (cross-plat 단일 명세, 본 페이지 시각 + 명세 본문 흡수) → PLAN aos M7 step-8 / ios M7 step-7 의 wireframes deferral 해소 → 본격 UI 코딩 진입 (server step-4~12 + aos step-2~7 + ios step-3~10)
-          <br><br>
-          <strong>FAIL / 의견:</strong> 의류·색·문구·진입점 위치·NEW 배지·엣지 처리 등 구체 변경 의견 → 본 HTML 갱신 + wireframes.md 정합 (사이클)
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <p>
-        ★ <strong>V_anchor_ux sanity 사이클 (spec §10.6 + §10.9 V_anchor_sanity 정합)</strong>:
-        시각 검토 → 의견 반영 → 재검토 PASS → wireframes.md 정합 갱신 → UI 코딩 진입.
-      </p>
-      <p style="margin-top:8px;">
-        Source: <code>_docs/specs/weather-outfit-spec.md §10.6</code> · 카탈로그·매트릭스 = <code>server/supabase/functions/_shared/clothing_catalog.ts</code> + <code>clothing_color_matrix.ts</code> (140 entries) · <a href="anchor-color-palette.html">anchor-color-palette.html (의류 시그니처 색)</a>
-      </p>
-      <p style="margin-top:8px;">
-        Related: <a href="recommendation-samples.html">recommendation-samples.html</a> (추천 8 케이스 충돌 회피 시각, V_anchor_sanity) · <a href="color-matrix.html">color-matrix.html</a> (matrix.ts 320 사용자 테마 풀) · <a href="themes.html">themes.html</a>
-      </p>
-    </footer>
-  </div>
+    <div class="inspector" id="inspector">
+      <!-- rendered by JS -->
+    </div>
+  </main>
+</div>
 
 <script>
-  const root = document.documentElement;
-  const body = document.body;
-  const toggle = document.getElementById('themeToggle');
-  function applyTheme(mode) {
-    if (mode === 'dark') {
-      body.classList.add('dark');
-      toggle.textContent = '☀️ 라이트 모드';
-    } else {
-      body.classList.remove('dark');
-      toggle.textContent = '🌙 다크 모드';
+/* ============================================================
+ * 데이터 (spec §10.3 catalog + clothing_color_matrix.ts 정합)
+ * ============================================================ */
+
+// 20 카탈로그 (id, role, label_ko, label_en, gender_lock?)
+const CATALOG = [
+  { id: "tshirt_white",      role: "top",    label_ko: "흰 면 티",       label_en: "White Tee" },
+  { id: "knit_basic",        role: "top",    label_ko: "무지 니트",       label_en: "Basic Knit" },
+  { id: "shirt_pastel",      role: "top",    label_ko: "셔츠",            label_en: "Shirt" },
+  { id: "hoodie",            role: "top",    label_ko: "후드",            label_en: "Hoodie" },
+  { id: "linen_shirt",       role: "top",    label_ko: "린넨 셔츠",       label_en: "Linen Shirt" },
+  { id: "jeans",             role: "bottom", label_ko: "청바지",          label_en: "Jeans" },
+  { id: "slacks",            role: "bottom", label_ko: "슬랙스",          label_en: "Slacks" },
+  { id: "wide_pants",        role: "bottom", label_ko: "와이드 팬츠",     label_en: "Wide Pants" },
+  { id: "jogger",            role: "bottom", label_ko: "조거 팬츠",       label_en: "Jogger" },
+  { id: "cardigan",          role: "outer",  label_ko: "카디건",          label_en: "Cardigan" },
+  { id: "blazer",            role: "outer",  label_ko: "블레이저",        label_en: "Blazer" },
+  { id: "trench",            role: "outer",  label_ko: "트렌치코트",      label_en: "Trench" },
+  { id: "oversize_coat",     role: "outer",  label_ko: "오버사이즈 코트", label_en: "Oversize Coat" },
+  { id: "padding",           role: "outer",  label_ko: "패딩",            label_en: "Padding" },
+  { id: "linen_dress",       role: "dress",  label_ko: "린넨 원피스",     label_en: "Linen Dress", gender_lock: "F" },
+  { id: "sneakers_canvas",   role: "shoes",  label_ko: "캔버스 스니커즈", label_en: "Canvas" },
+  { id: "sneakers_athletic", role: "shoes",  label_ko: "운동화",          label_en: "Athletic" },
+  { id: "loafer",            role: "shoes",  label_ko: "로퍼",            label_en: "Loafer" },
+  { id: "boots_winter",      role: "shoes",  label_ko: "부츠",            label_en: "Boots" },
+  { id: "sandals",           role: "shoes",  label_ko: "샌들",            label_en: "Sandals" },
+];
+
+// tone_options 매트릭스 (의류당 정확히 7, matrix.ts 정합)
+const MATRIX = {
+  tshirt_white: [
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"gray", label_ko:"그레이", hex:"#7F7F7F"},
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"pink", label_ko:"연핑크", hex:"#FAD1D1"},
+    {key:"mint", label_ko:"민트", hex:"#C5E8D4"},
+  ],
+  knit_basic: [
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"}, {key:"brown", label_ko:"브라운", hex:"#8B6F47"},
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"burgundy", label_ko:"버건디", hex:"#6B2C3A"},
+  ],
+  shirt_pastel: [
+    {key:"pink", label_ko:"연핑크", hex:"#FAD1D1"}, {key:"sky", label_ko:"하늘", hex:"#C8E0F4"},
+    {key:"mint", label_ko:"민트", hex:"#C5E8D4"}, {key:"white", label_ko:"흰색", hex:"#FFFFFF"},
+    {key:"lavender", label_ko:"라벤더", hex:"#D8C8E8"}, {key:"yellow", label_ko:"버터옐로우", hex:"#F5E6A8"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+  ],
+  hoodie: [
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"}, {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+    {key:"burgundy", label_ko:"버건디", hex:"#6B2C3A"},
+  ],
+  linen_shirt: [
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"pink", label_ko:"연핑크", hex:"#FAD1D1"}, {key:"sky", label_ko:"하늘", hex:"#C8E0F4"},
+    {key:"mint", label_ko:"민트", hex:"#C5E8D4"}, {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+    {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+  ],
+  jeans: [
+    {key:"washed", label_ko:"연청", hex:"#7BA0CC"}, {key:"mid", label_ko:"미드", hex:"#5A7BA8"},
+    {key:"dark", label_ko:"찐청", hex:"#2E4F7C"}, {key:"black", label_ko:"블랙", hex:"#1B2F4A"},
+    {key:"light", label_ko:"라이트", hex:"#A8C5DD"}, {key:"gray", label_ko:"그레이 워시드", hex:"#8A8A8A"},
+    {key:"cream", label_ko:"크림", hex:"#EFE7D2"},
+  ],
+  slacks: [
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"charcoal", label_ko:"차콜", hex:"#3F3F3F"},
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"beige", label_ko:"베이지", hex:"#A89478"},
+    {key:"brown", label_ko:"브라운", hex:"#6B5238"}, {key:"ivory", label_ko:"아이보리", hex:"#E8DEC8"},
+    {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+  ],
+  wide_pants: [
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"}, {key:"brown", label_ko:"브라운", hex:"#6B5238"},
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+  ],
+  jogger: [
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+    {key:"khaki", label_ko:"카키", hex:"#6B7A4A"}, {key:"brown", label_ko:"브라운", hex:"#6B5238"},
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+  ],
+  cardigan: [
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"}, {key:"gray", label_ko:"그레이", hex:"#7F7F7F"},
+    {key:"brown", label_ko:"브라운", hex:"#8B6F47"}, {key:"pink", label_ko:"연핑크", hex:"#FAD1D1"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"burgundy", label_ko:"버건디", hex:"#6B2C3A"},
+  ],
+  blazer: [
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"charcoal", label_ko:"차콜", hex:"#3F3F3F"},
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"beige", label_ko:"베이지", hex:"#A89478"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"}, {key:"camel", label_ko:"카멜", hex:"#A88B5F"},
+    {key:"burgundy", label_ko:"버건디", hex:"#6B2C3A"},
+  ],
+  trench: [
+    {key:"beige", label_ko:"베이지", hex:"#D2B48C"}, {key:"camel", label_ko:"카멜", hex:"#A88B5F"},
+    {key:"khaki", label_ko:"카키", hex:"#6B7A4A"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"brown", label_ko:"브라운", hex:"#6B5238"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+  ],
+  oversize_coat: [
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"camel", label_ko:"카멜", hex:"#A88B5F"},
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"brown", label_ko:"브라운", hex:"#6B5238"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+  ],
+  padding: [
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"navy", label_ko:"네이비", hex:"#2E4F7C"},
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"brown", label_ko:"브라운", hex:"#6B5238"}, {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+    {key:"khaki", label_ko:"카키", hex:"#6B7A4A"},
+  ],
+  linen_dress: [
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"pink", label_ko:"연핑크", hex:"#FAD1D1"},
+    {key:"sky", label_ko:"하늘", hex:"#C8E0F4"}, {key:"lavender", label_ko:"라벤더", hex:"#D8C8E8"},
+    {key:"ivory", label_ko:"아이보리", hex:"#F5F1E8"},
+  ],
+  sneakers_canvas: [
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"red", label_ko:"레드", hex:"#B83A3A"},
+    {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+  ],
+  sneakers_athletic: [
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"black", label_ko:"블랙", hex:"#1F1F1F"},
+    {key:"gray", label_ko:"그레이", hex:"#7F7F7F"}, {key:"color", label_ko:"컬러 포인트", hex:null},
+    {key:"navy", label_ko:"네이비", hex:"#2E4F7C"}, {key:"beige", label_ko:"베이지", hex:"#D2C4A8"},
+    {key:"cream", label_ko:"크림", hex:"#EFE7D2"},
+  ],
+  loafer: [
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"brown", label_ko:"브라운", hex:"#5A4030"},
+    {key:"cordovan", label_ko:"코도반", hex:"#4A1F1F"}, {key:"burgundy", label_ko:"버건디", hex:"#6B2C3A"},
+    {key:"beige", label_ko:"베이지", hex:"#A89478"}, {key:"camel", label_ko:"카멜", hex:"#A88B5F"},
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"},
+  ],
+  boots_winter: [
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"brown", label_ko:"브라운", hex:"#5A4030"},
+    {key:"cognac", label_ko:"코냑", hex:"#8B5A2B"}, {key:"tan", label_ko:"탄", hex:"#B08D5A"},
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"}, {key:"gray", label_ko:"그레이", hex:"#7F7F7F"},
+    {key:"olive", label_ko:"올리브", hex:"#5A6238"},
+  ],
+  sandals: [
+    {key:"black", label_ko:"블랙", hex:"#1F1F1F"}, {key:"brown", label_ko:"브라운", hex:"#5A4030"},
+    {key:"white", label_ko:"흰색", hex:"#FFFFFF"}, {key:"tan", label_ko:"탄", hex:"#B08D5A"},
+    {key:"beige", label_ko:"베이지", hex:"#D2C4A8"}, {key:"gray", label_ko:"그레이", hex:"#7F7F7F"},
+    {key:"silver", label_ko:"실버", hex:"#C0C0C0"},
+  ],
+};
+
+const ROLE_LABEL = { top: "상의", bottom: "하의", outer: "외투", dress: "원피스", shoes: "신발" };
+
+/* ============================================================
+ * 사용자 상태 (시뮬레이션)
+ * ============================================================ */
+let state = {
+  gender: "M",                      // 'M' | 'F' — gender_lock 영향
+  anchorMode: "auto",               // 'auto' | 'ask' — default_anchor_mode
+  autoRule: "cold",                 // cold|mid|hot|rain — 자동 룰 4-way
+  selectedRole: null,               // 모드 2 [1] 카테고리 선택 (null = 시작 상태)
+  selectedCatalogId: null,          // 모드 2 [2] 의류 선택
+  selectedTone: null,               // 모드 2 [3] 색 톤 선택 ({key,label_ko,hex} 또는 {key:"_auto", label_ko:"추천에 맡김"})
+  appliedAnchor: null,              // 모드 3 메인 화면에 적용된 앵커 (null = auto)
+};
+
+// 자동 룰 → role 매핑
+const AUTO_RULE_TO_ROLE = { cold: "outer", mid: "bottom", hot: "top", rain: "shoes" };
+
+// 자동 룰 → 추천 시그니처 (모드 3 디폴트 결과)
+const AUTO_ANCHOR = {
+  cold: { catalog_id: "trench",   tone_key: "camel",  reason: "체감 5°C 이하 → 외투 기준" },
+  mid:  { catalog_id: "jeans",    tone_key: "washed", reason: "기본 → 하의 기준" },
+  hot:  { catalog_id: "tshirt_white", tone_key: "white", reason: "체감 25°C 이상 → 상의 기준" },
+  rain: { catalog_id: "boots_winter", tone_key: "brown", reason: "비/눈 → 신발 기준" },
+};
+
+/* ============================================================
+ * 헬퍼
+ * ============================================================ */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+}
+function getCatalogByRole(role) {
+  return CATALOG.filter(c => c.role === role && (!c.gender_lock || c.gender_lock === state.gender));
+}
+function getCatalog(id) { return CATALOG.find(c => c.id === id); }
+function getTone(catalogId, toneKey) {
+  return MATRIX[catalogId]?.find(t => t.key === toneKey) || null;
+}
+
+// 현재 활성 앵커 — 사용자 모드 2 결과 우선, 없으면 자동 룰
+function getActiveAnchor() {
+  if (state.appliedAnchor) return state.appliedAnchor;
+  const auto = AUTO_ANCHOR[state.autoRule];
+  return { catalog_id: auto.catalog_id, tone_key: auto.tone_key, source: "auto", reason: auto.reason };
+}
+
+// 결과 4 카드 (앵커 1 + 나머지 3) — 시그니처 + 시즌 정합 시뮬
+function buildResultItems(anchor) {
+  const anchorCat = getCatalog(anchor.catalog_id);
+  const anchorRole = anchorCat.role;
+  const anchorTone = getTone(anchor.catalog_id, anchor.tone_key);
+
+  // 나머지 3 role 의 시그니처 카드 (단순 시뮬, 실제는 Claude 가 매칭)
+  const otherRolesByRule = {
+    outer: ["top", "bottom", "shoes"],
+    top: ["outer", "bottom", "shoes"],
+    bottom: ["outer", "top", "shoes"],
+    shoes: ["outer", "top", "bottom"],
+    dress: ["outer", "shoes", "top"],
+  };
+  const otherRoles = otherRolesByRule[anchorRole] || ["outer", "top", "shoes"];
+
+  // 앵커 색 톤 정합 매칭 (시뮬레이션)
+  const matchByAnchor = matchOthersForAnchor(anchor.catalog_id, anchor.tone_key);
+
+  const cards = [];
+  // 항상 외투/상의/하의/신발 순서로 표시 (앵커는 자기 자리)
+  const ORDER = ["outer", "top", "bottom", "shoes"];
+  for (const role of ORDER) {
+    if (anchorRole === "dress" && role === "top") continue; // 원피스 = 상의/하의 통합
+    if (anchorRole === "dress" && role === "bottom") {
+      cards.push({
+        role: "dress",
+        catalog_id: anchor.catalog_id,
+        catalog_label: anchorCat.label_ko,
+        tone: anchorTone,
+        is_anchor: true,
+      });
+      continue;
     }
-    try { localStorage.setItem('anchor-ux-theme', mode); } catch (e) {}
+    if (role === anchorRole) {
+      cards.push({
+        role,
+        catalog_id: anchor.catalog_id,
+        catalog_label: anchorCat.label_ko,
+        tone: anchorTone,
+        is_anchor: true,
+      });
+    } else {
+      const match = matchByAnchor[role];
+      if (match) cards.push({ role, ...match, is_anchor: false });
+    }
   }
-  toggle.addEventListener('click', () => {
-    applyTheme(body.classList.contains('dark') ? 'light' : 'dark');
+  return cards;
+}
+
+// 앵커 색에 맞춰 다른 의류 매칭 시뮬레이션 (간단한 규칙)
+function matchOthersForAnchor(anchorCatalogId, anchorToneKey) {
+  const anchorCat = getCatalog(anchorCatalogId);
+  const isDenimBlue = anchorCatalogId === "jeans";
+  const isCamel = anchorToneKey === "camel";
+  const isBeige = anchorToneKey === "beige";
+  const isBlack = anchorToneKey === "black";
+  const isWhite = anchorToneKey === "white";
+
+  // 시뮬: 베이지/카멜 앵커 = 베이지·아이보리·흰 매칭 / 데님 = 베이지·카멜·흰 / 블랙 = 그레이·흰
+  const palette = isDenimBlue
+    ? { top: "beige", bottom: null, outer: "camel", shoes: "white" }
+    : isCamel
+    ? { top: "ivory", bottom: "dark", outer: null, shoes: "brown" }
+    : isBeige
+    ? { top: "white", bottom: "washed", outer: "camel", shoes: "white" }
+    : isBlack
+    ? { top: "white", bottom: "gray", outer: "gray", shoes: "white" }
+    : isWhite
+    ? { top: null, bottom: "washed", outer: "navy", shoes: "navy" }
+    : { top: "ivory", bottom: "washed", outer: "beige", shoes: "white" };
+
+  // 각 role 별 시그니처 catalog_id 채택 (가장 보편)
+  const ROLE_DEFAULT = {
+    top: "knit_basic",
+    bottom: "jeans",
+    outer: "trench",
+    shoes: "sneakers_canvas",
+  };
+
+  const result = {};
+  for (const role of ["top", "bottom", "outer", "shoes"]) {
+    if (role === anchorCat.role) continue;
+    const catId = ROLE_DEFAULT[role];
+    const cat = getCatalog(catId);
+    const toneKey = palette[role] || MATRIX[catId][0].key;
+    const tone = getTone(catId, toneKey) || MATRIX[catId][0];
+    result[role] = {
+      catalog_id: catId,
+      catalog_label: cat.label_ko,
+      tone,
+    };
+  }
+  return result;
+}
+
+/* ============================================================
+ * 화면 렌더
+ * ============================================================ */
+const screens = [
+  { id: 0, mode: "m3", name: "메인 (모드 3 자동)",
+    desc: "기본 진입 화면. 앵커 1 카드 시각 강조 (📌 배지 + 보더 + warm gradient) + 헤더 캡션. v1.0 과 동일 마찰 0. ▼ 우측 버튼 = 모드 2 진입점 ①.",
+    render: renderMain },
+  { id: 1, mode: "m2", name: "앵커 선택 (모드 2 — 3-단계)",
+    desc: "한 화면 위→아래 스크롤. [1] 카테고리 라디오 → [2] 의류 그리드 (gender_lock + anchor_eligible 필터) → [3] 색 톤 그리드 (catalog 별 tone_options 7) + CTA. 진입점 = 메인 ▼ 또는 마이페이지 ★.",
+    render: renderAnchorSelect },
+  { id: 2, mode: "m3", name: "마이페이지 (NEW 2)",
+    desc: "기존 항목 사이에 ★ 기본 앵커 (모드 1 설정) + ★ 다른 옷 기준 (모드 2 deeplink) 신규 2 항목. NEW 배지 + warm tint highlight.",
+    render: renderMyPage },
+  { id: 3, mode: "m1", name: "기본 앵커 (모드 1 설정)",
+    desc: "default_anchor_mode 설정 — auto (디폴트, 자동 룰 4-way) vs ask (매번 묻기, 모드 2 강제 진입). 마찰 차이 명확 설명 문구.",
+    render: renderDefaultAnchor },
+  { id: 4, mode: "m2", name: "엣지 — gender_lock 시뮬",
+    desc: "여성 한정 의류 (린넨 원피스) = 남성 사용자 시 [2] 그리드 비노출. 사이드바 '성별' 토글 = M/F 전환 → 모드 2 [2] 의류 그리드 자동 갱신.",
+    render: renderEdgeGenderLock },
+];
+
+let currentScreen = 0;
+
+function statusBar() {
+  return `<div class="status-bar"><span>9:41</span><span>● ● ●</span></div>`;
+}
+
+function toast(msg) {
+  const phone = document.getElementById("phone-screen");
+  const old = phone.querySelector(".toast");
+  if (old) old.remove();
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  phone.appendChild(el);
+  requestAnimationFrame(() => el.classList.add("show"));
+  setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 250); }, 1800);
+}
+
+/* ===== 화면 0 — 메인 (모드 3) ===== */
+function renderMain() {
+  const anchor = getActiveAnchor();
+  const items = buildResultItems(anchor);
+  const anchorCat = getCatalog(anchor.catalog_id);
+  const anchorTone = getTone(anchor.catalog_id, anchor.tone_key);
+  const sourceLabel = anchor.source === "user" ? "내 선택" : "자동";
+
+  return `${statusBar()}
+  <div class="screen-body">
+    <div class="main-header">
+      <div class="main-location-block">
+        <div class="main-location">서울 강남구</div>
+        <div class="main-weather">${describeAutoRule()} · ${sourceLabel}</div>
+      </div>
+      <div class="main-actions">
+        <span class="main-settings" onclick="goto(2)" title="마이페이지">⚙</span>
+        <button class="anchor-entry-pill" onclick="goto(1)" title="모드 2 진입점 ①">▼ 다른 옷 기준</button>
+      </div>
+    </div>
+    <div class="anchor-caption">
+      📌 오늘은 <strong>${escapeHtml(anchorTone.label_ko)} ${escapeHtml(anchorCat.label_ko)}</strong> 기준
+      <span style="color:var(--textMuted);">— 다른 옷은 이에 맞춤</span>
+    </div>
+    <div class="items-list">
+      ${items.map(item => renderItemCard(item)).join("")}
+    </div>
+    ${state.appliedAnchor ? `
+      <div style="margin-top:10px; text-align:center;">
+        <button class="btn-secondary" style="font-size:12px; padding:9px;" onclick="resetAnchor()">자동으로 돌아가기</button>
+      </div>
+    ` : ""}
+  </div>`;
+}
+
+function describeAutoRule() {
+  const map = {
+    cold: "체감 3°C 흐림",
+    mid:  "체감 18°C 맑음",
+    hot:  "체감 27°C 맑음",
+    rain: "체감 14°C 비",
+  };
+  return map[state.autoRule] || "체감 18°C";
+}
+
+function renderItemCard(item) {
+  const swatchStyle = item.tone.hex
+    ? `background:${item.tone.hex};`
+    : `background:repeating-linear-gradient(45deg,var(--border) 0 6px,transparent 6px 12px);`;
+  return `
+    <div class="item-card ${item.is_anchor ? "anchor" : ""}">
+      <div class="item-chip" style="${swatchStyle}"></div>
+      <div class="item-info">
+        <div class="item-role ${item.is_anchor ? "anchor-role" : ""}">${escapeHtml(ROLE_LABEL[item.role] || item.role)}${item.is_anchor ? " · 앵커" : ""}</div>
+        <div class="item-name">${escapeHtml(item.tone.label_ko)}<span class="hex">${item.tone.hex || "—"}</span></div>
+        <div class="item-clothing">${escapeHtml(item.catalog_label)}</div>
+      </div>
+    </div>`;
+}
+
+function resetAnchor() {
+  state.appliedAnchor = null;
+  state.selectedRole = null;
+  state.selectedCatalogId = null;
+  state.selectedTone = null;
+  goto(0);
+  toast("자동 추천으로 전환됨");
+}
+
+/* ===== 화면 1 — 앵커 선택 (모드 2 3-단계) ===== */
+function renderAnchorSelect() {
+  return `${statusBar()}
+  <div class="screen-body">
+    <span class="as-back" onclick="goto(0)">←</span>
+    <div class="as-title">다른 옷 기준</div>
+
+    <!-- [1] 카테고리 -->
+    <div class="as-step">
+      <span class="as-step-num">[1] 카테고리</span>
+      <div class="as-step-title">어떤 의류를 기준으로?</div>
+      <div class="as-step-hint">앵커 의류 종류 선택. <strong>자동으로 맡김</strong> = 모드 1 회귀</div>
+      <div class="as-radio-grid" id="as-role-grid">
+        ${renderRoleRadios()}
+      </div>
+    </div>
+
+    <!-- [2] 의류 종류 -->
+    <div class="as-step">
+      <span class="as-step-num">[2] 의류 종류</span>
+      <div class="as-step-title">${state.selectedRole ? escapeHtml(ROLE_LABEL[state.selectedRole]) + " 의류" : "—"}</div>
+      <div class="as-step-hint">${state.selectedRole ? "anchor_eligible 의류 + gender_lock 필터" : "위 카테고리 먼저 선택"}</div>
+      <div class="as-item-grid" id="as-item-grid">
+        ${renderItemGrid()}
+      </div>
+    </div>
+
+    <!-- [3] 색 톤 -->
+    <div class="as-step">
+      <span class="as-step-num">[3] 색 톤</span>
+      <div class="as-step-title">${state.selectedCatalogId ? escapeHtml(getCatalog(state.selectedCatalogId).label_ko) + " 색 톤" : "—"}</div>
+      <div class="as-step-hint">${state.selectedCatalogId ? "이 추천에서 <strong>다른 옷 색은 이에 맞춰 자동</strong> 추천돼요" : "위 의류 먼저 선택"}</div>
+      <div class="as-tone-grid" id="as-tone-grid">
+        ${renderToneGrid()}
+      </div>
+    </div>
+
+    <div class="as-cta-area">
+      <button class="btn-primary mode2 ${canSubmit() ? "" : "btn-disabled"}" id="as-submit" onclick="submitAnchor()">
+        ${state.selectedTone && state.selectedTone.key === "_auto" ? "추천에 맡기고 받기" : "이걸로 추천 받기"}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderRoleRadios() {
+  const roles = [
+    { val: "outer",  label: "외투" },
+    { val: "bottom", label: "하의" },
+    { val: "top",    label: "상의" },
+    { val: "shoes",  label: "신발" },
+  ];
+  // 여성이면 원피스 추가 (앵커 자격 ✓)
+  if (state.gender === "F") roles.push({ val: "dress",  label: "원피스" });
+  let html = roles.map(r => `
+    <div class="as-radio-item ${state.selectedRole === r.val ? "selected" : ""}" onclick="selectRole('${r.val}')">
+      <div class="as-radio-dot"></div>${escapeHtml(r.label)}
+    </div>`).join("");
+  // "자동으로 맡김" full-width
+  html += `
+    <div class="as-radio-item full ${state.selectedRole === "_auto" ? "selected" : ""}" onclick="selectRole('_auto')">
+      <div class="as-radio-dot"></div>자동으로 맡김 (모드 1 회귀)
+    </div>`;
+  return html;
+}
+
+function renderItemGrid() {
+  if (!state.selectedRole) {
+    return Array(6).fill('<div class="as-item-chip empty">—</div>').join("");
+  }
+  if (state.selectedRole === "_auto") {
+    return `<div class="as-item-chip empty" style="grid-column:1 / -1; padding:14px;">자동 추천으로 진행됩니다 — 의류 선택 불필요</div>`;
+  }
+  const items = getCatalogByRole(state.selectedRole);
+  if (items.length === 0) {
+    return `<div class="as-item-chip empty" style="grid-column:1 / -1; padding:14px;">${escapeHtml(ROLE_LABEL[state.selectedRole])} 의류가 없어요 (gender_lock)</div>`;
+  }
+  let html = items.map(c => `
+    <div class="as-item-chip ${state.selectedCatalogId === c.id ? "selected" : ""}" onclick="selectCatalog('${c.id}')">
+      ${escapeHtml(c.label_ko)}
+    </div>`).join("");
+  // 빈 셀로 그리드 정합
+  const remainder = items.length % 3;
+  if (remainder !== 0) {
+    for (let i = 0; i < 3 - remainder; i++) html += '<div class="as-item-chip empty">—</div>';
+  }
+  return html;
+}
+
+function renderToneGrid() {
+  if (!state.selectedCatalogId || state.selectedRole === "_auto") {
+    return Array(6).fill('<div class="as-tone-chip" style="border-style:dashed; min-height:60px;"></div>').join("");
+  }
+  const tones = MATRIX[state.selectedCatalogId] || [];
+  let html = tones.map(t => {
+    const isSel = state.selectedTone && state.selectedTone.key === t.key;
+    if (t.hex === null) {
+      return `
+        <div class="as-tone-chip ${isSel ? "selected" : ""}" onclick='selectTone(${JSON.stringify(JSON.stringify(t))})'>
+          <div class="as-tone-swatch null">컬러 자유</div>
+          <div class="as-tone-meta">
+            <div class="as-tone-label">${escapeHtml(t.label_ko)}</div>
+            <div class="as-tone-hex">컨텍스트</div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="as-tone-chip ${isSel ? "selected" : ""}" onclick='selectTone(${JSON.stringify(JSON.stringify(t))})'>
+        <div class="as-tone-swatch" style="background:${t.hex};"></div>
+        <div class="as-tone-meta">
+          <div class="as-tone-label">${escapeHtml(t.label_ko)}</div>
+          <div class="as-tone-hex">${t.hex}</div>
+        </div>
+      </div>`;
+  }).join("");
+  // "추천에 맡김" 디폴트 옵션
+  const isAutoSel = state.selectedTone && state.selectedTone.key === "_auto";
+  html += `
+    <div class="as-tone-chip ${isAutoSel ? "selected" : ""}" onclick='selectTone(${JSON.stringify(JSON.stringify({key:"_auto", label_ko:"추천에 맡김", hex:null}))})'>
+      <div class="as-tone-swatch null">맡김</div>
+      <div class="as-tone-meta">
+        <div class="as-tone-label">추천에 맡김</div>
+        <div class="as-tone-hex">디폴트</div>
+      </div>
+    </div>`;
+  return html;
+}
+
+function canSubmit() {
+  if (state.selectedRole === "_auto") return true;
+  return state.selectedRole && state.selectedCatalogId && state.selectedTone;
+}
+
+function selectRole(role) {
+  state.selectedRole = role;
+  state.selectedCatalogId = null;
+  state.selectedTone = null;
+  goto(1);
+}
+function selectCatalog(id) {
+  state.selectedCatalogId = id;
+  state.selectedTone = null;
+  goto(1);
+}
+function selectTone(jsonStr) {
+  state.selectedTone = JSON.parse(jsonStr);
+  goto(1);
+}
+
+function submitAnchor() {
+  if (!canSubmit()) return;
+  if (state.selectedRole === "_auto") {
+    state.appliedAnchor = null; // 자동 회귀
+    state.selectedRole = null;
+    state.selectedCatalogId = null;
+    state.selectedTone = null;
+    goto(0);
+    toast("자동 추천으로 진행");
+    return;
+  }
+  const tone = state.selectedTone;
+  state.appliedAnchor = {
+    catalog_id: state.selectedCatalogId,
+    tone_key: tone.key === "_auto"
+      ? MATRIX[state.selectedCatalogId][0].key // server 자동 결정 (시뮬레이션: 첫 시그니처)
+      : tone.key,
+    source: "user",
+    fallback_used: tone.key === "_auto",
+  };
+  state.selectedRole = null;
+  state.selectedCatalogId = null;
+  state.selectedTone = null;
+  goto(0);
+  toast(tone.key === "_auto" ? "추천에 맡기고 결과를 받았어요" : "새 추천을 받았어요");
+}
+
+/* ===== 화면 2 — 마이페이지 ===== */
+function renderMyPage() {
+  return `${statusBar()}
+  <div class="screen-body">
+    <span class="myp-back" onclick="goto(0)">←</span>
+    <div class="myp-title">설정</div>
+
+    <div class="myp-section">
+      <div class="myp-section-h">컬러 테마</div>
+      <div class="myp-list-row">
+        <span>오리지널</span>
+        <span class="myp-chevron">›</span>
+      </div>
+    </div>
+
+    <div class="myp-section">
+      <div class="myp-section-h">위치 · 알림</div>
+      <div class="myp-list-row">
+        <span>위치</span>
+        <span><span class="myp-value">서울 강남구</span><span class="myp-chevron">›</span></span>
+      </div>
+      <div class="myp-list-row">
+        <span>알림</span>
+        <span><span class="myp-value">아침 8시</span><span class="myp-chevron">›</span></span>
+      </div>
+    </div>
+
+    <div class="myp-section">
+      <div class="myp-section-h">앵커 의류 (v1.1 신규)</div>
+      <div class="myp-list-row new" onclick="goto(3)">
+        <span>기본 앵커<span class="new-badge">NEW</span></span>
+        <span><span class="myp-value">${state.anchorMode === "auto" ? "자동" : "매번 묻기"}</span><span class="myp-chevron">›</span></span>
+      </div>
+      <div class="myp-list-row new" onclick="goto(1)">
+        <span>다른 옷 기준<span class="new-badge">NEW</span></span>
+        <span><span class="myp-chevron">›</span></span>
+      </div>
+    </div>
+
+    <div class="myp-section">
+      <div class="myp-section-h">계정 · 정보</div>
+      <div class="myp-list-row">
+        <span>로그인</span>
+        <span><span class="myp-value">byiryu@...</span><span class="myp-chevron">›</span></span>
+      </div>
+      <div class="myp-list-row">
+        <span>이용약관 · 처리방침</span>
+        <span class="myp-chevron">›</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===== 화면 3 — 기본 앵커 (모드 1 설정) ===== */
+function renderDefaultAnchor() {
+  return `${statusBar()}
+  <div class="screen-body">
+    <span class="myp-back" onclick="goto(2)">←</span>
+    <div class="myp-title">기본 앵커</div>
+
+    <div class="da-card ${state.anchorMode === "auto" ? "selected" : ""}" onclick="setAnchorMode('auto')">
+      <div class="da-card-head">
+        <div class="as-radio-dot"></div>
+        <div class="da-card-title">자동<span class="da-card-default-tag">디폴트</span></div>
+      </div>
+      <div class="da-card-desc">
+        날씨에 따라 자동으로 외투/상의/하의/신발 중 하나가 기준이 돼요. 마찰 없는 빠른 경험.
+      </div>
+    </div>
+
+    <div class="da-card ${state.anchorMode === "ask" ? "selected" : ""}" onclick="setAnchorMode('ask')">
+      <div class="da-card-head">
+        <div class="as-radio-dot"></div>
+        <div class="da-card-title">매번 묻기</div>
+      </div>
+      <div class="da-card-desc">
+        메인 진입 때마다 의류·색 톤 선택 화면이 떠요. (모드 2)<br>
+        직접 매번 선택하고 싶은 사용자 옵션 — 마찰 ↑ 알면서 선택.
+      </div>
+    </div>
+
+    <div style="margin-top: 18px; padding: 12px; background: var(--surface); border-radius: 10px; font-size: 11px; color: var(--textMuted); line-height: 1.6;">
+      💡 언제든 메인 헤더 우측 <strong>▼ 다른 옷 기준</strong> 으로 1회만 변경 가능.
+      이 설정은 그것과 무관 — 매번의 디폴트만 결정.
+    </div>
+  </div>`;
+}
+function setAnchorMode(m) {
+  state.anchorMode = m;
+  document.querySelector('.sim-toggle[data-sim="anchorMode"]')
+    .querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.val === m));
+  goto(3);
+  toast(m === "auto" ? "자동 모드로 설정" : "매번 묻기 모드 — 다음 진입부터 적용");
+}
+
+/* ===== 화면 4 — 엣지 (gender_lock 시뮬) ===== */
+function renderEdgeGenderLock() {
+  const showDress = state.gender === "F";
+  const dressCat = CATALOG.find(c => c.id === "linen_dress");
+  const dressTones = MATRIX["linen_dress"];
+  return `${statusBar()}
+  <div class="screen-body">
+    <span class="as-back" onclick="goto(1)">←</span>
+    <div class="as-title" style="color:var(--mode2);">엣지 — gender_lock 시뮬</div>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; font-size:12px; margin-bottom:14px;">
+      <div style="font-weight:600; margin-bottom:6px;">사이드바 "성별" 토글 → 효과:</div>
+      <div style="color:var(--textMuted); font-size:11px; line-height:1.55;">
+        현재 = <strong style="color:var(--text);">${state.gender === "M" ? "남성" : "여성"}</strong> ·
+        린넨 원피스 = <strong style="color:${showDress ? '#2C4E80' : 'var(--mode2)'};">${showDress ? "✓ 노출" : "✗ 비노출 (gender_lock='F')"}</strong>
+      </div>
+    </div>
+
+    <div class="as-step">
+      <span class="as-step-num">[1] 카테고리</span>
+      <div class="as-step-title">사용자 본 카테고리</div>
+      <div class="as-step-hint">${showDress ? "여성 = 5 카테고리 (원피스 포함)" : "남성 = 4 카테고리 (원피스 비노출)"}</div>
+      <div class="as-radio-grid">
+        <div class="as-radio-item"><div class="as-radio-dot"></div>외투</div>
+        <div class="as-radio-item"><div class="as-radio-dot"></div>하의</div>
+        <div class="as-radio-item"><div class="as-radio-dot"></div>상의</div>
+        <div class="as-radio-item"><div class="as-radio-dot"></div>신발</div>
+        ${showDress
+          ? `<div class="as-radio-item selected full"><div class="as-radio-dot"></div>원피스 (여성만)</div>`
+          : `<div class="as-radio-item full" style="opacity:0.4;"><div class="as-radio-dot"></div>원피스 — gender_lock='F', 비노출</div>`}
+      </div>
+    </div>
+
+    ${showDress ? `
+      <div class="as-step">
+        <span class="as-step-num">[2] 의류 종류</span>
+        <div class="as-step-title">원피스</div>
+        <div class="as-item-grid">
+          <div class="as-item-chip selected">${escapeHtml(dressCat.label_ko)}</div>
+          <div class="as-item-chip empty">—</div>
+          <div class="as-item-chip empty">—</div>
+        </div>
+      </div>
+      <div class="as-step">
+        <span class="as-step-num">[3] 색 톤</span>
+        <div class="as-step-title">린넨 원피스 색 톤</div>
+        <div class="as-tone-grid">
+          ${dressTones.slice(0, 6).map(t => `
+            <div class="as-tone-chip">
+              <div class="as-tone-swatch" style="background:${t.hex};"></div>
+              <div class="as-tone-meta">
+                <div class="as-tone-label">${escapeHtml(t.label_ko)}</div>
+                <div class="as-tone-hex">${t.hex}</div>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+    ` : `
+      <div style="background:rgba(74,144,226,0.06); border-left:3px solid var(--mode2); padding:12px; border-radius:6px; font-size:11.5px; color:var(--text); line-height:1.6; margin-top:8px;">
+        <strong>안전망:</strong> 클라 UI 사전 차단 (위 5번째 라디오 비노출) + server zod 검증 (400 INVALID_ANCHOR).
+        <br><br>
+        <strong>처리 정합:</strong> <code style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:10.5px;">getCatalogByRole('dress', 'M')</code> = <code style="background:var(--bg); padding:1px 4px; border-radius:3px; font-size:10.5px;">[]</code> 빈 배열 → 카테고리 [1] 비노출.
+      </div>
+    `}
+  </div>`;
+}
+
+/* ============================================================
+ * Inspector (오른쪽 옆 명세 박스)
+ * ============================================================ */
+function renderInspector() {
+  const s = screens[currentScreen];
+  let html = `<h4>스펙 · ${escapeHtml(s.name)}</h4>`;
+
+  if (s.id === 0) {
+    const a = getActiveAnchor();
+    const cat = getCatalog(a.catalog_id);
+    const tone = getTone(a.catalog_id, a.tone_key);
+    html += `
+      <div class="row"><span class="k">현재 앵커 source</span><span class="v ${a.source === "user" ? "code" : ""}">${a.source}${state.appliedAnchor && state.appliedAnchor.fallback_used ? " · fallback" : ""}</span></div>
+      <div class="row"><span class="k">앵커 의류</span><span class="v">${escapeHtml(cat.label_ko)} (${a.catalog_id})</span></div>
+      <div class="row"><span class="k">앵커 색 톤</span><span class="v">${escapeHtml(tone.label_ko)} ${tone.hex || ""}</span></div>
+      <div class="row"><span class="k">진입점</span><span class="v">▼ pill (헤더 우측, 모드 2 ①) + ⚙ (마이페이지)</span></div>
+      <div class="row"><span class="k">★ 앵커 카드 탭</span><span class="v">동작 X (정보 표시만)</span></div>
+      <div class="crossplat">
+        <div class="platform">
+          <h5>Android</h5>
+          <code>Card</code> + <code>BorderStroke(2.dp)</code> + 헤더 캡션 <code>Surface(tonalElevation=1.dp)</code>
+        </div>
+        <div class="platform">
+          <h5>iOS / SwiftUI</h5>
+          <code>RoundedRectangle</code> + <code>.overlay(stroke:lineWidth:2)</code> + <code>.font(.footnote)</code>
+        </div>
+      </div>`;
+  } else if (s.id === 1) {
+    html += `
+      <div class="row"><span class="k">선택 카테고리</span><span class="v">${state.selectedRole ? (state.selectedRole === "_auto" ? "자동 회귀" : escapeHtml(ROLE_LABEL[state.selectedRole])) : "—"}</span></div>
+      <div class="row"><span class="k">선택 의류</span><span class="v">${state.selectedCatalogId ? escapeHtml(getCatalog(state.selectedCatalogId).label_ko) + " (" + state.selectedCatalogId + ")" : "—"}</span></div>
+      <div class="row"><span class="k">선택 색 톤</span><span class="v">${state.selectedTone ? escapeHtml(state.selectedTone.label_ko) + " " + (state.selectedTone.hex || "—") : "—"}</span></div>
+      <div class="row"><span class="k">CTA 활성</span><span class="v">${canSubmit() ? "✓ 활성" : "✗ 비활성"}</span></div>
+      <div class="row"><span class="k">데이터 소스</span><span class="v">GET /v1/catalog (24h cache) · MATRIX 140 entries</span></div>
+      <div class="row"><span class="k">의미 명확화</span><span class="v">[3] 헤더 = {앵커 의류명} 색 톤 + 안내 "다른 옷 색은 이에 맞춰 자동"</span></div>
+      <div class="crossplat">
+        <div class="platform">
+          <h5>Android</h5>
+          <code>LazyColumn</code> + <code>RadioGroup</code> + <code>FilterChip</code> Grid + <code>fillMaxWidth Button</code>
+        </div>
+        <div class="platform">
+          <h5>iOS / SwiftUI</h5>
+          <code>ScrollView</code> + <code>Picker</code> + <code>LazyVGrid(count:3)</code> + <code>.borderedProminent</code>
+        </div>
+      </div>`;
+  } else if (s.id === 2) {
+    html += `
+      <div class="row"><span class="k">신규 항목 1</span><span class="v">★ 기본 앵커 (모드 1 설정)</span></div>
+      <div class="row"><span class="k">신규 항목 2</span><span class="v">★ 다른 옷 기준 (모드 2 deeplink)</span></div>
+      <div class="row"><span class="k">위치</span><span class="v">알림 ↔ 로그인 사이 (코어 설정 그룹)</span></div>
+      <div class="row"><span class="k">NEW 배지</span><span class="v">v1.1 출시 7~14일 자연 제거 (백로그)</span></div>
+      <div class="row"><span class="k">현재 default_anchor_mode</span><span class="v code">${state.anchorMode}</span></div>`;
+  } else if (s.id === 3) {
+    html += `
+      <div class="row"><span class="k">현재 default_anchor_mode</span><span class="v code">${state.anchorMode}</span></div>
+      <div class="row"><span class="k">저장 위치</span><span class="v code">weather_outfit_users.default_anchor_mode</span></div>
+      <div class="row"><span class="k">동기화</span><span class="v">즉시 fire-and-forget POST</span></div>
+      <div class="row"><span class="k">enum</span><span class="v code">'auto' | 'ask'</span></div>
+      <div class="row"><span class="k">★ 미해결</span><span class="v">'ask' 사용자 메인 진입 시 모드 2 강제 진입의 마찰 UX (★ 백로그)</span></div>`;
+  } else if (s.id === 4) {
+    const cnt = state.gender === "F" ? 5 : 4;
+    html += `
+      <div class="row"><span class="k">현재 성별</span><span class="v code">${state.gender}</span></div>
+      <div class="row"><span class="k">노출 카테고리</span><span class="v">${cnt}종 (${state.gender === "F" ? "원피스 포함" : "원피스 비노출"})</span></div>
+      <div class="row"><span class="k">필터링 위치</span><span class="v">클라 UI (사전) + server zod (안전망)</span></div>
+      <div class="row"><span class="k">helper</span><span class="v code">getCatalogByRole('dress', 'M')</span></div>
+      <div class="row"><span class="k">기타 엣지</span><span class="v">auto-partial · fallback_used · INVALID_ANCHOR 400 (server 안전망)</span></div>`;
+  }
+
+  document.getElementById("inspector").innerHTML = html;
+}
+
+/* ============================================================
+ * Navigation
+ * ============================================================ */
+function renderNav() {
+  document.getElementById("nav-list").innerHTML = screens.map(s => `
+    <li class="nav-item ${s.id === currentScreen ? "active" : ""}" onclick="goto(${s.id})">
+      <span class="num">${s.id}</span>
+      <span style="flex:1;">${escapeHtml(s.name)}</span>
+      <span class="mode-dot ${s.mode}"></span>
+    </li>
+  `).join("");
+}
+
+function goto(id) {
+  currentScreen = id;
+  const s = screens[id];
+  document.getElementById("screen-title").textContent = s.name;
+  document.getElementById("screen-id").textContent = `screen ${id}`;
+  document.getElementById("screen-description").textContent = s.desc;
+  const badge = document.getElementById("screen-mode-badge");
+  badge.className = `screen-mode-badge ${s.mode}`;
+  badge.textContent = s.mode.toUpperCase();
+  document.getElementById("phone-screen").innerHTML = s.render();
+  renderNav();
+  renderInspector();
+}
+
+/* ============================================================
+ * Simulator (성별·기본 앵커·자동 룰)
+ * ============================================================ */
+document.querySelectorAll(".sim-toggle").forEach(group => {
+  const sim = group.dataset.sim;
+  group.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => {
+      group.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state[sim] = btn.dataset.val;
+      // 성별 변경 시 선택값 초기화 (linen_dress 등 정합)
+      if (sim === "gender") {
+        if (state.selectedRole === "dress" && state.gender === "M") state.selectedRole = null;
+        if (state.selectedCatalogId === "linen_dress" && state.gender === "M") state.selectedCatalogId = null;
+      }
+      // 자동 룰 변경 시 user anchor 가 없으면 메인 화면 자연 갱신
+      goto(currentScreen);
+    };
   });
-  try {
-    const saved = localStorage.getItem('anchor-ux-theme');
-    if (saved) applyTheme(saved);
-    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
-  } catch (e) {}
+});
+
+document.querySelectorAll("[data-theme-btn]").forEach(btn => {
+  btn.onclick = () => {
+    document.body.dataset.theme = btn.dataset.themeBtn;
+    document.querySelectorAll("[data-theme-btn]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  };
+});
+
+/* ============================================================
+ * Init
+ * ============================================================ */
+goto(0);
 </script>
 </body>
 </html>
