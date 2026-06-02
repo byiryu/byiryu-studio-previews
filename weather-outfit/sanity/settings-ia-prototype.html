@@ -26,13 +26,12 @@
     background-image:radial-gradient(1200px 600px at 80% -10%,rgba(200,154,58,.06),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(44,78,128,.06),transparent 55%);
   }
   .wrap{max-width:980px;margin:0 auto;padding:48px 24px 80px}
-  /* header */
   .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:8px}
   .brand{font-weight:800;font-size:13px;letter-spacing:.28em;color:var(--brand);text-transform:uppercase}
   h1{font-size:30px;font-weight:800;line-height:1.15;margin-top:6px}
   h1 .dim{color:var(--sub);font-weight:600}
-  .lead{color:var(--sub);font-size:14px;margin-top:10px;max-width:560px;line-height:1.6}
-  /* controls */
+  .lead{color:var(--sub);font-size:14px;margin-top:10px;max-width:580px;line-height:1.6}
+  .lead b{color:var(--text)}
   .ctrls{display:flex;gap:10px;flex-wrap:wrap}
   .seg{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
   .seg button{border:none;background:none;font:inherit;font-weight:600;font-size:13px;color:var(--sub);
@@ -40,30 +39,25 @@
   .seg button.on{background:var(--brand);color:#fff}
   [data-theme="dark"] .seg button.on{color:#15130f}
   .seg.theme button.on{background:var(--text);color:var(--bg)}
-  /* legend */
   .legend{display:flex;gap:18px;margin:28px 0 26px;font-size:12.5px;color:var(--sub);flex-wrap:wrap}
   .legend span{display:inline-flex;align-items:center;gap:7px}
   .dot{width:10px;height:10px;border-radius:3px}
-  /* stage */
   .stage{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
   .col{display:flex;flex-direction:column;align-items:center;gap:14px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
   .col:nth-child(2){animation-delay:.08s}
   @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
   .caption{font-size:12.5px;font-weight:600;color:var(--sub);text-align:center;max-width:300px;line-height:1.5}
   .caption b{color:var(--text)}
-  /* phone */
   .phone{width:300px;background:var(--surface);border-radius:38px;border:1px solid var(--border);
     box-shadow:var(--shadow);padding:14px 12px 20px;position:relative;overflow:hidden}
-  .notch{width:120px;height:26px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto 8px;
-    position:relative;border:1px solid var(--border);border-top:none}
+  .notch{width:120px;height:26px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto 8px;border:1px solid var(--border);border-top:none}
   .scr{padding:6px 8px 4px}
   .scr-h{font-size:21px;font-weight:800;padding:8px 8px 16px}
   .scr-h small{display:block;font-size:11px;font-weight:600;color:var(--sub);letter-spacing:.02em;margin-top:3px}
-  /* section header */
   .sec{margin:14px 0 7px;padding:0 8px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--sub)}
   .sec .bar{width:3px;height:13px;border-radius:2px}
-  .sec.set .bar{background:var(--setbar)} .sec.func .bar{background:var(--funcbar)} .sec.acct .bar{background:var(--border)}
-  /* rows */
+  .sec.reco .bar{background:var(--funcbar)} .sec.set .bar{background:var(--setbar)} .sec.acct .bar{background:var(--border)}
+  .sec .hint{font-weight:600;letter-spacing:0;color:var(--sub);opacity:.8;margin-left:2px;text-transform:none}
   .card{background:var(--bg);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
   [data-theme="dark"] .card{background:#211d18}
   .row{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600}
@@ -73,20 +67,19 @@
   .row .val{color:var(--sub);font-size:13px;font-weight:600}
   .row .chev{color:var(--sub);font-size:15px;opacity:.6;margin-left:2px}
   .badge-new{font-size:9.5px;font-weight:800;letter-spacing:.04em;color:#fff;background:var(--mode2);padding:2px 7px;border-radius:999px}
-  /* anchor-flavored func rows tinted */
-  .func-card{background:var(--tint)}
-  [data-theme="dark"] .func-card{background:var(--tint)}
-  .func-card .row{border-color:rgba(200,154,58,.22)}
-  /* feature page (B) cards */
+  .reco-card{background:var(--tint)}
+  .reco-card .row{border-color:rgba(200,154,58,.22)}
+  /* action row (다른 옷 기준) — 골드 강조로 '액션' 시각 구분 */
+  .row.action .nm{color:var(--gold);font-weight:800}
+  .row.action .ic{filter:none}
   .feat{display:flex;gap:12px;align-items:flex-start;padding:15px 14px;border-bottom:1px solid var(--border)}
   .feat:last-child{border-bottom:none}
   .feat .fic{font-size:20px;width:26px;text-align:center}
   .feat .ft{font-weight:700;font-size:14px}
   .feat .fd{font-size:12px;color:var(--sub);margin-top:3px;line-height:1.45}
   .feat .go{font-size:11px;font-weight:800;color:var(--gold);border:1.5px solid var(--gold);padding:5px 10px;border-radius:999px;white-space:nowrap;align-self:center}
-  .entry{margin:14px 8px 4px;padding:13px 14px;border-radius:14px;border:1.5px dashed var(--mode2);
-    display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--mode2);cursor:default}
-  /* theme strip */
+  .entry{margin:14px 8px 4px;padding:13px 14px;border-radius:14px;border:1.5px dashed var(--gold);
+    display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--gold);cursor:default}
   .themes{margin-top:46px;padding:26px;background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)}
   .themes h3{font-size:13px;font-weight:800;letter-spacing:.04em}
   .themes p{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.55}
@@ -104,8 +97,8 @@
   <div class="top">
     <div>
       <div class="brand">PALETI · v1.1.1 sanity</div>
-      <h1>마이페이지 IA <span class="dim">— 설정 vs 기능 구분</span></h1>
-      <p class="lead">앵커 기능이 마이페이지에 <b>설정(기본 앵커)</b> + <b>액션(다른 옷 기준)</b> 을 더하며 성격이 섞였습니다. 두 가지 정리 방향을 비교하세요.</p>
+      <h1>마이페이지 IA <span class="dim">— 역할 기반 3그룹</span></h1>
+      <p class="lead"><b>컬러 테마·기본 앵커</b>는 추천을 바꾸는 <b>스타일 레버</b>(위치/알림 같은 환경 설정과 성격 다름) → <b>추천·코디 / 앱 설정 / 계정</b> 3그룹으로 정리.</p>
     </div>
     <div class="ctrls">
       <div class="seg" id="optSeg"><button data-opt="A" class="on">옵션 A · 그룹핑</button><button data-opt="B">옵션 B · 분리</button></div>
@@ -114,29 +107,29 @@
   </div>
 
   <div class="legend">
-    <span><i class="dot" style="background:var(--setbar)"></i> 설정 (preference)</span>
-    <span><i class="dot" style="background:var(--funcbar)"></i> 기능·액션 (feature)</span>
+    <span><i class="dot" style="background:var(--funcbar)"></i> 추천·코디 (테마·앵커 = 추천 레버)</span>
+    <span><i class="dot" style="background:var(--setbar)"></i> 앱 설정 (환경)</span>
     <span><i class="dot" style="background:var(--border)"></i> 계정·정보</span>
   </div>
 
-  <!-- OPTION A -->
+  <!-- OPTION A : 한 화면 3그룹 -->
   <div class="stage" id="optA">
     <div class="col">
       <div class="phone">
         <div class="notch"></div>
         <div class="scr">
           <div class="scr-h">마이페이지</div>
-          <div class="sec set"><span class="bar"></span>설정</div>
-          <div class="card">
+          <div class="sec reco"><span class="bar"></span>추천·코디 <span class="hint">— 추천을 어떻게 받을지</span></div>
+          <div class="card reco-card">
             <div class="row"><span class="ic">🎨</span><span class="nm">컬러 테마</span><span class="val">일상</span><span class="chev">›</span></div>
+            <div class="row"><span class="ic">📌</span><span class="nm">기본 앵커</span><span class="val">자동</span><span class="chev">›</span></div>
+            <div class="row action"><span class="ic">👕</span><span class="nm">다른 옷 기준</span><span class="badge-new">NEW</span><span class="chev">›</span></div>
+          </div>
+          <div class="sec set"><span class="bar"></span>앱 설정 <span class="hint">— 환경</span></div>
+          <div class="card">
             <div class="row"><span class="ic">📍</span><span class="nm">위치</span><span class="val">서울</span><span class="chev">›</span></div>
             <div class="row"><span class="ic">🔔</span><span class="nm">알림</span><span class="val">켜짐</span><span class="chev">›</span></div>
-            <div class="row"><span class="ic">📌</span><span class="nm">기본 앵커</span><span class="val">자동</span><span class="chev">›</span></div>
-          </div>
-          <div class="sec func"><span class="bar"></span>기능</div>
-          <div class="card func-card">
-            <div class="row"><span class="ic">👕</span><span class="nm">다른 옷 기준</span><span class="badge-new">NEW</span><span class="chev">›</span></div>
-            <div class="row"><span class="ic">🔲</span><span class="nm">위젯 추가</span><span class="chev">›</span></div>
+            <div class="row"><span class="ic">🌙</span><span class="nm">다크모드</span><span class="val">시스템</span><span class="chev">›</span></div>
           </div>
           <div class="sec acct"><span class="bar"></span>계정·정보</div>
           <div class="card">
@@ -145,25 +138,24 @@
           </div>
         </div>
       </div>
-      <p class="caption"><b>A. 섹션 그룹핑</b><br>새 페이지 없이 한 화면에 <b>설정 / 기능 / 계정</b> 헤더로 묶음. 가벼움 · MVP-first.</p>
+      <p class="caption"><b>A. 한 화면 3그룹</b><br>새 페이지 없이 <b>추천·코디 / 앱 설정 / 계정</b> 헤더로 묶음. 테마·앵커는 골드 묶음, '다른 옷 기준'(액션)만 골드 강조. 가벼움·MVP-first.</p>
     </div>
   </div>
 
-  <!-- OPTION B -->
+  <!-- OPTION B : 추천·코디 별도 페이지 -->
   <div class="stage hide" id="optB">
     <div class="col">
       <div class="phone">
         <div class="notch"></div>
         <div class="scr">
           <div class="scr-h">마이페이지</div>
-          <div class="sec set"><span class="bar"></span>설정</div>
+          <div class="entry">🎨 추천·코디 조정 <span>→</span></div>
+          <div class="sec set"><span class="bar"></span>앱 설정</div>
           <div class="card">
-            <div class="row"><span class="ic">🎨</span><span class="nm">컬러 테마</span><span class="val">일상</span><span class="chev">›</span></div>
             <div class="row"><span class="ic">📍</span><span class="nm">위치</span><span class="val">서울</span><span class="chev">›</span></div>
             <div class="row"><span class="ic">🔔</span><span class="nm">알림</span><span class="val">켜짐</span><span class="chev">›</span></div>
-            <div class="row"><span class="ic">📌</span><span class="nm">기본 앵커</span><span class="val">자동</span><span class="chev">›</span></div>
+            <div class="row"><span class="ic">🌙</span><span class="nm">다크모드</span><span class="val">시스템</span><span class="chev">›</span></div>
           </div>
-          <div class="entry">PALETI 기능 둘러보기 <span>→</span></div>
           <div class="sec acct"><span class="bar"></span>계정·정보</div>
           <div class="card">
             <div class="row"><span class="ic">↩︎</span><span class="nm">로그아웃</span><span class="chev">›</span></div>
@@ -171,25 +163,24 @@
           </div>
         </div>
       </div>
-      <p class="caption"><b>B-1. 마이페이지 = 설정만</b><br>기능은 별도 페이지로 분리 →</p>
+      <p class="caption"><b>B-1. 마이페이지 = 앱 설정·계정</b><br>추천 레버는 별도 페이지로 →</p>
     </div>
     <div class="col">
       <div class="phone">
         <div class="notch"></div>
         <div class="scr">
-          <div class="scr-h">PALETI 이렇게 써요<small>← 마이페이지</small></div>
-          <div class="card func-card">
-            <div class="feat"><span class="fic">🎨</span><div style="flex:1"><div class="ft">컬러 추천</div><div class="fd">매일 날씨·미세먼지로 오늘의 색 코디</div></div></div>
-            <div class="feat"><span class="fic">📌</span><div style="flex:1"><div class="ft">다른 옷 기준</div><div class="fd">내 옷(예: 청바지) 기준으로 나머지 색 맞춤</div></div><span class="go">열기</span></div>
-            <div class="feat"><span class="fic">🔲</span><div style="flex:1"><div class="ft">홈 위젯</div><div class="fd">앱 안 열어도 홈에서 오늘 색 확인</div></div><span class="go">추가</span></div>
+          <div class="scr-h">추천·코디 조정<small>← 마이페이지</small></div>
+          <div class="card reco-card">
+            <div class="feat"><span class="fic">🎨</span><div style="flex:1"><div class="ft">컬러 테마</div><div class="fd">오늘의 색 팔레트 무드 (일상·시원함·따뜻함…)</div></div><span class="go">일상</span></div>
+            <div class="feat"><span class="fic">📌</span><div style="flex:1"><div class="ft">기본 앵커</div><div class="fd">자동 / 매번 묻기</div></div><span class="go">자동</span></div>
+            <div class="feat"><span class="fic">👕</span><div style="flex:1"><div class="ft">다른 옷 기준</div><div class="fd">내 옷(예: 청바지) 기준으로 색 맞춤</div></div><span class="go">열기</span></div>
           </div>
         </div>
       </div>
-      <p class="caption"><b>B-2. 기능 한눈 페이지</b><br>onboarding recap 성격. discovery↑ · 새 화면 스코프↑.</p>
+      <p class="caption"><b>B-2. 추천·코디 페이지</b><br>추천 레버를 한 곳에. discovery↑ · 새 화면 스코프↑.</p>
     </div>
   </div>
 
-  <!-- theme labels -->
   <div class="themes">
     <h3>🎨 새 컬러 테마 라벨 (v1.1.1 확정) — <span style="color:var(--sub);font-weight:600">mood(English), storeValue 불변</span></h3>
     <p>음역(마린·포레스트…) → 느낌 기반. loanword(모던·시크·빈티지)는 순서 분산. 헤더 칩엔 mood만 노출.</p>
@@ -207,7 +198,7 @@
     </div>
   </div>
 
-  <p class="foot">PALETI v1.1.1 설정 UX 정리 sanity · idea = <code>2026-06-02-settings-ux-cleanup.md</code><br>리드 권장 = 옵션 A(섹션 그룹핑). discovery 데이터 확인 시 B 검토.</p>
+  <p class="foot">PALETI v1.1.1 설정 UX sanity · idea = <code>2026-06-02-settings-ux-cleanup.md</code><br>역할 기반 3그룹(추천·코디 / 앱 설정 / 계정) · 리드 권장 = 옵션 A(한 화면 그룹핑)</p>
 </div>
 
 <script>
