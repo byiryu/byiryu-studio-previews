@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PALETI — 메타 칩 재설계 (v1.1.1) Before/After</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F8F5F0;--surface:#FFFFFF;--text:#1A1A1A;--sub:#7A7468;--brand:#2C4E80;--border:#E8E5E0;
+    --gold:#C89A3A;--goldtxt:#8C6A1F;--tint:#FFF4D6;--chipbg:#ECE7DF;}
+  [data-theme="dark"]{--bg:#1A1815;--surface:#2A2520;--text:#F0EDE8;--sub:#A89B8C;--brand:#8FA9C9;--border:#3A352F;
+    --goldtxt:#C89A3A;--tint:#3A3220;--chipbg:#353029;}
+  *{box-sizing:border-box}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;margin:0;padding:28px;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
+  h1{font-size:21px;font-weight:800;margin:0 0 4px}
+  .sub{font-size:13px;color:#666;margin-bottom:18px}
+  .bar{display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+  .bar button{padding:8px 14px;border:1px solid #bbb;background:#fff;border-radius:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .bar button:hover{background:#f2efea}
+  .bar .on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .bar .smp{background:var(--brand,#2C4E80);color:#fff;border-color:transparent}
+  .wrap{display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:0 0 auto}
+  .lbl{font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+  .lbl .x{color:#c0392b}.lbl .o{color:#1e7e4f}
+  .tagm{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px}
+  .tagm.x{background:#fbe9e7;color:#c0392b}.tagm.o{background:#e6f4ec;color:#1e7e4f}
+
+  .phone{width:308px;background:var(--bg);border-radius:38px;border:10px solid #15130f;box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden;color:var(--text);transition:background .35s,color .35s}
+  .sb{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:11px 22px 2px;color:var(--text)}
+  .body{padding:6px 20px 22px}
+  .loc{font-size:21px;font-weight:800;margin-top:6px}
+  .wx{font-size:13px;color:var(--sub);margin-top:3px}
+  .pm{font-size:13px;color:var(--sub);margin-top:1px}
+
+  /* anchor caption (aos-ref: corner 10, 강조=본문크기 Bold) */
+  .cap{background:var(--tint);border-radius:10px;padding:9px 12px;font-size:12.5px;margin:14px 0 0;line-height:1.5}
+  .cap b{color:var(--goldtxt);font-weight:700}
+
+  /* meta chip (aos-ref: surfaceVariant gray, no border, pill, pad 4/12) */
+  .chip{display:inline-block;background:var(--chipbg);color:var(--text);font-size:13px;font-weight:500;
+    padding:4px 12px;border-radius:99px;margin-top:12px;transition:background .35s}
+  .chip .rd{color:#c0392b;font-weight:700}
+
+  .cards{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+  .ic{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+  .ic.anc{border:2px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
+  .sw{width:30px;height:30px;border-radius:8px;flex:0 0 auto;border:1px solid rgba(0,0,0,.12)}
+  .ir{font-size:11px;color:var(--sub);font-weight:600}.inm{font-size:13.5px;font-weight:700;margin-top:1px}
+  .bdg{font-size:9px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px;margin-left:auto}
+
+  .note{margin-top:26px;background:#fff;border-radius:14px;padding:20px 24px;max-width:780px;font-size:13.5px;line-height:1.7}
+  .note h3{font-size:14px;margin:0 0 10px}
+  .note table{border-collapse:collapse;width:100%;margin:10px 0;font-size:12.5px}
+  .note td,.note th{border:1px solid #e5e2dc;padding:7px 10px;text-align:left;vertical-align:top}
+  .note th{background:#f6f4f0;font-weight:700}
+  .note code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12px}
+  .ok{color:#1e7e4f;font-weight:700}.no{color:#c0392b;font-weight:700}
+  .src{font-size:11px;color:#888;margin-top:7px}
+</style>
+</head>
+<body>
+  <h1>PALETI · 메타 칩 재설계 (v1.1.1)</h1>
+  <div class="sub">현재 <code>성별 · 테마 · 무드</code> → 제안 <code>성별 · 무드 · 계절</code> · 중복 제거 + 명확화</div>
+
+  <div class="bar">
+    <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
+    <button id="thD" onclick="setTheme('dark')">☾ Dark</button>
+    <span style="width:14px"></span>
+    <button class="smp" onclick="nextSample()">↻ 다른 추천 보기</button>
+    <span id="smpname" style="font-size:12px;color:#666;font-weight:600"></span>
+  </div>
+
+  <div class="wrap">
+    <!-- BEFORE -->
+    <div class="col">
+      <div class="lbl"><span class="x">●</span> 현재 (v1.1.1-1 이후) <span class="tagm x">중복·모호</span></div>
+      <div class="phone">
+        <div class="sb"><span>9:41</span><span>📶 100%</span></div>
+        <div class="body">
+          <div class="loc">서울특별시</div>
+          <div class="wx" id="b_wx"></div>
+          <div class="pm" id="b_pm"></div>
+          <div class="cap" id="b_cap"></div>
+          <div class="chip" id="b_chip"></div>
+          <div class="cards" id="b_cards"></div>
+        </div>
+      </div>
+      <div class="src" id="b_src"></div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="col">
+      <div class="lbl"><span class="o">●</span> 제안 (성별·무드·계절) <span class="tagm o">중복 0</span></div>
+      <div class="phone">
+        <div class="sb"><span>9:41</span><span>📶 100%</span></div>
+        <div class="body">
+          <div class="loc">서울특별시</div>
+          <div class="wx" id="a_wx"></div>
+          <div class="pm" id="a_pm"></div>
+          <div class="cap" id="a_cap"></div>
+          <div class="chip" id="a_chip"></div>
+          <div class="cards" id="a_cards"></div>
+        </div>
+      </div>
+      <div class="src" id="a_src"></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h3>변경 요약 & 데이터 출처</h3>
+    <table>
+      <tr><th>토큰</th><th>현재</th><th>제안</th><th>출처</th></tr>
+      <tr><td>1번</td><td>성별 (남성)</td><td>성별 (남성)</td><td>프로필 <code>gender</code> — server (M/F → 클라 한글)</td></tr>
+      <tr><td>2번 (가운데)</td><td><span class="no">테마</span> (따뜻함)</td><td><span class="ok">무드</span> (산뜻)</td><td><code>mood_tag</code> — server Claude 생성 (<b>vibe-only로 정제</b>: 계절·테마 echo 제거)</td></tr>
+      <tr><td>3번</td><td>무드 (여름 어스톤)</td><td><span class="ok">계절</span> (여름)</td><td><code>season</code> — <b>이미 envelope에 존재</b> (enum, KST 월 기준 → 클라 한글)</td></tr>
+    </table>
+    <p><b>중복이 사라지는 이유:</b> 현재는 테마(<span class="no">따뜻함</span>)와 moodTag 속 테마 echo(<span class="no">어스톤</span>=earth-tone)가 <b>같은 걸 두 번</b> 말함. 테마는 v1.1.1-2에서 <b>"추천·코디" hub로 이동</b>했으니 메인 칩에서 빼고, moodTag는 vibe만 남기고, 계절은 별도 토큰으로 분리 → 3토큰이 <b>성별·무드·계절</b>로 성격이 안 겹침.</p>
+    <p><b>기존 API v1.0.0 영향 = <span class="ok">비파괴</span>:</b> <code>season</code> 은 이미 envelope에 있어 추가 필드 0. <code>mood_tag</code> 는 타입(string) 불변·내용만 vibe-only → 옛 클라 크래시 0 (현 v1.0.0 칩 mood 텍스트만 짧아짐 = cosmetic).</p>
+    <p class="src">server = mood_tag 프롬프트 정제 (few-shot 계절접두어·테마echo 제거) / client = 칩 재배치 + season enum→한글. 시각 검증용 프로토타입 — 명세 SoT는 wireframes.md.</p>
+  </div>
+
+<script>
+  // [gender, anchorColorKo, anchorItem, anchorHex, oldThemeLabel, oldMood(테마echo), newMood(vibe), seasonEn, seasonKo, wx, pm, cards[[role,colorKo,name,hex,isAnchor]]]
+  const S = [
+    {g:"남성",ac:"흰색",ai:"면 티",ah:"#F2F0EA",thm:"따뜻함",om:"여름 어스톤",nm:"산뜻",se:"여름",
+     wx:"32°C 맑음",pm:"미세먼지 보통",
+     cards:[["상의","흰색","면 티","#F2F0EA",1],["하의","탠 베이지","치노 팬츠","#C8A878",0],["신발","아이보리","스니커즈","#EFE9DC",0]]},
+    {g:"여성",ac:"라벤더",ai:"니트 가디건",ah:"#C9BCE0",thm:"사랑스러움",om:"봄 페미닌",nm:"포근",se:"봄",
+     wx:"14°C 구름 많음",pm:"미세먼지 좋음",
+     cards:[["외투","라벤더","니트 가디건","#C9BCE0",1],["상의","아이보리","블라우스","#EFE9DC",0],["하의","연그레이","슬랙스","#C7C4BE",0]]},
+    {g:"남성",ac:"차콜",ai:"울 코트",ah:"#3C3F44",thm:"시크",om:"겨울 시티",nm:"도시적",se:"겨울",
+     wx:"-2°C 흐림",pm:"미세먼지 나쁨",
+     cards:[["외투","차콜","울 코트","#3C3F44",1],["상의","네이비","터틀넥","#2A3550",0],["신발","블랙","첼시 부츠","#222",0]]},
+    {g:"여성",ac:"코랄",ai:"플리츠 스커트",ah:"#E98A78",thm:"화사함",om:"여름 비비드",nm:"발랄",se:"여름",
+     wx:"28°C 맑음",pm:"미세먼지 좋음",
+     cards:[["하의","코랄","플리츠 스커트","#E98A78",1],["상의","화이트","크롭 티","#FBFAF7",0],["신발","탠","샌들","#C99A6A",0]]},
+  ];
+  let i=0;
+  function cards(arr){return arr.map(c=>`<div class="ic${c[4]?' anc':''}"><span class="sw" style="background:${c[3]}"></span><div><div class="ir">${c[0]}</div><div class="inm">${c[2]}</div></div>${c[4]?'<span class="bdg">📌 기준</span>':''}</div>`).join('');}
+  function render(){
+    const s=S[i];
+    document.getElementById('smpname').textContent = `샘플 ${i+1}/${S.length} — ${s.g}·${s.se}`;
+    // BEFORE
+    b_wx.textContent=s.wx; b_pm.textContent=s.pm;
+    b_cap.innerHTML=`📌 오늘은 <b>${s.ac} ${s.ai}</b> 기준 — 다른 옷은 이에 맞춤`;
+    b_chip.innerHTML=`${s.g} · <span class="rd">${s.thm}</span> · <span class="rd">${s.om}</span>`;
+    b_cards.innerHTML=cards(s.cards);
+    b_src.innerHTML=`<span style="color:#c0392b">⚠︎ "${s.thm}"(테마) + "${s.om}"(무드 속 테마echo) 중복</span>`;
+    // AFTER
+    a_wx.textContent=s.wx; a_pm.textContent=s.pm;
+    a_cap.innerHTML=`📌 오늘은 <b>${s.ac} ${s.ai}</b> 기준 — 다른 옷은 이에 맞춤`;
+    a_chip.innerHTML=`${s.g} · ${s.nm} · ${s.se}`;
+    a_cards.innerHTML=cards(s.cards);
+    a_src.innerHTML=`성별·무드(vibe)·계절 — 중복 0, 각 토큰 성격 구분 명확`;
+  }
+  function nextSample(){i=(i+1)%S.length;render();}
+  function setTheme(t){document.documentElement.setAttribute('data-theme',t);
+    thL.classList.toggle('on',t==='light');thD.classList.toggle('on',t==='dark');}
+  render();
+</script>
+</body>
+</html>
