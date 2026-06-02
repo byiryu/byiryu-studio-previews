@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PALETI v1.1.1 — 설정 IA 인터랙티브 프로토타입</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F8F5F0;--surface:#FFFFFF;--text:#1A1A1A;--sub:#7A7468;--brand:#2C4E80;--border:#E8E5E0;
+    --gold:#C89A3A;--mode2:#4A90E2;--tint:#FFF4D6;}
+  [data-theme="dark"]{--bg:#1A1815;--surface:#2A2520;--text:#F0EDE8;--sub:#A89B8C;--brand:#8FA9C9;--border:#3A352F;--tint:#3A3220;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;padding:24px;line-height:1.5;letter-spacing:-.01em}
+  .layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:250px 1fr;gap:24px;align-items:start}
+  @media(max-width:880px){.layout{grid-template-columns:1fr}}
+  /* sidebar */
+  .side{background:#fff;border-radius:14px;padding:20px;position:sticky;top:24px}
+  .side .bc{font-size:12px;color:#888;margin-bottom:14px}
+  .side h2{font-size:11px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.1em;margin:16px 0 9px}
+  .nav{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .nav li{padding:9px 12px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:#1a1a1a;display:flex;align-items:center;gap:8px;border:1px solid transparent}
+  .nav li:hover{background:#f4f2ef}
+  .nav li.on{background:#1a1a1a;color:#fff}
+  .nav .nb{font-size:9px;font-weight:800;background:var(--mode2);color:#fff;padding:1px 6px;border-radius:99px;margin-left:auto}
+  .tg{display:flex;gap:6px;margin-top:12px}
+  .tg button{flex:1;padding:7px;border:1px solid #ccc;background:#fff;border-radius:8px;font:inherit;font-size:12px;cursor:pointer}
+  .tg button.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .chg{margin-top:18px;padding-top:14px;border-top:1px solid #eee;font-size:11.5px;color:#666;line-height:1.7}
+  .chg b{color:#1a1a1a}
+  .chg .x{color:#c0392b;font-weight:700}.chg .o{color:#1e7e4f;font-weight:700}
+  /* main */
+  .main{background:#fff;border-radius:16px;padding:30px 32px 40px;min-height:640px}
+  .sh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #eee;padding-bottom:16px;margin-bottom:8px}
+  .sh .t{font-size:20px;font-weight:800}.sh .d{font-size:13px;color:#777;margin-top:4px;max-width:560px}
+  .sh .id{font-size:11px;color:#aaa;font-family:ui-monospace,monospace}
+  .hint{background:#FFF8E8;border:1px solid #F0E2BC;color:#8a6d1f;font-size:12px;padding:9px 13px;border-radius:9px;margin:14px 0}
+  .stage{display:flex;justify-content:center;padding:24px 0}
+  /* phone */
+  .phone{width:300px;background:var(--bg);border-radius:40px;border:10px solid #15130f;box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden;color:var(--text);transition:background .4s}
+  .sb{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:10px 22px 4px;color:var(--text)}
+  .scr{display:none;padding:6px 16px 22px;min-height:560px;flex-direction:column}
+  .scr.on{display:flex;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* main screen */
+  .mh{display:flex;justify-content:space-between;align-items:flex-start;margin:6px 0 4px}
+  .loc{font-size:20px;font-weight:800;cursor:pointer}.wx{font-size:12.5px;color:var(--sub);margin-top:2px}
+  .gear{font-size:19px;cursor:pointer;opacity:.7}
+  .ghost{margin:8px 0;padding:7px 11px;border:1.5px dashed #c0392b;border-radius:99px;font-size:11px;color:#c0392b;font-weight:700;text-align:center;background:rgba(192,57,43,.05)}
+  .mood{display:inline-block;font-size:11.5px;font-weight:600;color:var(--sub);background:var(--surface);border:1px solid var(--border);padding:5px 11px;border-radius:99px;margin:6px 0}
+  .cap{background:var(--tint);border-radius:12px;padding:11px 13px;font-size:12.5px;font-weight:600;margin:8px 0 12px;line-height:1.45}
+  .cap b{color:var(--gold)}
+  .cards{display:flex;flex-direction:column;gap:8px}
+  .ic{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px}
+  .ic.anc{border:2px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
+  .chip{width:34px;height:34px;border-radius:9px;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
+  .chip.empty{background:repeating-linear-gradient(45deg,var(--border) 0 5px,transparent 5px 10px)}
+  .ir{font-size:11px;color:var(--sub);font-weight:600}.inm{font-size:14px;font-weight:700;margin-top:1px}
+  .badge{font-size:9px;font-weight:800;color:#fff;background:var(--gold);padding:2px 6px;border-radius:99px;margin-left:auto}
+  .ctaB{margin-top:auto;padding-top:14px}
+  .btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--brand);color:#fff;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;transition:.2s}
+  [data-theme="dark"] .btn{color:#12100c}
+  .btn:active{transform:scale(.98)}
+  .renamed{position:relative}
+  .renamed::after{content:"★ 리네임 + 진입점";position:absolute;right:0;top:-16px;font-size:10px;font-weight:700;color:#1e7e4f}
+  .adb{margin-top:10px;height:42px;border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--sub)}
+  /* generic list rows */
+  .back{font-size:18px;cursor:pointer;width:fit-content;padding:2px 0 4px}
+  .pt{font-size:22px;font-weight:800;margin:2px 0 3px}.psub{font-size:12.5px;color:var(--sub);margin-bottom:14px}
+  .sec{font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.05em;margin:16px 0 7px;display:flex;align-items:center;gap:7px}
+  .sec .bar{width:3px;height:12px;border-radius:2px}
+  .sec.reco .bar{background:var(--gold)}.sec.set .bar{background:var(--brand)}.sec.acct .bar{background:var(--border)}
+  .grp{background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden}
+  .grp.reco{background:var(--tint);border-color:rgba(200,154,58,.3)}
+  .r{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;cursor:pointer}
+  .r:last-child{border-bottom:none}.r .ri{width:20px;text-align:center}.r .rn{flex:1}.r .rv{color:var(--sub);font-size:13px}.r .rc{color:var(--sub);opacity:.6}
+  .r.act .rn{color:var(--gold);font-weight:800}
+  .nbg{font-size:9px;font-weight:800;color:#fff;background:var(--mode2);padding:2px 6px;border-radius:99px}
+  /* theme picker chips */
+  .tchips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 4px 4px}
+  .tc{font-size:12px;font-weight:600;padding:7px 11px;border-radius:99px;border:1px solid var(--border);background:var(--surface)}
+  .tc.on{border-color:var(--gold);color:var(--gold);background:var(--tint)}
+  .tc .en{font-size:9.5px;color:var(--sub);font-weight:500}
+  .removed-note{margin:10px 0;padding:10px 12px;border:1.5px dashed var(--mode2);border-radius:11px;font-size:11.5px;color:var(--mode2);font-weight:600;line-height:1.4;text-align:center}
+  .step{display:flex;gap:8px;flex-wrap:wrap;margin:7px 0 4px}
+  .so{font-size:12px;font-weight:600;padding:8px 12px;border-radius:9px;border:1px solid var(--border);background:var(--surface)}
+  .so.on{border-color:var(--gold);background:var(--tint);color:var(--gold);font-weight:800}
+</style>
+</head>
+<body data-theme="light">
+<div class="layout">
+  <aside class="side">
+    <div class="bc">PALETI · v1.1.1 sanity</div>
+    <h2>화면 (탭하면 전환)</h2>
+    <ul class="nav" id="nav">
+      <li data-s="main" class="on">📱 메인</li>
+      <li data-s="reco">🎨 추천·코디 <span class="nb">NEW</span></li>
+      <li data-s="anchor">👕 앵커 선택</li>
+      <li data-s="mypage">⚙ 마이페이지(설정)</li>
+    </ul>
+    <h2>모드</h2>
+    <div class="tg"><button class="on" data-th="light">Light</button><button data-th="dark">Dark</button></div>
+    <div class="chg">
+      <b>★ v1.1.1 IA 변경</b><br>
+      <span class="x">−</span> 메인 ▼ "다른 옷 기준" pill 제거<br>
+      <span class="o">↻</span> 메인 하단 버튼 "컬러 테마 변경" → <b>"코디 추천 조정"</b> + <b>추천·코디 페이지</b>로 진입<br>
+      <span class="x">−</span> 마이페이지에서 컬러 테마·기본 앵커 제거<br>
+      <span class="o">+</span> 추천·코디 페이지 신설 (테마·앵커·다른옷기준 한 곳)<br>
+      <span class="o">↻</span> catalog 라벨 "흰 면 티"→"면 티"
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="sh">
+      <div><div class="t" id="st">메인</div><div class="d" id="sd"></div></div>
+      <div class="id" id="si"></div>
+    </div>
+    <div class="hint">인터랙티브: 폰 안의 버튼·행을 탭하면 화면이 전환됩니다. 좌측 nav로도 점프.</div>
+    <div class="stage">
+      <div class="phone">
+        <div class="sb"><span>9:41</span><span>● ● ●</span></div>
+
+        <!-- MAIN -->
+        <div class="scr on" id="s-main">
+          <div class="mh">
+            <div><div class="loc" onclick="go('mypage')">서울 · 강남구 ↻</div><div class="wx">25°C 맑음</div><div class="wx">미세먼지 보통</div></div>
+            <div class="gear" onclick="go('mypage')">⚙</div>
+          </div>
+          <div class="ghost">✕ 여기 있던 ▼ "다른 옷 기준" pill 제거</div>
+          <span class="mood">톤온톤 · 여름 시원함</span>
+          <div class="cap">📌 오늘은 <b>흰색 면 티</b> 기준 — 다른 옷은 이에 맞춤</div>
+          <div class="cards">
+            <div class="ic"><div class="chip empty"></div><div><div class="ir">외투</div><div class="inm" style="color:var(--sub)">해당 없음</div></div></div>
+            <div class="ic anc"><div class="chip" style="background:#F4F4EE"></div><div><div class="ir">📌 상의 · 기준</div><div class="inm">흰색 면 티</div></div><span class="badge">기준</span></div>
+            <div class="ic"><div class="chip" style="background:#5A7BA8"></div><div><div class="ir">하의</div><div class="inm">미드 인디고 청바지</div></div></div>
+            <div class="ic"><div class="chip" style="background:#D2B48C"></div><div><div class="ir">신발</div><div class="inm">탠 베이지 스니커즈</div></div></div>
+          </div>
+          <div class="ctaB">
+            <div class="renamed"><button class="btn" onclick="go('reco')">🎨 코디 추천 조정 ▾</button></div>
+            <div class="adb">AdMob Banner · 50dp</div>
+          </div>
+        </div>
+
+        <!-- RECO·CODI (NEW) -->
+        <div class="scr" id="s-reco">
+          <span class="back" onclick="go('main')">←</span>
+          <div class="pt">코디 추천 조정</div>
+          <div class="psub">추천을 <b>어떻게 받을지</b> 정해요</div>
+          <div class="sec reco"><span class="bar"></span>오늘 무드</div>
+          <div class="grp reco">
+            <div class="r"><span class="ri">🎨</span><span class="rn">컬러 테마</span><span class="rv">일상</span><span class="rc">›</span></div>
+          </div>
+          <div class="tchips">
+            <span class="tc on">일상 <span class="en">Original</span></span><span class="tc">시원함 <span class="en">Marine</span></span>
+            <span class="tc">모던 <span class="en">Mono</span></span><span class="tc">따뜻함 <span class="en">Earth</span></span>
+            <span class="tc">시크 <span class="en">Cool</span></span><span class="tc">은은함 <span class="en">Pastel</span></span>
+            <span class="tc">빈티지</span><span class="tc">화사함 <span class="en">Pop</span></span><span class="tc">사랑스러움</span><span class="tc">차분함 <span class="en">Forest</span></span>
+          </div>
+          <div class="sec reco"><span class="bar"></span>앵커 (옷 기준)</div>
+          <div class="grp reco">
+            <div class="r"><span class="ri">📌</span><span class="rn">기본 앵커</span><span class="rv">자동</span><span class="rc">›</span></div>
+            <div class="r act" onclick="go('anchor')"><span class="ri">👕</span><span class="rn">다른 옷 기준 (오늘만)</span><span class="nbg">NEW</span><span class="rc">›</span></div>
+          </div>
+        </div>
+
+        <!-- ANCHOR SELECT -->
+        <div class="scr" id="s-anchor">
+          <span class="back" onclick="go('reco')">←</span>
+          <div class="pt">다른 옷 기준</div>
+          <div class="psub">내 옷(예: 청바지) 기준으로 색 맞춤 · 오늘 한 번</div>
+          <div class="sec reco"><span class="bar"></span>① 카테고리</div>
+          <div class="step"><span class="so">외투</span><span class="so on">하의</span><span class="so">상의</span><span class="so">신발</span><span class="so">자동</span></div>
+          <div class="sec reco"><span class="bar"></span>② 의류 (하의)</div>
+          <div class="step"><span class="so on">청바지</span><span class="so">슬랙스</span><span class="so">와이드</span><span class="so">조거</span></div>
+          <div class="sec reco"><span class="bar"></span>③ 색 톤 (청바지)</div>
+          <div class="step"><span class="so on">연청</span><span class="so">미드</span><span class="so">찐청</span><span class="so">블랙</span><span class="so">맡김</span></div>
+          <div class="ctaB"><button class="btn" onclick="go('main')">이걸로 추천 받기</button></div>
+        </div>
+
+        <!-- MYPAGE (설정) -->
+        <div class="scr" id="s-mypage">
+          <span class="back" onclick="go('main')">←</span>
+          <div class="pt">설정</div>
+          <div class="removed-note">컬러 테마·기본 앵커는 <b>메인 → 코디 추천 조정</b>으로 이동</div>
+          <div class="sec set"><span class="bar"></span>앱 설정</div>
+          <div class="grp">
+            <div class="r"><span class="ri">📍</span><span class="rn">위치</span><span class="rv">서울 · GPS</span><span class="rc">›</span></div>
+            <div class="r"><span class="ri">🔔</span><span class="rn">알림</span><span class="rv">켜짐</span><span class="rc">›</span></div>
+            <div class="r"><span class="ri">🌙</span><span class="rn">다크모드</span><span class="rv">시스템</span><span class="rc">›</span></div>
+          </div>
+          <div class="sec acct"><span class="bar"></span>계정·정보</div>
+          <div class="grp">
+            <div class="r"><span class="ri">↩︎</span><span class="rn">로그아웃</span><span class="rc">›</span></div>
+            <div class="r"><span class="ri">📄</span><span class="rn">이용약관·개인정보처리방침</span><span class="rc">›</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  const META={
+    main:["메인 ⭐","▼ pill 제거 · 하단 버튼 '코디 추천 조정'으로 리네임+진입점화 · 캡션 '흰색 면 티'(catalog fix)","screen · main"],
+    reco:["추천·코디 (NEW)","컬러 테마 + 기본 앵커 + 다른 옷 기준을 한 페이지로. 메인 하단 버튼이 진입점","screen · reco"],
+    anchor:["앵커 선택","3-단계(카테고리→의류→색 톤). '다른 옷 기준'에서 진입 (기존 화면 재사용)","screen · anchor"],
+    mypage:["마이페이지(설정)","컬러 테마·기본 앵커 제거 → 앱 설정(위치·알림·다크모드) + 계정만","screen · mypage"]
+  };
+  function go(s){
+    document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id==='s-'+s));
+    document.querySelectorAll('#nav li').forEach(e=>e.classList.toggle('on',e.dataset.s===s));
+    const m=META[s];document.getElementById('st').textContent=m[0];document.getElementById('sd').textContent=m[1];document.getElementById('si').textContent=m[2];
+  }
+  document.getElementById('nav').addEventListener('click',e=>{const li=e.target.closest('li');if(li)go(li.dataset.s);});
+  document.querySelector('.tg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    document.querySelectorAll('.tg button').forEach(x=>x.classList.toggle('on',x===b));document.body.dataset.theme=b.dataset.th;});
+  go('main');
+</script>
+</body>
+</html>
