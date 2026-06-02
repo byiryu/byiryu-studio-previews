@@ -61,7 +61,7 @@
 </head>
 <body>
   <h1>PALETI · 메타 칩 재설계 (v1.1.1)</h1>
-  <div class="sub">현재 <code>성별 · 테마 · 무드</code> → 제안 <code>성별 · 무드 · 계절</code> · 중복 제거 + 명확화</div>
+  <div class="sub">현재 <code>성별 · 테마 · 무드</code>(중복·Claude무드 모호) → Claude 무드 화면 제거 + 결정적 토큰만. 변형 A/B/C 비교</div>
 
   <div class="bar">
     <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
@@ -69,6 +69,13 @@
     <span style="width:14px"></span>
     <button class="smp" onclick="nextSample()">↻ 다른 추천 보기</button>
     <span id="smpname" style="font-size:12px;color:#666;font-weight:600"></span>
+  </div>
+  <div class="bar" style="margin-top:-8px">
+    <span style="font-size:12px;font-weight:700;color:#444">제안 변형 →</span>
+    <button id="vA" class="on" onclick="setVar('A')">A · 성별·계절</button>
+    <button id="vB" onclick="setVar('B')">B · 성별·테마·계절</button>
+    <button id="vC" onclick="setVar('C')">C · 칩 제거</button>
+    <span style="font-size:11.5px;color:#888">※ 셋 다 Claude 무드 텍스트는 화면에서 제거 (envelope엔 보존)</span>
   </div>
 
   <div class="wrap">
@@ -91,7 +98,7 @@
 
     <!-- AFTER -->
     <div class="col">
-      <div class="lbl"><span class="o">●</span> 제안 (성별·무드·계절) <span class="tagm o">중복 0</span></div>
+      <div class="lbl"><span class="o">●</span> 제안 <span id="varname"></span> <span class="tagm o">Claude 무드 제거</span></div>
       <div class="phone">
         <div class="sb"><span>9:41</span><span>📶 100%</span></div>
         <div class="body">
@@ -108,16 +115,17 @@
   </div>
 
   <div class="note">
-    <h3>변경 요약 & 데이터 출처</h3>
+    <h3>핵심 결정 — Claude 무드 텍스트는 화면에서 제거</h3>
+    <p><b>왜:</b> <code>mood_tag</code> 는 Claude가 추천마다 자유 생성 → 단어가 매번 바뀌고 추상적이라 <b>사용자가 "이게 뭘 뜻하지?" 함</b>. 화면 토큰은 <b>결정적이고 사용자가 이미 아는 값</b>이어야 함. → moodTag는 <b>envelope에 보존</b>(통계·v1.5 캘린더)하되 <b>메인 칩에선 미노출</b>.</p>
     <table>
-      <tr><th>토큰</th><th>현재</th><th>제안</th><th>출처</th></tr>
-      <tr><td>1번</td><td>성별 (남성)</td><td>성별 (남성)</td><td>프로필 <code>gender</code> — server (M/F → 클라 한글)</td></tr>
-      <tr><td>2번 (가운데)</td><td><span class="no">테마</span> (따뜻함)</td><td><span class="ok">무드</span> (산뜻)</td><td><code>mood_tag</code> — server Claude 생성 (<b>vibe-only로 정제</b>: 계절·테마 echo 제거)</td></tr>
-      <tr><td>3번</td><td>무드 (여름 어스톤)</td><td><span class="ok">계절</span> (여름)</td><td><code>season</code> — <b>이미 envelope에 존재</b> (enum, KST 월 기준 → 클라 한글)</td></tr>
+      <tr><th>변형</th><th>칩</th><th>장점 / 주의</th></tr>
+      <tr><td><b>A</b> (권장)</td><td>성별 · 계절</td><td><span class="ok">가장 명확</span> — 결정적 2토큰. Claude 텍스트 0 / 다소 단출</td></tr>
+      <tr><td><b>B</b></td><td>성별 · 테마 · 계절</td><td>테마=사용자 선택값(이해함) / 테마 라벨이 무드단어라 '여름' 옆에서 <span class="no">약간 모호</span></td></tr>
+      <tr><td><b>C</b></td><td>(칩 제거)</td><td>헤더(날씨+캡션)가 이미 충분 / 컨텍스트 태그 사라짐</td></tr>
     </table>
-    <p><b>중복이 사라지는 이유:</b> 현재는 테마(<span class="no">따뜻함</span>)와 moodTag 속 테마 echo(<span class="no">어스톤</span>=earth-tone)가 <b>같은 걸 두 번</b> 말함. 테마는 v1.1.1-2에서 <b>"추천·코디" hub로 이동</b>했으니 메인 칩에서 빼고, moodTag는 vibe만 남기고, 계절은 별도 토큰으로 분리 → 3토큰이 <b>성별·무드·계절</b>로 성격이 안 겹침.</p>
-    <p><b>기존 API v1.0.0 영향 = <span class="ok">비파괴</span>:</b> <code>season</code> 은 이미 envelope에 있어 추가 필드 0. <code>mood_tag</code> 는 타입(string) 불변·내용만 vibe-only → 옛 클라 크래시 0 (현 v1.0.0 칩 mood 텍스트만 짧아짐 = cosmetic).</p>
-    <p class="src">server = mood_tag 프롬프트 정제 (few-shot 계절접두어·테마echo 제거) / client = 칩 재배치 + season enum→한글. 시각 검증용 프로토타입 — 명세 SoT는 wireframes.md.</p>
+    <p><b>토큰 출처:</b> 성별=<code>gender</code>(프로필) · 계절=<code>season</code>(이미 envelope, enum→한글) · 테마=<code>preferred_theme</code>(사용자 선택). <b>전부 결정적 — Claude 자유생성 0.</b></p>
+    <p><b>기존 API v1.0.0 영향 = <span class="ok">비파괴</span>:</b> A/B/C 모두 <code>season</code>(기존 필드) + 프로필값만 사용, envelope 스키마 변경 0. <code>mood_tag</code> 는 그대로 두고 화면에서만 안 씀 → 옛 클라 영향 0.</p>
+    <p class="src">client = 칩 재배치 + season enum→한글 (server 작업 불필요). 시각 검증용 — 명세 SoT는 wireframes.md.</p>
   </div>
 
 <script>
@@ -136,25 +144,34 @@
      wx:"28°C 맑음",pm:"미세먼지 좋음",
      cards:[["하의","코랄","플리츠 스커트","#E98A78",1],["상의","화이트","크롭 티","#FBFAF7",0],["신발","탠","샌들","#C99A6A",0]]},
   ];
-  let i=0;
+  let i=0, V='A';
+  const VAR={
+    A:{name:"A · 성별·계절", chip:s=>`${s.g} · ${s.se}`, src:"결정적 2토큰만 — 사용자가 아는 값. Claude 텍스트 0. 가장 명확"},
+    B:{name:"B · 성별·테마·계절", chip:s=>`${s.g} · ${s.thm} · ${s.se}`, src:"테마(사용자 선택값) 가운데. 단 테마 라벨이 무드단어라 '여름' 옆에서 약간 모호"},
+    C:{name:"C · 칩 제거", chip:s=>``, src:"헤더(날씨+캡션)가 이미 충분 → 칩 제거. 가장 미니멀"},
+  };
   function cards(arr){return arr.map(c=>`<div class="ic${c[4]?' anc':''}"><span class="sw" style="background:${c[3]}"></span><div><div class="ir">${c[0]}</div><div class="inm">${c[2]}</div></div>${c[4]?'<span class="bdg">📌 기준</span>':''}</div>`).join('');}
   function render(){
-    const s=S[i];
+    const s=S[i], v=VAR[V];
     document.getElementById('smpname').textContent = `샘플 ${i+1}/${S.length} — ${s.g}·${s.se}`;
-    // BEFORE
+    document.getElementById('varname').textContent = `(${v.name})`;
+    // BEFORE (현재)
     b_wx.textContent=s.wx; b_pm.textContent=s.pm;
     b_cap.innerHTML=`📌 오늘은 <b>${s.ac} ${s.ai}</b> 기준 — 다른 옷은 이에 맞춤`;
     b_chip.innerHTML=`${s.g} · <span class="rd">${s.thm}</span> · <span class="rd">${s.om}</span>`;
+    b_chip.style.display='inline-block';
     b_cards.innerHTML=cards(s.cards);
-    b_src.innerHTML=`<span style="color:#c0392b">⚠︎ "${s.thm}"(테마) + "${s.om}"(무드 속 테마echo) 중복</span>`;
-    // AFTER
+    b_src.innerHTML=`<span style="color:#c0392b">⚠︎ "${s.thm}"(테마) + "${s.om}"(무드 속 테마echo) 중복 + Claude 무드 모호</span>`;
+    // AFTER (제안 변형)
     a_wx.textContent=s.wx; a_pm.textContent=s.pm;
     a_cap.innerHTML=`📌 오늘은 <b>${s.ac} ${s.ai}</b> 기준 — 다른 옷은 이에 맞춤`;
-    a_chip.innerHTML=`${s.g} · ${s.nm} · ${s.se}`;
+    const c=v.chip(s);
+    a_chip.innerHTML=c; a_chip.style.display = c? 'inline-block':'none';
     a_cards.innerHTML=cards(s.cards);
-    a_src.innerHTML=`성별·무드(vibe)·계절 — 중복 0, 각 토큰 성격 구분 명확`;
+    a_src.innerHTML=v.src;
   }
   function nextSample(){i=(i+1)%S.length;render();}
+  function setVar(x){V=x;['A','B','C'].forEach(k=>document.getElementById('v'+k).classList.toggle('on',k===x));render();}
   function setTheme(t){document.documentElement.setAttribute('data-theme',t);
     thL.classList.toggle('on',t==='light');thD.classList.toggle('on',t==='dark');}
   render();
