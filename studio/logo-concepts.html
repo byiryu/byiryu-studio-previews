@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>byiryu studio — 로고 컨셉 보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#EDEAE4;--card:#FFFFFF;--ink:#1A1A1A;--sub:#8A8378;--line:#E5E1D9;--indigo:#2C4E80;--gold:#C89A3A;--coral:#E98A78;--sage:#7E9B82;}
+  [data-theme="dark"]{--bg:#15130F;--card:#221F1A;--ink:#F0EDE8;--sub:#9A9182;--line:#33302A;--indigo:#8FA9C9;}
+  *{box-sizing:border-box}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:30px;letter-spacing:-.01em;transition:background .35s,color .35s}
+  h1{font-size:22px;font-weight:800;margin:0 0 3px}
+  .sub{font-size:13px;color:var(--sub);margin-bottom:20px;max-width:720px;line-height:1.6}
+  .bar{display:flex;gap:9px;margin-bottom:22px}
+  .bar button{padding:8px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .bar .on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .stage{height:180px;display:flex;align-items:center;justify-content:center;padding:24px}
+  .meta{border-top:1px solid var(--line);padding:13px 18px}
+  .meta .t{font-size:13px;font-weight:800}
+  .meta .d{font-size:11.5px;color:var(--sub);margin-top:3px;line-height:1.55}
+  .tag{display:inline-block;font-size:10px;font-weight:800;color:var(--indigo);background:color-mix(in srgb,var(--indigo) 12%,transparent);padding:1px 7px;border-radius:99px;margin-left:6px}
+  /* logo type */
+  .wm{font-weight:800;color:var(--ink);letter-spacing:-.03em}
+  .note{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;font-size:13px;line-height:1.7;max-width:820px}
+  .note b{font-weight:800}
+  code{background:color-mix(in srgb,var(--ink) 8%,transparent);padding:1px 5px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+  <h1>byiryu studio · 로고 컨셉 보드</h1>
+  <div class="sub">벡터(SVG) 로고 6안. 이름 표기(byiryu / BYIRYU / 모노그램)와 무드를 시각으로 비교 — 마음에 드는 <b>방향 1~2개</b>만 골라주시면 그걸 정교화(앱아이콘·파비콘·흑백·여백규칙)합니다. 스튜디오는 앱+게임 다중 브랜드를 담으므로 <b>모노크롬 우선 + 액센트 1색</b> 기조.</div>
+  <div class="bar">
+    <button id="thL" class="on" onclick="setT('light')">☀︎ Light</button>
+    <button id="thD" onclick="setT('dark')">☾ Dark</button>
+  </div>
+
+  <div class="grid">
+
+    <!-- A. 소문자 워드마크 (미니멀) -->
+    <div class="tile"><div class="stage">
+      <svg width="240" height="74" viewBox="0 0 240 74" role="img" aria-label="byiryu studio">
+        <text x="0" y="42" font-family="Pretendard" font-weight="800" font-size="40" letter-spacing="-1.5" fill="var(--ink)">byiryu</text>
+        <text x="2" y="64" font-family="Pretendard" font-weight="700" font-size="12.5" letter-spacing="6" fill="var(--sub)">STUDIO</text>
+      </svg>
+    </div><div class="meta"><div class="t">A · 소문자 워드마크 <span class="tag">미니멀</span></div><div class="d">가장 안전·범용. 소문자 byiryu = 친근/현대. 앱 크레딧·푸터에 그대로.</div></div></div>
+
+    <!-- B. 모노그램 b (앱아이콘형) -->
+    <div class="tile"><div class="stage">
+      <svg width="250" height="92" viewBox="0 0 250 92" role="img" aria-label="byiryu studio monogram">
+        <defs><linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A5E96"/><stop offset="1" stop-color="#23406B"/></linearGradient></defs>
+        <rect x="2" y="6" width="80" height="80" rx="20" fill="url(#ig)"/>
+        <text x="42" y="63" text-anchor="middle" font-family="Pretendard" font-weight="800" font-size="52" fill="#fff">b</text>
+        <text x="100" y="46" font-family="Pretendard" font-weight="800" font-size="28" letter-spacing="-1" fill="var(--ink)">byiryu</text>
+        <text x="101" y="66" font-family="Pretendard" font-weight="700" font-size="11" letter-spacing="5" fill="var(--sub)">STUDIO</text>
+      </svg>
+    </div><div class="meta"><div class="t">B · 모노그램 'b' + 워드마크 <span class="tag">아이콘 ready</span></div><div class="d">rounded-square 모노그램 = 앱 아이콘/파비콘 즉시. 인디고 그라데이션.</div></div></div>
+
+    <!-- C. 대문자 와이드 (에디토리얼) -->
+    <div class="tile"><div class="stage">
+      <svg width="270" height="60" viewBox="0 0 270 60" role="img" aria-label="BYIRYU STUDIO">
+        <text x="135" y="30" text-anchor="middle" font-family="Pretendard" font-weight="600" font-size="26" letter-spacing="9" fill="var(--ink)">BYIRYU</text>
+        <line x1="40" y1="42" x2="230" y2="42" stroke="var(--line)" stroke-width="1.2"/>
+        <text x="135" y="55" text-anchor="middle" font-family="Pretendard" font-weight="600" font-size="10.5" letter-spacing="7" fill="var(--sub)">STUDIO</text>
+      </svg>
+    </div><div class="meta"><div class="t">C · 대문자 와이드 트래킹 <span class="tag">에디토리얼</span></div><div class="d">건축적·차분. 게임/포트폴리오 톤에 강함. 흑백 단독으로 고급.</div></div></div>
+
+    <!-- D. 컬러 닷 마크 (창작/색) -->
+    <div class="tile"><div class="stage">
+      <svg width="250" height="80" viewBox="0 0 250 80" role="img" aria-label="byiryu studio color dots">
+        <g style="mix-blend-mode:multiply">
+          <circle cx="40" cy="34" r="22" fill="#2C4E80"/>
+          <circle cx="58" cy="46" r="22" fill="#C89A3A"/>
+          <circle cx="30" cy="50" r="20" fill="#E98A78"/>
+        </g>
+        <text x="92" y="42" font-family="Pretendard" font-weight="800" font-size="30" letter-spacing="-1.2" fill="var(--ink)">byiryu</text>
+        <text x="93" y="62" font-family="Pretendard" font-weight="700" font-size="11" letter-spacing="5" fill="var(--sub)">STUDIO</text>
+      </svg>
+    </div><div class="meta"><div class="t">D · 컬러 닷 마크 <span class="tag">창작·색</span></div><div class="d">겹치는 3색 원(중첩 혼색) = "색/창작" 스튜디오 정체성. PALETI 등 색 기반 앱과 결.</div></div></div>
+
+    <!-- E. 픽셀/플레이 마크 (앱+게임) -->
+    <div class="tile"><div class="stage">
+      <svg width="250" height="84" viewBox="0 0 250 84" role="img" aria-label="byiryu studio play mark">
+        <g fill="var(--indigo)">
+          <rect x="6" y="14" width="22" height="22" rx="5"/>
+          <rect x="34" y="14" width="22" height="22" rx="5" opacity=".55"/>
+          <rect x="6" y="42" width="22" height="22" rx="5" opacity=".55"/>
+          <path d="M40 44 l24 12 -24 12 z" fill="var(--gold)"/>
+        </g>
+        <text x="84" y="42" font-family="Pretendard" font-weight="800" font-size="29" letter-spacing="-1.2" fill="var(--ink)">byiryu</text>
+        <text x="85" y="62" font-family="Pretendard" font-weight="700" font-size="11" letter-spacing="5" fill="var(--sub)">STUDIO</text>
+      </svg>
+    </div><div class="meta"><div class="t">E · 픽셀+플레이 마크 <span class="tag">앱+게임</span></div><div class="d">타일(앱)+삼각 play(게임) 조합 — 다중 분야 스튜디오 암시. 모듈식.</div></div></div>
+
+    <!-- F. 점 강조 미니멀 (byi.) -->
+    <div class="tile"><div class="stage">
+      <svg width="220" height="70" viewBox="0 0 220 70" role="img" aria-label="byiryu dot">
+        <text x="0" y="46" font-family="Pretendard" font-weight="800" font-size="44" letter-spacing="-2" fill="var(--ink)">byiryu</text>
+        <circle cx="150" cy="40" r="6.5" fill="var(--gold)"/>
+        <text x="166" y="46" font-family="Pretendard" font-weight="800" font-size="44" letter-spacing="-2" fill="var(--sub)">st</text>
+      </svg>
+    </div><div class="meta"><div class="t">F · 닷 악센트 미니멀 <span class="tag">로고타입</span></div><div class="d">글자 사이 골드 점 = 시그니처 디테일. 워드마크 단독으로 충분한 개성.</div></div></div>
+
+  </div>
+
+  <div class="note">
+    <b>다음 단계:</b> 방향 1~2개 고르시면 → ① 흑백/단색 버전 ② 앱아이콘(1024, alpha 처리) ③ 파비콘 ④ 최소 여백·금지 규칙 ⑤ SVG 파일 export 까지 정교화.
+    <br><b>이름 확정도 함께</b>: <code>byiryu studio</code>(소문자) vs <code>BYIRYU</code>(대문자) vs 모노그램 중심 — 보드에서 고르시면 CLAUDE.md 스튜디오 정체성 TBD → 확정 반영.
+    <br><b>AI 렌더 원하면</b>: ComfyUI/Recraft 프롬프트 별도 제공 (단, 로고는 SVG 권장).
+  </div>
+
+<script>
+  function setT(t){document.documentElement.setAttribute('data-theme',t);
+    thL.classList.toggle('on',t==='light');thD.classList.toggle('on',t==='dark');}
+</script>
+</body>
+</html>
