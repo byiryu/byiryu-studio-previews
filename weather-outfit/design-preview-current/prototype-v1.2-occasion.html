@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PALETI — 상황 인지 추천 (v1.2) · 코디 추천 조정 허브 안</title>
+<title>PALETI — 상황 인지 추천 (v1.2) · 3단 (메인→허브→상황 설정)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
   :root{--bg:#F8F5F0;--surface:#FFFFFF;--text:#1A1A1A;--sub:#7A7468;--brand:#2C4E80;--border:#E8E5E0;
@@ -11,84 +11,89 @@
   [data-theme="dark"]{--bg:#1A1815;--surface:#2A2520;--text:#F0EDE8;--sub:#A89B8C;--brand:#8FA9C9;--border:#3A352F;
     --goldtxt:#C89A3A;--tint:#3A3220;--chipbg:#353029;}
   *{box-sizing:border-box}
-  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;margin:0;padding:28px;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
-  h1{font-size:21px;font-weight:800;margin:0 0 4px}
-  .sub{font-size:13px;color:#666;margin-bottom:18px;max-width:860px}
-  .bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-  .bar button{padding:8px 14px;border:1px solid #bbb;background:#fff;border-radius:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;margin:0;padding:26px;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
+  h1{font-size:20px;font-weight:800;margin:0 0 4px}
+  .sub{font-size:12.5px;color:#666;margin-bottom:16px;max-width:880px}
+  .bar{display:flex;gap:9px;align-items:center;margin-bottom:13px;flex-wrap:wrap}
+  .bar button{padding:7px 13px;border:1px solid #bbb;background:#fff;border-radius:9px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
   .bar button:hover{background:#f2efea}
   .bar .on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-  .occbar button{padding:7px 12px;font-size:12.5px}
-  .occbar .on{background:var(--brand,#2C4E80);color:#fff;border-color:transparent}
+  .occbar .on{background:var(--brand);color:#fff;border-color:transparent}
 
-  .wrap{display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .wrap{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
   .col{flex:0 0 auto}
-  .lbl{font-size:12px;font-weight:800;letter-spacing:.03em;margin-bottom:9px}
+  .lbl{font-size:11.5px;font-weight:800;letter-spacing:.02em;margin-bottom:8px}
+  .lbl .ar{color:var(--sub);font-weight:600}
 
-  .phone{width:300px;background:var(--bg);border-radius:38px;border:10px solid #15130f;box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden;color:var(--text);transition:background .35s,color .35s}
-  .sb{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:11px 22px 2px;color:var(--text)}
-  .body{padding:8px 18px 18px}
-  .scr{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--sub);text-transform:uppercase}
+  .phone{width:278px;background:var(--bg);border-radius:36px;border:9px solid #15130f;box-shadow:0 16px 44px rgba(0,0,0,.26);overflow:hidden;color:var(--text);transition:background .35s,color .35s}
+  .sb{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;padding:10px 20px 2px;color:var(--text)}
+  .body{padding:8px 16px 16px}
+  .scr{font-size:10.5px;font-weight:800;letter-spacing:.05em;color:var(--sub);text-transform:uppercase}
+  .nav{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800;margin-bottom:4px}
+  .nav .bk{color:var(--sub);font-weight:700}
 
   /* main */
-  .loc{font-size:19px;font-weight:800;margin-top:8px}
-  .wx{font-size:12.5px;color:var(--sub);margin-top:2px}
-  .otag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--goldtxt);background:var(--tint);padding:3px 10px;border-radius:99px;margin-top:8px}
-  .cap{background:var(--tint);border-radius:10px;padding:9px 12px;font-size:12.5px;margin:11px 0 0;line-height:1.5}
+  .loc{font-size:18px;font-weight:800;margin-top:8px}
+  .wx{font-size:12px;color:var(--sub);margin-top:2px}
+  .cap{background:var(--tint);border-radius:10px;padding:9px 11px;font-size:12px;margin:11px 0 0;line-height:1.5}
   .cap b{color:var(--goldtxt);font-weight:700}
-  .cards{margin-top:11px;display:flex;flex-direction:column;gap:8px}
-  .ic{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:9px 12px}
-  .sw{width:28px;height:28px;border-radius:8px;flex:0 0 auto;border:1px solid rgba(0,0,0,.12)}
+  .cards{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+  .ic{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:8px 11px}
+  .sw{width:26px;height:26px;border-radius:7px;flex:0 0 auto;border:1px solid rgba(0,0,0,.12)}
   [data-theme="dark"] .sw{border-color:rgba(255,255,255,.14)}
-  .ir{font-size:10.5px;color:var(--sub);font-weight:600}.inm{font-size:13px;font-weight:700;margin-top:1px}
+  .ir{font-size:10px;color:var(--sub);font-weight:600}.inm{font-size:12.5px;font-weight:700;margin-top:1px}
+  /* meta chip — 상황 합류 */
   .chip{display:inline-block;background:var(--chipbg);color:var(--text);font-size:12px;font-weight:500;padding:4px 11px;border-radius:99px;margin-top:11px}
-  .botcta{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
-  .botcta .b{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px;text-align:center;font-weight:800;font-size:14px}
+  .chip b{font-weight:800;color:var(--goldtxt)}
+  .botcta{margin-top:13px;border-top:1px solid var(--border);padding-top:11px}
+  .botcta .b{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;font-weight:800;font-size:13.5px}
 
   /* hub */
-  .sec{margin-top:16px}
-  .sec:first-child{margin-top:6px}
-  .sec-h{font-size:13px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
-  .sec-h .new{font-size:9px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px}
+  .sec{margin-top:15px}.sec:first-of-type{margin-top:7px}
+  .sec-h{font-size:12.5px;font-weight:800;margin-bottom:8px}
+  .tchips{display:flex;gap:6px;flex-wrap:wrap}
+  .tc{font-size:11px;font-weight:600;background:var(--surface);border:1px solid var(--border);padding:5px 10px;border-radius:99px}
+  .tc.on{border-color:var(--gold);background:var(--tint);color:var(--goldtxt);font-weight:800}
+  .grow{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:6px;cursor:pointer}
+  .grow.gold{border:1.5px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
+  .grow .em{font-size:16px}
+  .grow .t{font-size:12.5px;font-weight:700}
+  .grow .v{font-size:11.5px;color:var(--sub);margin-left:auto}
+  .grow .nb{font-size:8px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px;margin-left:auto}
+  .grow .ar{color:var(--sub);font-weight:700;font-size:13px}
+
+  /* 상황 설정 화면 */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .occ{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:11px 10px;cursor:pointer;position:relative;transition:.15s}
   .occ.sel{border-color:var(--gold);background:linear-gradient(120deg,var(--tint),var(--surface))}
   .occ .em{font-size:20px}.occ .nm{font-size:13px;font-weight:800;margin-top:4px}.occ .fm{font-size:10px;color:var(--sub);margin-top:1px}
   .occ .gap{position:absolute;top:7px;right:7px;font-size:8px;font-weight:800;color:#b45309;background:#fde9c8;padding:1px 5px;border-radius:5px}
   [data-theme="dark"] .occ .gap{background:#3a2e14;color:#e0a94f}
-  .list .row{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 11px;margin-bottom:6px;cursor:pointer}
+  .list .row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 11px;margin-bottom:6px;cursor:pointer}
   .list .row.sel{border:1.5px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
-  .list .em{font-size:18px;width:22px;text-align:center}.list .nm{font-size:13px;font-weight:700}.list .fm{font-size:10px;color:var(--sub)}
-  .list .rd{margin-left:auto;width:17px;height:17px;border-radius:50%;border:2px solid var(--border)}
+  .list .em{font-size:17px;width:21px;text-align:center}.list .nm{font-size:12.5px;font-weight:700}.list .fm{font-size:10px;color:var(--sub)}
+  .list .rd{margin-left:auto;width:16px;height:16px;border-radius:50%;border:2px solid var(--border)}
   .list .row.sel .rd{border-color:var(--gold);background:radial-gradient(var(--gold) 40%,transparent 46%)}
-  .save{margin-top:9px;display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600}
-  .save .cb{width:18px;height:18px;border-radius:5px;border:2px solid var(--gold);background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900}
-  .save small{color:var(--sub);font-weight:500}
-  /* abbreviated existing sections */
-  .tchips{display:flex;gap:6px;flex-wrap:wrap}
-  .tc{font-size:11.5px;font-weight:600;background:var(--surface);border:1px solid var(--border);padding:5px 11px;border-radius:99px}
-  .tc.on{border-color:var(--gold);background:var(--tint);color:var(--goldtxt);font-weight:800}
-  .grow{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px;margin-bottom:6px}
-  .grow.gold{border:1.5px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
-  .grow .t{font-size:12.5px;font-weight:700}.grow .nb{font-size:8.5px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px;margin-left:auto}
-  .grow .v{font-size:11.5px;color:var(--sub);margin-left:auto}
-  .dim{opacity:.5}
+  .opt{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px;margin-top:7px;font-size:12px;font-weight:600}
+  .opt .cb{width:18px;height:18px;border-radius:5px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff}
+  .opt .cb.on{background:var(--gold)}
+  .opt small{color:var(--sub);font-weight:500;display:block;margin-top:1px}
 
-  .note{margin-top:26px;background:#fff;border-radius:14px;padding:20px 24px;max-width:900px;font-size:13.5px;line-height:1.7}
-  .note h3{font-size:14px;margin:0 0 10px}.note code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12px}
+  .note{margin-top:24px;background:#fff;border-radius:14px;padding:18px 22px;max-width:920px;font-size:13px;line-height:1.7}
+  .note h3{font-size:14px;margin:0 0 9px}.note code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12px}
   .gapn{color:#b45309;font-weight:700}.src{font-size:11px;color:#888;margin-top:7px}
 </style>
 </head>
 <body>
-  <h1>PALETI · 상황 인지 추천 (v1.2) — <span style="color:#8C6A1F">"코디 추천 조정" 허브 안</span></h1>
-  <div class="sub">★ 형 결정 — 상황을 별도 메인 pill이 아니라 <b>기존 "코디 추천 조정" 허브의 한 섹션</b>으로 (테마·옷 기준과 같은 레버). 새 화면/네비 X. 왼쪽=메인(하단 "코디 추천 조정 ▾" + 상황 반영), 오른쪽=허브(맨 위 "오늘의 상황" 섹션 + 기존 테마·옷 기준).</div>
+  <h1>PALETI · 상황 인지 추천 (v1.2) — 3단: 메인 → 허브 → 상황 설정</h1>
+  <div class="sub">★ 형 결정 — ① 상황을 <b>한 depth 더</b>(옷 앵커처럼 허브 row → 상황 설정 화면) ② <b>메타칩에 상황 합류</b> <code>일상 · 남성 · 따뜻함 · 여름</code>(활성 상황이 칩 맨 앞 = 메인 표시). 상단 상황 토글로 셋이 동기화되는 것 확인.</div>
 
   <div class="bar">
     <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
     <button id="thD" onclick="setTheme('dark')">☾ Dark</button>
-    <span style="width:10px"></span>
-    <button id="vA" class="on" onclick="setVar('A')">상황 섹션 A · 카드</button>
-    <button id="vB" onclick="setVar('B')">B · 리스트</button>
+    <span style="width:8px"></span>
+    <button id="vA" class="on" onclick="setVar('A')">설정화면 A·카드</button>
+    <button id="vB" onclick="setVar('B')">B·리스트</button>
   </div>
   <div class="bar occbar">
     <span style="font-size:12px;font-weight:700;color:#444">상황 →</span>
@@ -101,15 +106,13 @@
   </div>
 
   <div class="wrap">
-    <!-- MAIN -->
+    <!-- 1. MAIN -->
     <div class="col">
-      <div class="lbl">메인 — 상황 반영 추천</div>
-      <div class="phone">
-        <div class="sb"><span>9:41</span><span>📶 100%</span></div>
+      <div class="lbl">① 메인 <span class="ar">— 칩에 상황 합류</span></div>
+      <div class="phone"><div class="sb"><span>9:41</span><span>📶</span></div>
         <div class="body">
           <div class="loc">서울특별시</div>
           <div class="wx">☀️ 18° 맑음 · 미세 보통</div>
-          <div class="otag" id="m_tag"></div>
           <div class="cap" id="m_cap"></div>
           <div class="cards" id="m_cards"></div>
           <div class="chip" id="m_chip"></div>
@@ -117,70 +120,75 @@
         </div>
       </div>
     </div>
-    <!-- HUB -->
+
+    <!-- 2. HUB -->
     <div class="col">
-      <div class="lbl">코디 추천 조정 (허브)</div>
-      <div class="phone">
-        <div class="sb"><span>9:41</span><span>📶 100%</span></div>
+      <div class="lbl">② 코디 추천 조정 <span class="ar">— 상황 row 추가</span></div>
+      <div class="phone"><div class="sb"><span>9:41</span><span>📶</span></div>
         <div class="body">
           <div class="scr">코디 추천 조정</div>
-          <!-- NEW: 오늘의 상황 -->
-          <div class="sec">
-            <div class="sec-h">오늘의 상황 <span class="new">NEW</span></div>
-            <div id="p_area"></div>
-            <div class="save"><span class="cb">✓</span><div>이 상황을 기본으로 저장 <small>· 끄면 오늘만</small></div></div>
-          </div>
-          <!-- 기존: 컬러 테마 -->
-          <div class="sec">
-            <div class="sec-h">컬러 테마</div>
-            <div class="tchips"><span class="tc on">따뜻함</span><span class="tc">일상</span><span class="tc">시원함</span><span class="tc dim">모던…</span></div>
-          </div>
-          <!-- 기존: 옷 기준 -->
-          <div class="sec">
-            <div class="sec-h">옷 기준</div>
-            <div class="grow gold"><span class="t">다른 옷 기준 (오늘만)</span><span class="nb">NEW</span></div>
-            <div class="grow"><span class="t">기본 앵커</span><span class="v">자동 ›</span></div>
-          </div>
+          <div class="sec"><div class="sec-h">컬러 테마</div>
+            <div class="tchips"><span class="tc on">따뜻함</span><span class="tc">일상</span><span class="tc">시원함</span><span class="tc">모던…</span></div></div>
+          <div class="sec"><div class="sec-h">옷 기준</div>
+            <div class="grow gold"><span class="em">👕</span><span class="t">다른 옷 기준 (오늘만)</span><span class="nb">NEW</span></div>
+            <div class="grow"><span class="em">📌</span><span class="t">기본 앵커</span><span class="v">자동 ›</span></div></div>
+          <div class="sec"><div class="sec-h">상황 <span style="font-size:8px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px">NEW</span></div>
+            <div class="grow" id="h_occ"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 상황 설정 화면 -->
+    <div class="col">
+      <div class="lbl">③ 상황 설정 <span class="ar">— 한 depth 더</span></div>
+      <div class="phone"><div class="sb"><span>9:41</span><span>📶</span></div>
+        <div class="body">
+          <div class="nav"><span class="bk">‹</span> 상황 설정</div>
+          <div class="src" style="margin:0 0 10px">상황에 맞춰 코디를 조정해 드려요</div>
+          <div id="p_area"></div>
+          <div class="opt"><span class="cb on">✓</span><div>이 상황을 기본으로 저장<small>끄면 오늘만 적용</small></div></div>
+          <div class="opt"><span class="cb"></span><div>매번 물어보기<small>앱 켤 때마다 상황 선택 (앵커 “묻기” 동일)</small></div></div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="note">
-    <h3>설계 — 허브 안 "오늘의 상황" 섹션 (테마·옷 기준과 동렬)</h3>
-    <p><b>배치:</b> 메인 하단 <code>코디 추천 조정 ▾</code> → 허브 진입 → 맨 위 <b>오늘의 상황</b> 섹션. "기본으로 저장" 체크 = 기본 갱신 / 미체크 = 오늘만. (앵커 <code>기본+오늘만</code> 패턴 동일, "다른 옷 기준(오늘만)"과 같은 줄에 사는 셈)</p>
-    <p><b>메인 반영:</b> 새 pill 대신 헤더에 작은 <code>상황 태그</code>(예: 👔 면접 코디)만 read-only로 — 변경은 허브에서.</p>
-    <p><b>상황→formality:</b> 일상 f1~2 / 출근 f3 / 면접 f4 / 데이트 f2~3+드레스 / 운동 스포츠 / 나들이 f1~2. <span class="gapn">★ 면접·운동·데이트 = 카탈로그 카테고리 확장 선행</span>.</p>
-    <p><b>구현 이점:</b> 신규 화면/네비 destination 0 — 기존 <code>RecommendationTuneScreen</code>(aos)/<code>RecommendationSettingsView</code>(ios)에 섹션 1개 추가. cross-plat parity 그대로.</p>
-    <p class="src">상황 섹션 변형 A(카드)/B(리스트) 토글. 샘플 추천은 occasion 적응 가상 데이터. 명세 SoT=wireframes.md.</p>
+    <h3>설계 — 옷 앵커 패턴 답습 (레버 = row → 설정화면, 칩 = 현재 상태)</h3>
+    <p><b>① depth</b>: 허브 "상황" row(현재 상황 표시) → 탭 → <b>상황 설정 화면</b>. 옷 앵커의 <code>기본 앵커 / 다른 옷 기준 → 앵커 선택화면</code> 과 동일 구조. 설정화면 = 6상황 선택 + <b>기본 저장</b>(끄면 오늘만) + <b>매번 물어보기</b>(앵커 ask 모드 동일, 선택).</p>
+    <p><b>② 메타칩</b>: <code>일상 · 남성 · 따뜻함 · 여름</code> — 활성 상황이 맨 앞. 메인에 별도 pill 없이 칩이 현재 상황 표시(상황 바꾸면 칩 갱신). v1.1.1-4 칩(성별·테마·계절)에 상황 1토큰 prepend.</p>
+    <p><b>상황→formality</b>: 일상 f1~2 / 출근 f3 / 면접 f4 / 데이트 f2~3+드레스 / 운동 스포츠 / 나들이 f1~2. <span class="gapn">★ 면접·운동·데이트 = 카탈로그 카테고리 확장 선행.</span></p>
+    <p><b>구현</b>: 허브에 상황 row + 신규 <code>OccasionSettingScreen</code>(aos)/<code>OccasionSettingView</code>(ios) 1개 — 앵커 선택화면 흐름 재사용. 메타칩 1토큰 추가. cross-plat parity.</p>
+    <p class="src">설정화면 변형 A(카드)/B(리스트) 토글. "매번 물어보기"는 옵션 — 채택 여부 미정. 샘플=가상 데이터. 명세 SoT=wireframes.md.</p>
   </div>
 
 <script>
   const OCC=[
-    {em:"🙂",nm:"일상",fm:"캐주얼",gap:0,cap:`편한 하루, <b>아이보리 면 티</b> 기준 캐주얼`,
-     items:[["상의","아이보리","면 티","#EFE6D2"],["하의","연청","청바지","#9DB4C8"],["신발","화이트","운동화","#F2F0EA"]],chip:"일상 · 남성 · 봄"},
-    {em:"💼",nm:"출근",fm:"오피스",gap:0,cap:`오피스룩, <b>하늘 셔츠</b>로 단정하게`,
-     items:[["상의","하늘","셔츠","#C8E0F4"],["하의","그레이","슬랙스","#C7C4BE"],["신발","브라운","로퍼","#8B6F47"]],chip:"출근 · 남성 · 봄"},
-    {em:"👔",nm:"면접",fm:"격식",gap:1,cap:`면접엔 <b>차콜 정장</b>으로 신뢰감 있게`,
-     items:[["외투","차콜","블레이저","#3C3F44"],["하의","차콜","슬랙스","#3A3D42"],["신발","블랙","구두","#222426"]],chip:"면접 · 남성 · 봄"},
-    {em:"💛",nm:"데이트",fm:"부드럽게",gap:1,cap:`데이트엔 <b>라벤더 니트</b>로 포근하게`,
-     items:[["상의","라벤더","니트","#C9BCE0"],["하의","아이보리","슬랙스","#EFE9DC"],["신발","베이지","로퍼","#D2C4A8"]],chip:"데이트 · 여성 · 봄"},
-    {em:"🏃",nm:"운동",fm:"스포츠",gap:1,cap:`운동엔 <b>그레이 트레이닝</b>으로 가볍게`,
-     items:[["상의","그레이","트레이닝","#9AA0A8"],["하의","블랙","조거","#2A2C30"],["신발","화이트","러닝화","#F2F0EA"]],chip:"운동 · 남성 · 봄"},
-    {em:"🧺",nm:"나들이",fm:"활동성",gap:0,cap:`나들이엔 <b>민트 린넨셔츠</b>로 산뜻하게`,
-     items:[["상의","민트","린넨 셔츠","#C5E8D4"],["하의","베이지","와이드 팬츠","#D2C4A8"],["신발","아이보리","캔버스","#EFE9DC"]],chip:"나들이 · 남성 · 봄"},
+    {em:"🙂",nm:"일상",fm:"캐주얼",g:"남성",gap:0,cap:`편한 하루, <b>아이보리 면 티</b> 기준 캐주얼`,
+     items:[["상의","아이보리","면 티","#EFE6D2"],["하의","연청","청바지","#9DB4C8"],["신발","화이트","운동화","#F2F0EA"]]},
+    {em:"💼",nm:"출근",fm:"오피스 f3",g:"남성",gap:0,cap:`오피스룩, <b>하늘 셔츠</b>로 단정하게`,
+     items:[["상의","하늘","셔츠","#C8E0F4"],["하의","그레이","슬랙스","#C7C4BE"],["신발","브라운","로퍼","#8B6F47"]]},
+    {em:"👔",nm:"면접",fm:"격식 f4",g:"남성",gap:1,cap:`면접엔 <b>차콜 정장</b>으로 신뢰감 있게`,
+     items:[["외투","차콜","블레이저","#3C3F44"],["하의","차콜","슬랙스","#3A3D42"],["신발","블랙","구두","#222426"]]},
+    {em:"💛",nm:"데이트",fm:"f2~3 부드럽게",g:"여성",gap:1,cap:`데이트엔 <b>라벤더 니트</b>로 포근하게`,
+     items:[["상의","라벤더","니트","#C9BCE0"],["하의","아이보리","슬랙스","#EFE9DC"],["신발","베이지","로퍼","#D2C4A8"]]},
+    {em:"🏃",nm:"운동",fm:"스포츠",g:"남성",gap:1,cap:`운동엔 <b>그레이 트레이닝</b>으로 가볍게`,
+     items:[["상의","그레이","트레이닝","#9AA0A8"],["하의","블랙","조거","#2A2C30"],["신발","화이트","러닝화","#F2F0EA"]]},
+    {em:"🧺",nm:"나들이",fm:"f1~2 활동성",g:"남성",gap:0,cap:`나들이엔 <b>민트 린넨셔츠</b>로 산뜻하게`,
+     items:[["상의","민트","린넨 셔츠","#C5E8D4"],["하의","베이지","와이드 팬츠","#D2C4A8"],["신발","아이보리","캔버스","#EFE9DC"]]},
   ];
   let sel=0, V='A';
   function pick(i){sel=i;document.querySelectorAll('.occbar [data-o]').forEach(b=>b.classList.toggle('on',+b.dataset.o===i));render();}
   function setVar(x){V=x;vA.classList.toggle('on',x==='A');vB.classList.toggle('on',x==='B');render();}
   function setTheme(t){document.documentElement.setAttribute('data-theme',t);thL.classList.toggle('on',t==='light');thD.classList.toggle('on',t==='dark');}
-  function itemRows(arr){return arr.map(c=>`<div class="ic"><span class="sw" style="background:${c[3]}"></span><div><div class="ir">${c[0]}</div><div class="inm">${c[1]} ${c[2]}</div></div></div>`).join('');}
+  function itemRows(a){return a.map(c=>`<div class="ic"><span class="sw" style="background:${c[3]}"></span><div><div class="ir">${c[0]}</div><div class="inm">${c[1]} ${c[2]}</div></div></div>`).join('');}
   function secA(){return `<div class="grid">`+OCC.map((o,i)=>`<div class="occ${i===sel?' sel':''}" onclick="pick(${i})">${o.gap?'<span class="gap">확장</span>':''}<div class="em">${o.em}</div><div class="nm">${o.nm}</div><div class="fm">${o.fm}</div></div>`).join('')+`</div>`;}
   function secB(){return `<div class="list">`+OCC.map((o,i)=>`<div class="row${i===sel?' sel':''}" onclick="pick(${i})"><span class="em">${o.em}</span><div><div class="nm">${o.nm}</div><div class="fm">${o.fm}</div></div><span class="rd"></span></div>`).join('')+`</div>`;}
   function render(){
     const o=OCC[sel];
-    m_tag.innerHTML=`${o.em} ${o.nm} 코디`;
-    m_cap.innerHTML=o.cap; m_cards.innerHTML=itemRows(o.items); m_chip.textContent=o.chip;
+    m_cap.innerHTML=o.cap; m_cards.innerHTML=itemRows(o.items);
+    m_chip.innerHTML=`<b>${o.nm}</b> · ${o.g} · 따뜻함 · 여름`;
+    h_occ.innerHTML=`<span class="em">${o.em}</span><span class="t">오늘의 상황</span><span class="v">${o.nm} ›</span>`;
     p_area.innerHTML = V==='A'?secA():secB();
   }
   render();
