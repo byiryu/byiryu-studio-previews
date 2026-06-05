@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PALETI — 오늘의 룩 공유 카드 (v1.2) 변형 A/B/C</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F8F5F0;--surface:#FFFFFF;--text:#1A1A1A;--sub:#7A7468;--brand:#2C4E80;--border:#E8E5E0;
+    --gold:#C89A3A;--goldtxt:#8C6A1F;--tint:#FFF4D6;--chipbg:#ECE7DF;}
+  [data-theme="dark"]{--bg:#1A1815;--surface:#2A2520;--text:#F0EDE8;--sub:#A89B8C;--brand:#8FA9C9;--border:#3A352F;
+    --goldtxt:#C89A3A;--tint:#3A3220;--chipbg:#353029;}
+  *{box-sizing:border-box}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;margin:0;padding:28px;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
+  h1{font-size:21px;font-weight:800;margin:0 0 4px}
+  .sub{font-size:13px;color:#666;margin-bottom:18px;max-width:820px}
+  .bar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  .bar button{padding:8px 14px;border:1px solid #bbb;background:#fff;border-radius:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .bar button:hover{background:#f2efea}
+  .bar .on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .bar .smp{background:var(--brand,#2C4E80);color:#fff;border-color:transparent}
+
+  .wrap{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:0 0 auto;width:280px}
+  .vlbl{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .vlbl .tag{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;background:#e6f4ec;color:#1e7e4f}
+  .vlbl .tag.b{background:#eef1f8;color:#2C4E80}.vlbl .tag.c{background:#fbf0dd;color:#8C6A1F}
+  .vdesc{font-size:11.5px;color:#777;margin-top:9px;line-height:1.55;min-height:48px}
+
+  /* ===== share card base (4:5 portrait) ===== */
+  .card{width:280px;height:350px;border-radius:20px;overflow:hidden;position:relative;
+    background:var(--surface);color:var(--text);box-shadow:0 14px 38px rgba(0,0,0,.20);
+    transition:background .35s,color .35s;display:flex;flex-direction:column}
+  .wm{font-weight:800;letter-spacing:.02em;color:var(--brand)}
+  .sw{border-radius:7px;border:1px solid rgba(0,0,0,.10);flex:0 0 auto}
+  [data-theme="dark"] .sw{border-color:rgba(255,255,255,.14)}
+  .foot{font-size:10.5px;color:var(--sub);font-weight:600}
+
+  /* ---- A · 미니멀 스와치 ---- */
+  .A{padding:22px 22px 18px}
+  .A .top{display:flex;justify-content:space-between;align-items:baseline}
+  .A .wm{font-size:18px}
+  .A .meta{font-size:10.5px;color:var(--sub);font-weight:600;text-align:right;line-height:1.4}
+  .A .pal{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;margin:14px 0}
+  .A .row{display:flex;align-items:center;gap:13px}
+  .A .row .sw{width:44px;height:44px;border-radius:10px}
+  .A .nm{font-size:15px;font-weight:700}
+  .A .ty{font-size:11.5px;color:var(--sub);margin-top:1px}
+  .A .scheme{font-size:11px;font-weight:800;color:var(--goldtxt);letter-spacing:.03em}
+
+  /* ---- B · 아이콘-리치 ---- */
+  .B{padding:18px 18px 16px}
+  .B .top{display:flex;justify-content:space-between;align-items:center}
+  .B .wm{font-size:16px}
+  .B .wx{font-size:12px;font-weight:700;color:var(--sub)}
+  .B .loc{font-size:10.5px;color:var(--sub);font-weight:600;margin-top:2px}
+  .B .items{flex:1;display:flex;flex-direction:column;justify-content:center;gap:9px;margin:12px 0}
+  .B .it{display:flex;align-items:center;gap:11px;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:8px 11px}
+  .B .it.anc{border:1.5px solid var(--gold);background:linear-gradient(100deg,var(--tint),var(--surface))}
+  .B .ico{font-size:18px;width:22px;text-align:center;flex:0 0 auto}
+  .B .it .sw{width:24px;height:24px}
+  .B .nm{font-size:13px;font-weight:700}.B .ty{font-size:10.5px;color:var(--sub)}
+  .B .bdg{font-size:8.5px;font-weight:800;color:#3A2F12;background:var(--gold);padding:2px 6px;border-radius:99px;margin-left:auto}
+  .B .chips{display:flex;gap:5px;flex-wrap:wrap}
+  .B .chip{font-size:10px;font-weight:600;background:var(--chipbg);color:var(--text);padding:3px 9px;border-radius:99px}
+
+  /* ---- C · 무드 에디토리얼 ---- */
+  .C{padding:0;color:#1A1A1A}
+  .C .canvas{flex:1;display:flex;flex-direction:column;padding:22px 22px 18px}
+  .C .wm{font-size:13px;opacity:.85;color:#1A1A1A}
+  .C .cap{font-size:21px;font-weight:800;line-height:1.32;letter-spacing:-.02em;margin-top:auto}
+  .C .cap b{color:#7a5a18}
+  .C .pal{display:flex;gap:7px;margin:16px 0 12px}
+  .C .pal .sw{width:34px;height:34px;border-radius:9px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+  .C .foot{color:rgba(0,0,0,.5);font-weight:700}
+  .C .scheme{font-size:11px;font-weight:800;letter-spacing:.04em;color:#7a5a18;text-transform:none}
+
+  .note{margin-top:28px;background:#fff;border-radius:14px;padding:20px 24px;max-width:880px;font-size:13.5px;line-height:1.7}
+  .note h3{font-size:14px;margin:0 0 10px}
+  .note table{border-collapse:collapse;width:100%;margin:10px 0;font-size:12.5px}
+  .note td,.note th{border:1px solid #e5e2dc;padding:7px 10px;text-align:left;vertical-align:top}
+  .note th{background:#f6f4f0;font-weight:700}
+  .note code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12px}
+  .ok{color:#1e7e4f;font-weight:700}.no{color:#c0392b;font-weight:700}
+  .src{font-size:11px;color:#888;margin-top:7px}
+</style>
+</head>
+<body>
+  <h1>PALETI · 오늘의 룩 공유 카드 (v1.2 신규 피처)</h1>
+  <div class="sub">지금 추천 envelope(<code>palette + 옷종류 + 배색(scheme) + 날씨 + 위치·날짜 + 캡션 + 무드/계절</code>)를 SNS 공유용 카드로. "색상만이라 부족할까?" 판단용 — 변형 A/B/C 비교. <b>실제 옷 비주얼(AI 코디 이미지)은 v1.3 업그레이드</b>(이 카드가 그 surface).</div>
+
+  <div class="bar">
+    <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
+    <button id="thD" onclick="setTheme('dark')">☾ Dark</button>
+    <span style="width:14px"></span>
+    <button class="smp" onclick="nextSample()">↻ 다른 추천 보기</button>
+    <span id="smpname" style="font-size:12px;color:#666;font-weight:600"></span>
+    <span style="font-size:11.5px;color:#999">※ 카드 비율 = 4:5 (인스타 피드/스토리). 워터마크 = 무예산 성장 루프</span>
+  </div>
+
+  <div class="wrap">
+    <div class="col">
+      <div class="vlbl">A · 미니멀 스와치 <span class="tag">가장 가벼움</span></div>
+      <div class="card A" id="cardA"></div>
+      <div class="vdesc">팔레트가 주인공. 색·옷종류·배색만 큼직하게. 제작 가장 빠름. 깔끔하지만 정보 밀도 낮음.</div>
+    </div>
+    <div class="col">
+      <div class="vlbl">B · 아이콘-리치 <span class="tag b">정보형</span></div>
+      <div class="card B" id="cardB"></div>
+      <div class="vdesc">옷종류 아이콘 + 날씨 아이콘 + 칩. "무슨 옷·어떤 날씨"가 한눈에. 아이콘 에셋(소) 필요. 다소 빽빽.</div>
+    </div>
+    <div class="col">
+      <div class="vlbl">C · 무드 에디토리얼 <span class="tag c">공유각 ★</span></div>
+      <div class="card C" id="cardC"></div>
+      <div class="vdesc">캡션(스토리)이 히어로 + 무드 기반 배경 톤. 매거진 느낌 = 공유 욕구 최대. AI 이미지(v1.3) 들어가면 이 레이아웃이 자연 확장.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h3>판단 포인트 — "색상만이라 부족한가?"</h3>
+    <p>카드에 실제로 들어가는 건 <b>색 팔레트(한국어 색이름) + 옷종류 + 배색방식(톤온톤/보색…) + 날씨 + 위치·날짜 + 캡션(Claude 문장) + 무드·계절 + 브랜딩</b> — 색 스와치만이 아님. 그래도 "옷의 실제 모습"이 없는 건 사실 → 아래 2단 설계로 흡수.</p>
+    <table>
+      <tr><th>변형</th><th>강점</th><th>주의 / 노력</th></tr>
+      <tr><td><b>A</b> 미니멀</td><td><span class="ok">가장 빠름</span>·깔끔·팔레트 강조</td><td>정보 밀도 낮음 — "색만" 인상에 가장 취약</td></tr>
+      <tr><td><b>B</b> 아이콘</td><td>옷종류·날씨 한눈 / 정보 풍부</td><td>아이콘 에셋(라인 5종) 필요·다소 빽빽</td></tr>
+      <tr><td><b>C</b> 에디토리얼</td><td><span class="ok">공유각 최대</span>·스토리·무드 톤 / AI이미지 surface</td><td>캡션 길이 가변 대응·배경 톤 로직</td></tr>
+    </table>
+    <p><b>2단 설계:</b> <b>v1.2</b> = 비AI 에디토리얼 카드(server 0, client 렌더→이미지+공유 시트). <b>v1.3</b> = <code>image_url</code>(AI 코디 이미지)를 카드 히어로로 = 옷 실제 비주얼. 지금 카드가 그 자리(surface). → 지금 당기면 cost/scope, 미루면 자연 업그레이드.</p>
+    <p><b>좋싫 1탭</b>은 별건(메인 추천에 👍/👎 + 피드백 저장 → v2 방향 결정용 데이터). 디자인 부담 없어 같이 v1.2 진입.</p>
+    <p class="src">시각 검증용 프로토타입 — 명세 SoT는 wireframes.md. 아이콘=프로토타입은 emoji, 제작 시 PALETI 라인 아이콘. 데이터=실 envelope 필드 기반 가상 샘플.</p>
+  </div>
+
+<script>
+  // role→아이콘, 샘플 데이터. cards:[role, 색이름, 옷종류, hex, isAnchor]
+  const ICON={상의:"👕",하의:"👖",신발:"👟",외투:"🧥",원피스:"👗"};
+  const S=[
+    {g:"남성",thm:"따뜻함",se:"봄",loc:"서울특별시",date:"6.5 금",wx:"맑음",wi:"☀️",temp:18,feels:17,pm:"미세 보통",
+     scheme:"톤온톤",ac:"아이보리",ai:"셔츠",accent:"#EAD9B8",
+     cap:`맑은 18도, <b>아이보리 셔츠</b> 기준 톤온톤 코디`,
+     cards:[["상의","아이보리","셔츠","#EFE6D2",1],["하의","연청","청바지","#9DB4C8",0],["신발","화이트","운동화","#F2F0EA",0]]},
+    {g:"여성",thm:"사랑스러움",se:"봄",loc:"부산광역시",date:"6.5 금",wx:"구름 많음",wi:"⛅",temp:14,feels:13,pm:"미세 좋음",
+     scheme:"유사색",ac:"라벤더",ai:"니트 가디건",accent:"#D8CCEC",
+     cap:`선선한 14도, <b>라벤더 가디건</b>으로 포근하게`,
+     cards:[["외투","라벤더","니트 가디건","#C9BCE0",1],["상의","아이보리","블라우스","#EFE9DC",0],["하의","연그레이","슬랙스","#C7C4BE",0]]},
+    {g:"남성",thm:"시크",se:"겨울",loc:"서울특별시",date:"6.5 금",wx:"흐림",wi:"☁️",temp:-2,feels:-6,pm:"미세 나쁨",
+     scheme:"보색",ac:"차콜",ai:"울 코트",accent:"#9AA0A8",
+     cap:`영하 2도, <b>차콜 코트</b>로 시크하게 마무리`,
+     cards:[["외투","차콜","울 코트","#3C3F44",1],["상의","네이비","터틀넥","#2A3550",0],["신발","블랙","첼시 부츠","#222426",0]]},
+  ];
+  let i=0;
+
+  function paletteRows(arr){ // A
+    return arr.map(c=>`<div class="row"><span class="sw" style="background:${c[3]}"></span>
+      <div><div class="nm">${c[1]}</div><div class="ty">${c[2]}${c[4]?' · 기준':''}</div></div></div>`).join('');
+  }
+  function itemRows(arr){ // B
+    return arr.map(c=>`<div class="it${c[4]?' anc':''}"><span class="ico">${ICON[c[0]]||"•"}</span>
+      <span class="sw" style="background:${c[3]}"></span>
+      <div><div class="nm">${c[1]}</div><div class="ty">${c[2]}</div></div>
+      ${c[4]?'<span class="bdg">📌 기준</span>':''}</div>`).join('');
+  }
+  function strip(arr){ // C
+    return arr.map(c=>`<span class="sw" style="background:${c[3]}" title="${c[1]} ${c[2]}"></span>`).join('');
+  }
+  function render(){
+    const s=S[i];
+    document.getElementById('smpname').textContent=`샘플 ${i+1}/${S.length} — ${s.loc} ${s.temp}° ${s.wx}`;
+    // A
+    cardA.innerHTML=`<div class="top"><span class="wm">PALETI</span>
+      <span class="meta">${s.date} · ${s.loc}<br>${s.wi} ${s.temp}° ${s.wx} · ${s.pm}</span></div>
+      <div class="pal">${paletteRows(s.cards)}</div>
+      <div class="foot"><span class="scheme">${s.scheme}</span> · ${s.g} · ${s.se}</div>`;
+    // B
+    cardB.innerHTML=`<div class="top"><div><div class="wm">PALETI</div><div class="loc">${s.loc} · ${s.date}</div></div>
+      <div class="wx">${s.wi} ${s.temp}° ${s.wx}</div></div>
+      <div class="items">${itemRows(s.cards)}</div>
+      <div class="chips"><span class="chip">${s.scheme}</span><span class="chip">${s.g}</span><span class="chip">${s.thm}</span><span class="chip">${s.se}</span></div>`;
+    // C  (무드 배경 = accent 그라데이션)
+    cardC.style.background=`linear-gradient(158deg, ${s.accent} 0%, #FBF8F2 78%)`;
+    cardC.innerHTML=`<div class="canvas"><span class="wm">PALETI · ${s.date}</span>
+      <div class="cap">${s.cap}</div>
+      <div class="pal">${strip(s.cards)}</div>
+      <div class="foot"><span class="scheme">${s.scheme}</span> &nbsp;·&nbsp; ${s.loc} · ${s.wi}${s.temp}° · ${s.g} · ${s.se}</div></div>`;
+  }
+  function nextSample(){i=(i+1)%S.length;render();}
+  function setTheme(t){document.documentElement.setAttribute('data-theme',t);
+    thL.classList.toggle('on',t==='light');thD.classList.toggle('on',t==='dark');}
+  render();
+</script>
+</body>
+</html>
