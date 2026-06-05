@@ -86,7 +86,7 @@
 </head>
 <body>
   <h1>PALETI · 상황 인지 추천 (v1.2) — 3단: 메인 → 허브 → 상황 설정</h1>
-  <div class="sub">★ 형 결정 — ① 상황을 <b>한 depth 더</b>(옷 앵커처럼 허브 row → 상황 설정 화면) ② <b>메타칩에 상황 합류</b> <code>일상 · 남성 · 따뜻함 · 여름</code>(활성 상황이 칩 맨 앞 = 메인 표시). 상단 상황 토글로 셋이 동기화되는 것 확인.</div>
+  <div class="sub">★ 형 결정 — ① 상황을 <b>한 depth 더</b>(옷 앵커처럼 허브 row → 상황 설정 화면) ② <b>메타칩에 상황 합류</b> <code>남성 · 따뜻함 · 여름 · 🙂 일상</code>(기존 순서 보존 + 상황 맨 뒤·이모지 = 메인 표시). 상단 상황 토글로 셋이 동기화되는 것 확인.</div>
 
   <div class="bar">
     <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
@@ -156,7 +156,7 @@
   <div class="note">
     <h3>설계 — 옷 앵커 패턴 답습 (레버 = row → 설정화면, 칩 = 현재 상태)</h3>
     <p><b>① depth</b>: 허브 "상황" row(현재 상황 표시) → 탭 → <b>상황 설정 화면</b>. 옷 앵커의 <code>기본 앵커 / 다른 옷 기준 → 앵커 선택화면</code> 과 동일 구조. 설정화면 = 6상황 선택 + <b>기본 저장</b>(끄면 오늘만) + <b>매번 물어보기</b>(앵커 ask 모드 동일, 선택).</p>
-    <p><b>② 메타칩</b>: <code>일상 · 남성 · 따뜻함 · 여름</code> — 활성 상황이 맨 앞. 메인에 별도 pill 없이 칩이 현재 상황 표시(상황 바꾸면 칩 갱신). v1.1.1-4 칩(성별·테마·계절)에 상황 1토큰 prepend.</p>
+    <p><b>② 메타칩</b>: <code>남성 · 따뜻함 · 여름 · 🙂 일상</code> — <b>기존 순서(성별·테마·계절) 보존 + 상황을 맨 뒤에 추가</b>(이모지 포함). 메인에 별도 pill 없이 칩이 현재 상황 표시. season은 이미 envelope → 상황도 envelope echo 권장(아래).</p>
     <p><b>상황→formality</b>: 일상 f1~2 / 출근 f3 / 면접 f4 / 데이트 f2~3+드레스 / 운동 스포츠 / 나들이 f1~2. <span class="gapn">★ 면접·운동·데이트 = 카탈로그 카테고리 확장 선행.</span></p>
     <p><b>구현</b>: 허브에 상황 row + 신규 <code>OccasionSettingScreen</code>(aos)/<code>OccasionSettingView</code>(ios) 1개 — 앵커 선택화면 흐름 재사용. 메타칩 1토큰 추가. cross-plat parity.</p>
     <p class="src">설정화면 변형 A(카드)/B(리스트) 토글. "매번 물어보기"는 옵션 — 채택 여부 미정. 샘플=가상 데이터. 명세 SoT=wireframes.md.</p>
@@ -187,7 +187,7 @@
   function render(){
     const o=OCC[sel];
     m_cap.innerHTML=o.cap; m_cards.innerHTML=itemRows(o.items);
-    m_chip.innerHTML=`<b>${o.nm}</b> · ${o.g} · 따뜻함 · 여름`;
+    m_chip.innerHTML=`${o.g} · 따뜻함 · 여름 · <b>${o.em} ${o.nm}</b>`;
     h_occ.innerHTML=`<span class="em">${o.em}</span><span class="t">오늘의 상황</span><span class="v">${o.nm} ›</span>`;
     p_area.innerHTML = V==='A'?secA():secB();
   }
