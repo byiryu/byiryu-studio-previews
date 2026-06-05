@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PALETI — 추천 좋아요/싫어요 (v1.2)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{--bg:#F8F5F0;--surface:#FFFFFF;--text:#1A1A1A;--sub:#7A7468;--brand:#2C4E80;--border:#E8E5E0;
+    --gold:#C89A3A;--goldtxt:#8C6A1F;--tint:#FFF4D6;--chipbg:#ECE7DF;--up:#1e7e4f;--down:#c0392b;}
+  [data-theme="dark"]{--bg:#1A1815;--surface:#2A2520;--text:#F0EDE8;--sub:#A89B8C;--brand:#8FA9C9;--border:#3A352F;
+    --goldtxt:#C89A3A;--tint:#3A3220;--chipbg:#353029;--up:#4caf80;--down:#e0796b;}
+  *{box-sizing:border-box}
+  body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;background:#d8d6d2;margin:0;padding:26px;line-height:1.5;letter-spacing:-.01em;color:#1a1a1a}
+  h1{font-size:20px;font-weight:800;margin:0 0 4px}
+  .sub{font-size:12.5px;color:#666;margin-bottom:16px;max-width:880px}
+  .bar{display:flex;gap:9px;align-items:center;margin-bottom:13px;flex-wrap:wrap}
+  .bar button{padding:7px 13px;border:1px solid #bbb;background:#fff;border-radius:9px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+  .bar button:hover{background:#f2efea}.bar .on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .bar .rs{background:var(--brand);color:#fff;border-color:transparent}
+
+  .wrap{display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .phone{width:300px;background:var(--bg);border-radius:38px;border:10px solid #15130f;box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden;color:var(--text);position:relative;transition:background .35s,color .35s}
+  .sb{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:11px 22px 2px}
+  .body{padding:8px 18px 18px}
+  .loc{font-size:18px;font-weight:800;margin-top:6px}.wx{font-size:12px;color:var(--sub);margin-top:2px}
+  .cap{background:var(--tint);border-radius:10px;padding:9px 11px;font-size:12px;margin:11px 0 0;line-height:1.5}.cap b{color:var(--goldtxt);font-weight:700}
+  .cards{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+  .ic{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:8px 11px}
+  .sw{width:26px;height:26px;border-radius:7px;border:1px solid rgba(0,0,0,.12)}
+  [data-theme="dark"] .sw{border-color:rgba(255,255,255,.14)}
+  .ir{font-size:10px;color:var(--sub);font-weight:600}.inm{font-size:12.5px;font-weight:700}
+  .chip{display:inline-block;background:var(--chipbg);font-size:12px;font-weight:500;padding:4px 11px;border-radius:99px;margin-top:11px}
+
+  /* 좋싫 영역 */
+  .fb{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+  .fb .q{font-size:12.5px;font-weight:700;color:var(--sub);margin-bottom:8px}
+  .tbtns{display:flex;gap:10px}
+  .tb{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+  .tb .em{font-size:18px}
+  .tb.up.sel{border-color:var(--up);background:rgba(30,126,79,.10);color:var(--up)}
+  .tb.down.sel{border-color:var(--down);background:rgba(192,57,49,.10);color:var(--down)}
+  /* variant B 아이콘만 */
+  .iconly{display:flex;gap:14px;justify-content:flex-end}
+  .iconly .tb{flex:0 0 auto;width:46px;height:40px;padding:0}
+  /* variant C 칩 */
+  .chips .tb{flex:0 0 auto;padding:8px 14px;border-radius:99px;font-size:13px}
+  .ack{margin-top:9px;font-size:12px;font-weight:600;color:var(--up);background:rgba(30,126,79,.08);border-radius:9px;padding:8px 11px}
+  .ack.no{color:var(--sub);background:var(--chipbg)}
+  .cta{margin-top:12px;background:var(--brand);color:#fff;text-align:center;font-weight:800;font-size:13.5px;padding:12px;border-radius:12px}
+
+  /* OS 리뷰 시트 (시스템 제공 — 예시) */
+  .ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:24px}
+  .ov.show{display:flex}
+  .rev{background:#fff;border-radius:16px;padding:20px 18px;text-align:center;width:100%;color:#1a1a1a}
+  .rev .ttl{font-size:14px;font-weight:800}.rev .ds{font-size:11.5px;color:#777;margin:5px 0 12px}
+  .rev .stars{font-size:26px;letter-spacing:3px;color:#f5b301}
+  .rev .os{font-size:9.5px;color:#aaa;margin-top:12px}
+  .rev .row{display:flex;gap:8px;margin-top:13px}
+  .rev .row b{flex:1;font-size:12.5px;font-weight:700;padding:9px;border-radius:9px;background:#f0eee9}
+  .rev .row b.p{background:#2C4E80;color:#fff}
+
+  .note{margin-top:24px;background:#fff;border-radius:14px;padding:18px 22px;max-width:880px;font-size:13px;line-height:1.7}
+  .note h3{font-size:14px;margin:0 0 9px}.note code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12px}
+  .note table{border-collapse:collapse;width:100%;margin:9px 0;font-size:12.5px}.note td,.note th{border:1px solid #e5e2dc;padding:6px 9px;text-align:left}.note th{background:#f6f4f0}
+  .ok{color:#1e7e4f;font-weight:700}.src{font-size:11px;color:#888;margin-top:7px}
+</style>
+</head>
+<body>
+  <h1>PALETI · 추천 좋아요/싫어요 (v1.2 라이더)</h1>
+  <div class="sub">메인 추천 카드에 👍/👎 1탭. <b>v1.2=의견 수집만</b>(학습 반영=v2). 👍 = 인앱 리뷰 트리거(throttle). 변형 A 프롬프트+버튼 / B 아이콘만 / C 칩. <b>★ 리뷰 시트는 OS가 그림(디자인 불가)</b> — 우리가 정하는 건 "언제 띄울지"뿐.</div>
+
+  <div class="bar">
+    <button id="thL" class="on" onclick="setTheme('light')">☀︎ Light</button>
+    <button id="thD" onclick="setTheme('dark')">☾ Dark</button>
+    <span style="width:10px"></span>
+    <button id="vA" class="on" onclick="setVar('A')">A · 프롬프트+버튼</button>
+    <button id="vB" onclick="setVar('B')">B · 아이콘만</button>
+    <button id="vC" onclick="setVar('C')">C · 칩</button>
+    <span style="width:10px"></span>
+    <button class="rs" onclick="reset()">↻ 리셋</button>
+    <span id="cnt" style="font-size:11.5px;color:#888"></span>
+  </div>
+
+  <div class="wrap">
+    <div class="col">
+      <div class="phone">
+        <div class="sb"><span>9:41</span><span>📶 100%</span></div>
+        <div class="body">
+          <div class="loc">서울특별시</div>
+          <div class="wx">☀️ 18° 맑음 · 미세 보통</div>
+          <div class="cap">맑은 18도, <b>아이보리 셔츠</b> 기준 톤온톤 코디</div>
+          <div class="cards">
+            <div class="ic"><span class="sw" style="background:#EFE6D2"></span><div><div class="ir">상의</div><div class="inm">아이보리 셔츠</div></div></div>
+            <div class="ic"><span class="sw" style="background:#9DB4C8"></span><div><div class="ir">하의</div><div class="inm">연청 청바지</div></div></div>
+            <div class="ic"><span class="sw" style="background:#F2F0EA"></span><div><div class="ir">신발</div><div class="inm">화이트 운동화</div></div></div>
+          </div>
+          <div class="chip">남성 · 따뜻함 · 여름 · 🙂 일상</div>
+          <!-- 좋싫 -->
+          <div class="fb">
+            <div class="q" id="fq">이 추천 어때요?</div>
+            <div class="tbtns" id="fbtns"></div>
+            <div id="ack"></div>
+          </div>
+          <div class="cta">코디 추천 조정 ▾</div>
+        </div>
+        <!-- OS 리뷰 시트 -->
+        <div class="ov" id="ov"><div class="rev">
+          <div class="ttl">PALETI를 평가해 주세요</div>
+          <div class="ds">App Store / Play에 별점을 남겨주세요</div>
+          <div class="stars">★★★★★</div>
+          <div class="row"><b>나중에</b><b class="p">평가하기</b></div>
+          <div class="os">⌘ OS 기본 리뷰 시트 (시스템 제공 · 디자인/문구 커스텀 불가 · 표시 횟수 OS 제한)</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <h3>설계 — 좋싫 1탭 + 리뷰 트리거</h3>
+      <table>
+        <tr><th>항목</th><th>동작</th></tr>
+        <tr><td><b>위치</b></td><td>메인 추천 카드 ↔ "코디 추천 조정" 버튼 사이 (wireframes §3)</td></tr>
+        <tr><td><b>👍 좋아요</b></td><td>하이라이트 + 짧은 ack. <b>긍정 누적 + throttle 충족 시 OS 인앱 리뷰 시트 트리거</b> (앱 켤 때마다 X)</td></tr>
+        <tr><td><b>👎 싫어요</b></td><td>하이라이트 + ack. <span class="ok">v1.2=기록만</span>(학습 X·"반영" 약속 X). 리뷰 트리거 안 함. 이유 chip은 v2 옵션</td></tr>
+        <tr><td><b>저장</b></td><td>analytics 이벤트(A 우선) / rec_id 테이블(B, envelope rec_id echo 선행) — api-contract §6.3 미정</td></tr>
+        <tr><td><b>재탭</b></td><td>같은 추천엔 1회(토글 변경 가능), 새 추천 받으면 리셋</td></tr>
+      </table>
+      <p><b>★ 인앱 리뷰 = OS 소유</b>: aos Play In-App Review / ios StoreKit. <b>시트 문구·별 UI·표시 여부 전부 OS 결정</b>(우리 커스텀 0, ios 365일 최대 3회). 우리가 통제 = <b>트리거 시점</b>(좋아요 + N회/며칠 + 마지막 표시 throttle). 정책상 강요·보상·👎 직후 금지.</p>
+      <p class="src">위 phone에서 👍 3회 누적(또는 리셋 후) 시 OS 리뷰 시트 예시 노출 = throttle/트리거 시뮬. 명세 SoT=wireframes.md §3. v1.2=수집·학습=v2.</p>
+    </div>
+  </div>
+
+<script>
+  let V='A', vote=null, likeCount=0;
+  function render(){
+    const fb=document.getElementById('fbtns');
+    document.getElementById('fq').style.display = V==='B' ? 'none':'block';
+    const up=`<div class="tb up${vote==='up'?' sel':''}" onclick="tap('up')"><span class="em">👍</span>${V==='B'?'':'<span>좋아요</span>'}</div>`;
+    const dn=`<div class="tb down${vote==='down'?' sel':''}" onclick="tap('down')"><span class="em">👎</span>${V==='B'?'':'<span>'+(V==='C'?'별로예요':'싫어요')+'</span>'}</div>`;
+    fb.className = 'tbtns'+(V==='B'?' iconly':'')+(V==='C'?' chips':'');
+    fb.innerHTML = up+dn;
+    const ack=document.getElementById('ack');
+    if(vote==='up') ack.innerHTML='<div class="ack">의견 감사합니다 🙂</div>';
+    else if(vote==='down') ack.innerHTML='<div class="ack no">의견 감사합니다 — 더 나은 추천에 쓸게요</div>';
+    else ack.innerHTML='';
+    document.getElementById('cnt').textContent = `👍 누적 ${likeCount}/3 (3회 시 리뷰 시트)`;
+  }
+  function tap(v){
+    vote = (vote===v)? null : v;
+    if(vote==='up'){ likeCount++; if(likeCount>=3){ setTimeout(()=>document.getElementById('ov').classList.add('show'),350); } }
+    render();
+  }
+  function reset(){ vote=null; likeCount=0; document.getElementById('ov').classList.remove('show'); render(); }
+  function setVar(x){ V=x; ['A','B','C'].forEach(k=>document.getElementById('v'+k).classList.toggle('on',k===x)); render(); }
+  function setTheme(t){ document.documentElement.setAttribute('data-theme',t); thL.classList.toggle('on',t==='light'); thD.classList.toggle('on',t==='dark'); }
+  document.getElementById('ov').addEventListener('click',()=>document.getElementById('ov').classList.remove('show'));
+  render();
+</script>
+</body>
+</html>
