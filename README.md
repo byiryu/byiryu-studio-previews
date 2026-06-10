@@ -8,14 +8,13 @@ byiryu studio 프로젝트 미리보기 · 디자인 시스템 · 검증 자료 
 
 ```
 byiryu-studio-previews/
-├── index.html                       # 스튜디오 랜딩 (프로젝트 목록 + 도구)
+├── index.html                       # 스튜디오 랜딩 (프로젝트 목록 + 스튜디오)
 ├── studio/
 │   └── logo-concepts.html           # 스튜디오 로고 컨셉 보드 (SVG 6안)
-├── tools/
-│   └── color-palette-viewer.html    # 컬러 팔레트 뷰어 (필터 기반)
 │
 ├── weather-outfit/                  # PALETI (v1.x 출시)
-│   ├── index.html                   # 프로젝트 인덱스 (sanity + design)
+│   ├── index.html                   # 프로젝트 인덱스 (sanity + design + 도구)
+│   ├── color-palette-viewer.html    # 컬러 팔레트 뷰어 (날씨/계절/역할 필터)
 │   ├── design/                      # 출시 디자인 프리뷰 (공개) — 구 design-preview-current/
 │   │   ├── index.html               #   canonical 4종 + 버전별 프로토타입 이력
 │   │   ├── design-system.html · components.html · prototype.html · widgets.html
@@ -54,3 +53,4 @@ GitHub Pages — 푸시하면 자동 배포.
 | 2026-05-10~11 | weather-outfit 검증 자료 8건 추가 |
 | 2026-05-11 | **`byiryu-studio-previews` 로 이름 변경.** 스튜디오 단위 표준 구조 (`{project}/design/` + `{project}/sanity/`) 도입 |
 | 2026-06-10 | PALETI 출시 후 정리 — `weather-outfit/design-preview-current/` → `design/` 승격(공개), 고아 sanity 보드·로고 컨셉·버전 프로토타입 인덱스 연결, README 구조 정합 |
+| 2026-06-10 | `tools/color-palette-viewer` → `weather-outfit/` 이동(PALETI 전용 도구), PALETI 카드 Google Play 링크 추가, weaver 카드 비활성화, 미리보기 카드 네이밍 간소화 |
