@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 아트 디렉션 비교 보드 (3방향)</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Pretendard',sans-serif;background:#101016;color:#eeeef2;padding:24px 14px 48px;line-height:1.5}
+  .wrap{max-width:430px;margin:0 auto}
+  h1{font-size:20px;letter-spacing:1px}
+  .sub{color:#778;font-size:12px;margin:4px 0 20px}
+  .dir{margin-bottom:34px}
+  .dir h2{font-size:16px;margin-bottom:2px}
+  .dir .concept{font-size:12px;color:#9aa0b0;margin-bottom:2px}
+  .dir .pros{font-size:11px;color:#667;margin-bottom:10px}
+  .row{display:flex;gap:10px}
+  .ph{flex:1;aspect-ratio:9/19;border:1.5px solid #2a2a36;border-radius:18px;overflow:hidden;position:relative;background:#0c0c11}
+  .bg{position:absolute;inset:0}
+  /* 공통: 라이브 트랙 데모 (회전 마름모) */
+  .track{position:absolute;left:15%;top:22%;width:70%;aspect-ratio:1;border:1px solid rgba(255,255,255,.10);transform:rotate(45deg);animation:spin 50s linear infinite}
+  .track::after{content:'';position:absolute;top:-3px;left:50%;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 8px rgba(255,255,255,.5)}
+  @keyframes spin{to{transform:rotate(405deg)}}
+  /* D1 보이드 */
+  .d1 .bg{background:#06060d}
+  .d1 .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 45% 60%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 85% 45%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 10% 75%,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 60% 85%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 35% 10%,rgba(255,255,255,.35),transparent);animation:tw 4s ease-in-out infinite alternate}
+  @keyframes tw{to{opacity:.55}}
+  .d1 .neb{position:absolute;inset:0;background:radial-gradient(45% 30% at 75% 20%,rgba(76,70,160,.22),transparent),radial-gradient(50% 35% at 20% 80%,rgba(120,60,140,.14),transparent)}
+  /* D2 사이버 그리드 */
+  .d2 .bg{background:#070a0f}
+  .d2 .grid{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(77,171,247,.09) 0 1px,transparent 1px 26px),repeating-linear-gradient(90deg,rgba(77,171,247,.07) 0 1px,transparent 1px 26px)}
+  .d2 .hor{position:absolute;left:0;right:0;bottom:0;height:38%;background:radial-gradient(70% 90% at 50% 100%,rgba(77,171,247,.20),transparent)}
+  /* D3 추상 잔광 */
+  .d3 .bg{background:#0c0c11}
+  .d3 .orb{position:absolute;width:60%;aspect-ratio:1;border-radius:50%;filter:blur(26px);opacity:.16}
+  .d3 .o1{background:#4dabf7;left:-20%;top:6%}
+  .d3 .o2{background:#b197fc;right:-22%;top:42%}
+  .d3 .o3{background:#ff6b6b;left:-12%;bottom:-8%;opacity:.10}
+  .d3 .streak{position:absolute;width:140%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(-24deg);left:-20%}
+  /* 목업 콘텐츠 */
+  .ct{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 10px;z-index:2}
+  .logo{font-size:14px;font-weight:800;letter-spacing:3px;text-align:center}
+  .copy{font-size:7.5px;color:#9aa0b0;text-align:center;margin-top:2px}
+  .grow{flex:1}
+  .sso{background:rgba(21,21,29,.85);border:1px solid #2a2a36;border-radius:8px;font-size:7.5px;font-weight:600;text-align:center;padding:6px;margin-top:5px}
+  .sso.k{background:#FEE500;color:#191600;border-color:#FEE500}
+  .coins{font-size:8px;color:#9aa0b0;display:flex;justify-content:space-between;margin-bottom:8px}
+  .mcard{background:rgba(21,21,29,.82);border:1px solid #2a2a36;border-radius:9px;text-align:center;padding:10px 4px;font-size:9px;font-weight:700}
+  .mrow{display:flex;gap:5px;margin-top:5px}
+  .mrow .mcard{flex:1;padding:7px 2px;font-size:7.5px}
+  .tag{position:absolute;top:7px;left:9px;font-size:7px;color:#667;letter-spacing:1px;z-index:3}
+  .note{background:#15151d;border-left:3px solid #ffd43b;border-radius:8px;padding:10px 13px;font-size:12px;color:#9aa0b0;margin:6px 0 26px}
+  .note b{color:#eeeef2}
+  .pick{background:#15151d;border:1px solid #2a2a36;border-radius:10px;padding:12px 14px;font-size:12px;color:#9aa0b0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>weaver — 아트 디렉션 비교</h1>
+  <p class="sub">2026-06-11 · 로그인+메인 목업 × 3방향 · 모든 안에 "라이브 트랙 데모 배경"(회전 마름모) 공통 적용 — 폰에서 보고 선택</p>
+
+  <div class="note"><b>공통 기법:</b> 메타 화면 배경 = 실제 트랙이 천천히 돌며 데모 주행 (제작비 ~0, "살아 움직이는 트랙" 정체성). 아래 3방향은 그 <b>뒤에 깔리는 세계</b>의 차이입니다. 인게임(플레이 중)은 어느 안이든 절제 — 위협 가독성 1순위.</div>
+
+  <!-- D1 -->
+  <div class="dir d1">
+    <h2>A. 보이드 / 우주</h2>
+    <p class="concept">깊은 어둠 + 별·성운 — 트랙은 허공에 떠 있는 네온 구조물. 무중력 세계관 직결</p>
+    <p class="pros">+ 세계관 설득력 최고 · 차분한 깊이 / − 흔한 모티프 (우주 러너 다수)</p>
+    <div class="row">
+      <div class="ph">
+        <span class="tag">LOGIN</span>
+        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
+        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+      </div>
+      <div class="ph">
+        <span class="tag">MAIN</span>
+        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
+        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D2 -->
+  <div class="dir d2">
+    <h2>B. 사이버 그리드</h2>
+    <p class="concept">디지털 공간 — 미세 그리드 + 수평선 글로우, 트랙은 시스템 회로. 카테고리 4색 네온과 정합</p>
+    <p class="pros">+ 4색 네온이 가장 살아남 · "게임다움" 즉발 / − 트론류 기시감 · 차가움</p>
+    <div class="row">
+      <div class="ph">
+        <span class="tag">LOGIN</span>
+        <div class="bg"></div><div class="grid"></div><div class="hor"></div><div class="track"></div>
+        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+      </div>
+      <div class="ph">
+        <span class="tag">MAIN</span>
+        <div class="bg"></div><div class="grid"></div><div class="hor"></div><div class="track"></div>
+        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D3 -->
+  <div class="dir d3">
+    <h2>C. 추상 잔광</h2>
+    <p class="concept">어둠 유지 + 카테고리색 오브 글로우·빛줄기만 — "색 = 정보" 문법의 메타 화면 연장</p>
+    <p class="pros">+ 브랜드 일관성 최고 · 질리지 않음 / − 셋 중 가장 절제 = "게임다움" 임팩트는 약할 수 있음</p>
+    <div class="row">
+      <div class="ph">
+        <span class="tag">LOGIN</span>
+        <div class="bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="streak" style="top:30%"></div><div class="streak" style="top:62%"></div><div class="track"></div>
+        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+      </div>
+      <div class="ph">
+        <span class="tag">MAIN</span>
+        <div class="bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="streak" style="top:26%"></div><div class="streak" style="top:58%"></div><div class="track"></div>
+        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pick">
+    <b style="color:#eeeef2">선택 방법:</b> A / B / C (혼합 가능 — 예: "기본 C, 스테이지 선택만 B 그리드"). 선택되면 → brief.md 아트 디렉션 섹션 확정 → M0 캐릭터 팩 선택 기준 + 캐릭터 룩(픽셀 스프라이트 톤)이 이 방향을 따릅니다. 본 보드는 결정 흔적으로 sanity 에 보존.
+  </div>
+</div>
+</body>
+</html>
