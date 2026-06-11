@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>weaver — prototype v3 (스테이지 · 무기 스왑 액션)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body { height:100%; background:#0c0c11; overflow:hidden; font-family:-apple-system,'Segoe UI',sans-serif; color:#eee; }
+  #wrap { height:100%; display:flex; flex-direction:column; align-items:center; }
+  canvas { display:block; touch-action:none; }
+  #panel { flex:1; width:100%; max-width:560px; display:flex; flex-direction:column; padding:8px 14px 10px; gap:8px; min-height:0; }
+  .hud { display:flex; align-items:center; gap:10px; font-size:12px; color:#9aa; font-variant-numeric:tabular-nums; }
+  .hud .stage { color:#fff; font-weight:700; letter-spacing:1px; }
+  .bar { flex:1; height:6px; background:#1d1d26; border-radius:3px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0%; background:#5c7cfa; border-radius:3px; transition:width 0.1s linear; }
+  #weapons { display:flex; gap:8px; }
+  .wslot { flex:1; min-width:0; background:#15151d; border:2px solid #2a2a36; border-radius:12px; padding:8px 2px 7px; text-align:center; cursor:pointer; transition:all 0.1s; }
+  .wslot .ic { font-size:20px; display:block; }
+  .wslot .nm { font-size:10px; color:#888; display:block; margin-top:2px; }
+  .wslot.on { background:#1c2030; transform:translateY(-2px); }
+  .wslot[data-w="0"].on { border-color:#4dabf7; box-shadow:0 0 12px rgba(77,171,247,.35); }
+  .wslot[data-w="1"].on { border-color:#ff6b6b; box-shadow:0 0 12px rgba(255,107,107,.35); }
+  .wslot[data-w="2"].on { border-color:#ffd43b; box-shadow:0 0 12px rgba(255,212,59,.35); }
+  .wslot[data-w="3"].on { border-color:#b197fc; box-shadow:0 0 12px rgba(177,151,252,.35); }
+  #movezone { flex:1; min-height:64px; background:#12121a; border:1px dashed #2a2a36; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#556; font-size:13px; letter-spacing:1px; touch-action:none; }
+  #movezone.held { background:#181826; color:#778; }
+  #menubar { display:flex; justify-content:space-between; color:#445; font-size:15px; padding:0 4px; }
+  #menubar span { font-size:11px; letter-spacing:1px; padding-top:3px; }
+  .overlay { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(8,8,12,.88); text-align:center; padding:24px; z-index:10; }
+  .hidden { display:none !important; }
+  h1 { font-size:28px; letter-spacing:4px; margin-bottom:4px; }
+  h1 .sub { font-size:12px; letter-spacing:2px; color:#888; display:block; margin-top:6px; font-weight:400; }
+  .legend { text-align:left; font-size:12.5px; line-height:1.85; margin:16px 0 18px; color:#bbb; max-width:330px; }
+  .legend b { color:#fff; }
+  .btn { background:#fff; color:#111; border:none; padding:13px 34px; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; letter-spacing:1px; margin-top:4px; }
+  .big { font-size:38px; font-weight:800; margin:4px 0; }
+  .muted { color:#888; font-size:13px; margin-bottom:10px; }
+  .skins { display:flex; gap:12px; margin:10px 0 16px; align-items:center; }
+  .skins span { font-size:12px; color:#888; }
+  .sk { width:26px; height:26px; border-radius:50%; border:2px solid #333; cursor:pointer; }
+  .sk.on { border-color:#fff; transform:scale(1.15); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div id="panel">
+    <div class="hud">
+      <span class="stage">STAGE 1 · 마름모</span>
+      <div class="bar"><i id="prog"></i></div>
+      <span id="lapTxt">0/3바퀴</span>
+    </div>
+    <div id="weapons">
+      <div class="wslot on" data-w="0"><span class="ic">🔵</span><span class="nm">원거리</span></div>
+      <div class="wslot" data-w="1"><span class="ic">🔴</span><span class="nm">근거리</span></div>
+      <div class="wslot" data-w="2"><span class="ic">🟡</span><span class="nm">대공</span></div>
+      <div class="wslot" data-w="3"><span class="ic">🟣</span><span class="nm">특수</span></div>
+    </div>
+    <div id="movezone">탭 = 점프 · 누르고 있으면 착지 후 슬라이드</div>
+    <div id="menubar"><span>☰ 메뉴 (목업)</span><span>weaver proto v3</span></div>
+  </div>
+</div>
+
+<div id="startScreen" class="overlay">
+  <h1>WEAVER<span class="sub">prototype v3 · 스테이지 · 무기 스왑 액션</span></h1>
+  <div class="legend">
+    🏃 캐릭터가 마름모 네 벽을 <b>자동 주행</b> — 무중력 세계관<br>
+    🎮 이동 존: <b>탭=점프</b> · <b>홀드=착지 후 슬라이드</b><br>
+    🔺 가시=점프 · ▬ 바=슬라이드 (기본 장애물 = 몸으로)<br>
+    ⚔️ <b>이벤트 몬스터 = 색 맞는 무기로 스왑</b> → 자동 사격<br>
+    &nbsp;&nbsp;&nbsp;🔵 일반 몬스터 · 🔴 장갑(근거리만) · 🟡 낙하물 요격<br>
+    &nbsp;&nbsp;&nbsp;(무기가 안 맞으면? 점프 타이밍으로 회피 — 어려움)<br>
+    🏁 <b>클리어 = 3바퀴 완주</b>
+  </div>
+  <div class="skins"><span>스킨(코스메틱 시인성 확인):</span>
+    <div class="sk on" style="background:#fff" data-s="#ffffff"></div>
+    <div class="sk" style="background:#5cf" data-s="#55ccff"></div>
+    <div class="sk" style="background:#f7a" data-s="#ff77aa"></div>
+  </div>
+  <button class="btn" id="startBtn">시작</button>
+  <p class="muted" style="margin-top:14px;">※ 검증 포인트: ① 스왑이 달리기를 풍부하게 하나 ② 탭/홀드 입력 손맛 ③ 이 크기에서 스킨이 읽히나</p>
+</div>
+
+<div id="overScreen" class="overlay hidden">
+  <div class="muted" id="overTitle">GAME OVER</div>
+  <div class="big" id="overInfo">0.0바퀴</div>
+  <div class="muted" id="overSub"></div>
+  <button class="btn" id="retryBtn">다시하기</button>
+</div>
+
+<script>
+const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
+const DPR=Math.min(window.devicePixelRatio||1,2);
+let S=0, C=0, R=0, L=0, P=0, verts=[];
+function layout(){
+  S=Math.min(innerWidth, Math.floor(innerHeight*0.54));
+  canvas.width=S*DPR; canvas.height=S*DPR;
+  canvas.style.width=S+'px'; canvas.style.height=S+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  C=S/2; R=S/2-26;
+  verts=[[C,C-R],[C+R,C],[C,C+R],[C-R,C]];   // 상·우·하·좌 꼭짓점 (시계방향 주행)
+  L=Math.hypot(R,R); P=4*L;
+}
+addEventListener('resize',layout); layout();
+
+function pathAt(d){
+  d=((d%P)+P)%P;
+  const i=Math.min(3,Math.floor(d/L)), t=d-i*L;
+  const A=verts[i], B=verts[(i+1)%4];
+  const fx=(B[0]-A[0])/L, fy=(B[1]-A[1])/L;
+  return {x:A[0]+fx*t, y:A[1]+fy*t, fx, fy, nx:-fy, ny:fx}; // n = 안쪽(중심) 방향
+}
+function wrapDelta(a,b){ return ((a-b)%P+P)%P; }
+
+// ---------- 스테이지 정의 (핸드크래프트, 결정론 — 재도전 시 동일) ----------
+const LAPS=3;
+function frac(lap,f){ return (lap-1)*P + f*P; }
+let threats=[];
+function buildStage(){
+  threats=[];
+  const T=(lap,f,kind)=>threats.push({d:frac(lap,f), kind, dead:false, fired:false, obj:null, slashT:0});
+  // lap1 — 기본기 (몸)
+  T(1,.14,'spike'); T(1,.32,'spike'); T(1,.5,'bar'); T(1,.68,'spike'); T(1,.86,'bar');
+  // lap2 — 몬스터 도입 (🔵) + 장갑 (🔴)
+  T(2,.08,'mob'); T(2,.22,'spike'); T(2,.4,'armor'); T(2,.56,'bar'); T(2,.72,'mob'); T(2,.88,'spike');
+  // lap3 — 낙하물 (🟡) + 혼합
+  T(3,.06,'fall'); T(3,.2,'mob'); T(3,.36,'armor'); T(3,.52,'fall'); T(3,.66,'bar'); T(3,.8,'armor'); T(3,.92,'spike');
+}
+
+// ---------- 상태 ----------
+const GRAV=2600, JUMPV=620;
+const CHAR_H=24, SLIDE_H=11, CHAR_W=8;
+const SPIKE_H=30, MOB_H=24, ARMOR_H=38;
+const BAR_LO=16, BAR_HI=64, BAR_W=14;
+const WCOL=['#4dabf7','#ff6b6b','#ffd43b','#b197fc'];
+let state='start', skin='#ffffff';
+const char={d:0,speed:0,offset:0,vy:0,grounded:true,sliding:false,walk:0};
+let held=false, weapon=0, elapsed=0, shots=[], fx=[], trail=[];
+
+function reset(){
+  char.d=0; char.speed=205; char.offset=0; char.vy=0; char.grounded=true; char.sliding=false; char.walk=0;
+  held=false; weapon=0; setWeaponUI(0); elapsed=0; shots=[]; fx=[]; trail=[];
+  buildStage();
+}
+
+// ---------- 입력 ----------
+const movezone=document.getElementById('movezone');
+function down(e){ e.preventDefault(); if(state!=='play')return; held=true; movezone.classList.add('held');
+  if(char.grounded && !char.sliding){ char.vy=JUMPV; char.grounded=false; } }
+function up(){ held=false; movezone.classList.remove('held'); }
+movezone.addEventListener('pointerdown',down);
+addEventListener('pointerup',up); addEventListener('pointercancel',up);
+addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); if(!e.repeat) down(e); } });
+addEventListener('keyup',e=>{ if(e.code==='Space') up(); });
+
+function setWeaponUI(w){
+  weapon=w;
+  document.querySelectorAll('.wslot').forEach(s=>s.classList.toggle('on',+s.dataset.w===w));
+}
+document.querySelectorAll('.wslot').forEach(s=>{
+  s.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); setWeaponUI(+s.dataset.w); });
+});
+document.querySelectorAll('.sk').forEach(s=>{
+  s.addEventListener('pointerdown',()=>{ skin=s.dataset.s;
+    document.querySelectorAll('.sk').forEach(x=>x.classList.toggle('on',x===s)); });
+});
+
+// ---------- 자동 사격 ----------
+let cdBlue=0, cdYellow=0;
+function autoFire(dt){
+  cdBlue-=dt; cdYellow-=dt;
+  for(const t of threats){
+    if(t.dead) continue;
+    const ahead=t.d-char.d;   // 절대 거리 (랩 구분 유지 — wrap 사용 금지)
+    if(t.kind==='mob' && weapon===0 && ahead>8 && ahead<150 && cdBlue<=0){
+      cdBlue=0.35; const p=pathAt(t.d), c0=charPos();
+      shots.push({x:c0.x,y:c0.y,tx:p.x,ty:p.y,target:t,col:WCOL[0],speed:560});
+    }
+    if(t.kind==='armor' && weapon===1 && ahead>4 && ahead<72 && t.slashT<=0){
+      t.slashT=0.13; // 슬래시 후 처치
+    }
+    if(t.kind==='fall' && t.obj && !t.obj.done && weapon===2 && cdYellow<=0){
+      const c0=charPos(), dx=t.obj.x-c0.x, dy=t.obj.y-c0.y;
+      if(Math.hypot(dx,dy)<210){ cdYellow=0.4;
+        shots.push({x:c0.x,y:c0.y,target:t,homObj:true,col:WCOL[2],speed:620}); }
+    }
+    if(t.slashT>0){ t.slashT-=dt; if(t.slashT<=0){ t.dead=true; addFx(pathAt(t.d),WCOL[1]); } }
+  }
+  for(const s of shots){
+    if(s.done) continue;
+    let tx=s.tx, ty=s.ty;
+    if(s.homObj){ if(!s.target.obj||s.target.obj.done){s.done=true;continue;} tx=s.target.obj.x; ty=s.target.obj.y; }
+    else { const p=pathAt(s.target.d); tx=p.x; ty=p.y; if(s.target.dead){s.done=true;continue;} }
+    const dx=tx-s.x, dy=ty-s.y, dist=Math.hypot(dx,dy), step=s.speed*(1/60);
+    if(dist<step+6){
+      s.done=true;
+      if(s.homObj){ s.target.obj.done=true; addFx({x:tx,y:ty},WCOL[2]); }
+      else { s.target.dead=true; addFx({x:tx,y:ty},WCOL[0]); }
+    } else { s.x+=dx/dist*step; s.y+=dy/dist*step; }
+  }
+  shots=shots.filter(s=>!s.done);
+}
+function addFx(p,col){ fx.push({x:p.x,y:p.y,t:0.28,col}); }
+
+// ---------- 충돌 ----------
+function charPos(){ const p=pathAt(char.d); return {x:p.x+p.nx*(char.offset+10), y:p.y+p.ny*(char.offset+10)}; }
+function collide(){
+  const h=char.sliding?SLIDE_H:CHAR_H;
+  for(const t of threats){
+    if(t.dead||t.kind==='fall') continue;
+    const near=Math.abs(t.d-char.d);   // 절대 거리 (랩 구분)
+    const w=(t.kind==='bar'?BAR_W:10)+CHAR_W;
+    if(near>=w) continue;
+    if(t.kind==='spike' && char.offset<SPIKE_H-2) return t.kind;
+    if(t.kind==='mob'   && char.offset<MOB_H-2)   return t.kind;
+    if(t.kind==='armor' && char.offset<ARMOR_H-3) return t.kind;
+    if(t.kind==='bar'   && (char.offset<BAR_HI && char.offset+h>BAR_LO)) return t.kind;
+  }
+  return null;
+}
+
+// ---------- 낙하물 ----------
+function updateFalls(dt){
+  for(const t of threats){
+    if(t.kind!=='fall'||t.dead) continue;
+    const ahead=t.d-char.d;   // 절대 거리 (랩 구분)
+    if(!t.obj && ahead<340 && ahead>20){
+      const p=pathAt(t.d);
+      const sx=p.x+p.nx*R*1.15, sy=p.y+p.ny*R*1.15;
+      // 착탄 시각 ≈ 캐릭터 도착 직전 (위협 성립)
+      const tt=Math.max(0.7, ahead/char.speed*0.95);
+      t.obj={x:sx, y:sy, x0:sx, y0:sy, ix:p.x, iy:p.y, tt, t:0, done:false};
+    }
+    if(t.obj && !t.obj.done){
+      t.obj.t+=dt;
+      const k=Math.min(1,t.obj.t/t.obj.tt);
+      t.obj.x=t.obj.x0+(t.obj.ix-t.obj.x0)*k;
+      t.obj.y=t.obj.y0+(t.obj.iy-t.obj.y0)*k;
+      if(k>=1){
+        t.obj.done=true; t.dead=true; addFx({x:t.obj.ix,y:t.obj.iy},'#aaa');
+        const near=Math.abs(t.d-char.d);
+        if(near<24 && char.offset<22) gameOver('낙하물 — 🟡 대공으로 요격하거나 타이밍 회피');
+      }
+    }
+  }
+}
+
+// ---------- 그리기 ----------
+function drawTrack(){
+  ctx.strokeStyle='rgba(255,255,255,0.16)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(verts[0][0],verts[0][1]);
+  for(let i=1;i<4;i++) ctx.lineTo(verts[i][0],verts[i][1]);
+  ctx.closePath(); ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.022)'; ctx.fill();
+}
+function drawWedge(p,wHalf,h,col){ // 벽에서 안쪽으로 솟은 삼각형
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(p.x+p.fx*wHalf, p.y+p.fy*wHalf);
+  ctx.lineTo(p.x-p.fx*wHalf, p.y-p.fy*wHalf);
+  ctx.lineTo(p.x+p.nx*h, p.y+p.ny*h);
+  ctx.closePath(); ctx.fill();
+}
+function drawThreat(t){
+  const rel=t.d-char.d;             // 절대 거리 (랩 구분)
+  if(rel>P*0.9 || rel<-60) return;  // 다음 lap 분·지나간 분 숨김
+  const p=pathAt(t.d);
+  if(t.kind==='spike'){ drawWedge(p,9,SPIKE_H,'#ff5a5a'); return; }
+  if(t.kind==='bar'){
+    // 벽과 평행한 슬랩 (안쪽 16~64) — 슬라이드로만 통과
+    ctx.fillStyle='#74c0fc';
+    ctx.beginPath();
+    ctx.moveTo(p.x+p.fx*BAR_W+p.nx*BAR_LO, p.y+p.fy*BAR_W+p.ny*BAR_LO);
+    ctx.lineTo(p.x-p.fx*BAR_W+p.nx*BAR_LO, p.y-p.fy*BAR_W+p.ny*BAR_LO);
+    ctx.lineTo(p.x-p.fx*BAR_W+p.nx*BAR_HI, p.y-p.fy*BAR_W+p.ny*BAR_HI);
+    ctx.lineTo(p.x+p.fx*BAR_W+p.nx*BAR_HI, p.y+p.fy*BAR_W+p.ny*BAR_HI);
+    ctx.closePath(); ctx.fill();
+    return;
+  }
+  if(t.dead) return;
+  if(t.kind==='mob'){
+    ring(p,MOB_H,WCOL[0]);
+    ctx.fillStyle='#4dabf7';
+    ctx.beginPath(); ctx.arc(p.x+p.nx*12,p.y+p.ny*12,9,0,7); ctx.fill();
+    eyes(p,12);
+  }
+  if(t.kind==='armor'){
+    ring(p,ARMOR_H,WCOL[1]);
+    ctx.fillStyle='#c92a2a';
+    ctx.save(); ctx.translate(p.x+p.nx*19,p.y+p.ny*19); ctx.rotate(Math.atan2(p.nx,-p.ny));
+    ctx.fillRect(-11,-17,22,34); ctx.fillStyle='#7d1a1a'; ctx.fillRect(-11,-17,22,9);
+    ctx.restore();
+  }
+  if(t.kind==='fall' && t.obj && !t.obj.done){
+    ring(pathAt(t.d),14,WCOL[2]);                       // 착탄 마커
+    ctx.fillStyle='#ffd43b';
+    ctx.beginPath(); ctx.arc(t.obj.x,t.obj.y,8,0,7); ctx.fill();
+  }
+}
+function ring(p,h,col){ // 경고 링 (해당 무기 색)
+  const pul=2+Math.sin(performance.now()/180)*1.5;
+  ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.globalAlpha=0.85;
+  ctx.beginPath(); ctx.arc(p.x+p.nx*(h*0.55), p.y+p.ny*(h*0.55), h*0.8+pul, 0, 7); ctx.stroke();
+  ctx.globalAlpha=1;
+}
+function eyes(p,off){
+  ctx.fillStyle='#0c0c11';
+  ctx.beginPath(); ctx.arc(p.x+p.nx*off-2,p.y+p.ny*off-1,1.6,0,7);
+  ctx.arc(p.x+p.nx*off+3,p.y+p.ny*off-1,1.6,0,7); ctx.fill();
+}
+function drawChar(){
+  const p=pathAt(char.d);
+  const bx=p.x+p.nx*char.offset, by=p.y+p.ny*char.offset;
+  trail.push({x:bx+p.nx*10,y:by+p.ny*10}); if(trail.length>14) trail.shift();
+  for(let i=0;i<trail.length;i++){
+    ctx.globalAlpha=i/trail.length*0.3; ctx.fillStyle=skin;
+    ctx.beginPath(); ctx.arc(trail[i].x,trail[i].y,2.2,0,7); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  const rot=Math.atan2(p.nx,-p.ny);
+  ctx.save(); ctx.translate(bx,by); ctx.rotate(rot);
+  ctx.strokeStyle=skin; ctx.fillStyle=skin; ctx.lineWidth=3; ctx.lineCap='round';
+  if(char.sliding){
+    ctx.beginPath(); ctx.moveTo(-9,-4); ctx.lineTo(9,-4); ctx.stroke();   // 누운 몸
+    ctx.beginPath(); ctx.arc(12,-6,4.2,0,7); ctx.fill();                   // 머리
+  } else {
+    const swing=Math.sin(char.walk)*(char.grounded?6:2);
+    ctx.beginPath(); ctx.moveTo(0,-9); ctx.lineTo(-swing,0); ctx.moveTo(0,-9); ctx.lineTo(swing,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-9); ctx.lineTo(0,-18); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-15); ctx.lineTo(swing*0.7,-11); ctx.moveTo(0,-15); ctx.lineTo(-swing*0.7,-11); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,-22,4.5,0,7); ctx.fill();
+  }
+  ctx.restore();
+  // 무기 표시 (캐릭터 옆 점)
+  ctx.fillStyle=WCOL[weapon];
+  ctx.beginPath(); ctx.arc(bx+p.nx*26, by+p.ny*26, 3.4, 0, 7); ctx.fill();
+}
+
+// ---------- 루프 ----------
+const progEl=document.getElementById('prog'), lapEl=document.getElementById('lapTxt');
+let last=performance.now();
+function loop(now){
+  let dt=(now-last)/1000; last=now; if(dt>0.05)dt=0.05;
+  requestAnimationFrame(loop);
+  ctx.clearRect(0,0,S,S);
+  drawTrack();
+
+  if(state==='play'){
+    elapsed+=dt;
+    char.speed+=dt*4;
+    char.d+=char.speed*dt;
+    char.walk+=char.speed*dt*0.07;
+    if(!char.grounded){
+      char.offset+=char.vy*dt; char.vy-=GRAV*dt;
+      if(char.offset<=0){ char.offset=0; char.vy=0; char.grounded=true; }
+    }
+    char.sliding = held && char.grounded;
+    autoFire(dt); updateFalls(dt);
+    const hit=collide();
+    if(hit){
+      const why={spike:'가시 — 점프로 넘기', bar:'바 — 홀드(슬라이드)로 통과', mob:'몬스터 — 🔵 원거리로 처치 또는 점프 회피', armor:'장갑 몬스터 — 🔴 근거리로 처치 (점프 회피는 고난도)'}[hit];
+      gameOver(why);
+    }
+    if(char.d>=LAPS*P && state==='play') stageClear();
+    progEl.style.width=Math.min(100,char.d/(LAPS*P)*100)+'%';
+    lapEl.textContent=Math.min(LAPS,(char.d/P)).toFixed(1)+'/'+LAPS+'바퀴';
+  }
+
+  for(const t of threats) drawThreat(t);
+  for(const s of shots){ ctx.fillStyle=s.col; ctx.beginPath(); ctx.arc(s.x,s.y,3,0,7); ctx.fill(); }
+  for(const f of fx){ f.t-=dt; ctx.globalAlpha=Math.max(0,f.t/0.28); ctx.strokeStyle=f.col; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(f.x,f.y,(0.28-f.t)*70+6,0,7); ctx.stroke(); ctx.globalAlpha=1; }
+  fx=fx.filter(f=>f.t>0);
+  if(state!=='start') drawChar();
+}
+requestAnimationFrame(loop);
+
+// ---------- 상태 전환 ----------
+const startScreen=document.getElementById('startScreen'), overScreen=document.getElementById('overScreen');
+function startGame(){ reset(); state='play'; startScreen.classList.add('hidden'); overScreen.classList.add('hidden'); }
+function gameOver(why){
+  state='over';
+  document.getElementById('overTitle').textContent='GAME OVER';
+  document.getElementById('overInfo').textContent=(char.d/P).toFixed(1)+'바퀴';
+  document.getElementById('overSub').textContent=why||'';
+  overScreen.classList.remove('hidden');
+}
+function stageClear(){
+  state='over';
+  document.getElementById('overTitle').textContent='🏁 STAGE CLEAR';
+  document.getElementById('overInfo').textContent=elapsed.toFixed(1)+'초';
+  document.getElementById('overSub').textContent='3바퀴 완주 — 재도전으로 클리어 타임 단축';
+  overScreen.classList.remove('hidden');
+}
+document.getElementById('startBtn').onclick=startGame;
+document.getElementById('retryBtn').onclick=startGame;
+</script>
+</body>
+</html>
