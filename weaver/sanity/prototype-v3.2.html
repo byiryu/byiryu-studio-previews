@@ -80,7 +80,7 @@
 <div id="startScreen" class="overlay">
   <h1>WEAVER<span class="sub">prototype v3.2 · 카메라 구조 비교 (A/B 결정용)</span></h1>
   <div class="legend">
-    🎥 <b>HUD 우측 버튼 = 뷰 전환</b> — 전체 뷰 ↔ 놈식 팔로우(줌+회전)<br>
+    🎥 <b>팔로우 뷰 확정판</b> — 줌 1.45·우향·전방 시야 확대 (버튼으로 전체 뷰 비교 가능)<br>
     ⏱ 속도 = 둘레 정규화 (시작 8초/바퀴 — 기기 무관 동일)<br>
     🎮 원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)<br>
     🏃 스테이지 5개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
@@ -126,10 +126,12 @@ function setShape(shape){
   baseVerts=shapeVerts(shape); applyRot();
   L=Math.hypot(baseVerts[1][0]-baseVerts[0][0], baseVerts[1][1]-baseVerts[0][1]); P=4*L;
 }
+let VW=0, VH=0;   // ★ 뷰포트 (1:1 해제 — 가로 풀 × 세로 ~56%). 월드는 S×S 유지
 function layout(){
-  S=Math.min(innerWidth, Math.floor(innerHeight*0.5));
-  canvas.width=S*DPR; canvas.height=S*DPR;
-  canvas.style.width=S+'px'; canvas.style.height=S+'px';
+  VW=Math.min(innerWidth,560); VH=Math.floor(innerHeight*0.56);
+  S=VW;
+  canvas.width=VW*DPR; canvas.height=VH*DPR;
+  canvas.style.width=VW+'px'; canvas.style.height=VH+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
   C=S/2; setShape(curShape);
 }
@@ -186,16 +188,17 @@ const WCOL=['#4dabf7','#ff6b6b','#ffd43b','#b197fc'];
 let state='start', skin='#ffffff';
 const char={d:0,speed:0,offset:0,vy:0,grounded:true,sliding:false,walk:0};
 let slideHeld=false, weapon=-1, elapsed=0, totalElapsed=0, shots=[], fx=[], trail=[];
-let camMode='overview', camAngle=0;
+let camMode='follow', camAngle=0, camSnap=true;   // ★ 팔로우 확정 (2026-06-11) — 전체 뷰는 비교 참조용
 const camBtn=document.getElementById('camBtn');
 function toggleCam(){ camMode = camMode==='overview' ? 'follow' : 'overview';
   camBtn.textContent = camMode==='overview' ? '🎥 따라가기' : '👁 전체 뷰'; }
+camBtn.textContent='👁 전체 뷰';
 camBtn.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); toggleCam(); });
 addEventListener('keydown',e=>{ if(e.code==='KeyV') toggleCam(); });
 
 function startStage(i){
   stageIdx=i;
-  rotAngle=0; setShape(STAGES[i].shape||'diamond');   // ★ 형태·둘레 재계산 후 배치
+  rotAngle=0; camSnap=true; setShape(STAGES[i].shape||'diamond');   // ★ 형태·둘레 재계산 후 배치
   char.d=0; char.speed=P/8.0*(1+i*0.06); char.offset=0;   // ★ 둘레 정규화 — 시작 8초/바퀴, 기기 무관 (v3.1 px/s 고정 버그 수정) char.vy=0; char.grounded=true; char.sliding=false; char.walk=0;
   elapsed=0; shots=[]; fx=[]; trail=[]; slideHeld=false;
   buildStage();
@@ -443,7 +446,7 @@ let last=performance.now();
 function loop(now){
   let dt=(now-last)/1000; last=now; if(dt>0.05)dt=0.05;
   requestAnimationFrame(loop);
-  ctx.clearRect(0,0,S,S);
+  ctx.clearRect(0,0,VW,VH);
 
   if(state==='play'){
     elapsed+=dt; totalElapsed+=dt;
@@ -478,12 +481,14 @@ function loop(now){
   if(camMode==='follow' && state!=='start'){
     const p=pathAt(char.d);
     const cx=p.x+p.nx*(char.offset+12), cy=p.y+p.ny*(char.offset+12);
-    const target=-Math.atan2(p.ny,p.nx)-Math.PI/2;
+    // ★ 우향 진행 (미러) + 줌 완화 1.45 + 캐릭터 좌측 38% 배치 = 전방 시야 ~2.5초 (스왑 성립 조건)
+    const target=Math.PI-Math.atan2(p.fy,p.fx);
+    if(camSnap){ camAngle=target; camSnap=false; }   // 시작 직후 기울어짐 방지
     let dd=target-camAngle; while(dd>Math.PI)dd-=2*Math.PI; while(dd<-Math.PI)dd+=2*Math.PI;
     camAngle+=dd*Math.min(1,dt*5);   // 모서리 전환 = 부드러운 회전 (놈의 그 손맛)
-    const Z=1.9;
-    ctx.translate(S*0.5, S*0.64); ctx.rotate(camAngle); ctx.scale(Z,Z); ctx.translate(-cx,-cy);
-  } else { camAngle=0; }
+    const Z=1.45;
+    ctx.translate(VW*0.38, VH*0.66); ctx.scale(-1,1); ctx.rotate(camAngle); ctx.scale(Z,Z); ctx.translate(-cx,-cy);
+  } else { camAngle=0; ctx.translate(0,(VH-S)/2); const fit=Math.min(1,VH/S); if(fit<1){ctx.translate(VW*0.5,VH*0.5);ctx.scale(fit,fit);ctx.translate(-VW*0.5,-VH*0.5);} }
   drawTrack();
   for(const t of threats) drawThreat(t);
   for(const s of shots){ ctx.fillStyle=s.col; ctx.beginPath(); ctx.arc(s.x,s.y,3,0,7); ctx.fill(); }
