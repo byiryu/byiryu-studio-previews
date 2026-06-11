@@ -43,6 +43,21 @@
   .tog.off{background:#2a2a36}.tog.off::after{right:auto;left:2px}
   .stars{font-size:26px;letter-spacing:6px}
   .gold{color:#ffd43b}
+  /* 메인 V2-C (2026-06-11 확정) */
+  .mainhero{position:relative;flex:1;min-height:230px}
+  .mtrack{position:absolute;left:50%;top:46%;width:230px;height:230px;margin:-115px 0 0 -115px;border:1.5px solid rgba(255,255,255,.13);animation:mspin 40s linear infinite}
+  @keyframes mspin{to{transform:rotate(360deg)}}
+  .mchar{position:absolute;left:50%;top:40%;width:36px;height:48px;margin-left:-18px;background:#fff;border-radius:5px;cursor:pointer;
+    box-shadow:0 0 22px rgba(255,255,255,.5), -14px 10px 0 -6px rgba(255,255,255,.22), -24px 16px 0 -8px rgba(255,255,255,.08);animation:mbob 1.6s ease-in-out infinite}
+  @keyframes mbob{50%{transform:translateY(-4px)}}
+  .sdots{position:absolute;left:0;right:0;top:72%;display:flex;gap:7px;justify-content:center;cursor:pointer}
+  .sdots i{width:7px;height:7px;border-radius:50%}
+  .sdots i.cur{box-shadow:0 0 0 2px #0c0c11,0 0 0 3.5px #eeeef2}
+  .railrow{display:flex;align-items:center;gap:8px;margin:6px 0 10px;cursor:pointer}
+  .raillock{width:17px;height:17px;border-radius:50%;border:1.5px solid #FF6B6B;color:#FF6B6B;font-size:9px;display:flex;align-items:center;justify-content:center;flex:none}
+  .mnav{display:flex;margin-top:12px}
+  .mnav div{flex:1;text-align:center;font-size:11px;color:#9aa0b0;cursor:pointer}
+  .mnav div span{display:block;font-size:16px;margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -60,25 +75,35 @@
     <p class="dim" style="text-align:center">약관 · 개인정보처리방침</p>
   </div>
 
+  <!-- 메인 = V2-C 확정 구도 (2026-06-11 아트 디렉션 보드 rev.2 — 비주얼 디테일은 보드/SoT 기준, 본 화면은 흐름 확인용) -->
   <div class="scr" data-s="main">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 style="font-size:18px">WEAVER</h3><span style="cursor:pointer" onclick="go('settings')">⚙️</span>
+      <span class="muted">🪙 1,240 &nbsp; ⭐ 23</span><span style="cursor:pointer" onclick="go('settings')">⚙️</span>
     </div>
-    <p class="muted" style="margin:4px 0 16px">🪙 1,240 &nbsp; ⭐ 23</p>
-    <div class="card" style="text-align:center;padding:22px" onclick="go('stages')">
-      <div style="font-size:17px;font-weight:700">▶ 스테이지</div>
-      <div class="dim">구역 2 · 12</div>
+    <p class="dim" style="text-align:center;letter-spacing:4px;margin-top:8px">WEAVER</p>
+    <div class="mainhero">
+      <div class="mtrack"></div>
+      <div class="mchar" onclick="go('armory')" title="탭 → 스킨"></div>
+      <div class="sdots" onclick="go('armory')">
+        <i class="cur" style="background:#FFFFFF"></i><i style="background:#55CCFF"></i><i style="background:#FF77AA"></i>
+        <i style="background:#7CF29C;opacity:.3"></i><i style="background:#FFB454;opacity:.3"></i><i style="background:#C9A0FF;opacity:.3"></i>
+        <i style="background:#FF6E6E;opacity:.3"></i><i style="background:#FFE066;opacity:.3"></i>
+      </div>
+      <div class="dim" style="position:absolute;left:0;right:0;top:80%;text-align:center;font-size:9px">탭하여 스킨 변경</div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <div class="card" onclick="go('loadout')">∞ 무한</div>
-      <div class="card" onclick="go('loadout')">📅 데일리 <span class="dim">✓</span></div>
+    <div class="dim" style="text-align:right;font-size:10px">12 / 16</div>
+    <div class="railrow" onclick="go('stages')" title="탭 → 스테이지 선택">
+      <div class="bar"><i style="width:56%"></i></div><div class="raillock">🔒</div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <div class="card" onclick="go('armory')">🗡 무기고</div>
-      <div class="card">🏆 랭킹</div>
+    <button class="btn" style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px" onclick="go('loadout')">
+      <span>▶ PLAY</span><span style="font-size:11px;opacity:.55">스테이지 12</span>
+    </button>
+    <div class="mnav">
+      <div onclick="go('loadout')"><span>∞</span>무한</div>
+      <div onclick="go('loadout')"><span>📅</span>데일리</div>
+      <div onclick="go('armory')"><span>🗡</span>무기고</div>
+      <div><span>🏆</span>랭킹</div>
     </div>
-    <div class="grow"></div>
-    <p class="dim" style="text-align:center">전면 광고 없음 (스테이지 사이만)</p>
   </div>
 
   <div class="scr" data-s="stages">

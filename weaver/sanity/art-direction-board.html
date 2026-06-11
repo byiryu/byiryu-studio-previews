@@ -231,7 +231,7 @@
   <p class="meta">2026-06-11 · 디자인 세션 제작 · game-ui-designer 검토 반영 · 이전 3방향 비교(rev.1)는 git 이력 보존</p>
   <div class="status">
     <div class="pill"><span class="dot ok"></span><span><b>로그인 — A 보이드/우주 확정</b> · §01 확정안 쇼케이스</span></div>
-    <div class="pill"><span class="dot wait"></span><span><b>메인 구도 — 결정 대기</b> · §02 v2 / v2-B / v2-C 중 선택 (조합 가능)</span></div>
+    <div class="pill"><span class="dot ok"></span><span><b>메인 구도 — V2-C 확정</b> (2026-06-11 사용자 선택 — 클로즈업 + 진행 레일, B+C 조합 기각) · SoT 반영 완료</span></div>
   </div>
 
   <div class="note"><b>공통 기법 — 라이브 트랙 데모:</b> 메타 화면 배경에 실제 트랙이 천천히 회전 (제작비 ~0, "살아 움직이는 트랙" 정체성). <b>트랙 형태 = 플레이어 현재 페이즈 동기</b> (스테이지 12 = 구역 2 → 정사각) — 배경 자체가 진행 표현이 됩니다.</div>
@@ -275,7 +275,7 @@
 
   <!-- ───────── 02 메인 구도 ───────── -->
   <section>
-    <div class="sec-head"><span class="sec-num">02</span><h2>메인 구도 — 3안</h2><span class="badge wait">결정 대기</span></div>
+    <div class="sec-head"><span class="sec-num">02</span><h2>메인 구도 — 3안</h2><span class="badge ok">✓ V2-C 확정</span></div>
     <p class="sec-sub">v2 계열 — 메타화면 3요소(캐릭터 프레즌스 · 주 CTA · 진행 티저)는 셋 다 충족. 결정 축 2개가 직교라 조합 선택도 가능합니다.</p>
 
     <table>
@@ -398,7 +398,7 @@
 
     <!-- v2-C 진행 레일 -->
     <div class="stage">
-      <div class="vlabel"><span class="dot" style="background:var(--prog)"></span>V2-C — CTA 통합 티저 (위계 단순형)</div>
+      <div class="vlabel" style="border-color:rgba(81,207,102,.4)"><span class="dot ok"></span>V2-C — CTA 통합 티저 ✓ 확정</div>
       <div class="ph">
         <div class="island"></div>
         <div class="void"></div><div class="stars"></div><div class="stars2"></div><div class="neb"></div>
@@ -485,9 +485,9 @@
   <section style="margin-bottom:0">
     <div class="sec-head"><span class="sec-num">04</span><h2>선택 방법</h2></div>
     <div class="footer">
-      <b>메인 구도 1개 선택</b> (또는 조합 — 축이 직교라 자유):
-      <div class="opts"><span class="opt">V2 클로즈업</span><span class="opt">V2-B 트랙 러너</span><span class="opt">V2-C 진행 레일</span><span class="opt">조합 (예: B+C)</span></div>
-      선택 → 디자인 세션이 <b>wireframes #3 메인 메뉴 구도 갱신</b> + design-system <b>chip_teaser 토큰 신설</b> 후 SoT 커밋 → M0 진입 시 이 구도가 구현 기준이 됩니다. 본 보드는 결정 흔적으로 sanity 보존.
+      <b>✅ 결정 완료 (2026-06-11):</b> 메인 구도 = <b>V2-C</b> (캐릭터 클로즈업 + 구역 진행 레일 — B+C 조합 기각: 스킨 BM 진열 유지 우선).
+      <div class="opts"><span class="opt" style="opacity:.4">V2 클로즈업</span><span class="opt" style="opacity:.4">V2-B 트랙 러너</span><span class="opt" style="border-color:rgba(81,207,102,.5);color:#51CF66">✓ V2-C 진행 레일</span></div>
+      SoT 반영 완료 — wireframes #3 구도 교체 + design-system 토큰 5종 (<b>bg_live_track · hero_character · skin_dots · rail_zone · icon_nav</b>) + 메타화면 모션 원칙. M0 진입 시 이 구도가 구현 기준. 본 보드는 결정 흔적으로 sanity 보존.
     </div>
   </section>
 
