@@ -42,6 +42,7 @@ byiryu-studio-previews/
 3. **죽은 placeholder 링크 금지** — 페이지가 생기면 즉시 활성 링크, 없으면 링크를 두지 않는다
 4. 인덱스 링크 라벨 = **한글 제목 + 날짜·1줄 설명 메타** (파일명 노출 X). superseded 자료는 흐림 처리 + 상태 라벨
 5. push 전 `./check_orphans.sh` 실행 → `OK` 확인
+6. **★ 비공개 진행 (unlisted) 상태** — 출시 전 자료를 공개 인덱스에서 숨기되 URL 직접 접근은 유지하고 싶을 때: (a) 루트 `.unlisted` 에 경로 prefix 등록 (예: `weaver/`) (b) 해당 페이지 전부 `<meta name="robots" content="noindex, nofollow">` 의무 (검색 노출 차단 — 스크립트가 검사) (c) 루트 index 카드 = "비공개 진행" 상태 표기, 링크 없음 (d) `{project}/index.html` 은 유지 — URL 아는 사람의 허브. **"잊힌 고아"와 "의도적 비공개"의 구분 = `.unlisted` 등록 여부**
 
 상세 = `ApplicationProject/_docs/workflow.md` §8.7
 

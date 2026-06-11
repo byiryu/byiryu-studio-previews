@@ -5,8 +5,16 @@
 #  - 하위 index.html: 디렉토리 밖에서 그 디렉토리로 들어오는 링크(`{dir}/` 또는 `{dir}/index.html`) 존재해야 함
 cd "$(dirname "$0")" || exit 1
 fail=0
+# .unlisted — 의도적 비공개(unlisted) 경로 prefix 목록. 인덱스 비연결 허용 (URL 직접 접근 전용, noindex 메타 의무)
+unlisted=""
+[ -f .unlisted ] && unlisted=$(grep -v '^#' .unlisted | grep -v '^$')
+is_unlisted(){ for p in $unlisted; do case "$1" in "$p"*) return 0;; esac; done; return 1; }
 while IFS= read -r f; do
   rel="${f#./}"
+  if is_unlisted "$rel"; then
+    grep -q 'name="robots" content="noindex' "$rel" || { echo "UNLISTED WITHOUT NOINDEX: $rel"; fail=1; }
+    continue
+  fi
   base="$(basename "$rel")"
   dir="$(dirname "$rel")"
   if [ "$base" = "index.html" ]; then
