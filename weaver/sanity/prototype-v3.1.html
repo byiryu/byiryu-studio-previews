@@ -26,10 +26,12 @@
   .wslot[data-w="1"].on { border-color:#ff6b6b; box-shadow:0 0 12px rgba(255,107,107,.35); }
   .wslot[data-w="2"].on { border-color:#ffd43b; box-shadow:0 0 12px rgba(255,212,59,.35); }
   .wslot[data-w="3"].on { border-color:#b197fc; box-shadow:0 0 12px rgba(177,151,252,.35); }
-  #controls { flex:1; display:flex; gap:10px; min-height:84px; }
-  .cbtn { flex:1; background:#15151d; border:2px solid #2a2a36; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:#aab; font-size:15px; font-weight:700; letter-spacing:2px; touch-action:none; }
-  .cbtn small { font-size:10px; color:#556; font-weight:400; letter-spacing:0.5px; }
-  .cbtn.press { background:#1e2030; border-color:#3a3f5c; color:#fff; transform:scale(0.985); }
+  #controls { flex:1; position:relative; min-height:118px; touch-action:none; }
+  .cbtn { position:absolute; bottom:6px; width:92px; height:92px; border-radius:50%; background:rgba(21,21,29,0.92); border:2px solid #2a2a36; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:#aab; font-size:13px; font-weight:700; letter-spacing:1px; touch-action:none; box-shadow:0 4px 14px rgba(0,0,0,0.4); }
+  .cbtn .glyph { font-size:22px; line-height:1; }
+  .cbtn small { font-size:9px; color:#556; font-weight:400; letter-spacing:0.5px; }
+  .cbtn.press { background:#1e2030; border-color:#3a3f5c; color:#fff; transform:scale(0.94); }
+  #btnSlide { left:8px; } #btnJump { right:8px; }
   #menubar { display:flex; justify-content:space-between; color:#445; font-size:15px; padding:0 4px; }
   #menubar span { font-size:11px; letter-spacing:1px; padding-top:3px; }
   .overlay { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(8,8,12,.9); text-align:center; padding:24px; z-index:10; }
@@ -64,8 +66,8 @@
       <div class="wslot locked" data-w="3"><span class="ic">🟣</span><span class="nm">특수</span></div>
     </div>
     <div id="controls">
-      <div class="cbtn" id="btnJump">점프<small>탭</small></div>
-      <div class="cbtn" id="btnSlide">슬라이드<small>누르는 동안</small></div>
+      <div class="cbtn" id="btnSlide"><span class="glyph">⤵</span>슬라이드<small>누르는 동안</small></div>
+      <div class="cbtn" id="btnJump"><span class="glyph">▲</span>점프<small>탭</small></div>
     </div>
     <div id="menubar"><span>☰ 메뉴 (목업)</span><span>weaver proto v3.1</span></div>
   </div>
@@ -74,7 +76,7 @@
 <div id="startScreen" class="overlay">
   <h1>WEAVER<span class="sub">prototype v3.1 · 2버튼 · 점진 해금 커리큘럼</span></h1>
   <div class="legend">
-    🎮 <b>좌 버튼 = 점프 (탭) · 우 버튼 = 슬라이드 (홀드)</b><br>
+    🎮 <b>원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)</b><br>
     🏃 스테이지 4개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
     &nbsp;&nbsp;S1 <b>P0</b> 몸으로만 — 가시·바·⚪낙하물(점프 타이밍)<br>
     &nbsp;&nbsp;S2 <b>P1</b> 🔵 해금 — 자동사격 (스왑 없음)<br>
