@@ -11,7 +11,8 @@
   #wrap { height:100%; display:flex; flex-direction:column; align-items:center; }
   canvas { display:block; touch-action:none; }
   #panel { flex:1; width:100%; max-width:560px; display:flex; flex-direction:column; padding:8px 14px 10px; gap:8px; min-height:0; }
-  .hud { display:flex; align-items:center; gap:10px; font-size:12px; color:#9aa; font-variant-numeric:tabular-nums; }
+  #gamewrap { position:relative; }
+  .hud { position:absolute; top:8px; left:14px; right:14px; display:flex; align-items:center; gap:10px; font-size:12px; color:#9aa; font-variant-numeric:tabular-nums; pointer-events:none; text-shadow:0 1px 4px rgba(0,0,0,.8); z-index:5; }
   .hud .stage { color:#fff; font-weight:700; letter-spacing:1px; white-space:nowrap; }
   .bar { flex:1; height:6px; background:#1d1d26; border-radius:3px; overflow:hidden; }
   .bar i { display:block; height:100%; width:0%; background:#5c7cfa; border-radius:3px; transition:width 0.1s linear; }
@@ -52,13 +53,15 @@
 </head>
 <body>
 <div id="wrap">
-  <canvas id="c"></canvas>
-  <div id="panel">
-    <div class="hud">
+  <div id="gamewrap">
+    <canvas id="c"></canvas>
+    <div class="hud" id="hudOverlay">
       <span class="stage" id="stageLabel">STAGE 1 · P0</span>
       <div class="bar"><i id="prog"></i></div>
       <span id="lapTxt">0/2바퀴</span>
     </div>
+  </div>
+  <div id="panel">
     <div id="weapons">
       <div class="wslot locked" data-w="0"><span class="ic">🔵</span><span class="nm">원거리</span></div>
       <div class="wslot locked" data-w="1"><span class="ic">🔴</span><span class="nm">근거리</span></div>
@@ -104,8 +107,8 @@
 <script>
 const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
 const DPR=Math.min(window.devicePixelRatio||1,2);
-// ★ 가시성 마진 M=40 — 위협·경고 링이 1:1 영역을 절대 안 벗어나게 (2026-06-11 사용자 피드백)
-let S=0, C=0, M=40, TR=0, L=0, P=0, baseVerts=[], verts=[], rotAngle=0, curShape='diamond';
+// ★ 가시성 마진 M=22 — 링 수납 수정으로 안전 마진 축소 (놈 레퍼런스 비교 후 트랙 확대, 2026-06-11)
+let S=0, C=0, M=22, TR=0, L=0, P=0, baseVerts=[], verts=[], rotAngle=0, curShape='diamond';
 function shapeVerts(shape){
   if(shape==='square'){ const m=M; return [[m,m],[S-m,m],[S-m,S-m],[m,S-m]]; }
   const R=S/2-M; return [[C,C-R],[C+R,C],[C,C+R],[C-R,C]];   // diamond
@@ -406,7 +409,7 @@ function drawChar(){
   }
   ctx.globalAlpha=1;
   const rot=Math.atan2(p.nx,-p.ny);
-  ctx.save(); ctx.translate(bx,by); ctx.rotate(rot);
+  ctx.save(); ctx.translate(bx,by); ctx.rotate(rot); ctx.scale(1.25,1.25);   // 시각 스케일만 (충돌 불변 — 놈 대비 체감)
   ctx.strokeStyle=skin; ctx.fillStyle=skin; ctx.lineWidth=3; ctx.lineCap='round';
   if(char.sliding){
     ctx.beginPath(); ctx.moveTo(-9,-4); ctx.lineTo(9,-4); ctx.stroke();
