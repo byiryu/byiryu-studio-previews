@@ -33,6 +33,18 @@ byiryu-studio-previews/
 
 > `travel-illust` / `lego-builder` 는 설계 단계 — 디렉토리는 `/new` 착수 시 생성.
 
+## ★ 인덱스 연결 의무 — 고아 페이지 금지 (필수 규칙, 2026-06-11)
+
+**페이지를 추가·이동·삭제하는 모든 세션 (리드·마케팅·플랫폼) 동일 적용:**
+
+1. 모든 페이지는 **루트 `index.html` → `{project}/index.html` → 페이지** 3단 체인으로 도달 가능해야 한다. `_archive/` 같은 하위 묶음도 자체 index + 부모 인덱스에서의 링크 필수
+2. **페이지 추가와 인덱스 갱신은 같은 커밋** — 고아 페이지를 push 하지 않는다
+3. **죽은 placeholder 링크 금지** — 페이지가 생기면 즉시 활성 링크, 없으면 링크를 두지 않는다
+4. 인덱스 링크 라벨 = **한글 제목 + 날짜·1줄 설명 메타** (파일명 노출 X). superseded 자료는 흐림 처리 + 상태 라벨
+5. push 전 `./check_orphans.sh` 실행 → `OK` 확인
+
+상세 = `ApplicationProject/_docs/workflow.md` §8.7
+
 ## 공개 정책
 
 **디자인 작업물 (`{project}/design/`)** — 프로젝트 출시 후 공개. 출시 전엔 로컬 보관.
@@ -54,3 +66,4 @@ GitHub Pages — 푸시하면 자동 배포.
 | 2026-05-11 | **`byiryu-studio-previews` 로 이름 변경.** 스튜디오 단위 표준 구조 (`{project}/design/` + `{project}/sanity/`) 도입 |
 | 2026-06-10 | PALETI 출시 후 정리 — `weather-outfit/design-preview-current/` → `design/` 승격(공개), 고아 sanity 보드·로고 컨셉·버전 프로토타입 인덱스 연결, README 구조 정합 |
 | 2026-06-10 | `tools/color-palette-viewer` → `weather-outfit/` 이동(PALETI 전용 도구), PALETI 카드 Google Play 링크 추가, weaver 카드 비활성화, 미리보기 카드 네이밍 간소화 |
+| 2026-06-11 | **★ 인덱스 연결 의무 규칙 신설** (고아 페이지·죽은 링크 금지, workflow §8.7) + `check_orphans.sh` 추가 + weaver 카드 활성화 회수 (disabled placeholder → 실 링크) |
