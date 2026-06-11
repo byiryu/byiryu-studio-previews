@@ -4,158 +4,493 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>weaver — 아트 디렉션 비교 보드 (3방향)</title>
+<title>weaver — 아트 디렉션 보드 rev.2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
+  :root{
+    --ink:#07070c; --panel:#10101a; --line:#1d1d2a; --line2:#2a2a36;
+    --t1:#eeeef2; --t2:#9aa0b0; --t3:#556070;
+    --c-blue:#4DABF7; --c-red:#FF6B6B; --c-yellow:#FFD43B; --c-purple:#B197FC;
+    --coin:#FFE08A; --prog:#5C7CFA; --ok:#51CF66;
+  }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,'Pretendard',sans-serif;background:#101016;color:#eeeef2;padding:24px 14px 48px;line-height:1.5}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;
+    background:var(--ink); color:var(--t1); line-height:1.55;
+    padding:34px 16px 70px; overflow-x:hidden;
+  }
+  /* 보드 자체 배경 = 보이드 (확정 디렉션을 보드 크롬에도) */
+  body::before{content:'';position:fixed;inset:0;z-index:-2;
+    background-image:
+      radial-gradient(1px 1px at 31px 47px, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 155px 203px, rgba(255,255,255,.32), transparent),
+      radial-gradient(1.5px 1.5px at 257px 96px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 88px 310px, rgba(255,255,255,.26), transparent);
+    background-size:340px 380px;}
+  body::after{content:'';position:fixed;inset:0;z-index:-1;
+    background:radial-gradient(60% 38% at 82% -4%, rgba(76,70,160,.16), transparent),
+               radial-gradient(55% 35% at 8% 104%, rgba(120,60,140,.10), transparent);}
   .wrap{max-width:430px;margin:0 auto}
-  h1{font-size:20px;letter-spacing:1px}
-  .sub{color:#778;font-size:12px;margin:4px 0 20px}
-  .dir{margin-bottom:34px}
-  .dir h2{font-size:16px;margin-bottom:2px}
-  .dir .concept{font-size:12px;color:#9aa0b0;margin-bottom:2px}
-  .dir .pros{font-size:11px;color:#667;margin-bottom:10px}
-  .row{display:flex;gap:10px}
-  .ph{flex:1;aspect-ratio:9/19;border:1.5px solid #2a2a36;border-radius:18px;overflow:hidden;position:relative;background:#0c0c11}
-  .bg{position:absolute;inset:0}
-  /* 공통: 라이브 트랙 데모 (회전 마름모) */
-  .track{position:absolute;left:15%;top:22%;width:70%;aspect-ratio:1;border:1px solid rgba(255,255,255,.10);transform:rotate(45deg);animation:spin 50s linear infinite}
-  .track::after{content:'';position:absolute;top:-3px;left:50%;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 8px rgba(255,255,255,.5)}
-  @keyframes spin{to{transform:rotate(405deg)}}
-  /* D1 보이드 */
-  .d1 .bg{background:#06060d}
-  .d1 .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 45% 60%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 85% 45%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 10% 75%,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 60% 85%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 35% 10%,rgba(255,255,255,.35),transparent);animation:tw 4s ease-in-out infinite alternate}
-  @keyframes tw{to{opacity:.55}}
-  .d1 .neb{position:absolute;inset:0;background:radial-gradient(45% 30% at 75% 20%,rgba(76,70,160,.22),transparent),radial-gradient(50% 35% at 20% 80%,rgba(120,60,140,.14),transparent)}
-  /* D2 사이버 그리드 */
-  .d2 .bg{background:#070a0f}
-  .d2 .grid{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(77,171,247,.09) 0 1px,transparent 1px 26px),repeating-linear-gradient(90deg,rgba(77,171,247,.07) 0 1px,transparent 1px 26px)}
-  .d2 .hor{position:absolute;left:0;right:0;bottom:0;height:38%;background:radial-gradient(70% 90% at 50% 100%,rgba(77,171,247,.20),transparent)}
-  /* D3 추상 잔광 */
-  .d3 .bg{background:#0c0c11}
-  .d3 .orb{position:absolute;width:60%;aspect-ratio:1;border-radius:50%;filter:blur(26px);opacity:.16}
-  .d3 .o1{background:#4dabf7;left:-20%;top:6%}
-  .d3 .o2{background:#b197fc;right:-22%;top:42%}
-  .d3 .o3{background:#ff6b6b;left:-12%;bottom:-8%;opacity:.10}
-  .d3 .streak{position:absolute;width:140%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(-24deg);left:-20%}
-  /* 목업 콘텐츠 */
-  .ct{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 10px;z-index:2}
-  .logo{font-size:14px;font-weight:800;letter-spacing:3px;text-align:center}
-  .copy{font-size:7.5px;color:#9aa0b0;text-align:center;margin-top:2px}
-  .grow{flex:1}
-  .sso{background:rgba(21,21,29,.85);border:1px solid #2a2a36;border-radius:8px;font-size:7.5px;font-weight:600;text-align:center;padding:6px;margin-top:5px}
-  .sso.k{background:#FEE500;color:#191600;border-color:#FEE500}
-  .coins{font-size:8px;color:#9aa0b0;display:flex;justify-content:space-between;margin-bottom:8px}
-  .mcard{background:rgba(21,21,29,.82);border:1px solid #2a2a36;border-radius:9px;text-align:center;padding:10px 4px;font-size:9px;font-weight:700}
-  .mrow{display:flex;gap:5px;margin-top:5px}
-  .mrow .mcard{flex:1;padding:7px 2px;font-size:7.5px}
-  .tag{position:absolute;top:7px;left:9px;font-size:7px;color:#667;letter-spacing:1px;z-index:3}
-  .note{background:#15151d;border-left:3px solid #ffd43b;border-radius:8px;padding:10px 13px;font-size:12px;color:#9aa0b0;margin:6px 0 26px}
-  .note b{color:#eeeef2}
-  .pick{background:#15151d;border:1px solid #2a2a36;border-radius:10px;padding:12px 14px;font-size:12px;color:#9aa0b0}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+
+  /* ── 헤더 ─────────────────────────── */
+  .eyebrow{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10px;letter-spacing:2.5px;color:var(--t3)}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.3px;margin:6px 0 4px}
+  .meta{font-size:12px;color:var(--t3);margin-bottom:14px}
+  .status{display:flex;flex-direction:column;gap:6px;margin-bottom:30px}
+  .pill{display:flex;align-items:center;gap:9px;background:rgba(16,16,26,.8);border:1px solid var(--line);border-radius:11px;padding:9px 13px;font-size:12.5px;color:var(--t2)}
+  .pill b{color:var(--t1);font-weight:700}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .dot.ok{background:var(--ok);box-shadow:0 0 8px rgba(81,207,102,.5)}
+  .dot.wait{background:var(--c-yellow);box-shadow:0 0 8px rgba(255,212,59,.45);animation:blink 1.8s ease-in-out infinite}
+  @keyframes blink{50%{opacity:.45}}
+
+  /* ── 섹션 ─────────────────────────── */
+  section{margin-bottom:46px}
+  .sec-head{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:5px}
+  .sec-num{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:2px;color:var(--t3)}
+  .sec-head h2{font-size:16px;font-weight:800;letter-spacing:-.2px}
+  .sec-head .badge{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:99px;padding:3px 10px;flex:none}
+  .badge.ok{color:var(--ok);border:1px solid rgba(81,207,102,.35);background:rgba(81,207,102,.07)}
+  .badge.wait{color:var(--c-yellow);border:1px solid rgba(255,212,59,.3);background:rgba(255,212,59,.06)}
+  .sec-sub{font-size:12px;color:var(--t3);margin-bottom:18px}
+  .note{background:rgba(16,16,26,.85);border:1px solid var(--line);border-left:3px solid var(--prog);border-radius:10px;padding:12px 15px;font-size:12.5px;color:var(--t2);margin-bottom:18px}
+  .note b{color:var(--t1)}
+
+  /* ── 폰 목업 프레임 ────────────────── */
+  .stage{display:flex;flex-direction:column;align-items:center;gap:14px;margin:20px 0 16px}
+  .vlabel{display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10.5px;letter-spacing:1.5px;color:var(--t2);background:rgba(16,16,26,.9);border:1px solid var(--line2);border-radius:99px;padding:5px 14px}
+  .vlabel .dot{width:6px;height:6px}
+  .ph{width:272px;aspect-ratio:9/19.4;border-radius:30px;position:relative;overflow:hidden;
+    background:#06060d;border:1px solid #23232f;flex:none;
+    box-shadow:0 24px 70px -24px rgba(0,0,0,.9), 0 0 0 4px rgba(255,255,255,.022), inset 0 0 0 1px rgba(255,255,255,.035)}
+  .island{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:58px;height:13px;border-radius:8px;background:#000;z-index:30;border:1px solid rgba(255,255,255,.06)}
+
+  /* 보이드 배경 (확정 A) */
+  .void,.stars,.stars2,.neb{position:absolute;inset:0}
+  .void{background:radial-gradient(120% 75% at 50% 0%, #0a0a14 0%, #06060d 55%)}
+  .stars{background-image:
+      radial-gradient(1px 1px at 21px 33px, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 135px 161px, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.4px 1.4px at 196px 57px, rgba(255,255,255,.55), transparent),
+      radial-gradient(1px 1px at 63px 224px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 243px 130px, rgba(255,255,255,.35), transparent);
+    background-size:260px 300px;animation:tw 4.5s ease-in-out infinite alternate}
+  .stars2{background-image:
+      radial-gradient(1px 1px at 90px 80px, rgba(255,255,255,.3), transparent),
+      radial-gradient(1.3px 1.3px at 200px 250px, rgba(255,255,255,.38), transparent),
+      radial-gradient(1px 1px at 30px 190px, rgba(255,255,255,.25), transparent);
+    background-size:300px 360px;animation:tw 4.5s ease-in-out infinite alternate-reverse}
+  @keyframes tw{to{opacity:.5}}
+  .neb{background:radial-gradient(48% 30% at 78% 16%, rgba(76,70,160,.20), transparent),
+                 radial-gradient(52% 34% at 16% 86%, rgba(120,60,140,.12), transparent)}
+
+  /* 라이브 트랙 (공통 기법 — 회전 정사각, 페이즈 동기) */
+  .track{position:absolute;left:50%;width:78%;aspect-ratio:1;transform:translateX(-50%);}
+  .track .edge{position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.13);animation:spin 40s linear infinite}
+  .track .edge i{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3)}
+  .track .edge i:nth-child(1){top:-2.5px;left:-2.5px}.track .edge i:nth-child(2){top:-2.5px;right:-2.5px}
+  .track .edge i:nth-child(3){bottom:-2.5px;left:-2.5px}.track .edge i:nth-child(4){bottom:-2.5px;right:-2.5px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* 로그인용 데모 주행 점 */
+  .demo-dot{position:absolute;top:-3.5px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;
+    background:rgba(255,255,255,.8);box-shadow:0 0 10px rgba(255,255,255,.7), -10px 2px 6px -2px rgba(255,255,255,.28)}
+
+  /* ── 픽셀 러너 (12px/px · 정수 배율) ── */
+  .runner{position:relative;width:60px;height:96px}
+  .runner .px{position:absolute;left:12px;top:0;width:12px;height:12px;background:#fff;box-shadow:
+    12px 0 #fff, 24px 0 #fff,
+    0 12px #fff, 12px 12px #fff, 24px 12px #0c0c11,
+    -12px 24px #fff, 0 24px #fff, 12px 24px #fff, 24px 24px #fff, 36px 24px #fff,
+    -12px 36px #fff, 0 36px #fff, 12px 36px #fff, 24px 36px #fff, 36px 36px #fff,
+    0 48px #fff, 12px 48px #fff, 24px 48px #fff,
+    0 60px #fff, 12px 60px #fff, 24px 60px #fff,
+    0 72px #fff, 24px 72px #fff,
+    0 84px #fff, 24px 84px #fff}
+  .runner .ghost{position:absolute;width:9px;border-radius:3px;background:#fff;filter:blur(1.5px)}
+  .runner .g1{left:-15px;height:46px;top:30px;opacity:.14}
+  .runner .g2{left:-27px;height:34px;top:37px;opacity:.07}
+  .runner .g3{left:-38px;height:22px;top:43px;opacity:.035}
+  .hero{position:absolute;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center}
+  .hero .bobwrap{animation:bob 1.6s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(255,255,255,.4))}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .hero .ground{width:74px;height:10px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.10), transparent);margin-top:4px}
+
+  /* 스킨 도트 행 (BM 진열 상설) */
+  .skins{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:10px}
+  .skins i{width:6px;height:6px;border-radius:50%;flex:none}
+  .skins i.cur{box-shadow:0 0 0 2px #06060d, 0 0 0 3.2px #eeeef2}
+  .hint{font-size:7px;color:var(--t3);text-align:center;margin-top:7px;letter-spacing:.3px}
+
+  /* ── 목업 공통 UI ─────────────────── */
+  .ct{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;padding:30px 13px 13px}
+  .sb{display:flex;align-items:center;justify-content:space-between}
+  .sb .chips{display:flex;gap:5px}
+  .chip{display:inline-flex;align-items:center;gap:4px;height:19px;padding:0 8px;border-radius:10px;
+    background:rgba(21,21,29,.85);border:1px solid var(--line2);font-size:8.5px;font-weight:700;
+    font-variant-numeric:tabular-nums;color:var(--t1)}
+  .ic{width:14px;height:14px;flex:none}
+  .ic.s{width:10px;height:10px}
+  .gearbtn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(21,21,29,.6)}
+  .wm{font-size:7.5px;font-weight:400;letter-spacing:3px;color:var(--t3);text-align:center;margin-top:9px}
+
+  /* 티저 칩 (chip_teaser — 중립 보더 + 카테고리 도트) */
+  .teaser{align-self:center;display:inline-flex;align-items:center;gap:6px;height:25px;padding:0 11px;
+    border-radius:13px;background:rgba(21,21,29,.92);border:1px solid var(--line2);font-size:8.5px;color:var(--t2)}
+  .teaser i{width:6px;height:6px;border-radius:50%;background:var(--c-red);box-shadow:0 0 6px rgba(255,107,107,.55);flex:none}
+  .teaser b{color:var(--t1);font-weight:700}
+
+  /* PLAY CTA */
+  .play{display:flex;align-items:center;justify-content:space-between;height:41px;margin-top:11px;
+    padding:0 17px;border-radius:21px;background:#eeeef2;color:#0c0c11;
+    box-shadow:0 0 26px rgba(238,238,242,.13), 0 5px 18px -6px rgba(0,0,0,.6);
+    animation:ctapulse 2.4s ease-in-out infinite}
+  .play .l{font-size:12.5px;font-weight:800;letter-spacing:.3px}
+  .play .r{font-size:9px;font-weight:700;opacity:.55;font-variant-numeric:tabular-nums}
+  @keyframes ctapulse{0%,100%{transform:scale(1)}50%{transform:scale(1.018)}}
+
+  /* 아이콘 행 */
+  .navrow{display:flex;margin-top:10px;padding-bottom:2px}
+  .nav{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .nav .icw{position:relative;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
+  .nav svg{width:15px;height:15px;stroke:var(--t2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .nav .inf{font-size:13.5px;font-weight:600;color:var(--t2);line-height:1}
+  .nav em{font-style:normal;font-size:7.5px;color:var(--t2)}
+  .nav .nd{position:absolute;top:-2px;right:-3px;width:4.5px;height:4.5px;border-radius:50%;background:var(--prog);box-shadow:0 0 5px rgba(92,124,250,.7)}
+
+  /* 진행 레일 (v2-C) */
+  .railwrap{margin-top:11px}
+  .railmeta{display:flex;justify-content:flex-end;font-size:7px;color:var(--t3);font-variant-numeric:tabular-nums;margin-bottom:4px}
+  .railrow{display:flex;align-items:center;gap:7px}
+  .rail{flex:1;height:4px;border-radius:2px;background:#1d1d26;overflow:hidden}
+  .rail i{display:block;width:56%;height:100%;border-radius:2px;background:var(--prog);box-shadow:0 0 8px rgba(92,124,250,.6)}
+  .raillock{width:15px;height:15px;border-radius:50%;border:1.2px solid var(--c-red);display:flex;align-items:center;justify-content:center;flex:none}
+  .raillock svg{width:7px;height:7px;stroke:var(--c-red);fill:none;stroke-width:1.8}
+
+  /* 로그인 화면 전용 */
+  .login-mid{position:absolute;left:0;right:0;z-index:6;text-align:center}
+  .login-mid .logo{font-size:19px;font-weight:800;letter-spacing:5px;text-shadow:0 0 22px rgba(255,255,255,.25)}
+  .login-mid .copy{font-size:8.5px;color:var(--t2);margin-top:6px}
+  .ssoStack{margin-top:auto;display:flex;flex-direction:column;gap:7px}
+  .sso{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;height:34px;border-radius:11px;font-size:9.5px;font-weight:700}
+  .sso.g{background:#f5f5f7;color:#1b1b1f}
+  .sso.g .gmark{font-weight:800;font-size:11px;color:#4285F4}
+  .sso.a{background:rgba(21,21,29,.92);border:1px solid var(--line2);color:var(--t1)}
+  .sso.k{background:#FEE500;color:#191600}
+  .recent{position:absolute;top:-6px;right:9px;font-size:6.5px;font-weight:700;color:#fff;background:var(--prog);border-radius:99px;padding:1.5px 6px;box-shadow:0 2px 8px rgba(92,124,250,.4)}
+  .terms{font-size:7px;color:var(--t3);text-align:center;margin-top:9px}
+
+  /* v2-B 트랙 위 러너 — 게임 물리 동일: 트랙 안쪽 면 주행 (발 = 엣지, 몸 = 중심 방향)
+     → 어느 위상에서도 폰 화면 잘림 0 (완전 가시성 룰). 캡처 위상 = 하단 엣지 (직립, -9.5s) */
+  .orbit{position:absolute;inset:0;animation:spin 24s linear infinite;animation-delay:-9.5s}
+  .pin{position:absolute;top:0;left:50%;width:0;height:0}
+  .mini{position:absolute;left:-30px;top:0;zoom:.5;transform:rotate(180deg)}
+  .edgetrail{position:absolute;top:1px;right:18px;width:58px;height:3px;border-radius:2px;
+    background:linear-gradient(270deg, rgba(255,255,255,.5), transparent);filter:blur(.6px)}
+
+  /* ── 노트 카드 ────────────────────── */
+  .vnotes{background:rgba(16,16,26,.85);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--t2)}
+  .vnotes h4{font-size:12.5px;color:var(--t1);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .vnotes ul{list-style:none}
+  .vnotes li{padding-left:14px;position:relative;margin-bottom:5px}
+  .vnotes li::before{content:'';position:absolute;left:2px;top:8px;width:4px;height:4px;border-radius:50%;background:var(--t3)}
+  .vnotes .axis{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px}
+  .vnotes .axis b{color:var(--c-yellow);font-weight:700}
+  .vnotes .risk b{color:var(--c-red);font-weight:700}
+
+  /* 결정 축 표 / 검토 표 */
+  table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:16px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--t2);vertical-align:top}
+  th{font-size:10px;letter-spacing:1px;color:var(--t3);font-weight:600;text-transform:uppercase;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+  td b{color:var(--t1);font-weight:700}
+  .pass{color:var(--ok);font-weight:700;font-size:10.5px}
+  .cond{color:var(--c-yellow);font-weight:700;font-size:10.5px}
+  .fixlist li b{color:var(--t1)}
+
+  .footer{background:rgba(16,16,26,.9);border:1px solid var(--line2);border-radius:12px;padding:16px 18px;font-size:12.5px;color:var(--t2)}
+  .footer b{color:var(--t1)}
+  .footer .opts{display:flex;gap:7px;margin:10px 0 12px;flex-wrap:wrap}
+  .footer .opt{border:1px solid var(--line2);border-radius:99px;padding:4px 13px;font-size:11.5px;font-weight:700;color:var(--t1);background:rgba(21,21,29,.8)}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="8.5" y1="3.5" x2="8.5" y2="7"/><line x1="15.5" y1="3.5" x2="15.5" y2="7"/></symbol>
+  <symbol id="i-sword" viewBox="0 0 24 24"><path d="M18.6 5.4 10 14"/><path d="m7.8 12.3 3.9 3.9"/><path d="m9.9 14.4-3.2 3.2"/><circle cx="6" cy="18.1" r=".6"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4.5h8V10a4 4 0 0 1-8 0V4.5z"/><path d="M8 6H5.2A2.9 2.9 0 0 0 8 9.8"/><path d="M16 6h2.8A2.9 2.9 0 0 1 16 9.8"/><line x1="12" y1="14" x2="12" y2="17"/><path d="M8.5 19.5h7"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/></symbol>
+</svg>
+
 <div class="wrap">
-  <h1>weaver — 아트 디렉션 비교</h1>
-  <p class="sub">2026-06-11 · 로그인+메인 목업 × 3방향 · 모든 안에 "라이브 트랙 데모 배경"(회전 마름모) 공통 적용 — 폰에서 보고 선택</p>
 
-  <div class="note"><b>공통 기법:</b> 메타 화면 배경 = 실제 트랙이 천천히 돌며 데모 주행 (제작비 ~0, "살아 움직이는 트랙" 정체성). 아래 3방향은 그 <b>뒤에 깔리는 세계</b>의 차이입니다. 인게임(플레이 중)은 어느 안이든 절제 — 위협 가독성 1순위.</div>
-  <div class="note" style="border-left-color:#51cf66"><b>결정 현황 (2026-06-11):</b> 로그인 = <b>A 보이드/우주 ✅ 확정</b> · 메인 = 방향 A 긍정 + <b>구도 재검토</b> → 아래 "메인 구도 v2" 비교</div>
+  <!-- ───────── 헤더 ───────── -->
+  <div class="eyebrow">WEAVER · ART DIRECTION BOARD · REV 2</div>
+  <h1>아트 디렉션 보드</h1>
+  <p class="meta">2026-06-11 · 디자인 세션 제작 · game-ui-designer 검토 반영 · 이전 3방향 비교(rev.1)는 git 이력 보존</p>
+  <div class="status">
+    <div class="pill"><span class="dot ok"></span><span><b>로그인 — A 보이드/우주 확정</b> · §01 확정안 쇼케이스</span></div>
+    <div class="pill"><span class="dot wait"></span><span><b>메인 구도 — 결정 대기</b> · §02 v2 / v2-B / v2-C 중 선택 (조합 가능)</span></div>
+  </div>
 
-  <!-- 메인 구도 v1 vs v2 -->
-  <div class="dir d1">
-    <h2>★ 메인 구도 — v1(기존) vs v2(UI/UX 보강)</h2>
-    <p class="concept">v2 = 캐릭터 프레즌스(스킨 BM 표면) + 주 CTA 하단 엄지 존 + 다음 해금 티저 — "채우기"가 아니라 "중심과 위계"</p>
-    <p class="pros">배경은 둘 다 A 보이드 + 라이브 트랙</p>
-    <div class="row">
+  <div class="note"><b>공통 기법 — 라이브 트랙 데모:</b> 메타 화면 배경에 실제 트랙이 천천히 회전 (제작비 ~0, "살아 움직이는 트랙" 정체성). <b>트랙 형태 = 플레이어 현재 페이즈 동기</b> (스테이지 12 = 구역 2 → 정사각) — 배경 자체가 진행 표현이 됩니다.</div>
+
+  <!-- ───────── 01 로그인 확정 ───────── -->
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>로그인 — 보이드/우주</h2><span class="badge ok">✓ 확정</span></div>
+    <p class="sec-sub">확정안 정교화 쇼케이스 — 별·성운 위 네온 트랙 구조물 (무중력 세계관 직결)</p>
+
+    <div class="stage">
       <div class="ph">
-        <span class="tag">MAIN v1 (기존)</span>
-        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
-        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
-      </div>
-      <div class="ph">
-        <span class="tag">MAIN v2 (보강)</span>
-        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
+        <div class="island"></div>
+        <div class="void"></div><div class="stars"></div><div class="stars2"></div><div class="neb"></div>
+        <div class="track" style="top:13%">
+          <div class="edge"><i></i><i></i><i></i><i></i><span class="demo-dot"></span></div>
+        </div>
+        <div class="login-mid" style="top:27%">
+          <div class="logo">WEAVER</div>
+          <div class="copy">진행과 아이템을 안전하게 보관해요</div>
+        </div>
         <div class="ct">
-          <div class="coins"><span>🪙 1,240 · ⭐ 23</span><span>⚙️</span></div>
-          <div class="grow"></div>
-          <div style="text-align:center">
-            <div style="display:inline-block;position:relative">
-              <div style="width:22px;height:22px;border-radius:6px;background:#fff;box-shadow:0 0 14px rgba(255,255,255,.65), -14px 6px 0 -8px rgba(255,255,255,.35), -22px 10px 0 -9px rgba(255,255,255,.18);animation:bob 2.2s ease-in-out infinite"></div>
-            </div>
-            <div style="font-size:7px;color:#9aa0b0;margin-top:5px">현재 스킨 · 탭하여 변경</div>
-            <div style="display:inline-block;font-size:7px;color:#ffd43b;border:1px solid rgba(255,212,59,.4);border-radius:99px;padding:2px 7px;margin-top:5px">다음 해금: 🟡 대공 — 구역 4</div>
+          <div class="ssoStack">
+            <div class="sso g"><span class="recent">최근 사용</span><span class="gmark">G</span>Google로 시작</div>
+            <div class="sso a"> Apple로 시작</div>
+            <div class="sso k">카카오로 시작</div>
+            <div class="terms">이용약관 · 개인정보처리방침</div>
           </div>
-          <div class="grow"></div>
-          <div style="background:#eeeef2;color:#0c0c11;border-radius:99px;text-align:center;font-weight:800;font-size:11px;padding:9px">▶ PLAY · 스테이지 12</div>
-          <div class="mrow"><div class="mcard">∞</div><div class="mcard">📅</div><div class="mcard">🗡</div><div class="mcard">🏆</div></div>
         </div>
       </div>
     </div>
-  </div>
-  <style>@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}</style>
 
-  <!-- D1 -->
-  <div class="dir d1">
-    <h2>A. 보이드 / 우주</h2>
-    <p class="concept">깊은 어둠 + 별·성운 — 트랙은 허공에 떠 있는 네온 구조물. 무중력 세계관 직결</p>
-    <p class="pros">+ 세계관 설득력 최고 · 차분한 깊이 / − 흔한 모티프 (우주 러너 다수)</p>
-    <div class="row">
+    <div class="vnotes">
+      <h4>확정안 디테일</h4>
+      <ul>
+        <li>트랙 안에 워드마크 — 회전 트랙 + 데모 주행 점이 화면의 유일한 모션</li>
+        <li>SSO 버튼 = 하단 엄지 존 · 마지막 사용 수단 최상단 + "최근 사용" 칩 (wireframes #2)</li>
+        <li>가치 카피("안전하게 보관") + 약관·처리방침 링크 하단 — 강제 로그인 마찰 완화 (spec §2.9)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ───────── 02 메인 구도 ───────── -->
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>메인 구도 — 3안</h2><span class="badge wait">결정 대기</span></div>
+    <p class="sec-sub">v2 계열 — 메타화면 3요소(캐릭터 프레즌스 · 주 CTA · 진행 티저)는 셋 다 충족. 결정 축 2개가 직교라 조합 선택도 가능합니다.</p>
+
+    <table>
+      <tr><th>결정 축</th><th>선택지</th></tr>
+      <tr><td><b>① 캐릭터 진열 방식</b></td><td><b>v2</b> 클로즈업 (BM 진열 최강) vs <b>v2-B</b> 트랙 위 주행 (게임 정체성·스크린샷)</td></tr>
+      <tr><td><b>② 해금 티저 형태</b></td><td><b>v2/B</b> 텍스트 칩 (정보 명시) vs <b>v2-C</b> 진행 레일 (위계 미니멀)</td></tr>
+    </table>
+
+    <!-- v2 디폴트 -->
+    <div class="stage">
+      <div class="vlabel"><span class="dot" style="background:var(--t1)"></span>V2 — 캐릭터 클로즈업 (디폴트)</div>
       <div class="ph">
-        <span class="tag">LOGIN</span>
-        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
-        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+        <div class="island"></div>
+        <div class="void"></div><div class="stars"></div><div class="stars2"></div><div class="neb"></div>
+        <div class="track" style="top:21%"><div class="edge"><i></i><i></i><i></i><i></i></div></div>
+        <div class="hero" style="top:26.5%">
+          <div class="bobwrap">
+            <div class="runner"><div class="ghost g1"></div><div class="ghost g2"></div><div class="ghost g3"></div><div class="px"></div></div>
+          </div>
+          <div class="ground"></div>
+          <div class="skins">
+            <i class="cur" style="background:#FFFFFF"></i><i style="background:#55CCFF"></i><i style="background:#FF77AA"></i>
+            <i style="background:#7CF29C;opacity:.3"></i><i style="background:#FFB454;opacity:.3"></i><i style="background:#C9A0FF;opacity:.3"></i>
+            <i style="background:#FF6E6E;opacity:.3"></i><i style="background:#FFE066;opacity:.3"></i>
+          </div>
+          <div class="hint">탭하여 스킨 변경</div>
+        </div>
+        <div class="ct">
+          <div class="sb">
+            <div class="chips">
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FFE08A"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="rgba(12,12,17,.45)" stroke-width="2"/></svg>1,240</span>
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><path d="M12 2.8l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.3l1.2-6-4.5-4.2 6.1-.7z" fill="#fff"/></svg>23</span>
+            </div>
+            <span class="gearbtn"><svg class="ic" viewBox="0 0 24 24" style="stroke:var(--t2);fill:none;stroke-width:1.6"><use href="#i-gear"/></svg></span>
+          </div>
+          <div class="wm">WEAVER</div>
+          <div style="flex:1"></div>
+          <div class="teaser"><i></i>다음 해금 · <b>근거리 — 구역 3</b></div>
+          <div class="play"><span class="l">▶&nbsp; PLAY</span><span class="r">스테이지 12</span></div>
+          <div class="navrow">
+            <div class="nav"><span class="icw"><span class="inf">∞</span></span><em>무한</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg><span class="nd"></span></span><em>데일리</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></span><em>무기고</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><em>랭킹</em></div>
+          </div>
+        </div>
       </div>
-      <div class="ph">
-        <span class="tag">MAIN</span>
-        <div class="bg"></div><div class="stars"></div><div class="neb"></div><div class="track"></div>
-        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      <div class="vnotes">
+        <h4>V2 — 표준 메타화면 문법에 가장 충실</h4>
+        <ul>
+          <li>캐릭터 클로즈업 (픽셀 ×12 정수 배율) = <b>스킨 BM 진열 최강</b> — 스킨 도트 8종 상설 진열</li>
+          <li>배경 데모 주행 점 제거 — <b>캐릭터가 화면의 유일한 생명체</b> (1주인공 원칙)</li>
+          <li>티저 칩 = PLAY 직상단 (누르기 직전 마지막 시선 = 동기 부여 위치) · 탭 → 스테이지 선택</li>
+        </ul>
+        <div class="axis"><b>테스트 축:</b> 진열 = 클로즈업 · 티저 = 텍스트 칩 (기준안)</div>
       </div>
     </div>
-  </div>
 
-  <!-- D2 -->
-  <div class="dir d2">
-    <h2>B. 사이버 그리드</h2>
-    <p class="concept">디지털 공간 — 미세 그리드 + 수평선 글로우, 트랙은 시스템 회로. 카테고리 4색 네온과 정합</p>
-    <p class="pros">+ 4색 네온이 가장 살아남 · "게임다움" 즉발 / − 트론류 기시감 · 차가움</p>
-    <div class="row">
+    <!-- v2-B 트랙 위 러너 -->
+    <div class="stage">
+      <div class="vlabel"><span class="dot" style="background:var(--c-blue)"></span>V2-B — 트랙 위 러너 (통합형)</div>
       <div class="ph">
-        <span class="tag">LOGIN</span>
-        <div class="bg"></div><div class="grid"></div><div class="hor"></div><div class="track"></div>
-        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+        <div class="island"></div>
+        <div class="void"></div><div class="stars"></div><div class="stars2"></div><div class="neb"></div>
+        <div class="track" style="top:17%;width:84%">
+          <div class="orbit">
+            <div style="position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.14)"></div>
+            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;left:-2.5px"></i>
+            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;right:-2.5px"></i>
+            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);bottom:-2.5px;left:-2.5px"></i>
+            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);bottom:-2.5px;right:-2.5px"></i>
+            <div class="pin">
+              <div class="edgetrail"></div>
+              <div class="upright">
+                <div class="mini">
+                  <div class="runner" style="filter:drop-shadow(0 0 10px rgba(255,255,255,.45))"><div class="px"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero" style="top:57%">
+          <div class="skins">
+            <i class="cur" style="background:#FFFFFF"></i><i style="background:#55CCFF"></i><i style="background:#FF77AA"></i>
+            <i style="background:#7CF29C;opacity:.3"></i><i style="background:#FFB454;opacity:.3"></i><i style="background:#C9A0FF;opacity:.3"></i>
+            <i style="background:#FF6E6E;opacity:.3"></i><i style="background:#FFE066;opacity:.3"></i>
+          </div>
+          <div class="hint">탭하여 스킨 변경</div>
+        </div>
+        <div class="ct">
+          <div class="sb">
+            <div class="chips">
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FFE08A"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="rgba(12,12,17,.45)" stroke-width="2"/></svg>1,240</span>
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><path d="M12 2.8l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.3l1.2-6-4.5-4.2 6.1-.7z" fill="#fff"/></svg>23</span>
+            </div>
+            <span class="gearbtn"><svg class="ic" viewBox="0 0 24 24" style="stroke:var(--t2);fill:none;stroke-width:1.6"><use href="#i-gear"/></svg></span>
+          </div>
+          <div class="wm">WEAVER</div>
+          <div style="flex:1"></div>
+          <div class="teaser"><i></i>다음 해금 · <b>근거리 — 구역 3</b></div>
+          <div class="play"><span class="l">▶&nbsp; PLAY</span><span class="r">스테이지 12</span></div>
+          <div class="navrow">
+            <div class="nav"><span class="icw"><span class="inf">∞</span></span><em>무한</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg><span class="nd"></span></span><em>데일리</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></span><em>무기고</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><em>랭킹</em></div>
+          </div>
+        </div>
       </div>
-      <div class="ph">
-        <span class="tag">MAIN</span>
-        <div class="bg"></div><div class="grid"></div><div class="hor"></div><div class="track"></div>
-        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      <div class="vnotes">
+        <h4>V2-B — 캐릭터가 실제로 트랙을 데모 주행</h4>
+        <ul>
+          <li>프레즌스 · 라이브 트랙 · 스킨 진열이 <b>한 요소로 융합</b> — 1주인공 문제 원천 해소</li>
+          <li>"살아 움직이는 트랙" 정체성이 메타화면 전면에 — <b>스토어 스크린샷 1번 후보</b></li>
+          <li class="risk"><b>리스크:</b> 캐릭터 축소 → 스킨 식별 약화 (트랙 하단 도트 행으로 보완)</li>
+        </ul>
+        <div class="axis"><b>테스트 축:</b> BM 진열력 (v2) vs 게임 정체성·스크린샷 가치 (B)</div>
       </div>
     </div>
-  </div>
 
-  <!-- D3 -->
-  <div class="dir d3">
-    <h2>C. 추상 잔광</h2>
-    <p class="concept">어둠 유지 + 카테고리색 오브 글로우·빛줄기만 — "색 = 정보" 문법의 메타 화면 연장</p>
-    <p class="pros">+ 브랜드 일관성 최고 · 질리지 않음 / − 셋 중 가장 절제 = "게임다움" 임팩트는 약할 수 있음</p>
-    <div class="row">
+    <!-- v2-C 진행 레일 -->
+    <div class="stage">
+      <div class="vlabel"><span class="dot" style="background:var(--prog)"></span>V2-C — CTA 통합 티저 (위계 단순형)</div>
       <div class="ph">
-        <span class="tag">LOGIN</span>
-        <div class="bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="streak" style="top:30%"></div><div class="streak" style="top:62%"></div><div class="track"></div>
-        <div class="ct"><div class="grow"></div><div class="logo">WEAVER</div><div class="copy">진행·아이템을 안전하게 보관해요</div><div style="height:8px"></div><div class="sso">G  Google 로 시작</div><div class="sso"> Apple 로 시작</div><div class="sso k">카카오로 시작</div><div class="grow"></div></div>
+        <div class="island"></div>
+        <div class="void"></div><div class="stars"></div><div class="stars2"></div><div class="neb"></div>
+        <div class="track" style="top:21%"><div class="edge"><i></i><i></i><i></i><i></i></div></div>
+        <div class="hero" style="top:26.5%">
+          <div class="bobwrap">
+            <div class="runner"><div class="ghost g1"></div><div class="ghost g2"></div><div class="ghost g3"></div><div class="px"></div></div>
+          </div>
+          <div class="ground"></div>
+          <div class="skins">
+            <i class="cur" style="background:#FFFFFF"></i><i style="background:#55CCFF"></i><i style="background:#FF77AA"></i>
+            <i style="background:#7CF29C;opacity:.3"></i><i style="background:#FFB454;opacity:.3"></i><i style="background:#C9A0FF;opacity:.3"></i>
+            <i style="background:#FF6E6E;opacity:.3"></i><i style="background:#FFE066;opacity:.3"></i>
+          </div>
+          <div class="hint">탭하여 스킨 변경</div>
+        </div>
+        <div class="ct">
+          <div class="sb">
+            <div class="chips">
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FFE08A"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="rgba(12,12,17,.45)" stroke-width="2"/></svg>1,240</span>
+              <span class="chip"><svg class="ic s" viewBox="0 0 24 24"><path d="M12 2.8l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.3l1.2-6-4.5-4.2 6.1-.7z" fill="#fff"/></svg>23</span>
+            </div>
+            <span class="gearbtn"><svg class="ic" viewBox="0 0 24 24" style="stroke:var(--t2);fill:none;stroke-width:1.6"><use href="#i-gear"/></svg></span>
+          </div>
+          <div class="wm">WEAVER</div>
+          <div style="flex:1"></div>
+          <div class="railwrap">
+            <div class="railmeta">12 / 16</div>
+            <div class="railrow">
+              <div class="rail"><i></i></div>
+              <div class="raillock"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg></div>
+            </div>
+          </div>
+          <div class="play" style="margin-top:9px"><span class="l">▶&nbsp; PLAY</span><span class="r">스테이지 12</span></div>
+          <div class="navrow">
+            <div class="nav"><span class="icw"><span class="inf">∞</span></span><em>무한</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg><span class="nd"></span></span><em>데일리</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></span><em>무기고</em></div>
+            <div class="nav"><span class="icw"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><em>랭킹</em></div>
+          </div>
+        </div>
       </div>
-      <div class="ph">
-        <span class="tag">MAIN</span>
-        <div class="bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="streak" style="top:26%"></div><div class="streak" style="top:58%"></div><div class="track"></div>
-        <div class="ct"><div class="coins"><span>🪙 1,240</span><span>⭐ 23</span></div><div class="grow"></div><div class="mcard">▶ 스테이지<br><span style="font-size:7px;color:#778">구역 2 · 12</span></div><div class="mrow"><div class="mcard">∞ 무한</div><div class="mcard">📅 데일리</div></div><div class="mrow"><div class="mcard">🗡 무기고</div><div class="mcard">🏆 랭킹</div></div></div>
+      <div class="vnotes">
+        <h4>V2-C — 티저 칩 → 구역 진행 레일로 흡수</h4>
+        <ul>
+          <li>중간 위계 요소 1개 감소 → <b>캐릭터 → PLAY 시선 흐름이 가장 짧음</b></li>
+          <li>레일 끝 = 잠긴 카테고리색 도트 + 자물쇠 — 색 = 정보 문법 유지 · 12/16 tabular 수치</li>
+          <li class="risk"><b>리스크:</b> "구역 3에서 근거리" 언어 정보 소실 (레일 탭 시 툴팁 1회로 보완)</li>
+        </ul>
+        <div class="axis"><b>테스트 축:</b> 정보 명시성 (v2 칩) vs 위계 미니멀 (C) · <b>B+C 조합 가능</b></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="pick">
-    <b style="color:#eeeef2">선택 방법:</b> A / B / C (혼합 가능 — 예: "기본 C, 스테이지 선택만 B 그리드"). 선택되면 → brief.md 아트 디렉션 섹션 확정 → M0 캐릭터 팩 선택 기준 + 캐릭터 룩(픽셀 스프라이트 톤)이 이 방향을 따릅니다. 본 보드는 결정 흔적으로 sanity 에 보존.
-  </div>
+  <!-- ───────── 03 검토 요약 ───────── -->
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>game-ui-designer 검토 요약</h2></div>
+    <p class="sec-sub">paranoia 7 (메타화면 문법 · 시선 · 인체공학 · 게임필 · 가독 · 토큰 · 스토어) — 3안 모두 검토 통과, 아래 수정이 이미 반영된 상태</p>
+
+    <table>
+      <tr><th>#</th><th>영역</th><th>판정</th></tr>
+      <tr><td>1</td><td>메타화면 3요소 (프레즌스·CTA·티저)</td><td class="pass">PASS</td></tr>
+      <tr><td>2</td><td>시선 흐름 · 1화면 1주인공</td><td class="pass">PASS — 데모 점 제거로 해소</td></tr>
+      <tr><td>3</td><td>터치 인체공학 (44pt·엄지 존·safe area)</td><td class="pass">PASS — 칩 히트박스 44pt 조건</td></tr>
+      <tr><td>4</td><td>게임필 (idle bob · CTA 펄스 · 스태거 진입)</td><td class="pass">PASS</td></tr>
+      <tr><td>5</td><td>가독성 (별 ≤2px · 성운 명도 캡)</td><td class="pass">PASS</td></tr>
+      <tr><td>6</td><td>브랜드 토큰</td><td class="cond">수정 3건 반영 ↓</td></tr>
+      <tr><td>7</td><td>스토어 첫인상</td><td class="pass">PASS — 워드마크 추가로 해소</td></tr>
+    </table>
+
+    <div class="vnotes">
+      <h4>검토 반영 사항 (rev.1 → rev.2)</h4>
+      <ul class="fixlist">
+        <li><b>데이터 정합:</b> 스테이지 12의 다음 해금 = <b>근거리·구역 3</b> (rev.1의 "대공·구역 4"는 spec §2.11 커리큘럼 모순 — P2=16~25=근거리)</li>
+        <li><b>모션 주인공 단일화:</b> v2/C 배경 데모 점 제거 (트랙은 회전만) — 캐릭터와 모션 경합 해소</li>
+        <li><b>티저 칩:</b> 노랑 보더 → 중립 보더 + 카테고리색 도트 (코인 골드와 노랑 2계열 공존 해소, 색=정보)</li>
+        <li><b>이모지 → 모노 라인 아이콘</b> (렌더 편차·네온 미니멀 톤 보호) · 데일리 뱃지 = 진행색 도트</li>
+        <li><b>스킨 도트 행 8종 상설</b> (텍스트 힌트 단독 → BM 진열 강화) · 워드마크 희미 배치 (스크린샷 브랜딩)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ───────── 04 선택 ───────── -->
+  <section style="margin-bottom:0">
+    <div class="sec-head"><span class="sec-num">04</span><h2>선택 방법</h2></div>
+    <div class="footer">
+      <b>메인 구도 1개 선택</b> (또는 조합 — 축이 직교라 자유):
+      <div class="opts"><span class="opt">V2 클로즈업</span><span class="opt">V2-B 트랙 러너</span><span class="opt">V2-C 진행 레일</span><span class="opt">조합 (예: B+C)</span></div>
+      선택 → 디자인 세션이 <b>wireframes #3 메인 메뉴 구도 갱신</b> + design-system <b>chip_teaser 토큰 신설</b> 후 SoT 커밋 → M0 진입 시 이 구도가 구현 기준이 됩니다. 본 보드는 결정 흔적으로 sanity 보존.
+    </div>
+  </section>
+
 </div>
 </body>
 </html>
