@@ -116,16 +116,22 @@ function wrapDelta(a,b){ return ((a-b)%P+P)%P; }
 // ---------- 스테이지 정의 (핸드크래프트, 결정론 — 재도전 시 동일) ----------
 const LAPS=3;
 function frac(lap,f){ return (lap-1)*P + f*P; }
+// ★ 꼭짓점 마진 — 코너 위 배치 시 렌더가 트랙 밖으로 삐져나가고 충돌 존이 양 엣지에 걸려 읽기 불가 (2026-06-11 사용자 발견)
+function cornerSafe(d){
+  const m=34, t=((d%L)+L)%L;
+  if(t<m) d+=(m-t); else if(t>L-m) d-=(t-(L-m));
+  return d;
+}
 let threats=[];
 function buildStage(){
   threats=[];
-  const T=(lap,f,kind)=>threats.push({d:frac(lap,f), kind, dead:false, fired:false, obj:null, slashT:0});
+  const T=(lap,f,kind)=>threats.push({d:cornerSafe(frac(lap,f)), kind, dead:false, fired:false, obj:null, slashT:0});
   // lap1 — 기본기 (몸)
-  T(1,.14,'spike'); T(1,.32,'spike'); T(1,.5,'bar'); T(1,.68,'spike'); T(1,.86,'bar');
+  T(1,.14,'spike'); T(1,.32,'spike'); T(1,.46,'bar'); T(1,.68,'spike'); T(1,.86,'bar');
   // lap2 — 몬스터 도입 (🔵) + 장갑 (🔴)
   T(2,.08,'mob'); T(2,.22,'spike'); T(2,.4,'armor'); T(2,.56,'bar'); T(2,.72,'mob'); T(2,.88,'spike');
   // lap3 — 낙하물 (🟡) + 혼합
-  T(3,.06,'fall'); T(3,.2,'mob'); T(3,.36,'armor'); T(3,.52,'fall'); T(3,.66,'bar'); T(3,.8,'armor'); T(3,.92,'spike');
+  T(3,.06,'fall'); T(3,.2,'mob'); T(3,.36,'armor'); T(3,.55,'fall'); T(3,.66,'bar'); T(3,.8,'armor'); T(3,.92,'spike');
 }
 
 // ---------- 상태 ----------
