@@ -1,0 +1,22 @@
+#!/bin/bash
+# byiryu-studio-previews 공유 clone 보호 hook (workflow §8.7-7)
+# 설치: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# (1) author 검증 (루트 정책과 동일)  (2) 혼합 스코프 커밋 차단 (다중 세션 작업 흡수 방지)
+
+name=$(git config user.name); email=$(git config user.email)
+if [ "$name" != "byiryu" ] || [ "$email" != "byiryustudio@gmail.com" ]; then
+  echo "✋ author 위반: $name <$email> — byiryu <byiryustudio@gmail.com> 필수"; exit 1
+fi
+
+[ -n "$PREVIEWS_MIXED_OK" ] && exit 0
+# 스테이징 파일의 최상위 프로젝트 디렉토리 수 계산 (루트 파일·studio/ 제외)
+projs=$(git diff --cached --name-only | grep '/' | cut -d/ -f1 | sort -u | grep -v '^studio$')
+count=$(echo "$projs" | grep -c . )
+if [ "$count" -gt 1 ]; then
+  echo "✋ 혼합 스코프 커밋 차단 — 서로 다른 프로젝트 디렉토리가 한 커밋에 staged:"
+  echo "$projs" | sed 's/^/   - /'
+  echo "   공유 clone 에서 타 세션 작업 흡수 의심 (실사고 a73fbd5·1be62c5)."
+  echo "   git add 를 변경 파일 명시로 다시 — 의도적 혼합이면 PREVIEWS_MIXED_OK=1 git commit ..."
+  exit 1
+fi
+exit 0

@@ -43,7 +43,7 @@ byiryu-studio-previews/
 4. 인덱스 링크 라벨 = **한글 제목 + 날짜·1줄 설명 메타** (파일명 노출 X). superseded 자료는 흐림 처리 + 상태 라벨
 5. push 전 `./check_orphans.sh` 실행 → `OK` 확인
 6. **★ 비공개 진행 (unlisted) 상태** — 출시 전 자료를 공개 인덱스에서 숨기되 URL 직접 접근은 유지하고 싶을 때: (a) 루트 `.unlisted` 에 경로 prefix 등록 (예: `weaver/`) (b) 해당 페이지 전부 `<meta name="robots" content="noindex, nofollow">` 의무 (검색 노출 차단 — 스크립트가 검사) (c) 루트 index 카드 = "비공개 진행" 상태 표기, 링크 없음 (d) `{project}/index.html` 은 유지 — URL 아는 사람의 허브. **"잊힌 고아"와 "의도적 비공개"의 구분 = `.unlisted` 등록 여부**
-7. **★ 커밋 = 변경 파일 명시 add 만 (`git add -A` / `git commit -a` 금지)** — 본 레포의 로컬 clone (`/tmp/byiryu-studio-previews/`)은 **여러 세션(리드·마케팅)이 공유** — 일괄 add 는 다른 세션의 미커밋 작업을 자기 커밋에 흡수한다 (2026-06-11 실사고: `[market]` 커밋 `a73fbd5` 가 weaver v3.1 작업 493줄을 무단 흡수 — 내용 무사·이력 라벨만 오염). 루트 레포 `git commit -a` 금지 학습(2026-06-08)과 동일 결의
+7. **★ 커밋 = 변경 파일 명시 add 만 (`git add -A` / `git commit -a` 금지)** — 본 레포의 로컬 clone (`/tmp/byiryu-studio-previews/`)은 **여러 세션(리드·마케팅)이 공유** — 일괄 add 는 다른 세션의 미커밋 작업을 자기 커밋에 흡수한다 (2026-06-11 실사고 2건: `a73fbd5`·`1be62c5` — 내용 무사·이력 라벨만 오염). 루트 레포 `git commit -a` 금지 학습(2026-06-08)과 동일 결의. **★ 기계 차단: `hooks/pre-commit` 설치 의무** — fresh clone 시 `cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit` (author 검증 + 혼합 프로젝트 스코프 커밋 reject. 의도적 혼합 = `PREVIEWS_MIXED_OK=1`)
 
 상세 = `ApplicationProject/_docs/workflow.md` §8.7
 
