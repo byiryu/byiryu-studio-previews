@@ -80,7 +80,7 @@
 <div id="startScreen" class="overlay">
   <h1>WEAVER<span class="sub">prototype v3.2 · 카메라 구조 비교 (A/B 결정용)</span></h1>
   <div class="legend">
-    🎥 <b>팔로우 뷰 확정판</b> — 줌 1.45·우향·전방 시야 확대 (버튼으로 전체 뷰 비교 가능)<br>
+    🎥 <b>팔로우 = 월드 고정 (놈 형식)</b> — 회전 없음: 옆벽을 타고 오르는 게 그대로 보임<br>
     ⏱ 속도 = 둘레 정규화 (시작 8초/바퀴 — 기기 무관 동일)<br>
     🎮 원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)<br>
     🏃 스테이지 5개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
@@ -113,8 +113,9 @@ const DPR=Math.min(window.devicePixelRatio||1,2);
 // ★ 가시성 마진 M=22 — 링 수납 수정으로 안전 마진 축소 (놈 레퍼런스 비교 후 트랙 확대, 2026-06-11)
 let S=0, C=0, M=22, TR=0, L=0, P=0, baseVerts=[], verts=[], rotAngle=0, curShape='diamond';
 function shapeVerts(shape){
-  if(shape==='square'){ const m=M; return [[m,m],[S-m,m],[S-m,S-m],[m,S-m]]; }
-  const R=S/2-M; return [[C,C-R],[C+R,C],[C,C+R],[C-R,C]];   // diamond
+  // ★ 반시계 권선 + 시작 = 바닥 (월드 고정 카메라: 바닥에서 우향 출발 — 놈 형식)
+  if(shape==='square'){ const m=M; return [[m,S-m],[S-m,S-m],[S-m,m],[m,m]]; }
+  const R=S/2-M; return [[C,C+R],[C+R,C],[C,C-R],[C-R,C]];   // diamond (bottom→right→top→left)
 }
 function applyRot(){
   if(!rotAngle){ verts=baseVerts.map(v=>v.slice()); return; }
@@ -142,7 +143,7 @@ function pathAt(d){
   const i=Math.min(3,Math.floor(d/L)), t=d-i*L;
   const A=verts[i], B=verts[(i+1)%4];
   const fx=(B[0]-A[0])/L, fy=(B[1]-A[1])/L;
-  return {x:A[0]+fx*t, y:A[1]+fy*t, fx, fy, nx:-fy, ny:fx};
+  return {x:A[0]+fx*t, y:A[1]+fy*t, fx, fy, nx:fy, ny:-fx};   // ★ 반시계 권선의 안쪽 법선
 }
 function cornerSafe(d){
   const m=34, t=((d%L)+L)%L;
@@ -188,7 +189,7 @@ const WCOL=['#4dabf7','#ff6b6b','#ffd43b','#b197fc'];
 let state='start', skin='#ffffff';
 const char={d:0,speed:0,offset:0,vy:0,grounded:true,sliding:false,walk:0};
 let slideHeld=false, weapon=-1, elapsed=0, totalElapsed=0, shots=[], fx=[], trail=[];
-let camMode='follow', camAngle=0, camSnap=true;   // ★ 팔로우 확정 (2026-06-11) — 전체 뷰는 비교 참조용
+let camMode='follow', camX=0, camY=0, camSnap=true;   // ★ 팔로우 확정 — ★★ 월드 고정 (회전 없음, 놈 형식): 옆벽 = 화면에서 수직으로 타고 오름
 const camBtn=document.getElementById('camBtn');
 function toggleCam(){ camMode = camMode==='overview' ? 'follow' : 'overview';
   camBtn.textContent = camMode==='overview' ? '🎥 따라가기' : '👁 전체 뷰'; }
@@ -481,14 +482,14 @@ function loop(now){
   if(camMode==='follow' && state!=='start'){
     const p=pathAt(char.d);
     const cx=p.x+p.nx*(char.offset+12), cy=p.y+p.ny*(char.offset+12);
-    // ★ 우향 진행 (미러) + 줌 완화 1.45 + 캐릭터 좌측 38% 배치 = 전방 시야 ~2.5초 (스왑 성립 조건)
-    const target=Math.PI-Math.atan2(p.fy,p.fx);
-    if(camSnap){ camAngle=target; camSnap=false; }   // 시작 직후 기울어짐 방지
-    let dd=target-camAngle; while(dd>Math.PI)dd-=2*Math.PI; while(dd<-Math.PI)dd+=2*Math.PI;
-    camAngle+=dd*Math.min(1,dt*5);   // 모서리 전환 = 부드러운 회전 (놈의 그 손맛)
+    // ★★ 월드 고정 팬 팔로우 (놈 형식 — 회전 없음): 옆벽 구간 = 화면에서 수직 주행이 그대로 보임
+    //    카메라 = 캐릭터 + 진행 방향 리드 (전방 시야 확보) · 부드러운 추적 · 시작 스냅
+    const tx=cx+p.fx*S*0.17, ty=cy+p.fy*S*0.17;
+    if(camSnap){ camX=tx; camY=ty; camSnap=false; }
+    camX+=(tx-camX)*Math.min(1,dt*6); camY+=(ty-camY)*Math.min(1,dt*6);
     const Z=1.45;
-    ctx.translate(VW*0.38, VH*0.66); ctx.scale(-1,1); ctx.rotate(camAngle); ctx.scale(Z,Z); ctx.translate(-cx,-cy);
-  } else { camAngle=0; ctx.translate(0,(VH-S)/2); const fit=Math.min(1,VH/S); if(fit<1){ctx.translate(VW*0.5,VH*0.5);ctx.scale(fit,fit);ctx.translate(-VW*0.5,-VH*0.5);} }
+    ctx.translate(VW*0.5, VH*0.52); ctx.scale(Z,Z); ctx.translate(-camX,-camY);
+  } else { ctx.translate(0,(VH-S)/2); const fit=Math.min(1,VH/S); if(fit<1){ctx.translate(VW*0.5,VH*0.5);ctx.scale(fit,fit);ctx.translate(-VW*0.5,-VH*0.5);} }
   drawTrack();
   for(const t of threats) drawThreat(t);
   for(const s of shots){ ctx.fillStyle=s.col; ctx.beginPath(); ctx.arc(s.x,s.y,3,0,7); ctx.fill(); }
