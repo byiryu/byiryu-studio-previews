@@ -26,9 +26,11 @@ byiryu-studio-previews/
 │       ├── occasion-quality-board.html
 │       └── _archive/                # 폐기·구버전 자료 (옛 알고리즘·디자인 탐색·구 스키마)
 │
-└── weaver/                          # 미니멀 회피 아케이드 (Unity, 기획·프로토타입)
+└── weaver/                          # 벽 주행 액션 아케이드 (Unity, 기획 — ★ unlisted 비공개 진행)
     ├── index.html
-    └── sanity/prototype-v1.html · prototype-v2.html
+    ├── design/                      # /design 산출물 시각 미러 (★ 2026-06-11 — 로컬 design-preview 폐지, 레포 단일)
+    │   └── index.html · design-system.html · components.html · prototype.html
+    └── sanity/                      # 프로토타입 v1~v3.1 + 아트 디렉션 보드
 ```
 
 > `travel-illust` / `lego-builder` 는 설계 단계 — 디렉토리는 `/new` 착수 시 생성.

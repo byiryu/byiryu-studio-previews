@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 메타 화면 프로토타입</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,'Pretendard',sans-serif;background:#16161c;color:#eeeef2;display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh}
+  .nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;max-width:420px}
+  .nav button{background:#15151d;border:1px solid #2a2a36;color:#9aa0b0;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer}
+  .nav button.on{border-color:#5c7cfa;color:#fff}
+  .phone{width:340px;height:700px;background:#0c0c11;border:2px solid #2a2a36;border-radius:28px;overflow:hidden;position:relative}
+  .scr{position:absolute;inset:0;display:none;flex-direction:column;padding:22px 18px}
+  .scr.on{display:flex}
+  .hint{margin-top:10px;font-size:11px;color:#556070;max-width:340px;text-align:center}
+  h3{font-size:22px;letter-spacing:3px} .muted{color:#9aa0b0;font-size:12px} .dim{color:#556070;font-size:11px}
+  .grow{flex:1}
+  .btn{background:#eeeef2;color:#0c0c11;border:none;padding:12px;border-radius:30px;font-size:15px;font-weight:700;width:100%;cursor:pointer;letter-spacing:1px}
+  .sso{background:#15151d;border:1px solid #2a2a36;color:#eeeef2;padding:12px;border-radius:12px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:8px;text-align:center}
+  .sso.kakao{background:#FEE500;color:#191600;border-color:#FEE500}
+  .card{background:#15151d;border:1px solid #2a2a36;border-radius:12px;padding:14px;cursor:pointer}
+  .row{display:flex;gap:8px} .row .card{flex:1;text-align:center}
+  .wslot{flex:1;background:#15151d;border:2px solid #2a2a36;border-radius:12px;padding:7px 2px;text-align:center;font-size:16px;position:relative;cursor:pointer}
+  .wslot small{display:block;font-size:9px;color:#888}
+  .wslot.on{border-color:#4dabf7;box-shadow:0 0 10px rgba(77,171,247,.35);background:#1c2030}
+  .wslot.lk{opacity:.35}
+  .ctlzone{flex:1;position:relative;min-height:96px}
+  .cbtn{position:absolute;bottom:2px;width:78px;height:78px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid #2a2a36;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;letter-spacing:1px;color:#aab;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .cbtn .g{font-size:18px;line-height:1}
+  .cbtn small{font-size:8px;color:#556;font-weight:400}
+  .cbtn.l{left:4px}.cbtn.r{right:4px}
+  .bar{height:6px;background:#1d1d26;border-radius:3px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:#5c7cfa}
+  .scard{aspect-ratio:1;background:#15151d;border:1px solid #2a2a36;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:pointer}
+  .scard small{font-size:9px}
+  .grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .zone{font-size:11px;color:#9aa0b0;letter-spacing:1px;margin:12px 0 6px}
+  .unlockline{text-align:center;font-size:11px;color:#ffd43b;margin:10px 0 4px}
+  .game{aspect-ratio:1;background:#0c0c11;border-bottom:1px solid #1d1d26;position:relative;margin:-22px -18px 10px}
+  .diamond{position:absolute;inset:12%;border:1.5px solid rgba(255,255,255,.16);transform:rotate(45deg)}
+  .setrow{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;border-bottom:1px solid #1d1d26;font-size:14px;cursor:pointer}
+  .tog{width:38px;height:22px;border-radius:11px;background:#51cf66;position:relative}.tog::after{content:'';position:absolute;right:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff}
+  .tog.off{background:#2a2a36}.tog.off::after{right:auto;left:2px}
+  .stars{font-size:26px;letter-spacing:6px}
+  .gold{color:#ffd43b}
+</style>
+</head>
+<body>
+<div class="nav" id="nav"></div>
+<div class="phone" id="phone">
+
+  <div class="scr" data-s="login">
+    <div class="grow" style="display:flex;flex-direction:column;justify-content:center;text-align:center">
+      <h3 style="margin-bottom:6px">WEAVER</h3>
+      <p class="muted" style="margin-bottom:26px">진행·아이템을 안전하게 보관해요</p>
+      <button class="sso" onclick="go('main')">G &nbsp;Google 로 시작 <span class="dim">최근 사용</span></button>
+      <button class="sso" onclick="go('main')"> Apple 로 시작</button>
+      <button class="sso kakao" onclick="go('main')">카카오로 시작</button>
+    </div>
+    <p class="dim" style="text-align:center">약관 · 개인정보처리방침</p>
+  </div>
+
+  <div class="scr" data-s="main">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:18px">WEAVER</h3><span style="cursor:pointer" onclick="go('settings')">⚙️</span>
+    </div>
+    <p class="muted" style="margin:4px 0 16px">🪙 1,240 &nbsp; ⭐ 23</p>
+    <div class="card" style="text-align:center;padding:22px" onclick="go('stages')">
+      <div style="font-size:17px;font-weight:700">▶ 스테이지</div>
+      <div class="dim">구역 2 · 12</div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div class="card" onclick="go('loadout')">∞ 무한</div>
+      <div class="card" onclick="go('loadout')">📅 데일리 <span class="dim">✓</span></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div class="card" onclick="go('armory')">🗡 무기고</div>
+      <div class="card">🏆 랭킹</div>
+    </div>
+    <div class="grow"></div>
+    <p class="dim" style="text-align:center">전면 광고 없음 (스테이지 사이만)</p>
+  </div>
+
+  <div class="scr" data-s="stages">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="cursor:pointer" onclick="go('main')">←</span><b>스테이지</b>
+      <div class="bar"><i style="width:15%"></i></div><span class="dim">23/150⭐</span>
+    </div>
+    <div class="zone">구역 1 — 몸으로 □ <span style="opacity:.6">(정사각)</span></div>
+    <div class="grid6">
+      <div class="scard">1<small>✦✦✦</small></div><div class="scard">2<small>✦✦✧</small></div><div class="scard">3<small>✦✧✧</small></div>
+      <div class="scard">4<small>✦✧✧</small></div><div class="scard">5<small>✦✦✦</small></div><div class="scard">6<small>✦✦✧</small></div>
+    </div>
+    <div class="unlockline">— 🔵 원거리 해금! —</div>
+    <div class="zone">구역 2 — 자동사격 □</div>
+    <div class="grid6">
+      <div class="scard">7<small>✦✦✧</small></div><div class="scard">8<small>✦✧✧</small></div>
+      <div class="scard" style="border-color:#5c7cfa" onclick="go('loadout')">12<small style="color:#5c7cfa">▶</small></div>
+      <div class="scard" style="opacity:.4">13<small>🔒</small></div><div class="scard" style="opacity:.4">14<small>🔒</small></div><div class="scard" style="opacity:.4">15<small>🔒</small></div>
+    </div>
+    <div class="unlockline" style="opacity:.4">— 🔴 근거리 해금 —</div>
+    <div class="zone" style="opacity:.4">구역 3 — 첫 스왑 ◇ 🔒 <span style="opacity:.7">(트랙이 마름모로 변형)</span></div>
+    <div class="zone" style="opacity:.3">구역 5 — 변형: 회전 ↻ 🔒</div>
+  </div>
+
+  <div class="scr" data-s="loadout">
+    <span style="cursor:pointer" onclick="go('stages')">←</span>
+    <h3 style="font-size:18px;margin:8px 0 2px">STAGE 12 · 구역 2</h3>
+    <p class="muted">완주 3바퀴 · ⭐ 노히트 · ⭐ 코인 20</p>
+    <div class="card" style="margin:14px 0;text-align:center">
+      <div class="dim" style="margin-bottom:4px">★ 등장</div>
+      <div style="font-size:20px">🔵 ⚪</div>
+    </div>
+    <div class="dim" style="margin-bottom:4px">무기 슬롯</div>
+    <div class="row">
+      <div class="wslot on">🔵<small>연사</small></div>
+      <div class="wslot">＋<small>비어있음</small></div>
+      <div class="wslot lk">🔒</div>
+      <div class="wslot lk">🔒</div>
+    </div>
+    <div class="dim" style="margin:10px 0 4px">스킬 (1)</div>
+    <div class="card" style="padding:9px 14px;font-size:13px">🛡 실드 ▾</div>
+    <div class="grow"></div>
+    <button class="btn" onclick="go('play')">▶ 이대로 시작</button>
+  </div>
+
+  <div class="scr" data-s="play" style="padding-top:0">
+    <div class="game">
+      <div class="diamond"></div>
+      <div style="position:absolute;top:18%;left:54%;color:#fff;font-size:11px">🏃</div>
+      <div style="position:absolute;bottom:30%;right:22%;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #ff5a5a;transform:rotate(45deg)"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1px">
+      STAGE 12 <div class="bar"><i style="width:40%"></i></div><span class="dim">1.2/3바퀴</span>
+    </div>
+    <div class="row" style="margin:8px 0">
+      <div class="wslot on">🔵</div><div class="wslot">🔴</div><div class="wslot lk">🔒</div><div class="wslot lk">🔒</div>
+      <div class="wslot" style="flex:.7">⚡<small>1</small></div>
+    </div>
+    <div class="ctlzone grow">
+      <div class="cbtn l"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div>
+      <div class="cbtn r"><span class="g">▲</span>점프<small>탭</small></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px" class="dim">
+      <span style="cursor:pointer" onclick="go('clear')">⏸ (탭=클리어 화면)</span><span style="cursor:pointer" onclick="go('fail')">(탭=실패 화면)</span>
+    </div>
+  </div>
+
+  <div class="scr" data-s="clear" style="justify-content:center;text-align:center">
+    <p class="muted">✅ STAGE 12 CLEAR</p>
+    <div class="stars" style="margin:8px 0"><span>✦✦</span><span style="opacity:.2">✦</span></div>
+    <div style="font-size:32px;font-weight:800">24.3초</div>
+    <p style="margin:6px 0"><span class="gold">🪙</span> +85</p>
+    <p class="unlockline" style="font-size:14px">🔴 근거리 해금!<br><span class="dim">장갑 몬스터는 🔴만 통합니다</span></p>
+    <button class="sso" style="margin-top:14px">📺 보상 2배</button>
+    <button class="btn" style="margin-top:8px" onclick="go('loadout')">다음 스테이지 ▶</button>
+    <p class="dim" style="margin-top:8px">(3스테이지마다 전면 광고 — app-config 노브)</p>
+  </div>
+
+  <div class="scr" data-s="fail" style="justify-content:center;text-align:center">
+    <p class="muted">GAME OVER</p>
+    <div style="font-size:32px;font-weight:800;margin:8px 0">1.2/3바퀴</div>
+    <p class="dim">사인: 장갑 몬스터 — 🔴 근거리로 처치</p>
+    <button class="sso" style="margin-top:16px">📺 부활하기 (1회)</button>
+    <button class="btn" style="margin-top:8px" onclick="go('play')">다시하기</button>
+    <p class="dim" style="margin-top:10px;cursor:pointer" onclick="go('loadout')">로드아웃 변경</p>
+  </div>
+
+  <div class="scr" data-s="armory">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="cursor:pointer" onclick="go('main')">←</span><b>무기고</b><div class="grow"></div><span class="gold">🪙 1,240</span>
+    </div>
+    <div class="row" style="margin:12px 0">
+      <div class="card" style="padding:8px;border-color:#5c7cfa">무기</div>
+      <div class="card" style="padding:8px">스킨</div>
+      <div class="card" style="padding:8px">상점</div>
+    </div>
+    <div class="zone">🔵 원거리</div>
+    <div class="row">
+      <div class="card" style="font-size:12px">기본 ✓</div>
+      <div class="card" style="font-size:12px;border-color:#4dabf7">연사 ✓ <span class="dim">장착</span></div>
+      <div class="card" style="font-size:12px">관통 <span class="gold">🪙800</span></div>
+    </div>
+    <div class="zone">🔴 근거리</div>
+    <div class="row"><div class="card" style="font-size:12px">기본 ✓</div><div class="card" style="font-size:12px">대검 <span class="gold">🪙600</span></div></div>
+    <div class="zone" style="opacity:.4">🔒 🟡 대공 — 구역 4에서 해금</div>
+    <div class="grow"></div>
+    <p class="dim">카테고리 = 진행으로만 해금 · 변형 = 코인 (유료 X)</p>
+  </div>
+
+  <div class="scr" data-s="settings">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="cursor:pointer" onclick="go('main')">←</span><b>설정</b>
+    </div>
+    <div class="setrow">사운드 <div class="tog"></div></div>
+    <div class="setrow">진동 <div class="tog"></div></div>
+    <div class="setrow">조작 좌우 스왑 <div class="tog off"></div></div>
+    <div class="setrow">구매 복원 <span class="dim">›</span></div>
+    <div class="setrow">광고 동의 재설정 <span class="dim">›</span></div>
+    <div class="setrow">약관 · 처리방침 <span class="dim">↗</span></div>
+    <div class="setrow" onclick="go('login')">로그아웃 <span class="dim">›</span></div>
+    <div class="setrow" style="color:#ff6b6b">회원 탈퇴 <span class="dim">이 앱의 데이터만 삭제</span></div>
+  </div>
+
+</div>
+<p class="hint">화면 위 요소를 탭하면 전환됩니다 — 흐름: 로그인 → 메인 → 스테이지 → 로드아웃 → 플레이 → 클리어/실패. 게임플레이 자체는 prototype v3.1 (previews) 참조.</p>
+<script>
+const SCREENS=[['login','1 로그인'],['main','2 메인'],['stages','3 스테이지'],['loadout','4 로드아웃'],['play','5 플레이'],['clear','6 클리어'],['fail','7 실패'],['armory','8 무기고'],['settings','9 설정']];
+const nav=document.getElementById('nav');
+for(const [id,label] of SCREENS){
+  const b=document.createElement('button'); b.textContent=label; b.dataset.t=id;
+  b.onclick=()=>go(id); nav.appendChild(b);
+}
+function go(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.dataset.s===id));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
+}
+go('login');
+</script>
+</body>
+</html>

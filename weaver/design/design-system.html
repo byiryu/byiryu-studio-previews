@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 디자인 시스템 토큰</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Pretendard','Segoe UI',sans-serif;background:#0c0c11;color:#eeeef2;padding:32px 24px;line-height:1.5}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:1px;margin-bottom:4px}
+  .sub{color:#556070;font-size:13px;margin-bottom:32px}
+  h2{font-size:15px;color:#9aa0b0;text-transform:uppercase;letter-spacing:2px;margin:36px 0 14px;border-bottom:1px solid #2a2a36;padding-bottom:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .sw{background:#15151d;border:1px solid #2a2a36;border-radius:10px;overflow:hidden}
+  .sw .chip{height:56px}
+  .sw .meta{padding:8px 10px;font-size:11px;color:#9aa0b0}
+  .sw .meta b{display:block;color:#eeeef2;font-family:ui-monospace,monospace;font-size:11px}
+  .typo div{margin-bottom:14px}
+  .typo small{color:#556070;font-size:11px;display:block;font-family:ui-monospace,monospace}
+  .sp{display:flex;align-items:flex-end;gap:14px}
+  .sp .b{background:#5c7cfa;border-radius:2px}
+  .sp span{font-size:10px;color:#556070;display:block;text-align:center;margin-top:4px}
+  .note{background:#15151d;border-left:3px solid #ffd43b;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#9aa0b0;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>weaver — 디자인 시스템</h1>
+  <p class="sub">다크 단일 모드 · 색 = 정보 · design-system.md 의 시각 미러 (drift 시 .md 가 SoT)</p>
+
+  <h2>바탕·표면</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#0C0C11;border-bottom:1px solid #2a2a36"></div><div class="meta"><b>color_0C0C11</b>잉크 블랙 — 메인 배경</div></div>
+    <div class="sw"><div class="chip" style="background:#12121A"></div><div class="meta"><b>color_12121A</b>패널 딥</div></div>
+    <div class="sw"><div class="chip" style="background:#15151D"></div><div class="meta"><b>color_15151D</b>서피스 (슬롯·카드)</div></div>
+    <div class="sw"><div class="chip" style="background:#1C2030"></div><div class="meta"><b>color_1C2030</b>서피스 활성</div></div>
+    <div class="sw"><div class="chip" style="background:#2A2A36"></div><div class="meta"><b>color_2A2A36</b>보더</div></div>
+  </div>
+
+  <h2>무기 카테고리 4색 (브랜드 팔레트)</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#4DABF7"></div><div class="meta"><b>color_4DABF7</b>🔵 원거리</div></div>
+    <div class="sw"><div class="chip" style="background:#FF6B6B"></div><div class="meta"><b>color_FF6B6B</b>🔴 근거리</div></div>
+    <div class="sw"><div class="chip" style="background:#FFD43B"></div><div class="meta"><b>color_FFD43B</b>🟡 대공</div></div>
+    <div class="sw"><div class="chip" style="background:#B197FC"></div><div class="meta"><b>color_B197FC</b>🟣 특수</div></div>
+  </div>
+
+  <h2>위협·오브젝트</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#FF5A5A"></div><div class="meta"><b>color_FF5A5A</b>가시</div></div>
+    <div class="sw"><div class="chip" style="background:#74C0FC"></div><div class="meta"><b>color_74C0FC</b>바 (슬라이드)</div></div>
+    <div class="sw"><div class="chip" style="background:#E8E8F0"></div><div class="meta"><b>color_E8E8F0</b>⚪ 기본 낙하물·잔해</div></div>
+    <div class="sw"><div class="chip" style="background:#C92A2A"></div><div class="meta"><b>color_C92A2A</b>장갑 몸체</div></div>
+  </div>
+
+  <h2>진행·보상</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#5C7CFA"></div><div class="meta"><b>color_5C7CFA</b>진행 바</div></div>
+    <div class="sw"><div class="chip" style="background:#51CF66"></div><div class="meta"><b>color_51CF66</b>클리어</div></div>
+    <div class="sw"><div class="chip" style="background:#FFE08A"></div><div class="meta"><b>color_FFE08A</b>★ 코인 (대공과 분리)</div></div>
+    <div class="sw"><div class="chip" style="background:#EEEEF2"></div><div class="meta"><b>color_EEEEF2</b>주 텍스트·별</div></div>
+  </div>
+  <div class="note">★ 코인 <b style="color:#FFE08A">FFE08A</b> vs 대공 <b style="color:#FFD43B">FFD43B</b> — 트랙 위 코인이 요격 대상으로 오독되지 않도록 의도적 분리. M2 시각 검증 항목.</div>
+
+  <h2>스킨 팔레트 스왑 8종</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="meta"><b>#FFFFFF</b>기본</div></div>
+    <div class="sw"><div class="chip" style="background:#55CCFF"></div><div class="meta"><b>#55CCFF</b></div></div>
+    <div class="sw"><div class="chip" style="background:#FF77AA"></div><div class="meta"><b>#FF77AA</b></div></div>
+    <div class="sw"><div class="chip" style="background:#7CF29C"></div><div class="meta"><b>#7CF29C</b></div></div>
+    <div class="sw"><div class="chip" style="background:#FFB454"></div><div class="meta"><b>#FFB454</b></div></div>
+    <div class="sw"><div class="chip" style="background:#C9A0FF"></div><div class="meta"><b>#C9A0FF</b></div></div>
+    <div class="sw"><div class="chip" style="background:#FF6E6E"></div><div class="meta"><b>#FF6E6E</b></div></div>
+    <div class="sw"><div class="chip" style="background:#FFE066"></div><div class="meta"><b>#FFE066</b></div></div>
+  </div>
+
+  <h2>타이포그래피 (Pretendard 단일 · 숫자 tabular)</h2>
+  <div class="typo">
+    <div style="font-size:34px;font-weight:800">24.3초 — extrabold_34<small>결과 수치</small></div>
+    <div style="font-size:28px;font-weight:700;letter-spacing:4px">WEAVER — bold_28 ls4<small>타이틀·워드마크</small></div>
+    <div style="font-size:16px;font-weight:700">이대로 시작 — bold_16<small>버튼·CTA</small></div>
+    <div style="font-size:13px;font-weight:700;letter-spacing:1px">STAGE 12 · 구역 2 — bold_13 ls1<small>HUD 라벨</small></div>
+    <div style="font-size:13px">진행·아이템을 안전하게 보관해요 — regular_13<small>본문</small></div>
+    <div style="font-size:11px;color:#9aa0b0">원거리 · 누르는 동안 — regular_11<small>메타·힌트</small></div>
+  </div>
+
+  <h2>스페이싱</h2>
+  <div class="sp">
+    <div><div class="b" style="width:4px;height:4px"></div><span>4</span></div>
+    <div><div class="b" style="width:8px;height:8px"></div><span>8</span></div>
+    <div><div class="b" style="width:14px;height:14px"></div><span>14</span></div>
+    <div><div class="b" style="width:16px;height:16px"></div><span>16</span></div>
+    <div><div class="b" style="width:24px;height:24px"></div><span>24</span></div>
+  </div>
+</div>
+</body>
+</html>

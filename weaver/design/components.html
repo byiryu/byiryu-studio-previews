@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 컴포넌트 카탈로그</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Pretendard',sans-serif;background:#0c0c11;color:#eeeef2;padding:32px 24px;line-height:1.5}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:26px;margin-bottom:4px} .sub{color:#556070;font-size:13px;margin-bottom:32px}
+  h2{font-size:15px;color:#9aa0b0;text-transform:uppercase;letter-spacing:2px;margin:36px 0 14px;border-bottom:1px solid #2a2a36;padding-bottom:8px}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+  .lab{font-size:11px;color:#556070;margin-top:6px;text-align:center}
+  /* slot_weapon */
+  .wslot{width:84px;background:#15151d;border:2px solid #2a2a36;border-radius:12px;padding:8px 2px 7px;text-align:center;position:relative}
+  .wslot .ic{font-size:18px;display:block}.wslot .nm{font-size:10px;color:#888}
+  .wslot.on-b{border-color:#4dabf7;box-shadow:0 0 12px rgba(77,171,247,.35);background:#1c2030;transform:translateY(-2px)}
+  .wslot.on-r{border-color:#ff6b6b;box-shadow:0 0 12px rgba(255,107,107,.35);background:#1c2030;transform:translateY(-2px)}
+  .wslot.locked{opacity:.35}
+  .wslot.locked::after{content:'🔒';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(12,12,17,.45);border-radius:10px}
+  /* button_control — ★ 원형 코너 오버레이 (2026-06-11 직사각 폐기) */
+  .cbtn{width:92px;height:92px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid #2a2a36;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#aab;font-size:13px;font-weight:700;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .cbtn .g{font-size:22px;line-height:1}
+  .cbtn small{font-size:9px;color:#556;font-weight:400;letter-spacing:.5px}
+  .cbtn.press{background:#1e2030;border-color:#3a3f5c;color:#fff;transform:scale(.94)}
+  /* card_stage */
+  .scard{width:74px;height:74px;background:#15151d;border:1px solid #2a2a36;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:16px}
+  .scard .st{font-size:11px;letter-spacing:1px}
+  .scard.cur{border-color:#5c7cfa}.scard.lock{opacity:.4}
+  .star{color:#eeeef2}.star.off{color:transparent;-webkit-text-stroke:1px #2a2a36}
+  /* etc */
+  .bar{width:240px;height:6px;background:#1d1d26;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;width:42%;background:#5c7cfa;border-radius:3px}
+  .cta{background:#eeeef2;color:#0c0c11;border:none;padding:13px 34px;border-radius:30px;font-size:16px;font-weight:700;letter-spacing:1px}
+  .ringbox{width:84px;height:84px;position:relative;background:#0c0c11;border:1px dashed #2a2a36;border-radius:10px}
+  .ring{position:absolute;inset:18px;border:1.6px solid;border-radius:50%;animation:pul 1.1s infinite ease-in-out}
+  @keyframes pul{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.12);opacity:.6}}
+  .unlock{color:#ffd43b;font-size:16px;text-align:center;line-height:1.6}
+  .coin{width:16px;height:16px;border-radius:50%;background:#ffe08a;display:inline-block;vertical-align:-3px;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>weaver — 컴포넌트</h1>
+  <p class="sub">design-system.md 컴포넌트 토큰의 시각 미러</p>
+
+  <h2>slot_weapon — 무기 슬롯 (기본 / 활성 / 잠금)</h2>
+  <div class="row">
+    <div><div class="wslot"><span class="ic">🔵</span><span class="nm">원거리</span></div><div class="lab">기본</div></div>
+    <div><div class="wslot on-b"><span class="ic">🔵</span><span class="nm">원거리</span></div><div class="lab">활성 (카테고리색 glow)</div></div>
+    <div><div class="wslot on-r"><span class="ic">🔴</span><span class="nm">근거리</span></div><div class="lab">활성 (근거리)</div></div>
+    <div><div class="wslot locked"><span class="ic">🟣</span><span class="nm">특수</span></div><div class="lab">잠금 (§2.11 페이즈)</div></div>
+  </div>
+
+  <h2>button_control — 이동 버튼 = 원형 코너 오버레이 (★ 2026-06-11 확정)</h2>
+  <div class="row">
+    <div><div class="cbtn"><span class="g">▲</span>점프<small>탭</small></div><div class="lab">기본 (우측 코너 — 주 동사)</div></div>
+    <div><div class="cbtn press"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div><div class="lab">press (scale 0.94) — 좌측 코너</div></div>
+  </div>
+  <div class="lab" style="text-align:left;margin-top:4px">직경 ~84pt+ · 좌우 하단 코너 정착 · 버튼 사이 = 데드존 · 설정 좌우 스왑</div>
+
+  <h2>card_stage — 스테이지 카드 (클리어 / 현재 / 잠금)</h2>
+  <div class="row">
+    <div><div class="scard"><span class="st">5</span><span style="font-size:11px"><span class="star">✦✦</span><span class="star off">✦</span></span></div><div class="lab">클리어 (별 2/3)</div></div>
+    <div><div class="scard cur"><span class="st">8</span><span style="font-size:10px;color:#5c7cfa">진행 중</span></div><div class="lab">현재</div></div>
+    <div><div class="scard lock"><span class="st">🔒</span></div><div class="lab">잠금</div></div>
+  </div>
+
+  <h2>ring_warning — 위협 경고 링 (펄스)</h2>
+  <div class="row">
+    <div><div class="ringbox"><div class="ring" style="border-color:#4dabf7"></div></div><div class="lab">🔵 일반 몬스터</div></div>
+    <div><div class="ringbox"><div class="ring" style="border-color:#ff6b6b"></div></div><div class="lab">🔴 장갑</div></div>
+    <div><div class="ringbox"><div class="ring" style="border-color:#ffd43b"></div></div><div class="lab">🟡 요격형 낙하물</div></div>
+    <div><div class="ringbox"><div class="ring" style="border-color:#e8e8f0"></div></div><div class="lab">⚪ 기본형 (몸 회피)</div></div>
+  </div>
+
+  <h2>bar_progress · button_cta · chip_unlock · 코인</h2>
+  <div class="row" style="align-items:center">
+    <div><div class="bar"><i></i></div><div class="lab">진행 바 (1.2/3바퀴)</div></div>
+    <div><button class="cta">다음 스테이지 ▶</button><div class="lab">CTA 필</div></div>
+    <div><div class="unlock">🟡 대공 해금!<br><span style="font-size:12px;color:#9aa0b0">노란 낙하물을 요격합니다</span></div><div class="lab">해금 배너</div></div>
+    <div><div style="font-size:15px;font-weight:700"><span class="coin"></span>+85</div><div class="lab">코인 (FFE08A — 대공과 분리)</div></div>
+  </div>
+</div>
+</body>
+</html>
