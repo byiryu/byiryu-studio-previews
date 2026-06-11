@@ -77,11 +77,11 @@
   <h1>WEAVER<span class="sub">prototype v3.1 · 2버튼 · 점진 해금 커리큘럼</span></h1>
   <div class="legend">
     🎮 <b>원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)</b><br>
-    🏃 스테이지 4개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
-    &nbsp;&nbsp;S1 <b>P0</b> 몸으로만 — 가시·바·⚪낙하물(점프 타이밍)<br>
-    &nbsp;&nbsp;S2 <b>P1</b> 🔵 해금 — 자동사격 (스왑 없음)<br>
-    &nbsp;&nbsp;S3 <b>P2</b> 🔴 합류 — 첫 스왑 (색 보고 바꾸기)<br>
-    &nbsp;&nbsp;S4 <b>P3</b> 🟡 합류 — 노란 낙하물만 요격, ⚪는 몸으로<br>
+    🏃 스테이지 5개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
+    &nbsp;&nbsp;S1·S2 <b>정사각 트랙</b> — P0 몸으로만 → P1 🔵 자동사격<br>
+    &nbsp;&nbsp;S3 <b>★ 마름모 변형</b> + 🔴 첫 스왑<br>
+    &nbsp;&nbsp;S4 🟡 요격 — 노란 낙하물만 요격, ⚪는 몸으로<br>
+    &nbsp;&nbsp;S5 <b>★ 회전 변형</b> — 트랙(영역)이 살아 움직임<br>
     ⚪ 착탄 후 <b>잔해 1.5초</b> — 점프로 넘기
   </div>
   <div class="skins"><span>스킨:</span>
@@ -104,15 +104,28 @@
 <script>
 const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
 const DPR=Math.min(window.devicePixelRatio||1,2);
-let S=0, C=0, R=0, L=0, P=0, verts=[];
+// ★ 가시성 마진 M=40 — 위협·경고 링이 1:1 영역을 절대 안 벗어나게 (2026-06-11 사용자 피드백)
+let S=0, C=0, M=40, TR=0, L=0, P=0, baseVerts=[], verts=[], rotAngle=0, curShape='diamond';
+function shapeVerts(shape){
+  if(shape==='square'){ const m=M; return [[m,m],[S-m,m],[S-m,S-m],[m,S-m]]; }
+  const R=S/2-M; return [[C,C-R],[C+R,C],[C,C+R],[C-R,C]];   // diamond
+}
+function applyRot(){
+  if(!rotAngle){ verts=baseVerts.map(v=>v.slice()); return; }
+  const c=Math.cos(rotAngle), s=Math.sin(rotAngle);
+  verts=baseVerts.map(([x,y])=>[C+(x-C)*c-(y-C)*s, C+(x-C)*s+(y-C)*c]);
+}
+function setShape(shape){
+  curShape=shape; TR=S/2-M;
+  baseVerts=shapeVerts(shape); applyRot();
+  L=Math.hypot(baseVerts[1][0]-baseVerts[0][0], baseVerts[1][1]-baseVerts[0][1]); P=4*L;
+}
 function layout(){
   S=Math.min(innerWidth, Math.floor(innerHeight*0.5));
   canvas.width=S*DPR; canvas.height=S*DPR;
   canvas.style.width=S+'px'; canvas.style.height=S+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  C=S/2; R=S/2-26;
-  verts=[[C,C-R],[C+R,C],[C,C+R],[C-R,C]];
-  L=Math.hypot(R,R); P=4*L;
+  C=S/2; setShape(curShape);
 }
 addEventListener('resize',layout); layout();
 
@@ -129,20 +142,23 @@ function cornerSafe(d){
   return d;
 }
 
-// ---------- 커리큘럼 스테이지 (spec §2.11 P0~P3 압축) ----------
+// ---------- 커리큘럼 스테이지 (spec §2.11 — ★ 정사각 시작 → 마름모 → 회전 변형) ----------
 const STAGES=[
-  { label:'STAGE 1 · P0 몸으로', laps:2, weapons:[], unlock:null,
+  { label:'STAGE 1 · P0 몸으로', shape:'square', laps:2, weapons:[], unlock:null,
     script:[[1,.15,'spike'],[1,.35,'spike'],[1,.6,'bar'],[1,.85,'spike'],
             [2,.1,'bar'],[2,.3,'spike'],[2,.55,'drop'],[2,.72,'spike'],[2,.9,'bar']] },
-  { label:'STAGE 2 · P1 자동사격', laps:2, weapons:[0], unlock:'🔵 원거리 해금!<br>사거리 안 몬스터를 자동으로 쏩니다 — 스왑은 아직 없음',
+  { label:'STAGE 2 · P1 자동사격', shape:'square', laps:2, weapons:[0], unlock:'🔵 원거리 해금!<br>사거리 안 몬스터를 자동으로 쏩니다 — 스왑은 아직 없음',
     script:[[1,.12,'mob'],[1,.32,'spike'],[1,.52,'mob'],[1,.7,'bar'],[1,.9,'drop'],
             [2,.15,'mob'],[2,.35,'drop'],[2,.6,'mob'],[2,.8,'spike']] },
-  { label:'STAGE 3 · P2 첫 스왑', laps:2, weapons:[0,1], unlock:'🔴 근거리 해금!<br>장갑 몬스터(빨강)는 🔴만 통합니다 — 색 보고 스왑',
+  { label:'STAGE 3 · P2 첫 스왑', shape:'diamond', laps:2, weapons:[0,1], unlock:'🔴 근거리 해금!<br>장갑(빨강)은 🔴만 통합니다 — 그리고 ★ 트랙이 마름모로 변형!',
     script:[[1,.1,'mob'],[1,.3,'armor'],[1,.5,'bar'],[1,.7,'armor'],[1,.9,'spike'],
             [2,.12,'armor'],[2,.3,'mob'],[2,.5,'drop'],[2,.72,'armor'],[2,.9,'bar']] },
-  { label:'STAGE 4 · P3 요격', laps:2, weapons:[0,1,2], unlock:'🟡 대공 해금!<br>노란 낙하물은 🟡로 요격 — 흰 낙하물(⚪)은 여전히 몸으로',
+  { label:'STAGE 4 · P3 요격', shape:'diamond', laps:2, weapons:[0,1,2], unlock:'🟡 대공 해금!<br>노란 낙하물은 🟡로 요격 — 흰 낙하물(⚪)은 여전히 몸으로',
     script:[[1,.1,'fall'],[1,.3,'mob'],[1,.5,'armor'],[1,.66,'drop'],[1,.86,'fall'],
             [2,.14,'fall'],[2,.34,'armor'],[2,.52,'drop'],[2,.68,'mob'],[2,.86,'fall']] },
+  { label:'STAGE 5 · 변형: 회전', shape:'diamond', rotDeg:9, laps:2, weapons:[0,1,2], unlock:'★ 변형 구역!<br>트랙이 천천히 회전합니다 — 영역이 살아 움직이는 난이도 변형',
+    script:[[1,.12,'mob'],[1,.3,'spike'],[1,.5,'armor'],[1,.7,'bar'],[1,.9,'drop'],
+            [2,.15,'fall'],[2,.35,'spike'],[2,.55,'armor'],[2,.75,'drop'],[2,.92,'mob']] },
 ];
 let stageIdx=0, LAPS=2;
 
@@ -167,6 +183,7 @@ let slideHeld=false, weapon=-1, elapsed=0, totalElapsed=0, shots=[], fx=[], trai
 
 function startStage(i){
   stageIdx=i;
+  rotAngle=0; setShape(STAGES[i].shape||'diamond');   // ★ 형태·둘레 재계산 후 배치
   char.d=0; char.speed=200+i*12; char.offset=0; char.vy=0; char.grounded=true; char.sliding=false; char.walk=0;
   elapsed=0; shots=[]; fx=[]; trail=[]; slideHeld=false;
   buildStage();
@@ -256,19 +273,20 @@ function updateFalling(dt){
     if((t.kind!=='fall'&&t.kind!=='drop')||t.dead) continue;
     const ahead=t.d-char.d;
     if(!t.obj && ahead<340 && ahead>20){
-      const p=pathAt(t.d);
-      const sx=p.x+p.nx*R*1.15, sy=p.y+p.ny*R*1.15;
       const tt=Math.max(0.7, ahead/char.speed*0.95);
-      t.obj={x:sx,y:sy,x0:sx,y0:sy,ix:p.x,iy:p.y,tt,t:0,done:false};
+      t.obj={tt,t:0,done:false,x:0,y:0};
     }
     if(t.obj && !t.obj.done){
       t.obj.t+=dt;
       const k=Math.min(1,t.obj.t/t.obj.tt);
-      t.obj.x=t.obj.x0+(t.obj.ix-t.obj.x0)*k;
-      t.obj.y=t.obj.y0+(t.obj.iy-t.obj.y0)*k;
+      // ★ 매 프레임 라이브 끝점 — 회전 트랙에서도 착탄점을 정확히 추적
+      const p=pathAt(t.d);
+      const sx=p.x+p.nx*TR*1.15, sy=p.y+p.ny*TR*1.15;
+      t.obj.x=sx+(p.x-sx)*k;
+      t.obj.y=sy+(p.y-sy)*k;
       if(k>=1){
         t.obj.done=true;
-        addFx({x:t.obj.ix,y:t.obj.iy}, t.kind==='fall'?'#aaa':'#ddd');
+        addFx({x:t.obj.x,y:t.obj.y}, t.kind==='fall'?'#aaa':'#ddd');
         const near=Math.abs(t.d-char.d);
         if(near<24 && char.offset<22){
           gameOver(t.kind==='fall' ? '낙하물 — 🟡 대공으로 요격하거나 착탄 순간 점프'
@@ -323,9 +341,10 @@ function drawWedge(p,wHalf,h,col,alpha){
   ctx.globalAlpha=1;
 }
 function ring(p,h,col){
-  const pul=2+Math.sin(performance.now()/180)*1.5;
+  // ★ 링이 트랙 윤곽 안에 완전히 들어오게 (반지름 ≤ 중심 깊이 — 2026-06-11 가시성 피드백)
+  const pul=Math.sin(performance.now()/180)*1.2;
   ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.globalAlpha=0.85;
-  ctx.beginPath(); ctx.arc(p.x+p.nx*(h*0.55), p.y+p.ny*(h*0.55), h*0.8+pul, 0, 7); ctx.stroke();
+  ctx.beginPath(); ctx.arc(p.x+p.nx*(h*0.72), p.y+p.ny*(h*0.72), h*0.62+pul, 0, 7); ctx.stroke();
   ctx.globalAlpha=1;
 }
 function eyes(p,off){
@@ -417,6 +436,8 @@ function loop(now){
 
   if(state==='play'){
     elapsed+=dt; totalElapsed+=dt;
+    const st=STAGES[stageIdx];
+    if(st.rotDeg){ rotAngle+=st.rotDeg*Math.PI/180*dt; applyRot(); }   // ★ 회전 변형
     char.speed+=dt*4;
     char.d+=char.speed*dt;
     char.walk+=char.speed*dt*0.07;
