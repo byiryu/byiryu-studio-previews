@@ -195,8 +195,11 @@
   .item{display:inline-flex;align-items:center;gap:5px;background:rgba(21,21,29,.88);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:11px;margin:0 6px 6px 0;cursor:pointer}
   .item.own{border-color:#3a3f5c}
 
-  /* 해금 모먼트 */
-  .glow-red{position:absolute;inset:0;background:radial-gradient(60% 42% at 50% 38%, rgba(255,107,107,.22), transparent)}
+  /* 해금 모먼트 (템플릿 1개 — 3용도) */
+  .uvar{font-size:9.5px;color:var(--t3);border:1px solid var(--line);border-radius:99px;padding:4px 10px;cursor:pointer}
+  .uvar.on{color:var(--t1);border-color:#3a3f5c;background:rgba(21,21,29,.9)}
+  .morph{width:62px;height:62px;border:2px solid rgba(255,255,255,.85);box-shadow:0 0 20px rgba(255,255,255,.35);animation:morphr 2.4s ease-in-out infinite alternate}
+  @keyframes morphr{to{transform:rotate(45deg)}}
   .wpn{position:relative;width:18px;height:18px;margin:0 auto}
   .wpn .px{position:absolute;width:18px;height:18px;background:var(--red);box-shadow:18px -18px var(--red),36px -36px var(--red),
     54px -54px #ffd0d0, 0 18px #5a2430, 18px 36px #5a2430;filter:drop-shadow(0 0 18px rgba(255,107,107,.6))}
@@ -553,15 +556,18 @@
 
   <!-- 14 해금 모먼트 -->
   <div class="scr" data-s="unlock" style="justify-content:center;text-align:center">
-    <div class="glow-red"></div>
+    <div id="uglow" style="position:absolute;inset:0"></div>
     <div style="position:relative;z-index:6">
-      <div style="height:90px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:26px">
-        <div class="wpn"><div class="px"></div></div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-bottom:24px">
+        <span class="uvar" data-k="weapon" onclick="setUnlock('weapon')">① 무기 해금</span>
+        <span class="uvar" data-k="daily" onclick="setUnlock('daily')">② 데일리 런</span>
+        <span class="uvar" data-k="track" onclick="setUnlock('track')">③ 트랙 변형</span>
       </div>
-      <div style="font-size:26px;font-weight:800;color:var(--red);letter-spacing:1px;text-shadow:0 0 24px rgba(255,107,107,.5)">근거리 해금!</div>
-      <p class="muted" style="margin-top:8px">장갑 몬스터를 부순다 — 색을 보고 바꾸세요</p>
-      <p class="dim" style="margin-top:14px;font-size:9px">풀스크린 템플릿 1개 = ① 무기 해금 ② 데일리 런 개방 ③ 트랙 변형<br>이미지 = 무기 실물 스프라이트 (색 점 placeholder 금지 — 에셋 목록)</p>
-      <button class="cta" style="margin-top:22px" onclick="go('loadout')"><span style="margin:0 auto">장착하고 계속 ▶</span></button>
+      <div id="uimg" style="height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:22px"></div>
+      <div id="utitle" style="font-size:26px;font-weight:800;letter-spacing:1px"></div>
+      <p class="muted" id="ucopy" style="margin-top:8px"></p>
+      <p class="dim" style="margin-top:14px;font-size:9px">풀스크린 템플릿 1개 — 글로우색·이미지·타이틀·카피·CTA만 교체 (무기 4종 = 색·이미지 스왑)<br>무기 이미지 = 실물 스프라이트 (색 점 placeholder 금지 — 에셋 목록)</p>
+      <button class="cta" id="ucta" style="margin-top:22px"></button>
     </div>
   </div>
 
@@ -622,6 +628,27 @@ function tab(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===t));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.dataset.p===t));
 }
+/* 해금 모먼트 — 템플릿 1개·3용도 (spec §2.12 R6): 콘텐츠 데이터만 교체 */
+const UNLOCKS={
+  weapon:{glow:'rgba(255,107,107,.22)',color:'#FF6B6B',shadow:'rgba(255,107,107,.5)',
+    title:'근거리 해금!',copy:'장갑 몬스터를 부순다 — 색을 보고 바꾸세요',cta:'장착하고 계속 ▶',go:'loadout',
+    img:'<div class="wpn" style="margin-top:26px"><div class="px"></div></div>'},
+  daily:{glow:'rgba(92,124,250,.22)',color:'#5C7CFA',shadow:'rgba(92,124,250,.5)',
+    title:'데일리 런 개방!',copy:'매일 새로운 코스 — 전국 랭킹에 도전하세요',cta:'오늘의 코스 달리기 ▶',go:'daily',
+    img:'<svg class="ln" viewBox="0 0 24 24" style="width:56px;height:56px;stroke:#5C7CFA;stroke-width:1.4;filter:drop-shadow(0 0 14px rgba(92,124,250,.55))"><use href="#i-cal"/></svg>'},
+  track:{glow:'rgba(238,238,242,.15)',color:'#EEEEF2',shadow:'rgba(255,255,255,.4)',
+    title:'트랙이 변형됩니다!',copy:'구역 3 — 정사각 → 마름모, 모서리가 달라집니다',cta:'입장 계속 ▶',go:'loadout',
+    img:'<div class="morph"></div>'}
+};
+function setUnlock(k){const u=UNLOCKS[k];
+  document.getElementById('uglow').style.background=`radial-gradient(60% 42% at 50% 38%, ${u.glow}, transparent)`;
+  document.getElementById('uimg').innerHTML=u.img;
+  const t=document.getElementById('utitle'); t.textContent=u.title; t.style.color=u.color; t.style.textShadow=`0 0 24px ${u.shadow}`;
+  document.getElementById('ucopy').textContent=u.copy;
+  const c=document.getElementById('ucta'); c.innerHTML=`<span style="margin:0 auto">${u.cta}</span>`; c.onclick=()=>go(u.go);
+  document.querySelectorAll('.uvar').forEach(x=>x.classList.toggle('on',x.dataset.k===k));
+}
+setUnlock('weapon');
 go('main');
 </script>
 </body>
