@@ -49,6 +49,9 @@
   .skins span { font-size:12px; color:#888; }
   .sk { width:26px; height:26px; border-radius:50%; border:2px solid #333; cursor:pointer; }
   .sk.on { border-color:#fff; transform:scale(1.15); }
+  .stagesel { display:flex; gap:6px; justify-content:center; margin-top:12px; }
+  .stsel { background:#15151d; border:1px solid #2a2a36; color:#9aa; border-radius:8px; padding:7px 11px; font-size:12px; cursor:pointer; }
+  .stsel:active { background:#1c2030; color:#fff; }
 </style>
 </head>
 <body>
@@ -97,6 +100,7 @@
     <div class="sk" style="background:#f7a" data-s="#ff77aa"></div>
   </div>
   <button class="btn" id="startBtn">시작</button>
+  <div class="stagesel"><button class="stsel" data-st="0">S1</button><button class="stsel" data-st="1">S2</button><button class="stsel" data-st="2">S3</button><button class="stsel" data-st="3">S4</button><button class="stsel" data-st="4">S5</button></div>
   <p class="muted" style="margin-top:12px;">※ 검증: ① 2버튼 손맛 ② 해금 순간의 느낌 ③ ⚪몸회피 vs 🟡요격 구분 가독</p>
 </div>
 
@@ -106,6 +110,7 @@
   <div class="muted" id="overSub"></div>
   <div class="unlock hidden" id="unlockTxt"></div>
   <button class="btn" id="retryBtn">다시하기</button>
+  <div class="stagesel"><button class="stsel" data-st="0">S1</button><button class="stsel" data-st="1">S2</button><button class="stsel" data-st="2">S3</button><button class="stsel" data-st="3">S4</button><button class="stsel" data-st="4">S5</button></div>
 </div>
 
 <script>
@@ -535,6 +540,10 @@ function stageClear(){
   }
   overScreen.classList.remove('hidden');
 }
+document.querySelectorAll('.stsel').forEach(b=>{
+  b.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation();
+    totalElapsed=0; startScreen.classList.add('hidden'); overScreen.classList.add('hidden'); startStage(+b.dataset.st); });
+});
 document.getElementById('startBtn').onclick=()=>{ totalElapsed=0; startScreen.classList.add('hidden'); overScreen.classList.add('hidden'); startStage(0); };
 document.getElementById('retryBtn').onclick=()=>{
   overScreen.classList.add('hidden');
