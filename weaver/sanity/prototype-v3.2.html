@@ -80,7 +80,8 @@
 <div id="startScreen" class="overlay">
   <h1>WEAVER<span class="sub">prototype v3.2 · 카메라 구조 비교 (A/B 결정용)</span></h1>
   <div class="legend">
-    🎥 <b>팔로우 = 월드 고정 (놈 형식)</b> — 회전 없음: 옆벽을 타고 오르는 게 그대로 보임<br>
+    🎥 <b>팔로우 = 월드 고정 (놈 형식)</b> — 옆벽을 타고 오르는 게 그대로 보임<br>
+    🗺 <b>월드 1.7×</b> — 시작 시 다음 벽 안 보임 · 시작점 = 항상 바닥<br>
     ⏱ 속도 = 둘레 정규화 (시작 8초/바퀴 — 기기 무관 동일)<br>
     🎮 원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)<br>
     🏃 스테이지 5개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
@@ -127,10 +128,11 @@ function setShape(shape){
   baseVerts=shapeVerts(shape); applyRot();
   L=Math.hypot(baseVerts[1][0]-baseVerts[0][0], baseVerts[1][1]-baseVerts[0][1]); P=4*L;
 }
-let VW=0, VH=0;   // ★ 뷰포트 (1:1 해제 — 가로 풀 × 세로 ~56%). 월드는 S×S 유지
+let VW=0, VH=0;
+const WORLD_K=1.7;   // ★ 월드 스케일 — 뷰포트보다 큰 월드 (시작 시 다음 벽이 안 보이게, 여정감. 2026-06-12)
 function layout(){
   VW=Math.min(innerWidth,560); VH=Math.floor(innerHeight*0.56);
-  S=VW;
+  S=Math.round(VW*WORLD_K);   // 월드 = 뷰포트 × 1.7
   canvas.width=VW*DPR; canvas.height=VH*DPR;
   canvas.style.width=VW+'px'; canvas.style.height=VH+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -200,7 +202,7 @@ addEventListener('keydown',e=>{ if(e.code==='KeyV') toggleCam(); });
 function startStage(i){
   stageIdx=i;
   rotAngle=0; camSnap=true; setShape(STAGES[i].shape||'diamond');   // ★ 형태·둘레 재계산 후 배치
-  char.d=0; char.speed=P/8.0*(1+i*0.06); char.offset=0;   // ★ 둘레 정규화 — 시작 8초/바퀴, 기기 무관 (v3.1 px/s 고정 버그 수정) char.vy=0; char.grounded=true; char.sliding=false; char.walk=0;
+  char.d=0; char.speed=P/(8.0*WORLD_K)*(1+i*0.06); char.offset=0;   // ★ 둘레 정규화 + 바퀴 시간 = 월드 크기 비례 (화면 체감 속도 유지) char.vy=0; char.grounded=true; char.sliding=false; char.walk=0;
   elapsed=0; shots=[]; fx=[]; trail=[]; slideHeld=false;
   buildStage();
   const st=STAGES[i];
@@ -453,7 +455,7 @@ function loop(now){
     elapsed+=dt; totalElapsed+=dt;
     const st=STAGES[stageIdx];
     if(st.rotDeg){ rotAngle+=st.rotDeg*Math.PI/180*dt; applyRot(); }   // ★ 회전 변형
-    char.speed+=dt*P*0.0024;   // 가속도 둘레 정규화
+    char.speed+=dt*P*0.0024/WORLD_K;   // 가속도 둘레 정규화 (월드 비례)
     char.d+=char.speed*dt;
     char.walk+=char.speed*dt*0.07;
     if(!char.grounded){
@@ -489,7 +491,7 @@ function loop(now){
     camX+=(tx-camX)*Math.min(1,dt*6); camY+=(ty-camY)*Math.min(1,dt*6);
     const Z=1.45;
     ctx.translate(VW*0.5, VH*0.52); ctx.scale(Z,Z); ctx.translate(-camX,-camY);
-  } else { ctx.translate(0,(VH-S)/2); const fit=Math.min(1,VH/S); if(fit<1){ctx.translate(VW*0.5,VH*0.5);ctx.scale(fit,fit);ctx.translate(-VW*0.5,-VH*0.5);} }
+  } else { const fit=Math.min(VW/S,VH/S); ctx.translate((VW-S*fit)/2,(VH-S*fit)/2); ctx.scale(fit,fit); }
   drawTrack();
   for(const t of threats) drawThreat(t);
   for(const s of shots){ ctx.fillStyle=s.col; ctx.beginPath(); ctx.arc(s.x,s.y,3,0,7); ctx.fill(); }
