@@ -84,7 +84,7 @@
   <h1>WEAVER<span class="sub">prototype v3.2 · 카메라 구조 비교 (A/B 결정용)</span></h1>
   <div class="legend">
     🎥 <b>팔로우 = 월드 고정 (놈 형식)</b> — 옆벽을 타고 오르는 게 그대로 보임<br>
-    🗺 <b>월드 1.7×</b> — 시작 시 다음 벽 안 보임 · 시작점 = 항상 바닥<br>
+    🗺 <b>월드 2.5×</b> — 변 길이 확대 · 시작 시 다음 벽 안 보임 · 시작점 = 항상 바닥<br>
     ⏱ 속도 = 둘레 정규화 (시작 8초/바퀴 — 기기 무관 동일)<br>
     🎮 원형 버튼: 우 = 점프 (탭) · 좌 = 슬라이드 (홀드)<br>
     🏃 스테이지 5개 = 커리큘럼 압축 (각 2바퀴 완주)<br>
@@ -134,10 +134,10 @@ function setShape(shape){
   L=Math.hypot(baseVerts[1][0]-baseVerts[0][0], baseVerts[1][1]-baseVerts[0][1]); P=4*L;
 }
 let VW=0, VH=0;
-const WORLD_K=1.7;   // ★ 월드 스케일 — 뷰포트보다 큰 월드 (시작 시 다음 벽이 안 보이게, 여정감. 2026-06-12)
+const WORLD_K=2.5;   // ★ 월드 스케일 — 뷰포트보다 큰 월드 (변 길이 확대·여정감. 1.7→2.5, 형태 보드 검증 2026-06-12)
 function layout(){
   VW=Math.min(innerWidth,560); VH=Math.floor(innerHeight*0.56);
-  S=Math.round(VW*WORLD_K);   // 월드 = 뷰포트 × 1.7
+  S=Math.round(VW*WORLD_K);   // 월드 = 뷰포트 × WORLD_K
   canvas.width=VW*DPR; canvas.height=VH*DPR;
   canvas.style.width=VW+'px'; canvas.style.height=VH+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -491,10 +491,12 @@ function loop(now){
     const cx=p.x+p.nx*(char.offset+12), cy=p.y+p.ny*(char.offset+12);
     // ★★ 월드 고정 팬 팔로우 (놈 형식 — 회전 없음): 옆벽 구간 = 화면에서 수직 주행이 그대로 보임
     //    카메라 = 캐릭터 + 진행 방향 리드 (전방 시야 확보) · 부드러운 추적 · 시작 스냅
-    const tx=cx+p.fx*S*0.17, ty=cy+p.fy*S*0.17;
+    // ★ 인테리어 바이어스 — 벽을 화면 가장자리로, 내부가 화면을 채움 (전체 화면 활용, 2026-06-12)
+    const Z=1.45;
+    const IB=VH*0.26/Z;
+    const tx=cx+p.fx*S*0.10+p.nx*IB, ty=cy+p.fy*S*0.10+p.ny*IB;
     if(camSnap){ camX=tx; camY=ty; camSnap=false; }
     camX+=(tx-camX)*Math.min(1,dt*6); camY+=(ty-camY)*Math.min(1,dt*6);
-    const Z=1.45;
     ctx.translate(VW*0.5, VH*0.52); ctx.scale(Z,Z); ctx.translate(-camX,-camY);
   } else { const fit=Math.min(VW/S,VH/S); ctx.translate((VW-S*fit)/2,(VH-S*fit)/2); ctx.scale(fit,fit); }
   drawTrack();

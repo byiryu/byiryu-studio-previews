@@ -37,7 +37,7 @@
 <body>
 <div class="wrap">
   <h1>weaver — 트랙 형태 검증 + 주행 시뮬레이션</h1>
-  <p class="sub">2026-06-12 · 형태 5종 확정용 · spec §2.4 실게임 조건 (월드 고정 카메라·월드 1.7×·8초/바퀴·시작 최하단·우향)</p>
+  <p class="sub">2026-06-12 · 형태 5종 확정용 · spec §2.4 실게임 조건 (월드 고정 카메라·★월드 2.5×·바퀴 시간 둘레 비례·인테리어 바이어스·시작 최하단·우향)</p>
 
   <h2>① 주행 시뮬레이션 (장애물 0 — 형태 손맛만)</h2>
   <div class="chips" id="chips"></div>
@@ -61,7 +61,7 @@ const SHAPES=[
  {id:'penta', nm:'③ 오각', corners:'108°×5', tag:['ok','MVP 후보'], meta:'완만·잦은 전환 — 리듬 변화 (구역 4)', verts:'regular:5:90'},
  {id:'tri', nm:'④ 삼각', corners:'60°×3', tag:['ok','MVP 후보'], meta:'가장 급격한 코너 — 최고난도 전환 (구역 5)', verts:'regular:3:90'},
  {id:'hexa', nm:'⑤ 육각', corners:'120°×6', tag:['later','v1.x 예비'], meta:'거의 원형 — 별과 역할 겹침 시 예비', verts:'regular:6:0'},
- {id:'star', nm:'⑥ ★ 별', corners:'36°×5 + 오목 252°×5', tag:['test','★ 검증 필요'], meta:'오목 코너 = 새 전환 손맛.\n위험: 골짜기 점프 호 침범·낙하물 경로', verts:'star:5:0.46:90'},
+ {id:'star', nm:'⑥ ★ 별', corners:'뭉툭 별 (r0.62) — 볼록·오목 교차', tag:['test','★ 검증 필요'], meta:'오목 코너 = 새 전환 손맛.\n위험: 골짜기 점프 호 침범·낙하물 경로', verts:'star:5:0.62:90'},
  {id:'rect', nm:'⑦ 직사각', corners:'90°×4 (비등변)', tag:['later','v1.x 예비'], meta:'긴 바닥 + 짧은 벽 = 리듬 비대칭', wide:true, verts:[[-1.7,0.75],[1.7,0.75],[1.7,-0.75],[-1.7,-0.75]]},
 ];
 function buildVerts(def){
@@ -130,7 +130,7 @@ const simC=document.getElementById('sim'), sctx=simC.getContext('2d');
 const VW=Math.min(innerWidth-30,400), VH=Math.round(VW*1.15);
 simC.width=VW*DPR; simC.height=VH*DPR; simC.style.width=VW+'px'; simC.style.height=VH+'px';
 sctx.setTransform(DPR,0,0,DPR,0,0);
-const WORLD=VW*1.7;   // 월드 1.7×
+const WORLD=VW*2.5;   // ★ 월드 2.5× (2026-06-12 — 변 길이 확대, 여정감)
 let track=null, runD=0, dir=1, laps=0, off=0, vy=0, grounded=true, walk=0, trail=[];
 let camX=0, camY=0, camSnap=true;
 const GRAV=2600, JUMPV=620;
@@ -147,13 +147,15 @@ function simFrame(now){
   const dt=Math.min(0.05,(now-lastT)/1000); lastT=now;
   requestAnimationFrame(simFrame);
   if(!track) return;
-  const speed=track.P/(8.0);   // 8초/바퀴 (월드 1.7× 는 WORLD 에 이미 반영 — 둘레 기준 정규화)
+  const speed=track.P/(8.0*2.5/1.7);   // 바퀴 시간 = 둘레 비례 (체감 속도 = v3.2 기준 동일)
   runD+=dir*speed*dt; laps+=speed*dt/track.P; walk+=speed*dt*0.07;
   if(!grounded){ off+=vy*dt; vy-=GRAV*dt; if(off<=0){off=0;vy=0;grounded=true;} }
   document.getElementById('laps').textContent=laps.toFixed(1);
   const p=track.pathAt(runD);
   const cx=p.x+p.nx*(off+12), cy=p.y+p.ny*(off+12);
-  const tx=cx+dir*p.fx*WORLD*0.10, ty=cy+dir*p.fy*WORLD*0.10;
+  // ★ 인테리어 바이어스 — 벽을 화면 가장자리 쪽으로, 내부가 화면을 채움 (전체 화면 활용)
+  const IB=VH*0.26/1.45;
+  const tx=cx+dir*p.fx*WORLD*0.07+p.nx*IB, ty=cy+dir*p.fy*WORLD*0.07+p.ny*IB;
   if(camSnap){camX=tx;camY=ty;camSnap=false;}
   camX+=(tx-camX)*Math.min(1,dt*6); camY+=(ty-camY)*Math.min(1,dt*6);
   sctx.clearRect(0,0,VW,VH);
@@ -190,7 +192,10 @@ SHAPES.forEach((sh,i)=>{
   c.onclick=()=>{ document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); loadShape(sh); };
   chips.appendChild(c);
 });
-loadShape(SHAPES[0]);
+const initSh=SHAPES.find(s=>'#'+s.id===location.hash)||SHAPES[0];
+document.querySelectorAll('.chip')[SHAPES.indexOf(initSh)].classList.add('on');
+if(initSh!==SHAPES[0])document.querySelectorAll('.chip')[0].classList.remove('on');
+loadShape(initSh);
 
 // ─── ② 한눈 비교 그리드 ───
 const grid=document.getElementById('grid');
