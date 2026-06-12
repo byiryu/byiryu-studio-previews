@@ -27,7 +27,7 @@
 <body>
 <div class="wrap">
   <h1>weaver — 디자인 시스템</h1>
-  <p class="sub">다크 단일 모드 · 색 = 정보 · design-system.md 의 시각 미러 (drift 시 .md 가 SoT)</p>
+  <p class="sub">다크 단일 모드 · 색 = 정보 · design-system.md 의 시각 미러 (drift 시 .md 가 SoT) · 2026-06-12 정합 (텍스트 색 + 트랙 형태 5종)</p>
 
   <h2>바탕·표면</h2>
   <div class="grid">
@@ -62,6 +62,23 @@
     <div class="sw"><div class="chip" style="background:#EEEEF2"></div><div class="meta"><b>color_EEEEF2</b>주 텍스트·별</div></div>
   </div>
   <div class="note">★ 코인 <b style="color:#FFE08A">FFE08A</b> vs 대공 <b style="color:#FFD43B">FFD43B</b> — 트랙 위 코인이 요격 대상으로 오독되지 않도록 의도적 분리. M2 시각 검증 항목.</div>
+
+  <h2>텍스트</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#EEEEF2"></div><div class="meta"><b>color_EEEEF2</b>주 텍스트 · 기본 스킨</div></div>
+    <div class="sw"><div class="chip" style="background:#9AA0B0"></div><div class="meta"><b>color_9AA0B0</b>보조 (HUD 수치)</div></div>
+    <div class="sw"><div class="chip" style="background:#556070"></div><div class="meta"><b>color_556070</b>희미 (힌트·비활성)</div></div>
+  </div>
+
+  <h2>트랙 형태 — MVP 5종 (★ 2026-06-12 확정 · 코너 라운딩 + ≥90° 볼트)</h2>
+  <div class="row" style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end">
+    <div style="text-align:center"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linejoin="round"><polygon points="8,8 48,8 48,48 8,48"/></svg><div style="font-size:10px;color:#556070">정사각 · 볼트 4/4<br>(P0 시작)</div></div>
+    <div style="text-align:center"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linejoin="round"><polygon points="28,6 50,28 28,50 6,28"/></svg><div style="font-size:10px;color:#556070">마름모 · 볼트 4/4<br>(구역 3 — 첫 변형)</div></div>
+    <div style="text-align:center"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linejoin="round"><polygon points="28,6 50,22 42,48 14,48 6,22"/></svg><div style="font-size:10px;color:#556070">오각 · 볼트 0/5<br>(완만 — 그냥 주행)</div></div>
+    <div style="text-align:center"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linejoin="round"><polygon points="28,8 50,48 6,48"/></svg><div style="font-size:10px;color:#556070">삼각 · 볼트 3/3<br>(라운딩으로 복귀)</div></div>
+    <div style="text-align:center"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linejoin="round"><polygon points="28,6 36,17 48.9,21.2 40.9,32.2 40.9,45.8 28,41.6 15.1,45.8 15.1,32.2 7.1,21.2 20,17"/></svg><div style="font-size:10px;color:#556070">별 (뭉툭 0.62) · 볼트 5/10<br>(오목 코너 = 새 손맛)</div></div>
+  </div>
+  <div class="note">코너 = 필렛 라운딩 (반지름 ≈ 캐릭터 폭 1.5배) · |턴각| ≥ 90° = 자동 볼트 (전역 룰) · 코너 구간 = 입력 잠금 · 육각·직사각 = v1.x 예비. 상세 = spec §2.11</div>
 
   <h2>스킨 팔레트 스왑 8종</h2>
   <div class="grid">

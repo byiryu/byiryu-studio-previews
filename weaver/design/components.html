@@ -4,82 +4,204 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>weaver — 컴포넌트 카탈로그</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
+  :root{--srf:#15151d;--srf2:#1c2030;--line:#2a2a36;--t1:#eeeef2;--t2:#9aa0b0;--t3:#556070;
+    --blue:#4DABF7;--red:#FF6B6B;--yellow:#FFD43B;--purple:#B197FC;--coin:#FFE08A;--prog:#5C7CFA}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,'Pretendard',sans-serif;background:#0c0c11;color:#eeeef2;padding:32px 24px;line-height:1.5}
+  body{font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;background:#0c0c11;color:var(--t1);padding:32px 24px;line-height:1.5}
   .wrap{max-width:920px;margin:0 auto}
-  h1{font-size:26px;margin-bottom:4px} .sub{color:#556070;font-size:13px;margin-bottom:32px}
-  h2{font-size:15px;color:#9aa0b0;text-transform:uppercase;letter-spacing:2px;margin:36px 0 14px;border-bottom:1px solid #2a2a36;padding-bottom:8px}
-  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
-  .lab{font-size:11px;color:#556070;margin-top:6px;text-align:center}
+  h1{font-size:26px;margin-bottom:4px} .sub{color:var(--t3);font-size:13px;margin-bottom:32px}
+  h2{font-size:14px;color:var(--t2);text-transform:uppercase;letter-spacing:2px;margin:36px 0 14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  h2 .tk{font-family:ui-monospace,monospace;text-transform:none;letter-spacing:0;color:var(--prog)}
+  .row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+  .lab{font-size:11px;color:var(--t3);margin-top:6px;text-align:center;max-width:200px}
+  .note{font-size:11px;color:var(--t3);margin-top:8px}
+  .cdot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px}
+  svg.ln{stroke:var(--t2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   /* slot_weapon */
-  .wslot{width:84px;background:#15151d;border:2px solid #2a2a36;border-radius:12px;padding:8px 2px 7px;text-align:center;position:relative}
-  .wslot .ic{font-size:18px;display:block}.wslot .nm{font-size:10px;color:#888}
-  .wslot.on-b{border-color:#4dabf7;box-shadow:0 0 12px rgba(77,171,247,.35);background:#1c2030;transform:translateY(-2px)}
-  .wslot.on-r{border-color:#ff6b6b;box-shadow:0 0 12px rgba(255,107,107,.35);background:#1c2030;transform:translateY(-2px)}
-  .wslot.locked{opacity:.35}
-  .wslot.locked::after{content:'🔒';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(12,12,17,.45);border-radius:10px}
-  /* button_control — ★ 원형 코너 오버레이 (2026-06-11 직사각 폐기) */
-  .cbtn{width:92px;height:92px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid #2a2a36;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#aab;font-size:13px;font-weight:700;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .wslot{width:84px;background:var(--srf);border:2px solid var(--line);border-radius:12px;padding:10px 2px 8px;text-align:center;position:relative}
+  .wslot .nm{font-size:10px;color:var(--t2);display:block;margin-top:4px}
+  .wslot.on-b{border-color:var(--blue);box-shadow:0 0 12px rgba(77,171,247,.35);background:var(--srf2);transform:translateY(-2px)}
+  .wslot.on-r{border-color:var(--red);box-shadow:0 0 12px rgba(255,107,107,.35);background:var(--srf2);transform:translateY(-2px)}
+  .wslot.locked{opacity:.4}
+  /* button_control / button_skill */
+  .cbtn{width:92px;height:92px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#aab;font-size:13px;font-weight:700;letter-spacing:1px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
   .cbtn .g{font-size:22px;line-height:1}
-  .cbtn small{font-size:9px;color:#556;font-weight:400;letter-spacing:.5px}
+  .cbtn small{font-size:9px;color:var(--t3);font-weight:400;letter-spacing:.5px}
   .cbtn.press{background:#1e2030;border-color:#3a3f5c;color:#fff;transform:scale(.94)}
-  /* card_stage */
-  .scard{width:74px;height:74px;background:#15151d;border:1px solid #2a2a36;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:16px}
-  .scard .st{font-size:11px;letter-spacing:1px}
-  .scard.cur{border-color:#5c7cfa}.scard.lock{opacity:.4}
-  .star{color:#eeeef2}.star.off{color:transparent;-webkit-text-stroke:1px #2a2a36}
-  /* etc */
-  .bar{width:240px;height:6px;background:#1d1d26;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;width:42%;background:#5c7cfa;border-radius:3px}
-  .cta{background:#eeeef2;color:#0c0c11;border:none;padding:13px 34px;border-radius:30px;font-size:16px;font-weight:700;letter-spacing:1px}
-  .ringbox{width:84px;height:84px;position:relative;background:#0c0c11;border:1px dashed #2a2a36;border-radius:10px}
+  .skbtn{width:64px;height:64px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:17px;color:#aab;position:relative;animation:skp 2.5s ease-in-out infinite}
+  .skbtn small{font-size:8px;color:var(--t3)}
+  .skbtn .bdg{position:absolute;top:-4px;right:-2px;min-width:17px;height:17px;border-radius:9px;background:var(--prog);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .skbtn.spent{opacity:.4;animation:none}
+  @keyframes skp{50%{opacity:.85}}
+  /* hud_pill */
+  .hudpill{display:inline-flex;align-items:center;gap:8px;background:rgba(12,12,17,.55);border-radius:14px;height:30px;padding:0 13px;font-size:12px;font-weight:700;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+  .hudpill .pb{width:64px;height:4px;border-radius:2px;background:#1d1d26;overflow:hidden}
+  .hudpill .pb i{display:block;width:40%;height:100%;background:var(--prog)}
+  .hudpill .lap{font-weight:400;color:var(--t2);font-size:10px}
+  .pausepill{width:44px;justify-content:center;gap:4px}
+  .pausepill i{width:3px;height:12px;background:var(--t2);border-radius:1.5px}
+  .hudwrap{background:radial-gradient(120% 100% at 50% 0%,#0a0a14,#06060d);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;justify-content:space-between;min-width:320px}
+  /* chips */
+  .chip{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-radius:14px;background:var(--srf);border:1px solid var(--line);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+  .chip small{font-weight:400;font-size:10px;color:var(--t2)}
+  .ic{width:15px;height:15px}
+  /* cta_cost */
+  .cta{display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 22px;border-radius:26px;background:var(--t1);color:#0c0c11;border:none;font-weight:800;font-size:14px;min-width:230px;box-shadow:0 0 24px rgba(238,238,242,.1)}
+  .cta .cost{font-size:11px;font-weight:700;opacity:.55;font-variant-numeric:tabular-nums}
+  /* rail_zone */
+  .railmeta{text-align:right;font-size:11px;color:var(--t3);font-variant-numeric:tabular-nums;margin-bottom:5px}
+  .railrow{display:flex;align-items:center;gap:9px;width:280px}
+  .rail{flex:1;height:6px;border-radius:3px;background:#1d1d26;overflow:hidden}
+  .rail i{display:block;width:56%;height:100%;background:var(--prog);box-shadow:0 0 8px rgba(92,124,250,.6)}
+  .raillock{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--red);display:flex;align-items:center;justify-content:center}
+  .raillock svg{width:9px;height:9px;stroke:var(--red);fill:none;stroke-width:1.8}
+  /* skin_dots */
+  .skins{display:flex;gap:8px;align-items:center}
+  .skins i{width:9px;height:9px;border-radius:50%}
+  .skins i.cur{box-shadow:0 0 0 2.5px #0c0c11,0 0 0 4px var(--t1)}
+  /* icon_nav */
+  .nav{display:inline-flex;flex-direction:column;align-items:center;gap:5px;width:70px}
+  .nav .icw{position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+  .nav svg{width:22px;height:22px}
+  .nav em{font-style:normal;font-size:11px;color:var(--t2)}
+  .nav .nd{position:absolute;top:-2px;right:-4px;width:6px;height:6px;border-radius:50%;background:var(--prog);box-shadow:0 0 5px rgba(92,124,250,.7)}
+  /* row_rank */
+  .rankbox{width:300px}
+  .rrow{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #16161f;font-size:13px}
+  .rrow .rk{width:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--t2);text-align:center}
+  .rrow .nm{flex:1}.rrow .ds{font-weight:700;font-variant-numeric:tabular-nums}
+  .rrow.me{background:var(--srf2);border:1px solid var(--prog);border-radius:10px;box-shadow:0 0 12px rgba(92,124,250,.3);margin-top:6px}
+  .medal{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#0c0c11}
+  /* marker_death */
+  .mini{position:relative;width:96px;height:96px}
+  .mini .tr{position:absolute;inset:6px;border:1px solid var(--line);border-radius:2px}
+  .mini .x{position:absolute;top:16%;right:14%;color:#FF5A5A;font-weight:800;font-size:16px;animation:xp 1.4s ease-out 1}
+  @keyframes xp{from{transform:scale(1.6);opacity:0}to{transform:scale(1);opacity:1}}
+  /* template_unlock / dialog_sys 미니 */
+  .unlockmini{width:210px;height:130px;border-radius:14px;background:radial-gradient(70% 60% at 50% 42%,rgba(255,107,107,.22),#06060d);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+  .unlockmini b{color:var(--red);font-size:16px;text-shadow:0 0 18px rgba(255,107,107,.5)}
+  .unlockmini span{font-size:9px;color:var(--t2)}
+  .dlg{width:230px;background:var(--srf);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .dlg h4{font-size:13px;margin-bottom:6px}.dlg p{font-size:10.5px;color:var(--t2);line-height:1.5}
+  .dlg .btn2{margin-top:10px;width:100%;padding:8px;border-radius:10px;border:none;background:var(--t1);color:#0c0c11;font-size:11px;font-weight:700}
+  /* legacy */
+  .scard{width:74px;height:74px;background:var(--srf);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:16px}
+  .scard.cur{border-color:var(--prog)}.scard.lock{opacity:.4}
+  .star{color:var(--t1)}.star.off{color:transparent;-webkit-text-stroke:1px var(--line)}
+  .ringbox{width:84px;height:84px;position:relative;background:#0c0c11;border:1px dashed var(--line);border-radius:10px}
   .ring{position:absolute;inset:18px;border:1.6px solid;border-radius:50%;animation:pul 1.1s infinite ease-in-out}
   @keyframes pul{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.12);opacity:.6}}
-  .unlock{color:#ffd43b;font-size:16px;text-align:center;line-height:1.6}
-  .coin{width:16px;height:16px;border-radius:50%;background:#ffe08a;display:inline-block;vertical-align:-3px;margin-right:4px}
+  .coin{width:16px;height:16px;border-radius:50%;background:var(--coin);display:inline-block;vertical-align:-3px;margin-right:4px}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="8.5" y1="3.5" x2="8.5" y2="7"/><line x1="15.5" y1="3.5" x2="15.5" y2="7"/></symbol>
+  <symbol id="i-sword" viewBox="0 0 24 24"><path d="M18.6 5.4 10 14"/><path d="m7.8 12.3 3.9 3.9"/><path d="m9.9 14.4-3.2 3.2"/><circle cx="6" cy="18.1" r=".6"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4.5h8V10a4 4 0 0 1-8 0V4.5z"/><path d="M8 6H5.2A2.9 2.9 0 0 0 8 9.8"/><path d="M16 6h2.8A2.9 2.9 0 0 1 16 9.8"/><line x1="12" y1="14" x2="12" y2="17"/><path d="M8.5 19.5h7"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 9a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 0-2 2H6a2 2 0 0 0-2-2v-1.5a1.5 1.5 0 0 0 0-3V9z"/><line x1="12" y1="8" x2="12" y2="16" stroke-dasharray="2 2.4"/></symbol>
+</svg>
 <div class="wrap">
   <h1>weaver — 컴포넌트</h1>
-  <p class="sub">design-system.md 컴포넌트 토큰의 시각 미러</p>
+  <p class="sub">design-system.md 컴포넌트 토큰의 시각 미러 (drift 시 .md 가 SoT) · ★ 2026-06-12 전면 정합 — V2-C 5종 + §2.12 7종 + 플레이 검토 토큰 반영 · 풀 컨텍스트 = 목업 (prototype.html)</p>
 
-  <h2>slot_weapon — 무기 슬롯 (기본 / 활성 / 잠금)</h2>
+  <h2><span class="tk">slot_weapon</span> — 무기 슬롯 (색 = 정보, 이모지 X)</h2>
   <div class="row">
-    <div><div class="wslot"><span class="ic">🔵</span><span class="nm">원거리</span></div><div class="lab">기본</div></div>
-    <div><div class="wslot on-b"><span class="ic">🔵</span><span class="nm">원거리</span></div><div class="lab">활성 (카테고리색 glow)</div></div>
-    <div><div class="wslot on-r"><span class="ic">🔴</span><span class="nm">근거리</span></div><div class="lab">활성 (근거리)</div></div>
-    <div><div class="wslot locked"><span class="ic">🟣</span><span class="nm">특수</span></div><div class="lab">잠금 (§2.11 페이즈)</div></div>
+    <div><div class="wslot"><span class="cdot" style="background:var(--blue)"></span><span class="nm">원거리</span></div><div class="lab">기본</div></div>
+    <div><div class="wslot on-b"><span class="cdot" style="background:var(--blue)"></span><span class="nm">연사</span></div><div class="lab">활성 (카테고리색 glow)</div></div>
+    <div><div class="wslot on-r"><span class="cdot" style="background:var(--red)"></span><span class="nm">근거리</span></div><div class="lab">활성 (근거리)</div></div>
+    <div><div class="wslot locked"><svg class="ln" viewBox="0 0 24 24" style="width:16px;height:16px;margin:0 auto;display:block"><use href="#i-lock"/></svg><span class="nm">구역 4</span></div><div class="lab">잠금 (§2.11 페이즈 — 해금 구역 표기)</div></div>
   </div>
 
-  <h2>button_control — 이동 버튼 = 원형 코너 오버레이 (★ 2026-06-11 확정)</h2>
-  <div class="row">
-    <div><div class="cbtn"><span class="g">▲</span>점프<small>탭</small></div><div class="lab">기본 (우측 코너 — 주 동사)</div></div>
-    <div><div class="cbtn press"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div><div class="lab">press (scale 0.94) — 좌측 코너</div></div>
+  <h2><span class="tk">button_control · button_skill</span> — 조작 (★ 2026-06-12 중앙 = 스킬, 데드존 폐기)</h2>
+  <div class="row" style="align-items:flex-end">
+    <div><div class="cbtn"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div><div class="lab">좌측 코너 (홀드 · 히트 +8pt)</div></div>
+    <div style="padding-bottom:14px"><div class="skbtn">⚡<small>스킬</small><span class="bdg">1</span></div><div class="lab">button_skill — 60pt · 행 +14pt 상승 · 잔여 뱃지 · 미세 펄스</div></div>
+    <div style="padding-bottom:14px"><div class="skbtn spent">⚡<small>스킬</small></div><div class="lab">소진 (opacity 0.4 + 히트 차단)</div></div>
+    <div><div class="cbtn press"><span class="g">▲</span>점프<small>탭</small></div><div class="lab">press (scale 0.94) — 우측 코너 (주 동사)</div></div>
   </div>
-  <div class="lab" style="text-align:left;margin-top:4px">직경 ~84pt+ · 좌우 하단 코너 정착 · 버튼 사이 = 데드존 · 설정 좌우 스왑</div>
+  <p class="note">주 버튼 84pt+ 코너 정착 (압축 금지) · 스킬 = 히트 확장 0 + 250ms 디바운스 (오촉 가드 비대칭) · 설정 좌우 스왑 · 코너(호) 구간 = 입력 잠금 (버튼 시각 변화 없음)</p>
 
-  <h2>card_stage — 스테이지 카드 (클리어 / 현재 / 잠금)</h2>
-  <div class="row">
-    <div><div class="scard"><span class="st">5</span><span style="font-size:11px"><span class="star">✦✦</span><span class="star off">✦</span></span></div><div class="lab">클리어 (별 2/3)</div></div>
-    <div><div class="scard cur"><span class="st">8</span><span style="font-size:10px;color:#5c7cfa">진행 중</span></div><div class="lab">현재</div></div>
-    <div><div class="scard lock"><span class="st">🔒</span></div><div class="lab">잠금</div></div>
+  <h2><span class="tk">hud_pill</span> — 인게임 HUD (요소별 필 · 풀폭 금지)</h2>
+  <div class="hudwrap">
+    <span class="hudpill">STAGE 12 <span class="pb"><i></i></span><span class="lap">1.2/3</span></span>
+    <span class="hudpill pausepill"><i></i><i></i></span>
+  </div>
+  <p class="note">bg rgba(12,12,17,.55) · ⏸ 만 인터랙티브 (히트 44) — 나머지 터치 패스스루 · 오클루전 가드: 캐릭터 screen-y ≥130pt 클램프 + 침범 시 opacity 35% 페이드 · 티켓 칩 없음 (spec §2.12)</p>
+
+  <h2><span class="tk">chip_ticket</span> + 상태 칩 패밀리 (메인 상단)</h2>
+  <div class="row" style="align-items:center">
+    <div><span class="chip"><svg class="ic ln" viewBox="0 0 24 24" style="stroke:var(--prog)"><use href="#i-ticket"/></svg>3 <small>12:30</small></span><div class="lab">티켓 (잔량 + 리필 타이머) — 글리프 5C7CFA · 광고제거 보유 = 숨김</div></div>
+    <div><span class="chip"><span class="coin" style="width:14px;height:14px;margin:0"></span>1,240</span><div class="lab">코인 (FFE08A)</div></div>
+    <div><span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2.8l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.3l1.2-6-4.5-4.2 6.1-.7z" fill="#fff"/></svg>23</span><div class="lab">총 별</div></div>
   </div>
 
-  <h2>ring_warning — 위협 경고 링 (펄스)</h2>
+  <h2><span class="tk">cta_cost</span> — 비용 상태 CTA 4종 (티켓 게이트, #5·#10)</h2>
   <div class="row">
-    <div><div class="ringbox"><div class="ring" style="border-color:#4dabf7"></div></div><div class="lab">🔵 일반 몬스터</div></div>
-    <div><div class="ringbox"><div class="ring" style="border-color:#ff6b6b"></div></div><div class="lab">🔴 장갑</div></div>
-    <div><div class="ringbox"><div class="ring" style="border-color:#ffd43b"></div></div><div class="lab">🟡 요격형 낙하물</div></div>
+    <div><button class="cta"><span>▶&nbsp; 도전</span><span class="cost">— <svg class="ic ln" viewBox="0 0 24 24" style="stroke:rgba(12,12,17,.6);width:13px;height:13px;vertical-align:-2px"><use href="#i-ticket"/></svg> 1</span></button><div class="lab">티켓 ≥1 (소모)</div></div>
+    <div><button class="cta"><span>▶&nbsp; 📺 광고 보고 도전</span></button><div class="lab">티켓 0 (전면 광고 = 비용)</div></div>
+    <div><button class="cta"><span>▶&nbsp; 재도전</span><span class="cost">무료 2회 남음</span></button><div class="lab">재도전 1·2회 (면제)</div></div>
+    <div><button class="cta"><span>▶&nbsp; 도전</span></button><div class="lab">광고제거 (영구 무비용)</div></div>
+  </div>
+
+  <h2><span class="tk">rail_zone</span> — 구역 진행 레일 (V2-C 해금 티저)</h2>
+  <div>
+    <div class="railmeta" style="width:280px">12 / 16</div>
+    <div class="railrow"><div class="rail"><i></i></div><div class="raillock"><svg viewBox="0 0 24 24"><use href="#i-lock"/></svg></div></div>
+  </div>
+  <p class="note">우측 끝 = 다음 해금 카테고리색 링 + 자물쇠 · 행 전체 히트 44 · 탭 = 1회 툴팁("구역 3 — 근거리 해금") + 스테이지 선택 이동</p>
+
+  <h2><span class="tk">skin_dots</span> — 스킨 진열 도트 (BM 상설)</h2>
+  <div class="skins">
+    <i class="cur" style="background:#FFFFFF"></i><i style="background:#55CCFF"></i><i style="background:#FF77AA"></i>
+    <i style="background:#7CF29C;opacity:.3"></i><i style="background:#FFB454;opacity:.3"></i><i style="background:#C9A0FF;opacity:.3"></i>
+    <i style="background:#FF6E6E;opacity:.3"></i><i style="background:#FFE066;opacity:.3"></i>
+  </div>
+  <p class="note">현재 = 링 1.5 EEEEF2 · 미보유 = opacity 0.3 · 탭 → 무기고 스킨 탭 · hero_character (픽셀 정수 배율 ×9~10 · idle bob · 트레일 = 스킨색) = 목업 #3 참조</p>
+
+  <h2><span class="tk">icon_nav</span> — 메뉴 내비 (모노 라인 · 이모지 금지)</h2>
+  <div class="row">
+    <div class="nav"><span class="icw"><svg class="ln" viewBox="0 0 24 24"><use href="#i-cal"/></svg><span class="nd"></span></span><em>데일리 런</em></div>
+    <div class="nav"><span class="icw"><svg class="ln" viewBox="0 0 24 24"><use href="#i-sword"/></svg></span><em>무기고</em></div>
+    <div class="nav"><span class="icw"><svg class="ln" viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><em>랭킹</em></div>
+  </div>
+  <p class="note">stroke 9AA0B0 · 22pt + 라벨 regular_11 · 알림 도트 = 5C7CFA (데일리 미참가) · 아이콘 단독 vs +라벨 = A/B 보드 보류 (spec §1)</p>
+
+  <h2><span class="tk">row_rank</span> — 랭킹 행 (Supabase 일간 보드)</h2>
+  <div class="rankbox">
+    <div class="rrow"><span class="medal" style="background:var(--yellow)">1</span><span class="nm">검은별#482</span><span class="ds">4,120m</span></div>
+    <div class="rrow"><span class="rk">4</span><span class="nm">느린번개#204</span><span class="ds">3,560m</span></div>
+    <div class="rrow me"><span class="rk" style="color:var(--prog)">17</span><span class="nm"><b>나</b></span><span class="ds">2,051m</span></div>
+  </div>
+  <p class="note">h44 · 닉네임 = 자동 생성 (실명 노출 금지) · 내 순위 = sticky 하단 (1C2030 + 5C7CFA glow) · 1~3등 = 메달</p>
+
+  <h2><span class="tk">marker_death</span> — 사망 지점 (#9)</h2>
+  <div class="row" style="align-items:center">
+    <div><div class="mini"><div class="tr"></div><div class="x">✕</div></div><div class="lab">트랙 미니어처 + ✕ FF5A5A 펄스 1회</div></div>
+    <div class="lab" style="text-align:left">사인 카피 = 위협 글리프 + 해법 1줄<br>(예: "기본형 낙하물 ⚪ — 점프 타이밍으로 피하세요")</div>
+  </div>
+
+  <h2><span class="tk">template_unlock · dialog_sys</span> — 풀스크린 해금 / 시스템 다이얼로그</h2>
+  <div class="row">
+    <div><div class="unlockmini"><b>근거리 해금!</b><span>카테고리색 글로우 + 무기 실물 스프라이트</span><span style="color:var(--t3);font-size:8px">템플릿 1개 = 무기/데일리 런/트랙 변형 (목업 #14 토글)</span></div><div class="lab">template_unlock — 유일한 풀스크린 화려 연출</div></div>
+    <div><div class="dlg"><h4>🎁 보상 도착!</h4><p>어제 랭킹 🥈 2등 — <b style="color:var(--coin)">+60</b><br>weaver_rewards 우편함 · 메인 진입 시</p><button class="btn2">받기 (카운트업)</button></div><div class="lab">dialog_sys — 업데이트/광고제거/보상 공통 틀 (목업 #16)</div></div>
+  </div>
+
+  <h2><span class="tk">card_stage · ring_warning · bar_progress · chip_unlock</span> (기존)</h2>
+  <div class="row" style="align-items:center">
+    <div><div class="scard"><span>5</span><span style="font-size:11px"><span class="star">✦✦</span><span class="star off">✦</span></span></div><div class="lab">클리어 (별 2/3 — 조건 라이브러리)</div></div>
+    <div><div class="scard cur"><span>12</span><span style="font-size:10px;color:var(--prog)">▶ 현재</span></div><div class="lab">현재</div></div>
+    <div><div class="scard lock"><svg class="ln" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-lock"/></svg></div><div class="lab">잠금</div></div>
+    <div><div class="ringbox"><div class="ring" style="border-color:var(--blue)"></div></div><div class="lab">경고 링 — 🔵 일반</div></div>
     <div><div class="ringbox"><div class="ring" style="border-color:#e8e8f0"></div></div><div class="lab">⚪ 기본형 (몸 회피)</div></div>
   </div>
-
-  <h2>bar_progress · button_cta · chip_unlock · 코인</h2>
-  <div class="row" style="align-items:center">
-    <div><div class="bar"><i></i></div><div class="lab">진행 바 (1.2/3바퀴)</div></div>
-    <div><button class="cta">다음 스테이지 ▶</button><div class="lab">CTA 필</div></div>
-    <div><div class="unlock">🟡 대공 해금!<br><span style="font-size:12px;color:#9aa0b0">노란 낙하물을 요격합니다</span></div><div class="lab">해금 배너</div></div>
-    <div><div style="font-size:15px;font-weight:700"><span class="coin"></span>+85</div><div class="lab">코인 (FFE08A — 대공과 분리)</div></div>
+  <div class="row" style="align-items:center;margin-top:14px">
+    <div><div style="width:240px;height:6px;background:#1d1d26;border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:42%;background:var(--prog)"></i></div><div class="lab">bar_progress</div></div>
+    <div><div style="color:var(--yellow);font-size:15px;text-align:center">— 🟡 대공 해금 —</div><div class="lab">chip_unlock — #4 페이즈 경계 배너<br>(풀스크린 해금 = template_unlock)</div></div>
+    <div><div style="font-size:15px;font-weight:700"><span class="coin"></span>+85 <span style="font-size:10px;color:var(--t3)">(내역 분해 + 카운트업)</span></div><div class="lab">코인 — FFE08A (대공과 분리)</div></div>
   </div>
 </div>
 </body>

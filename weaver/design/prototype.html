@@ -46,7 +46,7 @@
 
   /* 라이브 트랙 */
   .track{position:absolute;left:50%;transform:translateX(-50%)}
-  .track .edge{position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.13);animation:spin 40s linear infinite}
+  .track .edge{position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.13);border-radius:5px;animation:spin 40s linear infinite}
   .track .edge i{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)}
   .track .edge i:nth-child(1){top:-2.5px;left:-2.5px}.track .edge i:nth-child(2){top:-2.5px;right:-2.5px}
   .track .edge i:nth-child(3){bottom:-2.5px;left:-2.5px}.track .edge i:nth-child(4){bottom:-2.5px;right:-2.5px}
@@ -134,10 +134,11 @@
   .recent{position:absolute;top:-7px;right:10px;font-size:8px;font-weight:700;color:#fff;background:var(--prog);border-radius:99px;padding:2px 7px}
 
   /* 플레이 (★ 2026-06-12 v3.2 확정판 — 월드 고정 팬·게임 영역 56%·패널 재배치) */
+  /* ★ 2026-06-12 재정합: 월드 3.0× + 인테리어 바이어스 32% → 바닥 ~84% (인테리어가 화면을 채움) */
   .parea{height:56%;position:relative;overflow:hidden}
-  .floor{position:absolute;left:0;right:0;top:74%;height:1.5px;background:rgba(255,255,255,.18)}
-  .floorlow{position:absolute;left:0;right:0;top:74%;bottom:0;background:rgba(0,0,0,.30)}
-  .pchar{position:absolute;left:33%;top:74%;transform:translate(-50%,-100%)}
+  .floor{position:absolute;left:0;right:0;top:84%;height:1.5px;background:rgba(255,255,255,.18)}
+  .floorlow{position:absolute;left:0;right:0;top:84%;bottom:0;background:rgba(0,0,0,.30)}
+  .pchar{position:absolute;left:33%;top:84%;transform:translate(-50%,-100%)}
   .pchar .trail{position:absolute;left:-13px;top:12px;width:8px;height:22px;border-radius:2px;background:#fff;opacity:.12;filter:blur(1.5px)}
   .hud{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:4}
   .hudpill{display:inline-flex;align-items:center;gap:7px;background:rgba(12,12,17,.55);border-radius:12px;height:26px;padding:0 11px;
@@ -349,7 +350,7 @@
       <div class="grow" style="display:flex;align-items:center;justify-content:center">
         <div style="text-align:center">
           <div style="position:relative;width:88px;height:88px;margin:0 auto">
-            <div style="position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.18)"></div>
+            <div style="position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.18);border-radius:2px"></div>
             <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;left:-2.5px"></i>
             <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;right:-2.5px"></i>
             <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);bottom:-2.5px;left:-2.5px"></i>
@@ -388,7 +389,7 @@
       <div class="grow" style="display:flex;align-items:center;justify-content:center">
         <div style="text-align:center">
           <div style="position:relative;width:88px;height:88px;margin:0 auto">
-            <div style="position:absolute;inset:9%;border:1.5px solid rgba(255,255,255,.18);transform:rotate(45deg)"></div>
+            <div style="position:absolute;inset:9%;border:1.5px solid rgba(255,255,255,.18);border-radius:2px;transform:rotate(45deg)"></div>
             <div style="position:absolute;bottom:-3px;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7)"></div>
             <div style="position:absolute;bottom:-14px;left:58%;font-size:9px;color:var(--t2)">▸</div>
             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;color:var(--t3)">×3</div>
