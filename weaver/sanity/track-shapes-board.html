@@ -40,7 +40,7 @@
 <body>
 <div class="wrap">
   <h1>weaver — 트랙 형태 검증 + 주행 시뮬레이션</h1>
-  <p class="sub">2026-06-12 v3 · ★ 코너 라운딩(호 세그먼트) + 코너 연출 A/B (볼트/홉) · spec §2.4 확정값 (월드 고정 카메라·월드 3.0×·바이어스 32%·바퀴 시간 둘레 비례·시작 최하단·우향)</p>
+  <p class="sub">2026-06-12 v4 · ★ 코너 라운딩 + 볼트 턴각 룰 (≥90° 볼트 / <90° 그냥 주행) 확정 · spec §2.4 확정값 (월드 고정 카메라·월드 3.0×·바이어스 32%·바퀴 시간 둘레 비례·시작 최하단·우향)</p>
 
   <h2>① 주행 시뮬레이션 (장애물 0 — 형태 손맛만)</h2>
   <div class="chips" id="chips"></div>
@@ -48,11 +48,11 @@
     <canvas id="sim"></canvas>
     <div id="simhud"><span id="shapeNm"><b>정사각</b></span><span><b id="laps">0.0</b> 바퀴 · <span id="corners">코너 90°×4</span></span></div>
     <button id="roundTgl" class="on">⌒ 라운딩 ON</button>
-    <button id="fxTgl">코너: 볼트 (감속+점프)</button>
+    <button id="fxTgl">볼트: 급코너만 (턴각 ≥90°)</button>
   </div>
-  <p class="simhint">▶ 화면 탭 = 점프 · <b>⌒ 라운딩 토글</b> (우하단) = 각진 코너 비교 · <b>코너 연출 토글</b> (좌하단) = <b>볼트 (코너 직전 감속 → 자동 점프로 통과 → 착지)</b> ↔ <b>홉</b> (감속 없이 작게 띄움) A/B · 볼트 중 점프 입력 무시 (자동 구간)</p>
+  <p class="simhint">▶ 화면 탭 = 점프 · ★ <b>확정 룰: 턴각 ≥90° 코너 = 볼트</b> (감속 멈칫 → 자동 점프 통과) / <b>&lt;90° = 그냥 주행</b> (오각·육각 전 코너) · 좌하단 토글 = 모든 코너 볼트 비교 · HUD 에 형태별 볼트 수 (정사각 4/4 · 오각 0/5 · 별 10/10)</p>
 
-  <div class="note"><b>검증 포인트:</b> ① 코너 연출 A/B — <b>볼트의 멈칫+점프 손맛 vs 홉의 흐름 유지</b>. 특히 <b>별 = 코너 10개/바퀴</b> — 볼트 빈도가 과한지 ② 별·삼각 코너가 라운딩으로 자연스러운가 (라운딩 OFF 비교) ③ <b>삼각 복귀 재평가</b></div>
+  <div class="note"><b>검증 포인트:</b> ① 오각 = 볼트 0 — 직선 흐름 유지가 의도대로인가 ② <b>별 = 10/10 볼트</b> — 과하면 임계값 90°→110° (오목 골짜기 제외 → 5/10, 노브 1개) ③ <b>삼각 복귀 재평가</b> (3/3 볼트)</div>
 
   <h2>② 7종 한눈 비교 (소형 — 라운딩 적용)</h2>
   <div class="grid" id="grid"></div>
@@ -130,7 +130,8 @@ function makeTrack(rawUnit, fitW, fitH, pad, cornerR){
     const len=Math.hypot(b[0]-a[0],b[1]-a[1]);
     if(len>0.5) segs.push({type:'line',ax:a[0],ay:a[1],fx:(b[0]-a[0])/len,fy:(b[1]-a[1])/len,len});
     const f=fil[(i+1)%n];
-    if(f.r>0) segs.push({type:'arc',C:f.C,r:f.r,a0:f.a0,delta:f.delta,len:Math.abs(f.delta)*f.r});
+    if(f.r>0) segs.push({type:'arc',C:f.C,r:f.r,a0:f.a0,delta:f.delta,len:Math.abs(f.delta)*f.r,
+      vault:Math.abs(f.delta)>=VAULT_TURN-0.01});   // ★ 턴각 룰: |턴각| ≥ 임계값 → 볼트 코너
   }
   const cum=[0]; for(const s of segs) cum.push(cum[cum.length-1]+s.len);
   const P=cum[cum.length-1];
@@ -155,7 +156,7 @@ function makeTrack(rawUnit, fitW, fitH, pad, cornerR){
     const p=rawAt(d);
     let nx=p.fy, ny=-p.fx;
     if(segs[p.seg].flip){ nx=-nx; ny=-ny; }
-    return {x:p.x,y:p.y,fx:p.fx,fy:p.fy,nx,ny,arc:p.arc,at:p.at};
+    return {x:p.x,y:p.y,fx:p.fx,fy:p.fy,nx,ny,arc:p.arc,at:p.at,vault:p.arc&&!!segs[p.seg].vault};
   }
   // 시작점 = 최하단 평탄 구간에서 "바닥 주행 거리가 가장 긴" 끝점 (코너 직전 시작 → 즉시 벽 타기 버그 방지)
   let bestY=-1e9;
@@ -184,9 +185,9 @@ simC.width=VW*DPR; simC.height=VH*DPR; simC.style.width=VW+'px'; simC.style.heig
 sctx.setTransform(DPR,0,0,DPR,0,0);
 const WORLD=VW*3.0;       // ★ 월드 3.0× (2026-06-12 확정)
 const CR=WORLD*0.022;     // ★ 코너 라운딩 반지름 (캐릭터 폭 ~1.5배)
-const HOP=8;              // 코너 홉 연출 높이 (자동 — 판정 무관)
-const VAULT_H=26;         // ★ 코너 볼트 점프 높이 (사용자 제안 2026-06-12 — 감속+자동 점프)
-let curShape=SHAPES[0], rounding=true, fxMode='vault', curArc=false;
+const VAULT_TURN=Math.PI/2;   // ★ 볼트 턴각 임계 (2026-06-12 확정 룰: 턴각 ≥90° = 볼트 / <90° = 그냥 주행. 별 과하면 110°로 — 오목 제외)
+const VAULT_H=34;             // ★ 볼트 점프 높이 (26→34 사용자 확정)
+let curShape=SHAPES[0], rounding=true, fxMode='rule', curArc=false;
 let track=null, runD=0, dir=1, laps=0, off=0, vy=0, grounded=true, walk=0, trail=[];
 let camX=0, camY=0, camSnap=true;
 const GRAV=2600, JUMPV=620;
@@ -196,33 +197,35 @@ function loadShape(sh){
   track=makeTrack(raw, WORLD, WORLD, 60, rounding?CR:0);
   runD=track.startD; dir=track.dir; laps=0; off=0; vy=0; grounded=true; trail=[]; camSnap=true;
   document.getElementById('shapeNm').innerHTML='<b>'+sh.nm.replace(/^[①-⑦★ ]+/,'')+'</b>';
-  document.getElementById('corners').textContent='코너 '+sh.corners;
+  const arcs=track.segs.filter(g=>g.type==='arc'), nv=arcs.filter(g=>g.vault).length;
+  document.getElementById('corners').textContent='코너 '+sh.corners+' · 볼트 '+nv+'/'+arcs.length;
 }
-simC.addEventListener('pointerdown',e=>{ e.preventDefault(); if(grounded && !(fxMode==='vault'&&curArc)){ vy=JUMPV; grounded=false; } });
+simC.addEventListener('pointerdown',e=>{ e.preventDefault(); if(grounded && !curArc){ vy=JUMPV; grounded=false; } });
 const tgl=document.getElementById('roundTgl');
 tgl.onclick=()=>{ rounding=!rounding; tgl.classList.toggle('on',rounding); tgl.textContent=rounding?'⌒ 라운딩 ON':'∠ 라운딩 OFF'; loadShape(curShape); };
 const fxT=document.getElementById('fxTgl');
-fxT.onclick=()=>{ fxMode=fxMode==='vault'?'hop':'vault'; fxT.textContent=fxMode==='vault'?'코너: 볼트 (감속+점프)':'코너: 홉 (흐름 유지)'; };
+fxT.onclick=()=>{ fxMode=fxMode==='rule'?'all':'rule'; fxT.textContent=fxMode==='rule'?'볼트: 급코너만 (턴각 ≥90°)':'볼트: 모든 코너 (비교용)'; };
 let lastT=performance.now();
 function simFrame(now){
   const dt=Math.min(0.05,(now-lastT)/1000); lastT=now;
   requestAnimationFrame(simFrame);
   if(!track) return;
   const speed=track.P/(8.0*3.0/1.7);   // 바퀴 시간 = 둘레 비례 (기준 8초/바퀴 @1.7×)
-  const p=track.pathAt(runD); curArc=p.arc;
-  // ★ 코너 연출 A/B: 볼트 = 코너 직전 감속(멈칫) → 호 구간을 자동 점프로 통과 / 홉 = 감속 없이 살짝 띄움
+  const p=track.pathAt(runD);
+  const vaultHere=p.arc&&(p.vault||fxMode==='all');
+  curArc=vaultHere;   // 입력 잠금 = 볼트 코너만 (그냥 주행 코너에선 점프 자유)
+  // ★ 확정 룰: 턴각 ≥90° 코너 = 볼트 (직전 감속 → 자동 점프 통과 → 착지) / <90° = 그냥 주행 (감속·홉 없음)
   let speedF=1;
-  if(rounding&&fxMode==='vault'&&grounded){
-    if(!p.arc){ const ahead=track.pathAt(runD+dir*42); if(ahead.arc) speedF=0.45; }   // 진입 멈칫
-    else speedF=1.18;   // 볼트 자체는 경쾌하게
+  if(rounding&&grounded){
+    if(!p.arc){ const ahead=track.pathAt(runD+dir*42); if(ahead.arc&&(ahead.vault||fxMode==='all')) speedF=0.45; }   // 진입 멈칫
+    else if(vaultHere) speedF=1.18;   // 볼트 자체는 경쾌하게
   }
   runD+=dir*speed*speedF*dt; laps+=speed*speedF*dt/track.P; walk+=speed*speedF*dt*0.07;
   if(!grounded){ off+=vy*dt; vy-=GRAV*dt; if(off<=0){off=0;vy=0;grounded=true;} }
   document.getElementById('laps').textContent=laps.toFixed(1);
   let hop=0, lean=0, tuck=false;
-  if(grounded&&p.arc){
-    if(fxMode==='hop'){ hop=HOP*Math.sin(p.at*Math.PI); }
-    else { hop=VAULT_H*Math.sin(p.at*Math.PI); lean=Math.sin(p.at*Math.PI)*0.55*dir; tuck=true; }
+  if(grounded&&vaultHere){
+    hop=VAULT_H*Math.sin(p.at*Math.PI); lean=Math.sin(p.at*Math.PI)*0.55*dir; tuck=true;
   }
   const drawOff=off+hop;
   const cx=p.x+p.nx*(off+12), cy=p.y+p.ny*(off+12);
@@ -292,7 +295,7 @@ for(const sh of SHAPES){
     const sp=t.pathAt(t.startD);
     ctx.fillStyle='#51cf66'; ctx.beginPath(); ctx.arc(sp.x,sp.y,3.5,0,7); ctx.fill();
     const p=t.pathAt(d);
-    const hop=p.arc?3*Math.sin(p.at*Math.PI):0;
+    const hop=p.vault?4*Math.sin(p.at*Math.PI):0;   // 그리드도 턴각 룰 — 볼트 코너만 띄움
     tr.push({x:p.x+p.nx*(5+hop),y:p.y+p.ny*(5+hop)}); if(tr.length>16)tr.shift();
     for(let i=0;i<tr.length;i++){ ctx.globalAlpha=i/tr.length*0.4; ctx.fillStyle='#fff';
       ctx.beginPath(); ctx.arc(tr[i].x,tr[i].y,1.6,0,7); ctx.fill(); }
