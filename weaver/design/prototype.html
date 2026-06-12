@@ -133,16 +133,44 @@
   .sso.k{background:#FEE500;color:#191600}
   .recent{position:absolute;top:-7px;right:10px;font-size:8px;font-weight:700;color:#fff;background:var(--prog);border-radius:99px;padding:2px 7px}
 
-  /* 플레이 */
-  .game{aspect-ratio:1;position:relative;margin:-24px -18px 10px;border-bottom:1px solid #1d1d26;overflow:hidden}
-  .cbtn{position:absolute;bottom:4px;width:74px;height:74px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid var(--line);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:11px;font-weight:700;color:#aab}
-  .cbtn .g{font-size:17px;line-height:1}.cbtn small{font-size:7.5px;color:var(--t3);font-weight:400}
-  .cbtn.l{left:6px}.cbtn.r{right:6px}
-  .hudrow{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:1px;font-variant-numeric:tabular-nums}
+  /* 플레이 (★ 2026-06-12 v3.2 확정판 — 월드 고정 팬·게임 영역 56%·패널 재배치) */
+  .parea{height:56%;position:relative;overflow:hidden}
+  .floor{position:absolute;left:0;right:0;top:74%;height:1.5px;background:rgba(255,255,255,.18)}
+  .floorlow{position:absolute;left:0;right:0;top:74%;bottom:0;background:rgba(0,0,0,.30)}
+  .pchar{position:absolute;left:33%;top:74%;transform:translate(-50%,-100%)}
+  .pchar .trail{position:absolute;left:-13px;top:12px;width:8px;height:22px;border-radius:2px;background:#fff;opacity:.12;filter:blur(1.5px)}
+  .hud{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:4}
+  .hudpill{display:inline-flex;align-items:center;gap:7px;background:rgba(12,12,17,.55);border-radius:12px;height:26px;padding:0 11px;
+    font-size:9.5px;font-weight:700;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+  .hudpill .pb{width:54px;height:4px;border-radius:2px;background:#1d1d26;overflow:hidden}
+  .hudpill .pb i{display:block;width:40%;height:100%;background:var(--prog)}
+  .hudpill .lap{font-weight:400;color:var(--t2);font-size:9px}
+  .pausepill{width:38px;justify-content:center;cursor:pointer;gap:3px}
+  .pausepill i{width:2.5px;height:10px;background:var(--t2);border-radius:1px}
+  .panel{height:44%;background:#12121A;border-top:1px solid var(--line);display:flex;flex-direction:column}
+  .deadband{flex:1;display:flex;align-items:flex-start;justify-content:center;padding-top:10px}
+  .ctlrow{position:relative;height:96px;flex:none}
+  .cb{position:absolute;bottom:0;width:72px;height:72px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid var(--line);
+    box-shadow:0 4px 14px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    font-size:10.5px;font-weight:700;color:#aab}
+  .cb .g{font-size:16px;line-height:1}.cb small{font-size:7px;color:var(--t3);font-weight:400}
+  .cb.l{left:14px}.cb.r{right:14px}
+  .skillbtn{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;
+    background:rgba(21,21,29,.92);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:14px;color:#aab;animation:skpulse 2.5s ease-in-out infinite}
+  .skillbtn small{font-size:6.5px;color:var(--t3)}
+  .skillbtn .bdg{position:absolute;top:-4px;right:-2px;min-width:15px;height:15px;border-radius:8px;background:var(--prog);color:#fff;
+    font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  @keyframes skpulse{50%{opacity:.85}}
+  .slotrow{display:flex;gap:10px;justify-content:center;padding:14px 0 12px;flex:none}
+  .pslot{width:50px;height:50px;background:rgba(21,21,29,.92);border:2px solid var(--line);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;position:relative}
+  .pslot.on{border-color:var(--blue);box-shadow:0 0 10px rgba(77,171,247,.35);background:var(--srf2)}
+  .pslot.lk{opacity:.4}
 
   /* 오버레이류 */
-  .ovl{position:absolute;inset:0;background:rgba(8,8,12,.9);display:flex;flex-direction:column;justify-content:center;padding:28px;z-index:6}
+  .ovl{position:absolute;inset:0;background:rgba(8,8,12,.9);display:flex;flex-direction:column;justify-content:center;padding:28px;z-index:7}
+  .ovl .btn2,.ovl .cta{flex:none}
   .dlg{background:var(--srf);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px}
   .dlg h4{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
   .dlg p{font-size:11.5px;color:var(--t2);line-height:1.55}
@@ -306,35 +334,53 @@
     <button class="cta" onclick="go('play')"><span>▶&nbsp; 도전</span><span class="cost">— <svg class="ic ln" viewBox="0 0 24 24" style="stroke:rgba(12,12,17,.6);width:13px;height:13px;vertical-align:-2px"><use href="#i-ticket"/></svg> 1</span></button>
   </div>
 
-  <!-- 6 플레이 -->
-  <div class="scr" data-s="play" style="padding-top:0">
-    <div class="game">
-      <div style="position:absolute;inset:13%;border:1.5px solid rgba(255,255,255,.16)"></div>
-      <div style="position:absolute;top:13%;left:48%;width:14px;height:19px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.5)"></div>
-      <div style="position:absolute;bottom:13%;right:26%;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid var(--spike)"></div>
-      <div style="position:absolute;top:34%;right:13%;width:11px;height:11px;border-radius:50%;background:#C92A2A;box-shadow:0 0 0 3px rgba(255,107,107,.4)"></div>
-      <div style="position:absolute;top:42%;left:38%;width:9px;height:9px;background:#E8E8F0;opacity:.9"></div>
+  <!-- 6 플레이 (★ 2026-06-12 v3.2 — 시작 장면: 바닥+캐릭터, 다음 벽 비가시) -->
+  <div class="scr" data-s="play" style="padding:0">
+    <div class="parea">
+      <div class="floorlow"></div><div class="floor"></div>
+      <div class="pchar"><div class="trail"></div><div class="runner" style="zoom:.42;filter:drop-shadow(0 0 10px rgba(255,255,255,.4))"><div class="px"></div></div></div>
+      <div class="hud">
+        <span class="hudpill">STAGE 12 <span class="pb"><i></i></span><span class="lap">1.2/3</span></span>
+        <span class="hudpill pausepill" onclick="go('pause')"><i></i><i></i></span>
+      </div>
     </div>
-    <div class="hudrow">STAGE 12 <div class="bar"><i style="width:40%"></i></div><span class="dim">1.2/3</span></div>
-    <div class="row" style="margin:9px 0 0">
-      <div class="wslot on"><span class="cdot" style="background:var(--blue)"></span></div>
-      <div class="wslot"><span class="cdot" style="background:var(--red)"></span></div>
-      <div class="wslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:12px;height:12px"><use href="#i-lock"/></svg></div>
-      <div class="wslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:12px;height:12px"><use href="#i-lock"/></svg></div>
-      <div class="wslot" style="flex:.65">⚡<small>1</small></div>
-    </div>
-    <div class="grow" style="position:relative;min-height:96px">
-      <div class="cbtn l"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div>
-      <div class="cbtn r"><span class="g">▲</span>점프<small>탭</small></div>
-    </div>
-    <div style="display:flex;justify-content:space-between" class="dim">
-      <span style="cursor:pointer" onclick="go('pause')">⏸ 일시정지</span>
-      <span><span style="cursor:pointer" onclick="go('clear')">(클리어)</span> · <span style="cursor:pointer" onclick="go('fail')">(실패)</span></span>
+    <div class="panel">
+      <div class="deadband"><span class="dim" style="font-size:8.5px">데드 밴드 (오촉 흡수) · 목업 데모: <span style="cursor:pointer;color:var(--t2)" onclick="go('clear')">클리어</span> / <span style="cursor:pointer;color:var(--t2)" onclick="go('fail')">실패</span></span></div>
+      <div class="ctlrow">
+        <div class="cb l"><span class="g">⤵</span>슬라이드<small>누르는 동안</small></div>
+        <div class="skillbtn">⚡<small>스킬</small><span class="bdg">1</span></div>
+        <div class="cb r"><span class="g">▲</span>점프<small>탭</small></div>
+      </div>
+      <div class="slotrow">
+        <div class="pslot on"><span class="cdot" style="background:var(--blue);width:13px;height:13px"></span></div>
+        <div class="pslot"><span class="cdot" style="background:var(--red);width:13px;height:13px"></span></div>
+        <div class="pslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg></div>
+        <div class="pslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg></div>
+      </div>
     </div>
   </div>
 
-  <!-- 7 일시정지 -->
-  <div class="scr" data-s="pause">
+  <!-- 7 일시정지 (배경 = 플레이 장면 dim) -->
+  <div class="scr" data-s="pause" style="padding:0">
+    <div class="parea">
+      <div class="floorlow"></div><div class="floor"></div>
+      <div class="pchar"><div class="runner" style="zoom:.42"><div class="px"></div></div></div>
+      <div class="hud"><span class="hudpill">STAGE 12 <span class="pb"><i></i></span><span class="lap">1.2/3</span></span></div>
+    </div>
+    <div class="panel">
+      <div class="deadband"></div>
+      <div class="ctlrow">
+        <div class="cb l" style="opacity:.5"><span class="g">⤵</span>슬라이드</div>
+        <div class="skillbtn" style="opacity:.5;animation:none">⚡</div>
+        <div class="cb r" style="opacity:.5"><span class="g">▲</span>점프</div>
+      </div>
+      <div class="slotrow" style="opacity:.5">
+        <div class="pslot on"><span class="cdot" style="background:var(--blue);width:13px;height:13px"></span></div>
+        <div class="pslot"><span class="cdot" style="background:var(--red);width:13px;height:13px"></span></div>
+        <div class="pslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg></div>
+        <div class="pslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg></div>
+      </div>
+    </div>
     <div class="ovl">
       <h3 style="text-align:center;font-size:18px;letter-spacing:2px;margin-bottom:20px">일시정지</h3>
       <button class="cta" onclick="go('play')"><span style="margin:0 auto">▶&nbsp; 이어하기 <span class="cost">(3·2·1 후 재개)</span></span></button>
