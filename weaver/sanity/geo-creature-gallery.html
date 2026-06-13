@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 기하 생물 갤러리 (절제~균형 12종)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;
+    --tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;
+    --blue:#4DABF7;--prog:#5C7CFA;--ok:#51CF66;--coin:#FFE08A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);text-decoration:underline;}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:800px;}.lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:5px 11px;}.tag b{color:var(--tx);}
+  .ask{display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(92,124,250,.4);background:linear-gradient(180deg,rgba(92,124,250,.10),rgba(92,124,250,.03));border-radius:14px;padding:15px 18px;margin-bottom:24px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--prog);font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .ask p{font-size:13.5px;color:var(--tx);}.ask p span{color:var(--sub);}.ask b{color:var(--prog);}
+
+  .gctrl{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border:1px solid var(--bd);border-radius:14px;padding:13px 16px;margin-bottom:26px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px);background:rgba(18,18,26,.86);}
+  .gctrl .grp{display:flex;gap:8px;align-items:center;}
+  .gctrl .lbl{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;}
+  .pose{font-family:var(--mono);font-size:11px;color:var(--sub);background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;cursor:pointer;transition:.12s;}
+  .pose:hover{border-color:var(--prog);color:var(--tx);}.pose.on{background:var(--surf-a);border-color:var(--prog);color:var(--tx);}
+  .skinpick{display:flex;gap:6px;flex-wrap:wrap;}
+  .sk{width:24px;height:24px;border-radius:7px;border:2px solid transparent;cursor:pointer;transition:.12s;}
+  .sk.on{border-color:var(--tx);box-shadow:0 0 0 3px rgba(238,238,242,.12);}.sk:hover{transform:translateY(-2px);}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  @media(max-width:860px){.grid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr);}}
+  .card{border:1px solid var(--bd);border-radius:14px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;}
+  .card .stage{position:relative;background:radial-gradient(120px 120px at 50% 46%, rgba(255,255,255,.03), transparent 70%),var(--ink);display:grid;place-items:center;border-bottom:1px solid var(--bd);}
+  .card canvas{display:block;}
+  .card .no{position:absolute;left:8px;top:8px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--prog);}
+  .card .dir{position:absolute;right:8px;top:8px;font-family:var(--mono);font-size:10px;color:var(--dim);}
+  .card .lab{padding:9px 11px 11px;}
+  .card .nm{font-size:12.5px;font-weight:700;}
+  .card .ty{font-family:var(--mono);font-size:9.5px;margin-top:2px;}
+  .ty.jeoljae{color:var(--blue);} .ty.gyun{color:var(--ok);} .ty.echo{color:var(--coin);}
+
+  .note{border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:16px 18px;margin-top:26px;}
+  .note h4{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .note h4 .b{font-family:var(--mono);font-size:10px;color:var(--ink);background:var(--prog);border-radius:5px;padding:2px 7px;}
+  .note p{font-size:12.5px;color:var(--sub);line-height:1.65;}.note p+p{margin-top:8px;}.note b{color:var(--tx);}
+  .note code{font-family:var(--mono);font-size:11px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+  footer{margin-top:40px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">geo-creature-gallery</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">ⓑ⁺ · 기하 생물 · 절제~균형 갤러리</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">기하 생물 갤러리 — 12종</span></h1>
+    <p class="lede">
+      확정을 서두르지 않고 <b>절제~균형 느낌의 후보를 넓게</b> 깔았다. 12종 모두 —
+      <b>단색 1변수 스왑 · 임의각 크리스프 · 진행 방향 향함(우향, 좌향은 미러)</b>. 마스코트(과한 귀여움)는 제외.
+      각도(날렵→둥글)와 형태(삼각·마름모·오각·큐브·물방울·화살·젬…)를 다양화 — <b>트랙 형태(마름모·오각)와 호응하는 변형</b>은 노란 태그.
+      마음에 드는 번호 몇 개를 추려주면 그걸로 좁혀 심화한다.
+    </p>
+    <div class="meta-row">
+      <span class="tag">전부 <b>방향성 + 스왑 + 임의각</b></span>
+      <span class="tag"><b style="color:var(--blue)">절제</b> · <b style="color:var(--ok)">균형</b> · <b style="color:var(--coin)">트랙 호응</b></span>
+      <span class="tag">눈 = <b>노치+글린트</b> (전방)</span>
+    </div>
+  </header>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>추려주세요 — 마음에 드는 번호 2~5개.</b>
+    <span>상단 <b>포즈·FACING·스킨</b> 바꿔가며 비교. 확정 아님 — 숏리스트를 받아 그 후보들만 풀 포즈(idle/run/jump/slide/death)·여러 스킨으로 다시 깊게 봅니다. 원하면 변주(눈·비율·각도)도 더 만듭니다.</span></p>
+  </div>
+
+  <div class="gctrl">
+    <div class="grp"><span class="lbl">POSE</span>
+      <button class="pose on" data-p="idle">idle</button>
+      <button class="pose" data-p="run">run</button>
+      <button class="pose" data-p="jump">jump</button></div>
+    <div class="grp"><span class="lbl">FACING</span>
+      <button class="pose on" data-f="R">우향 →</button>
+      <button class="pose" data-f="L">← 좌향</button></div>
+    <div class="grp"><span class="lbl">SKIN</span><div class="skinpick" id="skinpick"></div></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="note">
+    <h4><span class="b">읽는 법</span>이 갤러리의 의도</h4>
+    <p><b>넓게 → 좁게:</b> 지금은 형태 다양성을 보는 단계. 12종은 <b>각도 축(날렵한 절제 ↔ 둥근 균형)</b>과 <b>형태 축</b>을 교차해 깔았다. "이 방향이 끌린다"를 2~5개로 추리는 게 목표.</p>
+    <p><b>전부 동일 규격:</b> 어느 걸 골라도 단색 스왑·임의각·방향 미러는 보장됨(절차적). 그러니 <b>순수하게 "생김새"로</b> 고르면 된다.</p>
+    <p><b>다음:</b> 숏리스트 → 후보별 풀 포즈 시퀀스 + 스킨 8 + 인게임/트랙 배치 비교 보드 → 최종 1종 → design-system <code>hero_character</code> 규격 확정(리드).</p>
+  </div>
+
+  <footer>
+    weaver / sanity / geo-creature-gallery.html · ⓑ⁺ 기하 생물 절제~균형 12종<br>
+    노출 = unlisted (noindex) · 선행 = geo-creature-board(귀여움)·geo-creature-direction-board(방향 원칙) · 다음 = 숏리스트 심화
+  </footer>
+</div>
+
+<script>
+const SKINS=['#FFFFFF','#55CCFF','#FF77AA','#7CF29C','#FFB454','#C9A0FF','#FF6E6E','#FFE066'];
+function hx2rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function shade(h,f){let[r,g,b]=hx2rgb(h);if(f<=1){r*=f;g*=f;b*=f;}else{r=r+(255-r)*(f-1);g=g+(255-g)*(f-1);b=b+(255-b)*(f-1);}return`rgb(${r|0},${g|0},${b|0})`;}
+function roundPoly(ctx,pts,r){const n=pts.length;ctx.beginPath();
+  for(let i=0;i<=n;i++){const p0=pts[i%n],p1=pts[(i+1)%n];const mx=(p0.x+p1.x)/2,my=(p0.y+p1.y)/2;
+    if(i===0)ctx.moveTo(mx,my);else ctx.arcTo(p0.x,p0.y,mx,my,r);}ctx.closePath();}
+function drawEye(ctx,x,y,r,blink,dark,glint){
+  if(blink){ctx.fillStyle=dark;ctx.fillRect(x-r,y-0.7,r*2,1.4);return;}
+  ctx.fillStyle=dark;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  ctx.fillStyle=glint;ctx.beginPath();ctx.arc(x+r*0.34,y-r*0.36,r*0.4,0,7);ctx.fill();}
+function foot(ctx,x,y,r,skin,ol){ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.3;
+  roundPoly(ctx,[{x:x-r*0.4,y:y},{x:x-r,y:y+r+2},{x:x+r+1.4,y:y+r+2}],1.6);ctx.fill();ctx.stroke();}
+function motion(phase,t,bounce){const ph=t*8.5,run=phase==='run',jump=phase==='jump';
+  let bob,sq,sw;
+  if(jump){bob=-11;sq=1.12;sw=4;}
+  else if(run){bob=Math.abs(Math.sin(ph))*-(bounce||3.6);sq=1+Math.sin(ph)*.05;sw=Math.sin(ph)*5;}
+  else{bob=Math.sin(t*2.4)*1.5;sq=1+Math.sin(t*2.4)*.034;sw=0;}
+  return{ph,run,jump,bob,sq,sw,blink:(t%3.3)<0.13};}
+
+function drawCreature(ctx,skin,s,phase,t,c){
+  const ol=shade(skin,.4),hi=shade(skin,1.55),dark=shade(skin,.12),glint=shade(skin,1.9);
+  const m=motion(phase,t,c.bounce);
+  const lean=(c.lean??.12)*(phase==='idle'?.5:1);
+  ctx.save();ctx.scale(s,s);ctx.translate(0,m.bob);ctx.rotate(lean);ctx.scale(1/Math.sqrt(m.sq),m.sq);
+  if(c.feet)c.feet.forEach((fx,i)=>foot(ctx,fx+(i%2?-m.sw:m.sw),c.baseY??9,c.footR||3.6,skin,ol));
+  if(c.fin){ctx.fillStyle=shade(skin,.78);ctx.strokeStyle=ol;ctx.lineWidth=1.2;const fw=Math.sin(t*6)*2;
+    roundPoly(ctx,[{x:c.fin.x,y:c.fin.y-1},{x:c.fin.x-9,y:c.fin.y-5-fw},{x:c.fin.x-8,y:c.fin.y+3-fw},{x:c.fin.x+1,y:c.fin.y+4}],2);ctx.fill();ctx.stroke();}
+  ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.7;roundPoly(ctx,c.body,c.round);ctx.fill();ctx.stroke();
+  if(c.hi){ctx.fillStyle=hi;ctx.globalAlpha=.13;roundPoly(ctx,c.hi,3);ctx.fill();ctx.globalAlpha=1;}
+  c.eyes.forEach(e=>drawEye(ctx,e.x,e.y,e.r,m.blink,dark,glint));
+  ctx.restore();
+}
+
+const GEN=[
+ {nm:'쐐기 삼각',ty:'jeoljae',tl:'절제',body:[{x:6,y:-22},{x:15,y:9},{x:-13,y:9}],round:3,lean:.14,feet:[-5,6],eyes:[{x:5,y:-7,r:1.9}]},
+ {nm:'둥근 삼각',ty:'gyun',tl:'균형',body:[{x:4,y:-20},{x:15,y:9},{x:-13,y:9}],round:8,lean:.12,feet:[-5,6],eyes:[{x:4.5,y:-6,r:2.4},{x:10,y:-6,r:1.9}]},
+ {nm:'다트 (주둥이)',ty:'gyun',tl:'균형·화살',body:[{x:4,y:-12},{x:-11,y:-6},{x:-12,y:8},{x:5,y:10},{x:17,y:1}],round:5,lean:.07,feet:[-3,7],fin:{x:-10,y:-5},eyes:[{x:4,y:-4,r:2.4},{x:10,y:-3,r:1.9}]},
+ {nm:'마름모',ty:'echo',tl:'트랙 호응',body:[{x:3,y:-20},{x:16,y:-2},{x:3,y:9},{x:-12,y:-2}],round:5,lean:.1,feet:[-2,6],hi:[{x:1,y:-14},{x:8,y:-3},{x:-2,y:-2}],eyes:[{x:5,y:-4,r:2.3},{x:10,y:-4,r:1.8}]},
+ {nm:'오각',ty:'echo',tl:'트랙 호응',body:[{x:5,y:-19},{x:16,y:-3},{x:9,y:9},{x:-7,y:9},{x:-12,y:-6}],round:5,lean:.1,feet:[-3,6],eyes:[{x:5,y:-5,r:2.3},{x:10.5,y:-5,r:1.8}]},
+ {nm:'큐브',ty:'gyun',tl:'균형',body:[{x:-10,y:-18},{x:14,y:-18},{x:14,y:8},{x:-10,y:8}],round:6,lean:.07,feet:[-5,8],hi:[{x:2,y:-15},{x:9,y:-8},{x:-1,y:-6}],eyes:[{x:4,y:-6,r:2.4},{x:10,y:-6,r:2}]},
+ {nm:'물방울',ty:'gyun',tl:'균형',body:[{x:2,y:-18},{x:13,y:-3},{x:10,y:9},{x:-9,y:9},{x:-11,y:-3}],round:9,lean:.1,feet:[-5,6],eyes:[{x:4,y:-4,r:2.5},{x:10,y:-4,r:2}]},
+ {nm:'쉐브론 화살',ty:'jeoljae',tl:'절제·화살',body:[{x:16,y:0},{x:3,y:9},{x:-7,y:9},{x:4,y:0},{x:-7,y:-9},{x:3,y:-9}],round:3,lean:.06,feet:null,eyes:[{x:1,y:-3,r:2}]},
+ {nm:'슬림 타워',ty:'jeoljae',tl:'절제',body:[{x:2,y:-24},{x:9,y:8},{x:-7,y:8}],round:6,lean:.12,feet:[-3,3.5],baseY:8,eyes:[{x:2.5,y:-11,r:1.9},{x:6.5,y:-11,r:1.5}]},
+ {nm:'스쿼트',ty:'gyun',tl:'균형',body:[{x:2,y:-13},{x:17,y:9},{x:-15,y:9}],round:10,lean:.12,feet:[-6,7],eyes:[{x:4,y:-2,r:2.6},{x:11,y:-2,r:2.1}]},
+ {nm:'두건 첨두',ty:'jeoljae',tl:'절제',body:[{x:6,y:-24},{x:13,y:9},{x:-11,y:7}],round:5,lean:.12,feet:[-4,6],eyes:[{x:4,y:-7,r:2.2}]},
+ {nm:'크리스탈 젬',ty:'echo',tl:'트랙 호응',body:[{x:4,y:-20},{x:14,y:-6},{x:9,y:9},{x:-6,y:9},{x:-12,y:-6}],round:2.5,lean:.1,feet:[-3,6],hi:[{x:2,y:-14},{x:9,y:-6},{x:-1,y:-4}],eyes:[{x:4,y:-5,r:2.2},{x:9,y:-5,r:1.7}]},
+];
+
+let pose='idle',facing='R',skin='#55CCFF',T=0;const cells=[];
+function buildSkin(){const h=document.getElementById('skinpick');h.innerHTML='';
+  SKINS.forEach(s=>{const b=document.createElement('div');b.className='sk'+(s===skin?' on':'');b.style.background=s;b.dataset.s=s;
+    b.onclick=()=>{skin=s;[...h.children].forEach(c=>c.classList.toggle('on',c.dataset.s===s));};h.appendChild(b);});}
+function buildGrid(){const host=document.getElementById('grid');host.innerHTML='';
+  GEN.forEach((g,i)=>{const card=document.createElement('div');card.className='card';
+    card.innerHTML=`
+      <div class="stage">
+        <div class="no">#${i+1}</div><div class="dir" data-dir="${i}">→</div>
+        <canvas width="170" height="160"></canvas></div>
+      <div class="lab"><div class="nm">${g.nm}</div><div class="ty ${g.ty}">${g.tl}</div></div>`;
+    host.appendChild(card);
+    cells.push({g,cv:card.querySelector('canvas'),dir:card.querySelector('[data-dir]')});});}
+function render(){cells.forEach(({g,cv,dir})=>{
+  dir.textContent=facing==='R'?'→':'←';
+  const ctx=cv.getContext('2d');ctx.clearRect(0,0,170,160);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(35,128.5);ctx.lineTo(135,128.5);ctx.stroke();
+  ctx.save();ctx.translate(85,112);if(facing==='L')ctx.scale(-1,1);drawCreature(ctx,skin,2.7,pose,T,g);ctx.restore();});}
+document.querySelectorAll('.pose[data-p]').forEach(b=>{b.onclick=()=>{pose=b.dataset.p;document.querySelectorAll('.pose[data-p]').forEach(x=>x.classList.toggle('on',x===b));};});
+document.querySelectorAll('.pose[data-f]').forEach(b=>{b.onclick=()=>{facing=b.dataset.f;document.querySelectorAll('.pose[data-f]').forEach(x=>x.classList.toggle('on',x===b));};});
+buildSkin();buildGrid();
+let last=performance.now();function loop(now){const dt=(now-last)/1000;last=now;T+=dt;render();requestAnimationFrame(loop);}requestAnimationFrame(loop);
+</script>
+</body>
+</html>
