@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 캐릭터 트리트먼트 보드 (선행검증 3)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11; --panel:#12121A; --surf:#15151D; --surf-a:#1C2030; --bd:#2A2A36;
+    --tx:#EEEEF2; --sub:#9AA0B0; --dim:#556070;
+    --blue:#4DABF7; --red:#FF6B6B; --yellow:#FFD43B; --purple:#B197FC;
+    --coin:#FFE08A; --prog:#5C7CFA; --ok:#51CF66; --warn:#FF5A5A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    font-family:var(--body); background:var(--ink); color:var(--tx);
+    line-height:1.55; padding:28px 18px 90px; overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.10), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;
+    background-position:0 0,0 0,-1px -1px,-1px -1px;
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}
+  .crumb a:hover{color:var(--blue);text-decoration:underline;}
+
+  header.hero{
+    position:relative; border:1px solid var(--bd); border-radius:18px;
+    background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);
+    padding:26px 26px 24px; overflow:hidden; margin-bottom:14px;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(420px 200px at 92% 0%, rgba(124,242,156,.10), transparent 70%);
+    pointer-events:none;
+  }
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--ok);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:780px;}
+  .lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--sub);
+    background:rgba(255,255,255,.04); border:1px solid var(--bd); border-radius:999px; padding:5px 11px;}
+  .tag b{color:var(--tx);}
+
+  .ask{display:flex;gap:14px;align-items:flex-start; border:1px solid rgba(124,242,156,.4);
+    background:linear-gradient(180deg,rgba(124,242,156,.10),rgba(124,242,156,.03));
+    border-radius:14px; padding:15px 18px; margin-bottom:30px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--ok);font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .ask p{font-size:13.5px;color:var(--tx);}
+  .ask p span{color:var(--sub);}
+  .ask b{color:var(--ok);}
+
+  .sec{margin:42px 0 16px;display:flex;align-items:baseline;gap:12px;}
+  .sec .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);
+    background:var(--ok);border-radius:6px;padding:3px 8px;letter-spacing:.05em;}
+  .sec h2{font-size:18px;font-weight:800;letter-spacing:-.01em;}
+  .sec .subt{font-size:12px;color:var(--dim);margin-left:auto;font-family:var(--mono);text-align:right;}
+  @media(max-width:620px){.sec{flex-wrap:wrap;}.sec .subt{flex-basis:100%;margin-left:0;text-align:left;font-size:10.5px;margin-top:2px;}}
+
+  /* treatment columns */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr;}}
+  .col{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;}
+  .col.win{border-color:rgba(124,242,156,.42);}
+  .col .top{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;border-bottom:1px solid var(--bd);}
+  .col .badge{font-family:var(--mono);font-size:18px;font-weight:700;width:30px;height:30px;border-radius:8px;
+    display:grid;place-items:center;flex:none;}
+  .col .ba{background:rgba(177,151,252,.12);color:var(--purple);border:1px solid rgba(177,151,252,.4);}
+  .col .bb{background:rgba(124,242,156,.12);color:var(--ok);border:1px solid rgba(124,242,156,.4);}
+  .col h3{font-size:15px;font-weight:800;}
+  .col .one{font-size:11.5px;color:var(--sub);margin-top:1px;}
+  .col .stage{display:grid;place-items:center;background:
+      radial-gradient(220px 220px at 50% 42%, rgba(255,255,255,.025), transparent 70%),var(--ink);
+    border-bottom:1px solid var(--bd);}
+  .col canvas{display:block;image-rendering:pixelated;}
+  .col .ctrls{display:flex;gap:6px;padding:11px 14px;flex-wrap:wrap;align-items:center;}
+  .col .ctrls .lbl{font-family:var(--mono);font-size:10px;color:var(--dim);margin-right:2px;}
+  .pose{font-family:var(--mono);font-size:11px;color:var(--sub);background:var(--surf);
+    border:1px solid var(--bd);border-radius:8px;padding:5px 10px;cursor:pointer;transition:.12s;}
+  .pose:hover{border-color:var(--ok);color:var(--tx);}
+  .pose.on{background:var(--surf-a);border-color:var(--ok);color:var(--tx);}
+  .col .note{padding:0 16px 15px;font-size:11.5px;color:var(--sub);line-height:1.55;}
+  .col .note b{color:var(--tx);}
+  .verdict{display:flex;gap:7px;flex-wrap:wrap;padding:0 16px 16px;}
+  .pill{font-family:var(--mono);font-size:10px;letter-spacing:.02em;border-radius:999px;padding:4px 9px;border:1px solid;}
+  .pill.up{color:var(--ok);border-color:rgba(81,207,102,.4);background:rgba(81,207,102,.07);}
+  .pill.dn{color:var(--warn);border-color:rgba(255,90,90,.4);background:rgba(255,90,90,.07);}
+  .pill.eq{color:var(--sub);border-color:var(--bd);background:rgba(255,255,255,.03);}
+
+  /* full-width panels */
+  .panel{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);padding:18px;}
+  .panel .ph{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .panel .ph h3{font-size:14px;font-weight:800;}
+  .panel .ph .t{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-left:auto;}
+  .panel .pdesc{font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.55;max-width:780px;}
+  .panel .pdesc code{font-family:var(--mono);font-size:11px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+
+  /* palette swap grid */
+  .swap{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;}
+  @media(max-width:680px){.swap{grid-template-columns:repeat(4,1fr);}}
+  .sw{background:var(--ink);border:1px solid var(--bd);border-radius:10px;padding:8px 4px 6px;text-align:center;}
+  .sw canvas{display:block;margin:0 auto;image-rendering:pixelated;}
+  .sw .hx{font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-top:4px;}
+  .swap-row-lbl{font-family:var(--mono);font-size:11px;color:var(--sub);margin:14px 0 8px;display:flex;align-items:center;gap:8px;}
+  .swap-row-lbl .b{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-weight:700;font-size:11px;}
+
+  /* dark track test */
+  .tracktest{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;}
+  @media(max-width:760px){.tracktest{grid-template-columns:1fr;}}
+  #trackStage{width:100%;border:1px solid var(--bd);border-radius:14px;background:var(--ink);display:block;}
+  .tt-side .hint{font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:14px;}
+  .tt-side .hint b{color:var(--tx);}
+  .skinpick{display:flex;gap:8px;flex-wrap:wrap;}
+  .sk{width:34px;height:34px;border-radius:9px;border:2px solid transparent;cursor:pointer;position:relative;transition:.12s;}
+  .sk.on{border-color:var(--tx);box-shadow:0 0 0 3px rgba(238,238,242,.12);}
+  .sk:hover{transform:translateY(-2px);}
+  .treat-toggle{display:flex;gap:6px;margin:14px 0 10px;}
+  .tg{flex:1;font-family:var(--mono);font-size:11px;text-align:center;padding:7px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--bd);background:var(--surf);color:var(--sub);transition:.12s;}
+  .tg.on{background:var(--surf-a);border-color:var(--ok);color:var(--tx);}
+  .legend{margin-top:14px;font-size:11px;color:var(--dim);line-height:1.7;}
+  .legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+
+  /* wall rotation */
+  .rotgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media(max-width:680px){.rotgrid{grid-template-columns:repeat(2,1fr);}}
+  .rc{background:var(--ink);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:center;}
+  .rc canvas{display:block;margin:0 auto 6px;image-rendering:auto;}
+  .rc .cap{font-family:var(--mono);font-size:9.5px;color:var(--dim);}
+  .rc .cap b{color:var(--sub);}
+  .rc.bad{border-color:rgba(255,90,90,.35);}
+  .rc.good{border-color:rgba(81,207,102,.35);}
+
+  /* matrix */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--bd);vertical-align:top;}
+  thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--dim);text-transform:uppercase;font-weight:700;}
+  thead th.ca{color:var(--purple);} thead th.cb{color:var(--ok);}
+  td.axis{font-weight:700;color:var(--tx);width:30%;}
+  td.axis span{display:block;font-weight:400;font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-top:2px;}
+  td .w{color:var(--ok);font-weight:700;} td .l{color:var(--sub);}
+  .score{font-family:var(--mono);font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin-right:6px;}
+  .scw{background:rgba(81,207,102,.14);color:var(--ok);} .scl{background:rgba(255,255,255,.05);color:var(--sub);} .sce{background:rgba(77,171,247,.12);color:var(--blue);}
+
+  /* recommendation */
+  .rec{border:1px solid rgba(124,242,156,.4);border-radius:16px;
+    background:linear-gradient(165deg,rgba(124,242,156,.08),rgba(92,124,250,.04));padding:22px;}
+  .rec .rk{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--ok);text-transform:uppercase;}
+  .rec h3{font-size:19px;font-weight:800;margin:8px 0 4px;letter-spacing:-.01em;}
+  .rec h3 em{font-style:normal;color:var(--ok);}
+  .rec .why{font-size:13px;color:var(--tx);margin-top:12px;line-height:1.65;}
+  .rec .why b{color:var(--ok);}
+  .rec ul{margin:12px 0 0;padding-left:0;list-style:none;display:grid;gap:8px;}
+  .rec li{font-size:12.5px;color:var(--sub);padding-left:22px;position:relative;line-height:1.55;}
+  .rec li::before{content:"→";position:absolute;left:0;color:var(--ok);font-family:var(--mono);}
+  .rec li b{color:var(--tx);}
+  .rec .caveat{margin-top:16px;font-size:11.5px;color:var(--sub);border-top:1px solid var(--bd);padding-top:14px;}
+  .rec .caveat b{color:var(--warn);}
+
+  footer{margin-top:46px;border-top:1px solid var(--bd);padding-top:18px;
+    font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">character-treatment-board</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">선행검증 3 · 디자인 세션 · 에셋 트랙</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">캐릭터 트리트먼트 보드</span></h1>
+    <p class="lede">
+      spec §2.5 가 미해결로 남긴 결정: 플레이어 캐릭터를 <b>ⓐ 픽셀 스프라이트</b>로 갈 것인가,
+      <b>ⓑ 절차적 실루엣</b>(코드 드로잉·스프라이트 0)으로 갈 것인가.
+      둘 다 <b>팔레트-스왑-레디 단순 형태</b>라는 전제 아래 —
+      <b>시인성 · 팔레트 스왑 충실도 · 게임필 · 1인 지속성</b>을 살아있는 렌더로 비교한다.
+      (art-pack-board 는 ⓐ 의 <i>소싱 경로</i>만 다뤘다. 이 보드가 스프라이트를 쓸지 자체를 결정.)
+    </p>
+    <div class="meta-row">
+      <span class="tag">기준 = <b>spec §2.5 / §2.4 벽주행 / design-system hero_character</b></span>
+      <span class="tag">팔레트 = <b>스킨 8종</b></span>
+      <span class="tag">트랙 = <b>#0C0C11 다크 단일</b></span>
+      <span class="tag">paranoia <b>#5 인게임 가독성 · #1 캐릭터 프레즌스</b></span>
+    </div>
+  </header>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>결정 요청 — ⓐ 픽셀 vs ⓑ 절차적 (+ 하단 디자이너 3안).</b>
+    <span>아래 4개 테스트(병렬 렌더 · 팔레트 스왑 · 다크 트랙 시인성 · 벽 주행 회전)를 확인 후 선택.
+    이 보드는 <b>"실제 캐릭터" 요구(spec)</b>와 <b>weaver 고유의 벽 주행 회전</b>이 충돌하는 지점을 드러내는 게 핵심.</span></p>
+  </div>
+
+  <!-- 1. 병렬 렌더 -->
+  <div class="sec"><span class="n">01</span><h2>병렬 렌더 — 살아있는 비교</h2>
+    <span class="subt">같은 포즈·같은 스킨(#55CCFF)·같은 스케일<br>idle / run / slide / death 토글</span></div>
+
+  <div class="duo">
+    <div class="col" id="colA">
+      <div class="top"><div class="badge ba">ⓐ</div>
+        <div><h3>픽셀 스프라이트</h3><div class="one">스프라이트 시트 임포트 (rvros·AI·자작) · design-system <code style="font-family:var(--mono);font-size:10px">hero_character</code> 정수배율</div></div></div>
+      <div class="stage"><canvas id="heroA" width="300" height="300"></canvas></div>
+      <div class="ctrls"><span class="lbl">POSE</span>
+        <button class="pose on" data-c="A" data-p="idle">idle</button>
+        <button class="pose" data-c="A" data-p="run">run</button>
+        <button class="pose" data-c="A" data-p="slide">slide</button>
+        <button class="pose" data-c="A" data-p="death">death</button>
+      </div>
+      <p class="note"><b>블록 셀 = 캐릭터성 ↑.</b> "작은 친구"로 읽혀 spec 의 "실제 캐릭터" 요구에 직답.
+        단 본체는 <b>1색(스왑키)+다크 외곽 1색</b> 규격을 강제해야 팔레트 틴트가 깨지지 않음. 프레임 수 고정.</p>
+      <div class="verdict">
+        <span class="pill up">캐릭터성 ↑</span>
+        <span class="pill up">슬라이드·사망 팩 네이티브</span>
+        <span class="pill dn">회전 시 시머</span>
+        <span class="pill dn">소싱·라이선스 리스크</span>
+      </div>
+    </div>
+
+    <div class="col win" id="colB">
+      <div class="top"><div class="badge bb">ⓑ</div>
+        <div><h3>절차적 실루엣</h3><div class="one">캔버스 코드 드로잉 · 스프라이트 0 · 프로토 v3.2 검증 기법</div></div></div>
+      <div class="stage"><canvas id="heroB" width="300" height="300"></canvas></div>
+      <div class="ctrls"><span class="lbl">POSE</span>
+        <button class="pose on" data-c="B" data-p="idle">idle</button>
+        <button class="pose" data-c="B" data-p="run">run</button>
+        <button class="pose" data-c="B" data-p="slide">slide</button>
+        <button class="pose" data-c="B" data-p="death">death</button>
+      </div>
+      <p class="note"><b>단색 벡터 = 색이 곧 캐릭터.</b> <code style="font-family:var(--mono);font-size:10px">skin</code> 변수 하나로 본체+트레일+점프 이펙트 일괄 스왑 — Downwell "색=정보" 직결.
+        임의 각 크리스프 · 에셋 파이프라인 0. 단 기본형은 추상 스틱에 가까움(→ §05 강화안).</p>
+      <div class="verdict">
+        <span class="pill up">스왑 완벽 (변수 1개)</span>
+        <span class="pill up">임의 각 크리스프</span>
+        <span class="pill up">에셋·라이선스 0</span>
+        <span class="pill dn">기본형 캐릭터성 ↓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 팔레트 스왑 -->
+  <div class="sec"><span class="n">02</span><h2>팔레트 스왑 8색 충실도</h2>
+    <span class="subt">design-system 스킨 8종 · 같은 포즈(run) 일괄 적용</span></div>
+  <div class="panel">
+    <p class="pdesc">스킨 = 코스메틱 BM 핵심. <b>같은 캐릭터를 8색으로 찍어</b> 스왑이 균질한지 본다.
+      ⓑ 는 <code>skin</code> 한 변수 → 색마다 동일 품질. ⓐ 는 <b>본체 1색 규격</b>을 지키면 셰이더 틴트로 동일 효과, 어기면(눈·그림자 별색) 틴트가 일부만 먹어 색마다 편차.</p>
+
+    <div class="swap-row-lbl"><span class="b" style="background:rgba(177,151,252,.18);color:var(--purple)">ⓐ</span> 픽셀 스프라이트 — 본체 1색 틴트</div>
+    <div class="swap" id="swapA"></div>
+
+    <div class="swap-row-lbl"><span class="b" style="background:rgba(124,242,156,.18);color:var(--ok)">ⓑ</span> 절차적 실루엣 — <code>skin</code> 변수</div>
+    <div class="swap" id="swapB"></div>
+  </div>
+
+  <!-- 3. 다크 트랙 시인성 -->
+  <div class="sec"><span class="n">03</span><h2>다크 트랙 시인성 테스트</h2>
+    <span class="subt">실 게임 배경 #0C0C11 + 라이브 트랙 + 카테고리 4색 근접 배치</span></div>
+  <div class="panel">
+    <p class="pdesc">캐릭터가 <b>회전하는 트랙 위·게임 스케일</b>로 달릴 때 어둠 속에서 분리돼 보이는가.
+      <b>카테고리 4색(🔵🔴🟡🟣)과 코인이 같은 화면에</b> 있을 때 스킨이 위협색으로 오독되지 않는가 (design-system §스킨 "명도/채도 간격 확보").
+      스킨을 바꿔가며 — 특히 <code>#55CCFF</code>(파랑 카테고리와 근접)·<code>#FFE066</code>(코인/대공과 근접) 충돌 여부 확인.</p>
+    <div class="tracktest">
+      <canvas id="trackStage" width="720" height="420"></canvas>
+      <div class="tt-side">
+        <div class="hint"><b>트리트먼트</b> 전환 + <b>스킨</b> 클릭. 트랙은 정사각→마름모로 변형 회전(§2.11 데모).</div>
+        <div class="treat-toggle">
+          <div class="tg" data-tt="A">ⓐ 픽셀</div>
+          <div class="tg on" data-tt="B">ⓑ 절차적</div>
+        </div>
+        <div class="hint" style="margin-bottom:8px"><b>스킨 8종</b></div>
+        <div class="skinpick" id="skinpick"></div>
+        <div class="legend">
+          <span class="dot" style="background:#4DABF7"></span>원거리 ·
+          <span class="dot" style="background:#FF6B6B"></span>근거리 ·
+          <span class="dot" style="background:#FFD43B"></span>대공 ·
+          <span class="dot" style="background:#B197FC"></span>특수 ·
+          <span class="dot" style="background:#FFE08A"></span>코인<br>
+          <span style="color:var(--warn)">⚠ 스킨이 이 색들과 겹쳐 보이면 오독 리스크</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 벽 주행 회전 (decisive) -->
+  <div class="sec"><span class="n">04</span><h2>벽 주행 회전 — weaver 고유 변수 ★</h2>
+    <span class="subt">§2.4 월드 고정 팬 — 캐릭터가 벽·천장을 타고 도는 게임</span></div>
+  <div class="panel" style="border-color:rgba(255,90,90,.3)">
+    <p class="pdesc"><b>이 항목이 결정을 가른다.</b> weaver 는 캐릭터가 트랙 법선을 따라 <b>벽을 수직으로 타고 오르고 코너를 돈다</b>(§2.4 회전 정규화 폐기 — 벽 주행이 화면에 그대로 보임).
+      즉 캐릭터는 <b>임의 각도</b>로 렌더된다. 픽셀 그리드를 비직교 각으로 돌리면 <span style="color:var(--warn)">안티에일리어스 뭉개짐·엣지 시머</span>, 절차적 스트로크는 어느 각도든 크리스프.
+      바닥(0°)·코너(58°)·벽(90°) 3각도를 같은 스킨으로 비교:</p>
+    <div class="rotgrid" id="rotgrid"></div>
+    <p class="pdesc" style="margin-top:14px;margin-bottom:0">
+      → 픽셀을 쓰려면 <b>(a) 축정렬 고정</b>(벽에서 누운 채 미끄러져 어색) <b>(b) 회전 허용</b>(시머·블러) 중 택1, 둘 다 손해.
+      절차적은 이 트레이드오프 자체가 없음 — <b>weaver 의 카메라 시스템과 구조적으로 정합</b>.</p>
+  </div>
+
+  <!-- 5. 매트릭스 -->
+  <div class="sec"><span class="n">05</span><h2>비교 매트릭스</h2>
+    <span class="subt">spec §2.5 축 (시인성·게임필·1인 지속성) + 실측 항목</span></div>
+  <div class="panel" style="padding:6px 18px 14px">
+    <table>
+      <thead><tr><th>축</th><th class="ca">ⓐ 픽셀 스프라이트</th><th class="cb">ⓑ 절차적 실루엣</th></tr></thead>
+      <tbody>
+        <tr><td class="axis">다크 트랙 시인성<span>어둠 속 분리 · 카테고리색 비충돌</span></td>
+          <td><span class="score sce">동률</span>외곽 1px 다크로 경계 또렷 (면적 약우위)</td>
+          <td><span class="score sce">동률</span>스트로크 두께·트레일로 보장. 단색이라 충돌관리 단순</td></tr>
+        <tr><td class="axis">팔레트 스왑 충실도<span>스킨 8종 균질성</span></td>
+          <td><span class="score scl">△</span>본체 1색 규격 <b>강제 시</b> OK · 어기면 색별 편차</td>
+          <td><span class="score scw">◎</span><span class="w">변수 1개 = 8색 완벽 균질</span> · 트레일·이펙트까지 자동 일괄</td></tr>
+        <tr><td class="axis">벽 주행 회전 ★<span>weaver 고유 — §2.4</span></td>
+          <td><span class="score scl">✕</span>비직교 회전 시머·블러 → 축정렬 강제 or 품질 저하</td>
+          <td><span class="score scw">◎</span><span class="w">임의 각 크리스프 — 카메라 시스템과 구조 정합</span></td></tr>
+        <tr><td class="axis">게임필 "실제 캐릭터감"<span>spec "실제 캐릭터" 요구</span></td>
+          <td><span class="score scw">◎</span><span class="w">블록 셀 = 작은 친구 캐릭터성 ↑</span></td>
+          <td><span class="score scl">△</span>기본형 추상 스틱 — <b>강화 실루엣(§06)으로 상당 회수</b></td></tr>
+        <tr><td class="axis">슬라이드·사망 연출<span>포즈 다양성</span></td>
+          <td><span class="score scw">◯</span>팩 네이티브 프레임 (rvros 슬라이드·death)</td>
+          <td><span class="score sce">동률</span>포즈 파라미터 코딩 — <b>프로토 v3.2 에 이미 구현</b></td></tr>
+        <tr><td class="axis">1인 지속성<span>제작·교체 비용</span></td>
+          <td><span class="score scl">△</span>소싱·규격잠금·프레임 고정 → 교체 비용 ↑</td>
+          <td><span class="score scw">◎</span><span class="w">코드만 · 파이프라인 0 · 교체비 0 · 무한 변주</span></td></tr>
+        <tr><td class="axis">라이선스·비용<span>리스크</span></td>
+          <td><span class="score scl">△</span>C(rvros) 비-CC0 등 소싱 리스크 관리 필요</td>
+          <td><span class="score scw">◎</span><span class="w">0원 · 리스크 0</span></td></tr>
+        <tr><td class="axis">미감 정합<span>Downwell류 미니멀 (brief)</span></td>
+          <td><span class="score scl">△</span>팩 고유 스타일 = "에셋플립" 충돌 위험 (spec §2.5 경고)</td>
+          <td><span class="score scw">◎</span><span class="w">기하 미니멀·색=정보와 동일 언어</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. 추천 -->
+  <div class="sec"><span class="n">06</span><h2>디자이너 추천</h2>
+    <span class="subt">공동창업자 관점 — 결정은 사용자</span></div>
+  <div class="rec">
+    <div class="rk">권장 방향</div>
+    <h3>ⓑ 절차적 실루엣 채택 + <em>볼륨 강화(ⓑ⁺)</em></h3>
+    <p class="why">매트릭스 8축 중 ⓐ 의 단독 우위는 <b>"실제 캐릭터감" 하나</b>. 그런데 그 하나가
+      <b>벽 주행 회전 ✕ · 미감 충돌 · 1인 지속성 △ · 라이선스 리스크</b>를 데려온다.
+      weaver 는 brief 부터 "스프라이트 의존도가 낮은 게임"(Downwell류 색=정보·기하 미니멀)이라
+      <b>절차적이 룩과 카메라 시스템 양쪽에 구조적으로 정합</b>한다.</p>
+    <ul>
+      <li><b>ⓑ⁺ 강화안:</b> 기본 스틱을 <b>채운 바디 실루엣 + 코너 라운드 + 방향 점(눈) 1개</b>로 올려 ⓐ 의 유일 우위(캐릭터성)를 회수 — §01 ⓑ 캔버스가 이미 강화 버전. 스프라이트 0 유지.</li>
+      <li><b>팔레트 스왑은 ⓑ 가 정답:</b> <code style="font-family:var(--mono);font-size:11px;color:var(--coin)">skin</code> 변수 1개로 8색 균질 + 트레일·점프 이펙트 자동 동색 — BM(스킨 판매)의 토대.</li>
+      <li><b>벽 주행이 못박는다:</b> §2.4 의 임의각 렌더는 픽셀에 치명. 이건 튜닝으로 안 풀리는 구조 문제.</li>
+      <li><b>art-pack-board(ⓐ 소싱) 결정은 보류·기각 가능:</b> 적(敵) 스프라이트는 별개 트랙으로 분리 검토 (적은 회전 부담이 작아 픽셀 팩 여지 있음 — 후속 보드).</li>
+    </ul>
+    <p class="caveat"><b>반대 신호:</b> 출시 후 다운로드가 붙고 "캐릭터가 밋밋하다" 피드백이 명확하면 —
+      spec §2.5 의 <b>v1.x 정교 커스텀</b>(Retro Diffusion $20 / 외주) 경로로 승격. 단 그때도 <b>규격 = 본체 1색·임의각 대응</b>을 유지해 ⓑ 의 스왑·회전 자산을 깨지 않는다.
+      <span style="color:var(--sub)">→ 사용자 선택 시 brief.md 에셋목록 + design-system <code style="font-family:var(--mono);font-size:11px;color:var(--coin)">hero_character</code> 토큰 SoT 반영 (절차적이면 "정수배율 스프라이트" 문구 교체 — 리드 정합).</span></p>
+  </div>
+
+  <footer>
+    weaver / sanity / character-treatment-board.html · 선행검증 3 (spec §2.5 ⓐ vs ⓑ)<br>
+    노출 = unlisted (출시 전 noindex) · 결정 반영 = brief.md 에셋목록 + design-system hero_character · 적 스프라이트 = 별도 후속 보드
+  </footer>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const SKINS=[
+  {hex:'#FFFFFF',n:'기본'},{hex:'#55CCFF',n:'시안'},{hex:'#FF77AA',n:'핑크'},{hex:'#7CF29C',n:'민트'},
+  {hex:'#FFB454',n:'앰버'},{hex:'#C9A0FF',n:'라일락'},{hex:'#FF6E6E',n:'코랄'},{hex:'#FFE066',n:'옐로'}
+];
+function hx2rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function shade(h,f){const[r,g,b]=hx2rgb(h);return`rgb(${Math.round(r*f)},${Math.round(g*f)},${Math.round(b*f)})`;}
+function rgba(h,a){const[r,g,b]=hx2rgb(h);return`rgba(${r},${g},${b},${a})`;}
+
+/* ===== ⓑ procedural silhouette (enhanced volume body) =====
+   draws around origin, upright, height ~ 40u; rot applied by caller */
+function drawProc(ctx,skin,s,phase,t){
+  const ol=shade(skin,0.42);
+  ctx.save(); ctx.scale(s,s);
+  // trail (run only)
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  if(phase==='death'){
+    // collapsed burst
+    ctx.fillStyle=skin;
+    const ang=[0,1.2,2.5,3.8,5.0];
+    for(let i=0;i<5;i++){const a=ang[i]+t*0.4;const d=10+Math.sin(t*3+i)*2;
+      ctx.beginPath();ctx.arc(Math.cos(a)*d,Math.sin(a)*d-4,2.6,0,7);ctx.fill();}
+    ctx.strokeStyle=ol;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.arc(0,0,13,0,7);ctx.stroke();
+    ctx.restore();return;
+  }
+  if(phase==='slide'){
+    // crouched dash
+    ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.ellipse(0,-4,13,7,0,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle=shade(skin,1);
+    ctx.beginPath();ctx.arc(8,-6,2.0,0,7);ctx.fill(); // dir dot
+    ctx.restore();return;
+  }
+  const run=phase==='run';
+  const sw=run?Math.sin(t*9)*7:0;
+  const bob=run?Math.abs(Math.sin(t*9))*-2:Math.sin(t*2.2)*1.4;
+  ctx.translate(0,bob);
+  // legs
+  ctx.strokeStyle=skin;ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(0,2);ctx.lineTo(sw,12);ctx.moveTo(0,2);ctx.lineTo(-sw,12);ctx.stroke();
+  // volume body (filled rounded silhouette)
+  ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.6;
+  roundRectPath(ctx,-7,-14,14,18,6);ctx.fill();ctx.stroke();
+  // head
+  ctx.beginPath();ctx.arc(0,-19,6.4,0,7);ctx.fill();ctx.stroke();
+  // arm (run swing)
+  ctx.strokeStyle=skin;ctx.lineWidth=3.4;
+  ctx.beginPath();ctx.moveTo(0,-9);ctx.lineTo(sw*0.8,-2);ctx.stroke();
+  // direction dot (eye)
+  ctx.fillStyle=shade(skin,0.18);
+  ctx.beginPath();ctx.arc(2.4,-19,1.7,0,7);ctx.fill();
+  ctx.restore();
+}
+function roundRectPath(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+
+/* ===== ⓐ pixel sprite =====
+   grid string: B=body(swap key), D=dark outline(derived), .=empty
+   drawn cell-by-cell, integer scale -> crisp pixels (caller may rotate to expose shimmer) */
+const PX_IDLE=[
+"....DDDD....",
+"...DBBBBD...",
+"..DBBBBBBD..",
+"..DBBBBBBD..",
+"..DBBBBBBD..",
+"...DBBBBD...",
+"....DBBD....",
+"..DDBBBBDD..",
+".DBBBBBBBBD.",
+".DBBBBBBBBD.",
+".DBBBBBBBBD.",
+"..DBBBBBBD..",
+"..DBBDDBBD..",
+"..DBD..DBD..",
+"..DBD..DBD..",
+"..DD....DD..",
+];
+const PX_RUN=[
+"....DDDD....",
+"...DBBBBD...",
+"..DBBBBBBD..",
+"..DBBBBBBD..",
+"..DBBBBBBD..",
+"...DBBBBD...",
+"....DBBD....",
+"..DDBBBBDD..",
+"DDBBBBBBBBD.",
+".DBBBBBBBBDD",
+".DBBBBBBBBD.",
+"..DBBBBBBD..",
+"..DBBDDBBD..",
+".DBD....DBD.",
+"DBD......DBD",
+"DD........DD",
+];
+const PX_SLIDE=[
+"............",
+"............",
+"............",
+"............",
+"...DDDD.....",
+"..DBBBBDDDD.",
+".DBBBBBBBBBD",
+"DDBBBBBBBBDD",
+".DDBBBBBBDD.",
+"..DDDDDDDD..",
+"............",
+"............",
+];
+const PX_DEATH=[
+"..D......D..",
+".DBD....DBD.",
+"..DD.DD.DD..",
+"....DBBD....",
+"...DBBBBD...",
+"..DBDDDDBD..",
+".DBD....DBD.",
+"DBD..DD..DBD",
+".D..DBBD..D.",
+"....DBBD....",
+"...DD..DD...",
+"..D......D..",
+];
+function pxGrid(p){return p==='run'?PX_RUN:p==='slide'?PX_SLIDE:p==='death'?PX_DEATH:PX_IDLE;}
+function drawPixel(ctx,skin,cell,phase,t){
+  const g=pxGrid(phase);
+  const ol=shade(skin,0.4);
+  const rows=g.length, cols=g[0].length;
+  const bob=phase==='idle'?Math.round(Math.sin(t*2.2)*1)
+        :phase==='run'?-Math.round(Math.abs(Math.sin(t*9))*1):0;
+  ctx.save();
+  ctx.translate(-cols*cell/2, -rows*cell/2 + bob*cell*0.4);
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
+    const c=g[y][x]; if(c==='.')continue;
+    ctx.fillStyle=c==='D'?ol:skin;
+    ctx.fillRect(x*cell,y*cell,cell,cell);
+  }
+  ctx.restore();
+}
+
+/* ===== state ===== */
+const state={A:'idle',B:'idle'};
+let T=0;
+
+/* hero canvases */
+function drawHero(id,treat){
+  const cv=document.getElementById(id),ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,300,300);
+  // ground guide
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(40,232.5);ctx.lineTo(260,232.5);ctx.stroke();
+  ctx.save();ctx.translate(150,200);
+  const skin='#55CCFF';
+  if(treat==='A'){ctx.imageSmoothingEnabled=false;drawPixel(ctx,skin,9,state.A,T);}
+  else{drawProc(ctx,skin,3.4,state.B,T);}
+  ctx.restore();
+}
+
+/* palette swap rows */
+function buildSwap(){
+  const mk=(treat,host)=>{const el=document.getElementById(host);el.innerHTML='';
+    SKINS.forEach(s=>{
+      const d=document.createElement('div');d.className='sw';
+      const cv=document.createElement('canvas');cv.width=64;cv.height=84;
+      d.appendChild(cv);
+      const lab=document.createElement('div');lab.className='hx';lab.textContent=s.hex;d.appendChild(lab);
+      el.appendChild(d);
+      const ctx=cv.getContext('2d');
+      cv._draw=()=>{ctx.clearRect(0,0,64,84);ctx.save();ctx.translate(32,58);
+        if(treat==='A'){ctx.imageSmoothingEnabled=false;drawPixel(ctx,s.hex,3,'run',T);}
+        else{drawProc(ctx,s.hex,1.35,'run',T);}ctx.restore();};
+    });
+  };
+  mk('A','swapA');mk('B','swapB');
+}
+
+/* wall rotation grid */
+const ROT=[{a:0,lbl:'바닥 0°',cls:''},{a:0.45,lbl:'코너 ~26°',cls:''},{a:1.01,lbl:'코너 ~58°',cls:'bad'},{a:1.5708,lbl:'벽 90°',cls:'good'}];
+function buildRot(){
+  const host=document.getElementById('rotgrid');host.innerHTML='';
+  ['A','B'].forEach(treat=>{
+    ROT.forEach(r=>{
+      const rc=document.createElement('div');
+      rc.className='rc '+(treat==='A'&&r.cls==='bad'?'bad':treat==='B'&&r.cls==='good'?'good':'');
+      const cv=document.createElement('canvas');cv.width=110;cv.height=110;rc.appendChild(cv);
+      const cap=document.createElement('div');cap.className='cap';
+      cap.innerHTML=`<b>${treat==='A'?'ⓐ 픽셀':'ⓑ 절차'}</b> · ${r.lbl}`;rc.appendChild(cap);
+      host.appendChild(rc);
+      const ctx=cv.getContext('2d');
+      cv._draw=()=>{ctx.clearRect(0,0,110,110);ctx.save();ctx.translate(55,58);ctx.rotate(r.a);
+        if(treat==='A'){ctx.imageSmoothingEnabled=true;/*allow rotation -> shimmer*/drawPixel(ctx,'#55CCFF',3.4,'idle',T);}
+        else{drawProc(ctx,'#55CCFF',1.5,'idle',T);}ctx.restore();
+        // angle arc
+        ctx.strokeStyle='rgba(255,255,255,.08)';ctx.beginPath();ctx.moveTo(8,100);ctx.lineTo(102,100);ctx.stroke();
+      };
+    });
+  });
+}
+
+/* dark track test */
+let curTreat='B', curSkin='#55CCFF';
+function buildSkinPick(){
+  const host=document.getElementById('skinpick');host.innerHTML='';
+  SKINS.forEach((s,i)=>{const b=document.createElement('div');b.className='sk'+(s.hex===curSkin?' on':'');
+    b.style.background=s.hex;b.title=s.n+' '+s.hex;b.dataset.hex=s.hex;
+    b.onclick=()=>{curSkin=s.hex;[...host.children].forEach(c=>c.classList.toggle('on',c.dataset.hex===s.hex));};
+    host.appendChild(b);});
+}
+function polyPts(sides,rad,rot){const p=[];for(let i=0;i<sides;i++){const a=rot+i/sides*Math.PI*2-Math.PI/2;
+  p.push({x:Math.cos(a)*rad,y:Math.sin(a)*rad});}return p;}
+function drawTrack(){
+  const cv=document.getElementById('trackStage'),ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);
+  const cx=W/2,cy=H/2;
+  // morph square<->diamond
+  const morph=(Math.sin(T*0.35)+1)/2; const rot=T*0.12;
+  const rad=150;
+  const sq=polyPts(4,rad,rot), di=polyPts(4,rad,rot+Math.PI/4);
+  const pts=sq.map((p,i)=>({x:cx+p.x*(1-morph)+di[i].x*morph,y:cy+p.y*(1-morph)+di[i].y*morph}));
+  // track line
+  ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1.5;ctx.lineJoin='round';
+  ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.stroke();
+  // vertices
+  ctx.fillStyle='rgba(255,255,255,.22)';pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2.4,0,7);ctx.fill();});
+  // category color threats scattered on/near edges (confusion test)
+  const cats=['#4DABF7','#FF6B6B','#FFD43B','#B197FC','#FFE08A'];
+  for(let i=0;i<5;i++){const e=i%4;const a=pts[e],b=pts[(e+1)%4];
+    const f=0.3+0.13*i;const x=a.x+(b.x-a.x)*f, y=a.y+(b.y-a.y)*f;
+    // outward normal-ish offset
+    ctx.fillStyle=cats[i];ctx.globalAlpha=.95;
+    ctx.beginPath();ctx.arc(x,y-14,5,0,7);ctx.fill();
+    ctx.strokeStyle=cats[i];ctx.globalAlpha=.3;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(x,y-14,9,0,7);ctx.stroke();ctx.globalAlpha=1;
+  }
+  // character riding bottom-ish edge with track rotation
+  const ride=( (T*0.18)%1 );
+  // pick edge 0 (top in poly order is -y) -> choose the edge currently lowest on screen
+  let lo=0,loy=-1;for(let i=0;i<4;i++){const m=(pts[i].y+pts[(i+1)%4].y)/2;if(m>loy){loy=m;lo=i;}}
+  const A=pts[lo],B=pts[(lo+1)%4];
+  const px=A.x+(B.x-A.x)*ride, py=A.y+(B.y-A.y)*ride;
+  const ex=B.x-A.x,ey=B.y-A.y;const len=Math.hypot(ex,ey);
+  const nx=-ey/len,ny=ex/len; // inward? ensure points to center
+  const toC=(cx-px)*nx+(cy-py)*ny; const sgn=toC>0?1:-1;
+  const ang=Math.atan2(ey,ex);
+  ctx.save();ctx.translate(px+nx*sgn*9, py+ny*sgn*9);ctx.rotate(ang+(sgn<0?Math.PI:0));
+  if(curTreat==='A'){ctx.imageSmoothingEnabled=true;drawPixel(ctx,curSkin,2.6,'run',T);}
+  else{drawProc(ctx,curSkin,1.25,'run',T);}
+  ctx.restore();
+}
+
+/* ===== controls ===== */
+document.querySelectorAll('.pose').forEach(b=>{b.onclick=()=>{
+  const c=b.dataset.c;state[c]=b.dataset.p;
+  document.querySelectorAll(`.pose[data-c="${c}"]`).forEach(x=>x.classList.toggle('on',x===b));
+};});
+document.querySelectorAll('.tg').forEach(b=>{b.onclick=()=>{
+  curTreat=b.dataset.tt;document.querySelectorAll('.tg').forEach(x=>x.classList.toggle('on',x===b));
+};});
+
+buildSwap();buildRot();buildSkinPick();
+
+/* ===== loop ===== */
+let last=performance.now();
+function loop(now){const dt=(now-last)/1000;last=now;T+=dt;
+  drawHero('heroA','A');drawHero('heroB','B');
+  document.querySelectorAll('#swapA canvas,#swapB canvas,#rotgrid canvas').forEach(cv=>cv._draw&&cv._draw());
+  drawTrack();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
