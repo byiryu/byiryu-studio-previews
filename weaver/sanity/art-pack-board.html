@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 아트 후보 팩 보드 (M0)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11; --panel:#12121A; --surf:#15151D; --surf-a:#1C2030; --bd:#2A2A36;
+    --tx:#EEEEF2; --sub:#9AA0B0; --dim:#556070;
+    --blue:#4DABF7; --red:#FF6B6B; --yellow:#FFD43B; --purple:#B197FC;
+    --coin:#FFE08A; --prog:#5C7CFA; --ok:#51CF66;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    font-family:var(--body); background:var(--ink); color:var(--tx);
+    line-height:1.55; padding:28px 18px 80px; overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.10), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;
+    background-position:0 0,0 0,-1px -1px,-1px -1px;
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  /* ── breadcrumb / header ── */
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}
+  .crumb a:hover{color:var(--blue);text-decoration:underline;}
+
+  header.hero{
+    position:relative; border:1px solid var(--bd); border-radius:18px;
+    background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);
+    padding:26px 26px 24px; overflow:hidden; margin-bottom:14px;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(420px 200px at 92% 0%, rgba(77,171,247,.12), transparent 70%);
+    pointer-events:none;
+  }
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  h1 .ttl{display:inline-block;}
+  @media(max-width:520px){ h1 .wm{display:block;font-size:1.18em;margin-bottom:2px;} }
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:760px;}
+  .lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--sub);
+    background:rgba(255,255,255,.04); border:1px solid var(--bd); border-radius:999px; padding:5px 11px;}
+  .tag b{color:var(--tx);}
+
+  /* ── decision ask banner ── */
+  .ask{display:flex;gap:14px;align-items:flex-start; border:1px solid rgba(92,124,250,.4);
+    background:linear-gradient(180deg,rgba(92,124,250,.10),rgba(92,124,250,.03));
+    border-radius:14px; padding:15px 18px; margin-bottom:30px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--prog);font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .ask p{font-size:13.5px;color:var(--tx);}
+  .ask p span{color:var(--sub);}
+
+  /* ── section heads ── */
+  .sec{margin:38px 0 16px;display:flex;align-items:baseline;gap:12px;}
+  .sec .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);
+    background:var(--prog);border-radius:6px;padding:3px 8px;letter-spacing:.05em;}
+  .sec h2{font-size:18px;font-weight:800;letter-spacing:-.01em;}
+  .sec .sub{font-size:12px;color:var(--dim);margin-left:auto;font-family:var(--mono);}
+
+  /* ── style guard ── */
+  .guard{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:680px){.guard{grid-template-columns:1fr;}}
+  .gitem{display:flex;gap:12px;background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:13px 15px;}
+  .gitem .ic{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    font-size:15px;background:rgba(255,255,255,.04);border:1px solid var(--bd);}
+  .gitem h3{font-size:13.5px;font-weight:700;margin-bottom:2px;}
+  .gitem p{font-size:12px;color:var(--sub);line-height:1.5;}
+  .gitem p code{font-family:var(--mono);font-size:11px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+  .gitem.crit{border-color:rgba(255,107,107,.35);}
+  .gitem.crit .ic{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.3);}
+
+  /* ── candidate cards ── */
+  .cands{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media(max-width:900px){.cands{grid-template-columns:1fr;}}
+  .card{position:relative;background:var(--panel);border:1px solid var(--bd);border-radius:16px;overflow:hidden;
+    display:flex;flex-direction:column;transition:border-color .15s,transform .15s;}
+  .card.rec{border-color:rgba(81,207,102,.45);box-shadow:0 0 0 1px rgba(81,207,102,.12),0 14px 36px -18px rgba(81,207,102,.35);}
+  .card .recflag{position:absolute;top:0;right:0;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;
+    color:var(--ink);background:var(--ok);padding:4px 12px;border-bottom-left-radius:10px;z-index:3;}
+  .card .stage{position:relative;height:150px;display:grid;place-items:center;
+    background:radial-gradient(160px 110px at 50% 42%,rgba(255,255,255,.05),transparent 70%),#0d0d13;
+    border-bottom:1px solid var(--bd);overflow:hidden;}
+  .card .stage::after{content:"";position:absolute;left:0;right:0;bottom:30px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);}
+  .pixwrap{position:relative;z-index:2;filter:drop-shadow(0 0 14px var(--glow));}
+  .pixwrap svg{display:block;image-rendering:pixelated;}
+  .stage .glabel{position:absolute;bottom:8px;left:0;right:0;text-align:center;
+    font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.04em;}
+  .card .body{padding:16px 16px 18px;display:flex;flex-direction:column;flex:1;}
+  .ctop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;}
+  .clet{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--ink);background:var(--tx);border-radius:6px;width:22px;height:22px;display:grid;place-items:center;flex:none;}
+  .card h3{font-size:15.5px;font-weight:800;line-height:1.2;}
+  .csrc{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin:3px 0 12px;}
+  .csrc a{color:#6f7ba8;text-decoration:none;}
+  .csrc a:hover{color:var(--blue);text-decoration:underline;}
+  .lic{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;
+    padding:4px 9px;border-radius:999px;}
+  .lic.cc0{color:var(--ok);background:rgba(81,207,102,.12);border:1px solid rgba(81,207,102,.35);}
+  .lic.free{color:var(--yellow);background:rgba(255,212,59,.10);border:1px solid rgba(255,212,59,.32);}
+
+  /* coverage chips */
+  .cov{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 14px;}
+  .chip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:9px;
+    background:var(--surf);border:1px solid var(--bd);}
+  .chip .cl{font-size:10px;color:var(--sub);font-weight:600;}
+  .chip .cv{font-family:var(--mono);font-size:13px;font-weight:700;}
+  .chip.y .cv{color:var(--ok);} .chip.y{border-color:rgba(81,207,102,.3);}
+  .chip.n .cv{color:var(--red);} .chip.n{opacity:.72;}
+  .chip.p .cv{color:var(--yellow);} .chip.p{border-color:rgba(255,212,59,.25);}
+
+  .prosc{margin-top:auto;}
+  .prosc dt{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin:11px 0 5px;}
+  .prosc dt.pp{color:var(--ok);} .prosc dt.cc{color:var(--red);}
+  .prosc li{font-size:12px;color:var(--sub);line-height:1.5;list-style:none;padding-left:15px;position:relative;margin-bottom:3px;}
+  .prosc li::before{position:absolute;left:0;top:0;font-family:var(--mono);font-weight:700;}
+  .prosc .pp+ul li::before{content:"+";color:var(--ok);}
+  .prosc .cc+ul li::before{content:"–";color:var(--red);}
+  .prosc b{color:var(--tx);font-weight:700;}
+
+  /* ── spec lock ── */
+  .speclock{background:linear-gradient(180deg,#11131c,#0e0e15);border:1px solid var(--bd);border-radius:16px;overflow:hidden;}
+  .speclock .lh{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--bd);background:rgba(255,255,255,.02);}
+  .speclock .lh .lk{color:var(--coin);font-size:14px;}
+  .speclock .lh h3{font-size:14px;font-weight:800;}
+  .speclock .lh span{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:auto;}
+  .spectbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .spectbl td{padding:11px 18px;border-bottom:1px solid rgba(42,42,54,.55);vertical-align:top;}
+  .spectbl tr:last-child td{border-bottom:none;}
+  .spectbl td:first-child{font-family:var(--mono);color:var(--prog);font-weight:500;width:34%;white-space:nowrap;}
+  .spectbl td:last-child{color:var(--sub);}
+  .spectbl td:last-child b{color:var(--tx);font-weight:700;}
+  .spectbl code{font-family:var(--mono);font-size:11.5px;color:var(--coin);background:rgba(255,224,138,.07);padding:1px 5px;border-radius:4px;}
+  .animstrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .af{font-family:var(--mono);font-size:11px;background:var(--surf);border:1px solid var(--bd);border-radius:7px;padding:4px 9px;color:var(--tx);}
+  .af b{color:var(--prog);}
+
+  /* ── recommendation ── */
+  .reco{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;}
+  @media(max-width:760px){.reco{grid-template-columns:1fr;}}
+  .recmain{background:linear-gradient(165deg,rgba(81,207,102,.08),rgba(81,207,102,.02));border:1px solid rgba(81,207,102,.4);border-radius:16px;padding:20px;}
+  .recmain .lbl{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--ok);text-transform:uppercase;}
+  .recmain h3{font-size:17px;font-weight:800;margin:8px 0 4px;line-height:1.3;}
+  .recmain h3 em{font-style:normal;color:var(--ok);}
+  .recmain p{font-size:13px;color:var(--sub);margin-top:8px;}
+  .recmain p b{color:var(--tx);}
+  .split{display:flex;gap:10px;margin:16px 0 4px;}
+  .splitcell{flex:1;background:rgba(0,0,0,.25);border:1px solid var(--bd);border-radius:11px;padding:12px;}
+  .splitcell .role{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;}
+  .splitcell .who{font-size:13.5px;font-weight:700;margin-top:3px;}
+  .splitcell .who b{color:var(--ok);}
+  .splitcell .lic2{font-family:var(--mono);font-size:10px;color:var(--sub);margin-top:5px;}
+  .altbox{background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:18px;}
+  .altbox .lbl{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--sub);text-transform:uppercase;margin-bottom:10px;}
+  .altbox .alt{padding:11px 0;border-bottom:1px solid rgba(42,42,54,.5);}
+  .altbox .alt:last-child{border-bottom:none;padding-bottom:0;}
+  .altbox .alt h4{font-size:13px;font-weight:700;}
+  .altbox .alt h4 span{font-family:var(--mono);color:var(--dim);font-weight:400;}
+  .altbox .alt p{font-size:12px;color:var(--sub);margin-top:3px;}
+
+  /* ── license summary ── */
+  .lictbl{width:100%;border-collapse:collapse;font-size:12.5px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;}
+  .lictbl th{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--sub);text-align:left;
+    background:var(--surf);padding:11px 14px;border-bottom:1px solid var(--bd);text-transform:uppercase;}
+  .lictbl td{padding:12px 14px;border-bottom:1px solid rgba(42,42,54,.5);color:var(--sub);vertical-align:top;}
+  .lictbl tr:last-child td{border-bottom:none;}
+  .lictbl td b{color:var(--tx);}
+  .lictbl .ok2{color:var(--ok);font-weight:700;} .lictbl .no2{color:var(--red);font-weight:700;}
+  .pill-cc0{font-family:var(--mono);font-size:10px;color:var(--ok);}
+  .pill-free{font-family:var(--mono);font-size:10px;color:var(--yellow);}
+
+  .foot{margin-top:46px;padding-top:18px;border-top:1px solid var(--bd);font-size:12px;color:var(--dim);line-height:1.7;}
+  .foot b{color:var(--sub);}
+  .foot code{font-family:var(--mono);font-size:11px;color:#6f7ba8;}
+  .note{font-size:11.5px;color:var(--dim);margin-top:8px;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../">byiryu studio</a> / <a href="../">weaver</a> / sanity / <b style="color:#9AA0B0">art-pack-board</b>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="kicker">M0 · 에셋 트랙 ⓐ · Unity 임포트 前 결정</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">아트 후보 팩 보드</span></h1>
+    <p class="lede">
+      MVP 캐릭터·몬스터 = <b>무료 픽셀 팩</b> (spec §2.5 임시 확정 — 다운로드 시그널 후 Retro Diffusion/외주로 교체).
+      교체가 전제이므로 <b>지금 고를 팩</b>보다 <b>스프라이트 규격 잠금</b>이 진짜 영속 결정이다.
+      아래 3개 후보를 <b>슬라이드·사망·적 포함·라이선스</b> 4축으로 비교한다.
+    </p>
+    <div class="meta-row">
+      <span class="tag">시점 <b>측면 러너</b> (트랙 모서리 주행)</span>
+      <span class="tag">동사 <b>달리기·점프·슬라이드·사망</b></span>
+      <span class="tag">스킨 <b>팔레트 스왑 8종</b> (단일 본체)</span>
+      <span class="tag">몬스터 <b>3종</b> 일반·장갑·비행</span>
+      <span class="tag">무드 <b>다크 미니멀 · 네온</b></span>
+    </div>
+  </header>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>결정 요청 —</b> ① 어느 조합으로 MVP 임포트할지 (추천: <b style="color:var(--ok)">C 플레이어 + B 적</b>)
+      &nbsp;② 아래 <b>스프라이트 규격 잠금</b> 승인 (이후 교체 비용 최소화의 핵심).
+      <span>실제 아트는 각 후보의 itch/Kenney 링크에서 확인 — 본 보드는 결정 구조화용 (실루엣은 개념 묘사).</span></p>
+  </div>
+
+  <!-- ── STYLE GUARD ── -->
+  <div class="sec"><span class="n">A</span><h2>스타일 가드</h2><span class="sub">선택·교체 팩이 반드시 만족할 기준</span></div>
+  <div class="guard">
+    <div class="gitem crit">
+      <div class="ic">🔍</div>
+      <div><h3>소형 렌더 실루엣 가독</h3><p>트랙 위 캐릭터는 작게 그려진다. 내부 디테일이 작은 크기에서 뭉개지면 탈락 — <b style="color:var(--tx)">실루엣만으로 동작이 읽혀야</b> 한다.</p></div>
+    </div>
+    <div class="gitem crit">
+      <div class="ic">🎨</div>
+      <div><h3>단일 본체색 = 스왑 키</h3><p>본체가 하나의 교체 가능한 채움색이라야 스킨 8종 팔레트 스왑이 깨끗. 외곽선·AA 최소. 그라데이션/과한 셰이딩 금지 (<code>≤8색</code>).</p></div>
+    </div>
+    <div class="gitem">
+      <div class="ic">🏃</div>
+      <div><h3>측면·발바닥 접지 주행</h3><p>모서리를 타고 달리므로 <b style="color:var(--tx)">측면 뷰 + 바닥중앙 피벗</b>. 탑다운·3/4뷰 부적합 (월드 고정 팬 카메라 — 옆벽도 측면 그대로 노출).</p></div>
+    </div>
+    <div class="gitem">
+      <div class="ic">✨</div>
+      <div><h3>이펙트 베이크 금지</h3><p>글로우·트레일·점프 이펙트 = <b style="color:var(--tx)">코드 파티클</b> (스킨색 구동). 스프라이트는 본체만, 투명 배경. 효과가 구워진 팩은 스킨 시스템과 충돌.</p></div>
+    </div>
+    <div class="gitem">
+      <div class="ic">🌑</div>
+      <div><h3>톤 정합 — 절제된 중립</h3><p>마스코트·귀여움 과잉 X. tense + minimal 무드 (brief). 또렷한 외곽선은 OK (소형에서 crisp). 색은 의미 있을 때만.</p></div>
+    </div>
+    <div class="gitem">
+      <div class="ic">👾</div>
+      <div><h3>적 3원형 실루엣 분리</h3><p>지상(일반)·장갑(더 무거운 실루엣)·비행(공중) — 경고 링 색 = 카테고리(코드 오버레이)라 <b style="color:var(--tx)">적 본체는 실루엣 구분 + 링 부착 여백</b>만 만족.</p></div>
+    </div>
+    <div class="gitem crit">
+      <div class="ic">⚖️</div>
+      <div><h3>상업 가능 + 수정 허용</h3><p>팔레트 스왑 = 수정. <b style="color:var(--ok)">CC0 선호</b>(재배포 가능). free-commercial 도 Private 레포 MVP 엔 허용. 바이너리 내 출처표기 강제는 회피(크레딧 화면까지만).</p></div>
+    </div>
+    <div class="gitem">
+      <div class="ic">📐</div>
+      <div><h3>규격 잠금 호환</h3><p>아래 §C 규격(셀·프레임·피벗)으로 슬라이스 가능해야. 비정사각/불규칙 그리드는 임포트 시 재단 비용 — 잠금 규격에 맞춰 정규화 가능한지 확인.</p></div>
+    </div>
+  </div>
+
+  <!-- ── CANDIDATES ── -->
+  <div class="sec"><span class="n">B</span><h2>후보 3종</h2><span class="sub">슬라이드 · 사망 · 적 · 라이선스 4축</span></div>
+  <div class="cands">
+
+    <!-- A: Kenney -->
+    <div class="card">
+      <div class="stage" style="--glow:rgba(116,192,252,.35)">
+        <div class="pixwrap">
+          <!-- ultra-blocky minimal runner -->
+          <svg width="72" height="84" viewBox="0 0 18 21" fill="#74C0FC">
+            <rect x="6" y="1" width="6" height="5"/><rect x="7" y="2" width="1" height="1" fill="#0d0d13"/><rect x="10" y="2" width="1" height="1" fill="#0d0d13"/>
+            <rect x="5" y="6" width="8" height="7"/><rect x="3" y="7" width="2" height="3"/><rect x="13" y="7" width="2" height="3"/>
+            <rect x="5" y="13" width="3" height="5"/><rect x="10" y="13" width="3" height="6"/>
+            <rect x="5" y="18" width="4" height="2"/>
+          </svg>
+        </div>
+        <div class="glabel">개념 실루엣 · 블록형 미니멀</div>
+      </div>
+      <div class="body">
+        <div class="ctop"><span class="clet">A</span><h3>Pixel Platformer</h3></div>
+        <div class="csrc">Kenney · <a href="https://kenney.nl/assets/pixel-platformer" target="_blank" rel="noopener">kenney.nl ↗</a></div>
+        <span class="lic cc0">● CC0 1.0 · 완전 자유</span>
+        <div class="cov" style="margin-top:14px">
+          <div class="chip p"><span class="cl">달리기</span><span class="cv">△</span></div>
+          <div class="chip n"><span class="cl">점프</span><span class="cv">△</span></div>
+          <div class="chip n"><span class="cl">슬라이드</span><span class="cv">✗</span></div>
+          <div class="chip n"><span class="cl">사망</span><span class="cv">✗</span></div>
+          <div class="chip y"><span class="cl">적</span><span class="cv">✓</span></div>
+          <div class="chip y"><span class="cl">타일/HUD</span><span class="cv">✓</span></div>
+        </div>
+        <dl class="prosc">
+          <dt class="pp">강점</dt>
+          <ul>
+            <li><b>법적 0리스크</b> — CC0, 재배포·무표기. 200에셋(적·타일·HUD 동봉)</li>
+            <li>초미니멀 블록 실루엣 → 다크 미니멀 무드·소형 가독 최상, 스왑 trivial</li>
+          </ul>
+          <dt class="cc">약점</dt>
+          <ul>
+            <li><b>포즈 기반 저프레임</b> — 달리기 사이클·슬라이드·사망 전부 자작 애니 필요</li>
+            <li>너무 단순해 "실제 캐릭터" 요구(spec §2.5)와 거리</li>
+          </ul>
+        </dl>
+      </div>
+    </div>
+
+    <!-- B: Pixel Frog -->
+    <div class="card">
+      <div class="stage" style="--glow:rgba(81,207,102,.32)">
+        <div class="pixwrap">
+          <!-- rounder cute platformer char -->
+          <svg width="68" height="84" viewBox="0 0 17 21">
+            <rect x="4" y="2" width="9" height="8" rx="0" fill="#7CF29C"/>
+            <rect x="3" y="3" width="11" height="6" fill="#7CF29C"/>
+            <rect x="6" y="4" width="2" height="3" fill="#0d0d13"/><rect x="10" y="4" width="2" height="3" fill="#0d0d13"/>
+            <rect x="6" y="5" width="1" height="1" fill="#EEEEF2"/><rect x="10" y="5" width="1" height="1" fill="#EEEEF2"/>
+            <rect x="5" y="10" width="7" height="6" fill="#7CF29C"/>
+            <rect x="3" y="11" width="2" height="4" fill="#7CF29C"/><rect x="12" y="11" width="2" height="4" fill="#7CF29C"/>
+            <rect x="5" y="16" width="3" height="4" fill="#7CF29C"/><rect x="9" y="16" width="3" height="4" fill="#7CF29C"/>
+            <rect x="4" y="20" width="4" height="1" fill="#EEEEF2"/><rect x="9" y="20" width="4" height="1" fill="#EEEEF2"/>
+          </svg>
+        </div>
+        <div class="glabel">개념 실루엣 · 둥근 캐주얼</div>
+      </div>
+      <div class="body">
+        <div class="ctop"><span class="clet">B</span><h3>Pixel Adventure 1+2</h3></div>
+        <div class="csrc">Pixel Frog · <a href="https://pixelfrog-assets.itch.io/pixel-adventure-1" target="_blank" rel="noopener">itch.io ↗</a></div>
+        <span class="lic cc0">● CC0 1.0 · 완전 자유</span>
+        <div class="cov" style="margin-top:14px">
+          <div class="chip y"><span class="cl">달리기</span><span class="cv">✓</span></div>
+          <div class="chip y"><span class="cl">점프</span><span class="cv">✓</span></div>
+          <div class="chip n"><span class="cl">슬라이드</span><span class="cv">✗</span></div>
+          <div class="chip p"><span class="cl">사망</span><span class="cv">△</span></div>
+          <div class="chip y"><span class="cl">적</span><span class="cv">✓✓</span></div>
+          <div class="chip y"><span class="cl">변형 캐릭</span><span class="cv">4</span></div>
+        </div>
+        <dl class="prosc">
+          <dt class="pp">강점</dt>
+          <ul>
+            <li><b>CC0 + 풀 애니</b>(idle/run/jump/fall) 32×32, 20fps · 캐릭 4종</li>
+            <li><b>적 20종(PA2)</b> — 일반·장갑·비행 3원형 충분히 커버</li>
+          </ul>
+          <dt class="cc">약점</dt>
+          <ul>
+            <li><b>슬라이드 없음</b>(crouch도 X) · 사망 = hit 만 → 슬라이드·사망 자작</li>
+            <li>둥근/귀여운 톤 — 외곽선 굵음. 스왑+소형+글로우로 완화되나 무드 검증 필요</li>
+          </ul>
+        </dl>
+      </div>
+    </div>
+
+    <!-- C: rvros -->
+    <div class="card rec">
+      <div class="recflag">▷ 추천 · 플레이어</div>
+      <div class="stage" style="--glow:rgba(177,151,252,.34)">
+        <div class="pixwrap">
+          <!-- leaner adventurer w/ scarf hint -->
+          <svg width="62" height="88" viewBox="0 0 15.5 22">
+            <rect x="5" y="1" width="5" height="5" fill="#EEEEF2"/><rect x="6" y="2" width="1" height="2" fill="#0d0d13"/>
+            <rect x="9" y="3" width="3" height="2" fill="#C9A0FF"/>
+            <rect x="5" y="6" width="6" height="6" fill="#EEEEF2"/><rect x="4" y="7" width="1" height="4" fill="#EEEEF2"/><rect x="11" y="7" width="2" height="4" fill="#EEEEF2"/>
+            <rect x="12" y="9" width="3" height="1" fill="#9AA0B0"/>
+            <rect x="5" y="12" width="2" height="6" fill="#EEEEF2"/><rect x="9" y="12" width="2" height="7" fill="#EEEEF2"/>
+            <rect x="4" y="18" width="3" height="2" fill="#EEEEF2"/><rect x="9" y="19" width="4" height="2" fill="#EEEEF2"/>
+          </svg>
+        </div>
+        <div class="glabel">개념 실루엣 · 호리한 어드벤처러</div>
+      </div>
+      <div class="body">
+        <div class="ctop"><span class="clet">C</span><h3>Animated Pixel Adventurer</h3></div>
+        <div class="csrc">rvros · <a href="https://rvros.itch.io/animated-pixel-hero" target="_blank" rel="noopener">itch.io ↗</a></div>
+        <span class="lic free">◐ free · 상업 OK · 수정 OK (≠CC0)</span>
+        <div class="cov" style="margin-top:14px">
+          <div class="chip y"><span class="cl">달리기</span><span class="cv">✓</span></div>
+          <div class="chip y"><span class="cl">점프</span><span class="cv">✓</span></div>
+          <div class="chip y"><span class="cl">슬라이드</span><span class="cv">✓</span></div>
+          <div class="chip y"><span class="cl">사망</span><span class="cv">✓</span></div>
+          <div class="chip n"><span class="cl">적</span><span class="cv">✗</span></div>
+          <div class="chip y"><span class="cl">애니수</span><span class="cv">39</span></div>
+        </div>
+        <dl class="prosc">
+          <dt class="pp">강점</dt>
+          <ul>
+            <li><b>weaver 4동사 전부 네이티브</b> — Run·Jump·<b>Slide</b>·Crouch·Fall·사망 포함(39종)</li>
+            <li>호리한 측면 러너 실루엣 = 톤 최적 · <b>단일 본체</b> → 스킨 스왑 모델과 정확히 일치</li>
+          </ul>
+          <dt class="cc">약점</dt>
+          <ul>
+            <li><b>CC0 아님</b> — 상업·수정 OK지만 원본 에셋 재배포·재판매 X (Private 레포 출시엔 무문제)</li>
+            <li><b>적 미포함</b> — 몬스터는 별도 팩 필요 → 적은 B 또는 A 에서 조달</li>
+          </ul>
+        </dl>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SPEC LOCK ── -->
+  <div class="sec"><span class="n">C</span><h2>스프라이트 규격 잠금</h2><span class="sub">★ 진짜 영속 결정 — 어느 팩이든·교체본도 이 규격 준수</span></div>
+  <div class="speclock">
+    <div class="lh"><span class="lk">🔒</span><h3>weaver 캐릭터 스프라이트 규격 (임시 확정 — 승인 시 SoT 반영)</h3><span>spec §2.5 "처음부터 고정"</span></div>
+    <table class="spectbl">
+      <tr><td>프레임 셀</td><td><b>48 × 48 px 정사각</b> — 가장 넓은 포즈(점프 팔 뻗음·슬라이드)를 수용, 정수배율 친화(렌더 ×N 블러 0), Unity Grid-by-Cell 슬라이스. <span style="color:var(--dim)">소스 팩이 32²/50²여도 48² 캔버스 중앙 정렬로 정규화 임포트.</span></td></tr>
+      <tr><td>피벗</td><td><b>바닥 중앙</b> (24, 0) — 발이 트랙 주행면에 접지. 법선축 정렬 기준 (옆벽·천장 자동 성립).</td></tr>
+      <tr><td>애니 세트 · 프레임수</td><td>
+        <div class="animstrip">
+          <span class="af">idle <b>4f</b></span><span class="af">run <b>6f</b></span><span class="af">jump <b>3f</b> (상승·정점·하강)</span>
+          <span class="af">slide <b>2f</b> (진입·유지)</span><span class="af">death <b>4f</b></span>
+        </div>
+        <div class="note" style="margin-top:8px">brief "run 4~8f" → 6f 채택. 무기 발사는 자동(코드) — 캐릭터 attack 프레임 불요. 슬라이드 유지는 2f 루프.</div>
+      </td></tr>
+      <tr><td>팔레트</td><td><b>≤8색 · 본체 1색 = 스왑 키</b>. 인덱스/제한 팔레트 필수. 외곽선·그림자는 고정(또는 동시 틴트). 스킨 8종 = 본체색 교체로 코드 적용(셰이더/팔레트 맵).</td></tr>
+      <tr><td>포맷</td><td><b>PNG 가로 스트립</b> (애니별 1행), 투명 배경, <b>20fps</b> 기준(Pixel Frog 정합). 베이크 글로우/트레일 <b>금지</b> — 코드 파티클.</td></tr>
+      <tr><td>몬스터 셀</td><td>일반 <b>48²</b> · 장갑 <b>48²</b>(더 무거운 실루엣) · 비행 <b>48²</b>(공중 idle 2~4f). 경고 링은 코드 오버레이(카테고리색) — 본체에 링 베이크 X.</td></tr>
+    </table>
+  </div>
+
+  <!-- ── RECOMMENDATION ── -->
+  <div class="sec"><span class="n">D</span><h2>추천 — 공동창업자 관점</h2></div>
+  <div class="reco">
+    <div class="recmain">
+      <div class="lbl">▷ 권장 조합</div>
+      <h3>플레이어 = <em>C (rvros)</em> · 적 = <em>B (Pixel Adventure 2)</em></h3>
+      <p>weaver의 핵심 동사 <b>슬라이드</b>는 좌버튼 전용 입력이다. 슬라이드·사망을 <b>네이티브로 가진 건 C뿐</b> — 포즈팩(A)·hit only(B)에서 자작하면 MVP 일정 손해.
+        단일 본체 = 스킨 스왑 모델과 정확히 맞는다. 적은 C에 없으니 <b>CC0 적 20종(B-PA2)</b>으로 채운다.</p>
+      <div class="split">
+        <div class="splitcell"><div class="role">플레이어 캐릭터</div><div class="who"><b>C</b> rvros Adventurer</div><div class="lic2">free · 상업/수정 OK · 슬라이드+사망 네이티브</div></div>
+        <div class="splitcell"><div class="role">몬스터 3종</div><div class="who"><b>B</b> Pixel Adventure 2</div><div class="lic2">CC0 · 적 20종 → 일반·장갑·비행</div></div>
+      </div>
+      <p class="note">리스크 점검 — C는 CC0가 아니라 <b style="color:var(--tx)">원본 에셋 재배포 불가</b>. weaver 레포 = Private 이고 게임 바이너리 내 사용은 라이선스가 명시 허용 → 무문제. 단 previews/마케팅에 <b>원본 스프라이트시트 자체를 공개 호스팅하지 말 것</b>. 어차피 MVP는 교체 전제(§2.5)라 노출 표면도 짧다.</p>
+    </div>
+    <div class="altbox">
+      <div class="lbl">대안 경로</div>
+      <div class="alt">
+        <h4>순정 CC0 우선 <span>— B 단독</span></h4>
+        <p>법적 단순성·재배포 자유가 1순위면 <b style="color:var(--tx)">B 단독</b>(캐릭+적 한 팩). 비용 = 슬라이드·사망 자작 애니 2세트. 톤(둥근 캐주얼) 무드 검증 선행.</p>
+      </div>
+      <div class="alt">
+        <h4>최소 미니멀 <span>— A 단독</span></h4>
+        <p>다크 미니멀 톤 정합·소형 가독은 A가 최고지만 애니 표면을 거의 전부 자작 → 1인 MVP 일정과 상충. 비권장(프로토 임시용엔 가능).</p>
+      </div>
+      <div class="alt">
+        <h4>교체 단계 <span>— 출시 후</span></h4>
+        <p>다운로드 시그널 후 <b style="color:var(--tx)">Retro Diffusion($20 일시불·완전소유)</b> 또는 외주로 고유 캐릭터·스킨 라인업. §C 규격 그대로 → 코드 변경 0.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LICENSE SUMMARY ── -->
+  <div class="sec"><span class="n">E</span><h2>라이선스 요약</h2><span class="sub">임포트 전 최종 확인 (각 페이지 라이선스 문구 재확인 권장)</span></div>
+  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+  <table class="lictbl" style="min-width:560px">
+    <tr><th>후보</th><th>라이선스</th><th>상업</th><th>수정</th><th>재배포</th><th>표기</th><th>비고</th></tr>
+    <tr>
+      <td><b>A</b> Kenney Pixel Platformer<br><span class="pill-cc0">CC0 1.0</span></td>
+      <td>CC0 (퍼블릭 도메인)</td>
+      <td class="ok2">OK</td><td class="ok2">OK</td><td class="ok2">OK</td>
+      <td>불요</td>
+      <td>가장 자유. 200에셋·적·타일·HUD 동봉</td>
+    </tr>
+    <tr>
+      <td><b>B</b> Pixel Frog Pixel Adventure<br><span class="pill-cc0">CC0 1.0</span></td>
+      <td>CC0 (퍼블릭 도메인)</td>
+      <td class="ok2">OK</td><td class="ok2">OK</td><td class="ok2">OK</td>
+      <td>불요</td>
+      <td>PA1 캐릭4·PA2 적20. pay-what-you-want(무료)</td>
+    </tr>
+    <tr>
+      <td><b>C</b> rvros Animated Adventurer<br><span class="pill-free">free / custom</span></td>
+      <td>개인·상업 무료</td>
+      <td class="ok2">OK</td><td class="ok2">OK</td><td class="no2">금지</td>
+      <td>불요(권장)</td>
+      <td>원본 에셋 재판매·재배포 X. 게임 내 사용 무문제. 크레딧 권장</td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="foot">
+    <b>다음 단계 (3단 분업 · workflow §8.4):</b><br>
+    ① <b>디자인 세션(현재)</b> = 본 보드 + 스타일 가드 + 규격 잠금 제시 → 사용자 선택 대기<br>
+    ② <b>사용자</b> = 후보 itch/Kenney 실아트 확인 → 조합 선택 + 규격 승인 → 팩 다운로드<br>
+    ③ <b>plat(unity, M0~)</b> = 48² 정규화 임포트 · 슬라이스 · 팔레트 스왑 셰이더 · 인게임 가독/소형 렌더 검증<br>
+    <span style="color:var(--dim)">선택 확정 시 → brief.md 에셋 작업목록 + design-system 캐릭터 규격 토큰에 반영(SoT) → 리드 <code>/status</code> 회수.
+    톤 검증(B 둥근 캐주얼이 다크 미니멀에 붙는가)은 임포트 후 인게임 소형 렌더에서 — 본 보드는 결정 구조화까지.</span>
+  </div>
+
+</div>
+</body>
+</html>
