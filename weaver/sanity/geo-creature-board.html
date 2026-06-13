@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 기하 생물 변주 보드 (귀여움 스펙트럼)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;
+    --tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;
+    --blue:#4DABF7;--red:#FF6B6B;--yellow:#FFD43B;--purple:#B197FC;
+    --coin:#FFE08A;--prog:#5C7CFA;--ok:#51CF66;--warn:#FF5A5A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);text-decoration:underline;}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;
+    background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:790px;}.lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:5px 11px;}
+  .tag b{color:var(--tx);}
+
+  .warnbox{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(255,212,59,.34);
+    background:linear-gradient(180deg,rgba(255,212,59,.08),rgba(255,212,59,.02));border-radius:14px;padding:14px 17px;margin-bottom:14px;}
+  .warnbox .i{font-size:17px;flex:none;margin-top:1px;}
+  .warnbox p{font-size:12.5px;color:var(--tx);line-height:1.6;}.warnbox p b{color:var(--yellow);}.warnbox p span{color:var(--sub);}
+
+  .ask{display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(92,124,250,.4);
+    background:linear-gradient(180deg,rgba(92,124,250,.10),rgba(92,124,250,.03));border-radius:14px;padding:15px 18px;margin-bottom:24px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--prog);font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .ask p{font-size:13.5px;color:var(--tx);}.ask p span{color:var(--sub);}.ask b{color:var(--prog);}
+
+  .gctrl{display:flex;gap:18px;align-items:center;flex-wrap:wrap;border:1px solid var(--bd);border-radius:14px;
+    padding:13px 16px;margin-bottom:26px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px);background:rgba(18,18,26,.86);}
+  .gctrl .grp{display:flex;gap:8px;align-items:center;}
+  .gctrl .lbl{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;}
+  .pose{font-family:var(--mono);font-size:11px;color:var(--sub);background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:6px 13px;cursor:pointer;transition:.12s;}
+  .pose:hover{border-color:var(--prog);color:var(--tx);}.pose.on{background:var(--surf-a);border-color:var(--prog);color:var(--tx);}
+  .skinpick{display:flex;gap:6px;flex-wrap:wrap;}
+  .sk{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer;transition:.12s;}
+  .sk.on{border-color:var(--tx);box-shadow:0 0 0 3px rgba(238,238,242,.12);}.sk:hover{transform:translateY(-2px);}
+
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media(max-width:820px){.trio{grid-template-columns:1fr;max-width:430px;margin:0 auto;}}
+  .col{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;display:flex;flex-direction:column;}
+  .col.rec{border-color:rgba(92,124,250,.5);box-shadow:0 0 0 1px rgba(92,124,250,.15);}
+  .col .top{padding:14px 16px 12px;border-bottom:1px solid var(--bd);position:relative;}
+  .col .recbadge{position:absolute;top:12px;right:14px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;
+    color:var(--ink);background:var(--prog);border-radius:6px;padding:3px 8px;}
+  .col .kk{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--prog);text-transform:uppercase;}
+  .col h3{font-size:16px;font-weight:800;margin-top:3px;}
+  .col .one{font-size:11.5px;color:var(--sub);margin-top:2px;line-height:1.5;}
+  .meter{display:flex;align-items:center;gap:7px;margin-top:9px;}
+  .meter .ml{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;}
+  .meter .dots{display:flex;gap:3px;}
+  .meter .d{width:8px;height:8px;border-radius:50%;background:var(--bd);}
+  .meter .d.on{background:var(--prog);}
+  .col .stage{position:relative;display:grid;place-items:center;background:
+      radial-gradient(200px 200px at 50% 44%, rgba(255,255,255,.03), transparent 70%),var(--ink);border-bottom:1px solid var(--bd);}
+  .col canvas{display:block;}
+  .col .scalechip{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;color:var(--dim);
+    background:rgba(12,12,17,.7);border:1px solid var(--bd);border-radius:8px;padding:5px 8px;}
+  .col .scalechip canvas{display:block;}
+  .col .body{padding:13px 16px 16px;display:flex;flex-direction:column;gap:12px;flex:1;}
+  .swaprow{display:flex;gap:5px;align-items:center;justify-content:center;background:var(--ink);border:1px solid var(--bd);border-radius:10px;padding:8px 6px;}
+  .swaprow canvas{display:block;}
+  .pts{list-style:none;display:grid;gap:6px;}
+  .pts li{font-size:11.5px;color:var(--sub);padding-left:18px;position:relative;line-height:1.5;}
+  .pts li::before{content:"●";position:absolute;left:0;color:var(--prog);font-size:8px;top:3px;}.pts li b{color:var(--tx);}
+  .fit{font-size:11px;color:var(--dim);border-top:1px solid var(--bd);padding-top:10px;margin-top:auto;}.fit b{color:var(--ok);}
+  .rotok{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--ok);border:1px solid rgba(81,207,102,.35);border-radius:7px;padding:3px 7px;background:rgba(81,207,102,.06);}
+
+  .note{border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:16px 18px;margin-top:26px;}
+  .note h4{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .note h4 .b{font-family:var(--mono);font-size:10px;color:var(--ink);background:var(--prog);border-radius:5px;padding:2px 7px;}
+  .note p{font-size:12.5px;color:var(--sub);line-height:1.65;}.note p+p{margin-top:8px;}
+  .note b{color:var(--tx);}.note code{font-family:var(--mono);font-size:11px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+  footer{margin-top:40px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">geo-creature-board</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">ⓑ⁺ · 기하 생물(A) 심화 · 귀여움 스펙트럼</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">기하 생물 변주 보드</span></h1>
+    <p class="lede">
+      방향 = <b>A 기하 생물</b> 확정(2026-06-14). 요청 = <b>"좀 더 귀엽게"</b>.
+      귀여움은 단순 변주가 아니라 무드 결정이라(아래 ⚠), <b>같은 도형 생물을 절제 → 균형 → 마스코트</b> 세 단계로 만들어
+      원하는 귀여움 지점을 눈으로 고르게 했다. 셋 다 트랙 변형 다각형과 형태 언어 일치 · 단색 1변수 스왑 · 임의각 크리스프.
+      귀여움 레버 = <b>둥글기 · 큰 눈(저위치·글린트) · 통통한 비율 · 바운스/스쿼시 · 깜빡임</b>.
+    </p>
+    <div class="meta-row">
+      <span class="tag">방향 = <b>A 기하 생물</b></span>
+      <span class="tag">눈 = <b>다크 노치 + 글린트</b> (단색 안전)</span>
+      <span class="tag">전부 <b>스왑·임의각 유지</b></span>
+      <span class="tag">paranoia <b>#1 프레즌스 · #6 토큰 · #7 스토어</b></span>
+    </div>
+  </header>
+
+  <div class="warnbox">
+    <div class="i">⚠</div>
+    <p><b>brief 무드는 "귀엽지 않음 — tense·minimal·집중을 돕는 절제"로 명시돼 있음.</b>
+    <span>귀여움 도입 = 그 정체성을 트는 결정. 트레이드오프 — 귀여울수록 마스코트·스티커·마케팅 친화 + 스킨 BM 애착 ↑ / Downwell류 "쿨한 긴장"은 옅어짐. 그래서 스펙트럼으로 제시 — 고른 지점에 맞춰 <b style="color:var(--tx)">brief 무드 문구도 리드가 정합</b>.</span></p>
+  </div>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>결정 요청 — 귀여움 지점 택1 (절제 / 균형 / 마스코트).</b>
+    <span>상단 <b>포즈·스킨</b>으로 비교. 우하단 = <b>인게임 실제 크기</b>(작아도 표정 읽히는가 = #5 가독). idle 에서 <b>깜빡임</b> 관찰. 고르면 그 1종을 최종 스프라이트 시트 규격(idle/run/jump/slide/death)으로 확정.</span></p>
+  </div>
+
+  <div class="gctrl">
+    <div class="grp"><span class="lbl">POSE</span>
+      <button class="pose on" data-p="idle">idle</button>
+      <button class="pose" data-p="run">run</button>
+      <button class="pose" data-p="jump">jump</button>
+    </div>
+    <div class="grp"><span class="lbl">SKIN</span><div class="skinpick" id="skinpick"></div></div>
+  </div>
+
+  <div class="trio" id="trio"></div>
+
+  <div class="note">
+    <h4><span class="b">규격</span>세 변주 공통 — ⓑ⁺ 불변 + 귀여움 기법</h4>
+    <p><b>눈 = 단색 안전:</b> 다크 노치(<code>skin</code> 어둡게) + 글린트 점(<code>skin</code> 밝게) — 전부 skin 1변수 파생이라 8색 스왑에서 눈도 함께 자연 변색. 별색 안 씀(틴트 안 깨짐).</p>
+    <p><b>귀여움 = 형태·모션:</b> 디테일 추가가 아니라 ① 더 둥근 코너 ② 눈을 크게·낮게 ③ 통통한 비율 ④ 바운스·스쿼시(점프 시 늘어남) ⑤ 주기적 깜빡임. 전부 코드 파라미터 → 정교판 v1.x 교체 시도 동일 규격 유지.</p>
+    <p><b>다음:</b> 고른 변주 → idle4 / run6 / jump3 / slide2 / death4 풀 프레임 시퀀스 + 무기 장착 포즈 보드 → brief.md 에셋목록 + design-system <code>hero_character</code> SoT 반영(리드).</p>
+  </div>
+
+  <footer>
+    weaver / sanity / geo-creature-board.html · ⓑ⁺ 기하 생물 귀여움 스펙트럼<br>
+    노출 = unlisted (noindex) · 선행 = silhouette-concept-board (방향 A 확정) · 결정 시 brief 무드 문구 + design-system hero_character 정합(리드)
+  </footer>
+</div>
+
+<script>
+const SKINS=['#FFFFFF','#55CCFF','#FF77AA','#7CF29C','#FFB454','#C9A0FF','#FF6E6E','#FFE066'];
+function hx2rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function shade(h,f){let[r,g,b]=hx2rgb(h);if(f<=1){r*=f;g*=f;b*=f;}else{r=r+(255-r)*(f-1);g=g+(255-g)*(f-1);b=b+(255-b)*(f-1);}return`rgb(${r|0},${g|0},${b|0})`;}
+function roundPoly(ctx,pts,r){const n=pts.length;ctx.beginPath();
+  for(let i=0;i<=n;i++){const p0=pts[i%n],p1=pts[(i+1)%n];const mx=(p0.x+p1.x)/2,my=(p0.y+p1.y)/2;
+    if(i===0)ctx.moveTo(mx,my);else ctx.arcTo(p0.x,p0.y,mx,my,r);}ctx.closePath();}
+
+function drawEye(ctx,x,y,r,blink,dark,glint){
+  if(blink){ctx.fillStyle=dark;ctx.fillRect(x-r,y-0.7,r*2,1.4);return;}
+  ctx.fillStyle=dark;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  ctx.fillStyle=glint;ctx.beginPath();ctx.arc(x-r*0.32,y-r*0.36,r*0.4,0,7);ctx.fill();
+}
+function foot(ctx,x,y,r,skin,ol){ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.3;
+  roundPoly(ctx,[{x:x,y:y},{x:x-r,y:y+r+2},{x:x+r,y:y+r+2}],1.6);ctx.fill();ctx.stroke();}
+
+function drawGeo(ctx,skin,s,phase,t,c){
+  const ol=shade(skin,.4),hi=shade(skin,1.55),dark=shade(skin,.12),glint=shade(skin,1.9);
+  const ph=t*8.5,run=phase==='run',jump=phase==='jump';
+  const sw=run?Math.sin(ph)*c.footSw:0;
+  let bob,sq,tilt;
+  if(jump){bob=-12;sq=1.13;tilt=-0.1;}
+  else if(run){bob=Math.abs(Math.sin(ph))*-c.bounce;sq=1+Math.sin(ph)*0.05;tilt=0.11;}
+  else{bob=Math.sin(t*2.4)*c.idleBob;sq=1+Math.sin(t*2.4)*0.035*c.squashIdle;tilt=0;}
+  const blink=(t%3.3)<0.13;
+  ctx.save();ctx.scale(s,s);ctx.translate(0,bob);ctx.rotate(tilt);ctx.scale(1/Math.sqrt(sq),sq);
+  // feet
+  foot(ctx,-c.footX+sw,c.baseY,c.footR,skin,ol);
+  foot(ctx, c.footX-sw,c.baseY,c.footR,skin,ol);
+  // arms (mascot)
+  if(c.arms){const aw=run?Math.sin(ph+Math.PI)*3:Math.sin(t*2.4)*1.3;
+    ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.2;
+    roundPoly(ctx,[{x:-c.halfW+1,y:-1+aw},{x:-c.halfW-3,y:3+aw},{x:-c.halfW-3,y:7+aw},{x:-c.halfW+2,y:5+aw}],1.6);ctx.fill();ctx.stroke();
+    roundPoly(ctx,[{x:c.halfW-1,y:-1-aw*.6},{x:c.halfW+3,y:3-aw*.6},{x:c.halfW+3,y:7-aw*.6},{x:c.halfW-2,y:5-aw*.6}],1.6);ctx.fill();ctx.stroke();}
+  // tuft (mascot)
+  if(c.tuft){ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.2;
+    ctx.save();ctx.translate(0,c.apexY+1);ctx.rotate(Math.sin(t*4)*0.16);
+    roundPoly(ctx,[{x:0,y:-8},{x:3,y:0},{x:-3,y:0}],1.5);ctx.fill();ctx.stroke();ctx.restore();}
+  // body
+  ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.7;
+  roundPoly(ctx,[{x:0,y:c.apexY},{x:c.halfW,y:c.baseY},{x:-c.halfW,y:c.baseY}],c.round);ctx.fill();ctx.stroke();
+  // facet highlight
+  ctx.fillStyle=hi;ctx.globalAlpha=.13;
+  roundPoly(ctx,[{x:-2,y:c.apexY+4},{x:5,y:c.eyeY-3},{x:-5,y:c.eyeY-1}],3);ctx.fill();ctx.globalAlpha=1;
+  // eyes
+  if(c.eyes===1) drawEye(ctx,1.2,c.eyeY,c.eyeR,blink,dark,glint);
+  else{drawEye(ctx,-c.eyeDx,c.eyeY,c.eyeR,blink,dark,glint);drawEye(ctx,c.eyeDx,c.eyeY,c.eyeR,blink,dark,glint);}
+  // mouth (mascot only — tiny)
+  if(c.mouth&&!blink){ctx.strokeStyle=dark;ctx.lineWidth=1.1;ctx.lineCap='round';
+    ctx.beginPath();ctx.arc(0,c.eyeY+4.5,1.8,0.2,Math.PI-0.2);ctx.stroke();}
+  ctx.restore();
+}
+
+const VARS=[
+ {key:'restrained',kk:'A1',name:'절제형',cute:1,
+  one:'현재 컨셉에 가장 가까움 — 날렵한 삼각·외눈·미니멀',
+  pts:['<b>brief 무드 충실</b> — tense·절제 유지',
+       '외눈 노치 = Downwell 톤 쿨함',
+       '귀여움보다 "기하 위협" 쪽 무게'],
+  fit:'정체성 안전. 단 요청한 "귀여움"은 약함',
+  cfg:{apexY:-25,baseY:8,halfW:13.5,round:5,eyes:1,eyeR:2.0,eyeY:-8,eyeDx:0,footX:5.5,footR:3.6,footSw:5,bounce:3.2,idleBob:1.3,squashIdle:.6,arms:false,tuft:false,mouth:false}},
+ {key:'balanced',kk:'A2',name:'균형형',cute:2,rec:true,
+  one:'둥근 몸 + 두 눈(글린트) — 쿨함과 귀여움 공존',
+  pts:['<b>아케이드 쿨 + 친근함 동시</b> — 권장 스윗스팟',
+       '두 눈 + 글린트 = 캐릭터 애착(스킨 BM)',
+       '여전히 기하·미니멀 — 무드 과이탈 X'],
+  fit:'요청("좀 더 귀엽게")에 가장 균형있게 부합',
+  cfg:{apexY:-21,baseY:9,halfW:15,round:8.5,eyes:2,eyeR:2.5,eyeY:-5,eyeDx:4.6,footX:6,footR:4,footSw:5,bounce:4,idleBob:1.7,squashIdle:1,arms:false,tuft:false,mouth:false}},
+ {key:'mascot',kk:'A3',name:'마스코트형',cute:3,
+  one:'통통·큰 눈 저위치·팔·뿔·바운스 — 완전 캐릭터',
+  pts:['<b>마스코트·스티커·마케팅 잠재력 최대</b>',
+       '큰 눈+입+뿔+팔 = 애착·굿즈화',
+       '단 tense 무드와 가장 멀어짐 (무드 수정 필요)'],
+  fit:'귀여움 최대. brief 무드 재정의를 전제로',
+  cfg:{apexY:-15,baseY:11,halfW:16,round:12,eyes:2,eyeR:3.2,eyeY:-1,eyeDx:5,footX:6.5,footR:4.6,footSw:4.2,bounce:5,idleBob:2.2,squashIdle:1.7,arms:true,tuft:true,mouth:true}},
+];
+
+let pose='idle',skin='#55CCFF',T=0;const cards={};
+function buildSkin(){const h=document.getElementById('skinpick');h.innerHTML='';
+  SKINS.forEach(s=>{const b=document.createElement('div');b.className='sk'+(s===skin?' on':'');b.style.background=s;b.dataset.s=s;
+    b.onclick=()=>{skin=s;[...h.children].forEach(c=>c.classList.toggle('on',c.dataset.s===s));};h.appendChild(b);});}
+function buildTrio(){const host=document.getElementById('trio');host.innerHTML='';
+  VARS.forEach(v=>{const col=document.createElement('div');col.className='col'+(v.rec?' rec':'');
+    const dots=[1,2,3].map(i=>`<span class="d${i<=v.cute?' on':''}"></span>`).join('');
+    col.innerHTML=`
+      <div class="top">${v.rec?'<div class="recbadge">권장</div>':''}
+        <div class="kk">${v.kk}</div><h3>${v.name}</h3><div class="one">${v.one}</div>
+        <div class="meter"><span class="ml">CUTE</span><div class="dots">${dots}</div></div></div>
+      <div class="stage">
+        <canvas class="hero" width="300" height="280"></canvas>
+        <div class="scalechip"><span>인게임</span><canvas class="ig" width="46" height="46"></canvas></div></div>
+      <div class="body">
+        <div class="swaprow"></div>
+        <ul class="pts">${v.pts.map(p=>`<li>${p}</li>`).join('')}</ul>
+        <div class="fit"><span class="rotok">◇ 임의각 OK</span> &nbsp; <b>핏:</b> ${v.fit}</div></div>`;
+    host.appendChild(col);
+    const swap=col.querySelector('.swaprow');
+    SKINS.forEach(s=>{const cv=document.createElement('canvas');cv.width=30;cv.height=40;cv._s=s;swap.appendChild(cv);});
+    cards[v.key]={v,hero:col.querySelector('.hero'),ig:col.querySelector('.ig'),swaps:[...swap.querySelectorAll('canvas')]};});}
+function render(){for(const k in cards){const{v,hero,ig,swaps}=cards[k];
+  let ctx=hero.getContext('2d');ctx.clearRect(0,0,300,280);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(55,220.5);ctx.lineTo(245,220.5);ctx.stroke();
+  ctx.save();ctx.translate(150,196);drawGeo(ctx,skin,3.6,pose,T,v.cfg);ctx.restore();
+  ctx=ig.getContext('2d');ctx.clearRect(0,0,46,46);
+  ctx.fillStyle='#4DABF7';ctx.beginPath();ctx.arc(8,32,2.6,0,7);ctx.fill();
+  ctx.save();ctx.translate(27,33);drawGeo(ctx,skin,0.92,pose,T,v.cfg);ctx.restore();
+  swaps.forEach(cv=>{const x=cv.getContext('2d');x.clearRect(0,0,30,40);x.save();x.translate(15,30);drawGeo(x,cv._s,0.6,'idle',T,v.cfg);x.restore();});}}
+document.querySelectorAll('.pose').forEach(b=>{b.onclick=()=>{pose=b.dataset.p;document.querySelectorAll('.pose').forEach(x=>x.classList.toggle('on',x===b));};});
+buildSkin();buildTrio();
+let last=performance.now();
+function loop(now){const dt=(now-last)/1000;last=now;T+=dt;render();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
