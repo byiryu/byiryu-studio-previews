@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 기하 생물 결선 (#2 둥근삼각 vs #7 물방울)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;
+    --tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;
+    --blue:#4DABF7;--prog:#5C7CFA;--ok:#51CF66;--coin:#FFE08A;--warn:#FF5A5A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);text-decoration:underline;}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:800px;}.lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:5px 11px;}.tag b{color:var(--tx);}
+  .ask{display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(92,124,250,.4);background:linear-gradient(180deg,rgba(92,124,250,.10),rgba(92,124,250,.03));border-radius:14px;padding:15px 18px;margin-bottom:24px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--prog);font-size:22px;line-height:1;flex:none;margin-top:1px;}
+  .ask p{font-size:13.5px;color:var(--tx);}.ask p span{color:var(--sub);}.ask b{color:var(--prog);}
+
+  .gctrl{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border:1px solid var(--bd);border-radius:14px;padding:13px 16px;margin-bottom:26px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px);background:rgba(18,18,26,.86);}
+  .gctrl .grp{display:flex;gap:8px;align-items:center;}
+  .gctrl .lbl{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;}
+  .pose{font-family:var(--mono);font-size:11px;color:var(--sub);background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:6px 11px;cursor:pointer;transition:.12s;}
+  .pose:hover{border-color:var(--prog);color:var(--tx);}.pose.on{background:var(--surf-a);border-color:var(--prog);color:var(--tx);}
+  .skinpick{display:flex;gap:6px;flex-wrap:wrap;}
+  .sk{width:24px;height:24px;border-radius:7px;border:2px solid transparent;cursor:pointer;transition:.12s;}
+  .sk.on{border-color:var(--tx);box-shadow:0 0 0 3px rgba(238,238,242,.12);}.sk:hover{transform:translateY(-2px);}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:780px){.duo{grid-template-columns:1fr;}}
+  .col{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;display:flex;flex-direction:column;}
+  .col .top{padding:14px 16px 12px;border-bottom:1px solid var(--bd);}
+  .col .kk{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--prog);}
+  .col h3{font-size:16px;font-weight:800;margin-top:3px;}
+  .col .one{font-size:11.5px;color:var(--sub);margin-top:2px;line-height:1.5;}
+  .col .stage{position:relative;display:grid;place-items:center;background:radial-gradient(200px 200px at 50% 44%, rgba(255,255,255,.03), transparent 70%),var(--ink);border-bottom:1px solid var(--bd);}
+  .col canvas{display:block;}
+  .seqwrap{padding:12px 14px;border-bottom:1px solid var(--bd);}
+  .seqlbl{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.05em;margin-bottom:7px;}
+  .seq{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .seqcell{background:var(--ink);border:1px solid var(--bd);border-radius:9px;padding:5px 2px 4px;text-align:center;}
+  .seqcell canvas{display:block;margin:0 auto;}
+  .seqcell .pn{font-family:var(--mono);font-size:8px;color:var(--sub);margin-top:2px;}
+  .swapwrap{padding:12px 14px;border-bottom:1px solid var(--bd);}
+  .swaprow{display:flex;gap:5px;align-items:center;justify-content:center;background:var(--ink);border:1px solid var(--bd);border-radius:10px;padding:8px 5px;}
+  .swaprow canvas{display:block;}
+  .col .body{padding:12px 16px 16px;display:flex;flex-direction:column;gap:9px;flex:1;}
+  .pts{list-style:none;display:grid;gap:6px;}
+  .pts li{font-size:11.5px;color:var(--sub);padding-left:18px;position:relative;line-height:1.5;}
+  .pts li::before{content:"●";position:absolute;left:0;color:var(--prog);font-size:8px;top:3px;}.pts li b{color:var(--tx);}
+
+  .panel{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);padding:18px;margin-top:26px;}
+  .panel .ph{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;flex-wrap:wrap;}
+  .panel .ph h3{font-size:14px;font-weight:800;}
+  .panel .pdesc{font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.55;max-width:800px;}
+  .tt{display:grid;grid-template-columns:1fr 180px;gap:16px;align-items:start;}
+  @media(max-width:680px){.tt{grid-template-columns:1fr;}}
+  #trackStage{width:100%;border:1px solid var(--bd);border-radius:14px;background:var(--ink);display:block;}
+  .tt-side .hint{font-size:11.5px;color:var(--sub);line-height:1.6;margin-bottom:12px;}.tt-side .hint b{color:var(--tx);}
+  .dtoggle{display:flex;flex-direction:column;gap:6px;}
+  .dt{font-family:var(--mono);font-size:11px;text-align:center;padding:8px;border-radius:9px;cursor:pointer;border:1px solid var(--bd);background:var(--surf);color:var(--sub);transition:.12s;}
+  .dt.on{background:var(--surf-a);border-color:var(--prog);color:var(--tx);}
+
+  .note{border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:16px 18px;margin-top:26px;}
+  .note h4{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .note h4 .b{font-family:var(--mono);font-size:10px;color:var(--ink);background:var(--prog);border-radius:5px;padding:2px 7px;}
+  .note p{font-size:12.5px;color:var(--sub);line-height:1.65;}.note p+p{margin-top:8px;}.note b{color:var(--tx);}
+  .note code{font-family:var(--mono);font-size:11px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+  footer{margin-top:40px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">geo-creature-shortlist-board</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">ⓑ⁺ · 기하 생물 결선 · 풀 포즈</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">결선 — #2 둥근 삼각 vs #7 물방울</span></h1>
+    <p class="lede">
+      숏리스트 = <b>#2 둥근 삼각 · #7 물방울</b> (둘 다 균형 톤). 이제 <b>풀 포즈 세트</b>(idle·run·jump·slide·death)와
+      <b>스킨 8색 · 트랙 배치</b>로 깊게 비교해 <b>최종 1종</b>으로 좁힌다. slide(낮게 깔림)·death(전복+X눈)
+      포즈도 새로 설계 — 게임 전체에서 어떻게 움직일지가 보인다. 둘 다 단색 1변수 스왑 · 임의각 · 진행 방향.
+    </p>
+    <div class="meta-row">
+      <span class="tag">포즈 = <b>idle4·run6·jump3·slide2·death4</b></span>
+      <span class="tag">스킨 <b>8 스왑</b></span>
+      <span class="tag">방향 = <b>우향+미러</b></span>
+      <span class="tag">paranoia <b>#4 게임필 · #5 가독 · #1 프레즌스</b></span>
+    </div>
+  </header>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>결정 요청 — 최종 1종 (둥근 삼각 / 물방울), 또는 둘의 절충/추가 변주.</b>
+    <span>상단 <b>포즈·FACING·스킨</b> 으로 큰 캐릭터 비교. 각 열의 <b>5포즈 시퀀스 strip</b> = 스프라이트 세트 한눈에. 하단 <b>트랙 주행</b>으로 최종 후보 인게임 확인.</span></p>
+  </div>
+
+  <div class="gctrl">
+    <div class="grp"><span class="lbl">POSE</span>
+      <button class="pose on" data-p="idle">idle</button>
+      <button class="pose" data-p="run">run</button>
+      <button class="pose" data-p="jump">jump</button>
+      <button class="pose" data-p="slide">slide</button>
+      <button class="pose" data-p="death">death</button></div>
+    <div class="grp"><span class="lbl">FACING</span>
+      <button class="pose on" data-f="R">우향 →</button>
+      <button class="pose" data-f="L">← 좌향</button></div>
+    <div class="grp"><span class="lbl">SKIN</span><div class="skinpick" id="skinpick"></div></div>
+  </div>
+
+  <div class="duo" id="duo"></div>
+
+  <div class="panel">
+    <div class="ph"><h3>트랙 주행 — 최종 후보 인게임 확인</h3></div>
+    <p class="pdesc">정사각↔마름모 변형 트랙을 도는 모습. 벽 타며 회전해도 진행 방향(접선) 유지. 후보 전환해 인게임 실루엣·가독 비교.</p>
+    <div class="tt">
+      <canvas id="trackStage" width="720" height="380"></canvas>
+      <div class="tt-side">
+        <div class="hint"><b>후보 전환</b>해 트랙 위 비교.</div>
+        <div class="dtoggle">
+          <div class="dt on" data-d="0">#2 둥근 삼각</div>
+          <div class="dt" data-d="1">#7 물방울</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h4><span class="b">두 후보 성격</span>같은 균형 톤, 결은 다름</h4>
+    <p><b>#2 둥근 삼각:</b> 삼각 = 트랙 변형 기하·브랜드 모티프와 형태 언어 일치(아이콘·스토어와 한 몸). 각이 살아 "쿨한 긴장" 쪽. 방향 가독 = 앞으로 쏠린 apex + 전방 눈.</p>
+    <p><b>#7 물방울:</b> 곡선 = 가장 친근·말랑. 진행 방향으로 둥글게 흐르는 형태라 "달린다" 느낌이 부드럽다. 귀여움 쪽으로 반 발 더. 단 브랜드의 "기하" 색은 삼각보다 옅음.</p>
+    <p><b>판단 축:</b> <b>"쿨한 기하 정체성"(삼각)</b> ↔ <b>"친근·말랑"(물방울)</b>. 정답 없음 — brief 무드를 절제 쪽으로 둘지 균형 쪽으로 둘지와 직결. 최종 1종 → idle4/run6/jump3/slide2/death4 풀 프레임 + 무기 장착 포즈 → design-system <code>hero_character</code> SoT(리드).</p>
+  </div>
+
+  <footer>
+    weaver / sanity / geo-creature-shortlist-board.html · ⓑ⁺ 기하 생물 결선<br>
+    노출 = unlisted (noindex) · 선행 = geo-creature-gallery (#2·#7 선택) · 다음 = 최종 1종 풀 프레임 시퀀스
+  </footer>
+</div>
+
+<script>
+const SKINS=['#FFFFFF','#55CCFF','#FF77AA','#7CF29C','#FFB454','#C9A0FF','#FF6E6E','#FFE066'];
+function hx2rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function shade(h,f){let[r,g,b]=hx2rgb(h);if(f<=1){r*=f;g*=f;b*=f;}else{r=r+(255-r)*(f-1);g=g+(255-g)*(f-1);b=b+(255-b)*(f-1);}return`rgb(${r|0},${g|0},${b|0})`;}
+function roundPoly(ctx,pts,r){const n=pts.length;ctx.beginPath();
+  for(let i=0;i<=n;i++){const p0=pts[i%n],p1=pts[(i+1)%n];const mx=(p0.x+p1.x)/2,my=(p0.y+p1.y)/2;
+    if(i===0)ctx.moveTo(mx,my);else ctx.arcTo(p0.x,p0.y,mx,my,r);}ctx.closePath();}
+function drawEye(ctx,x,y,r,blink,dark,glint){
+  if(blink){ctx.fillStyle=dark;ctx.fillRect(x-r,y-0.7,r*2,1.4);return;}
+  ctx.fillStyle=dark;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  ctx.fillStyle=glint;ctx.beginPath();ctx.arc(x+r*0.34,y-r*0.36,r*0.4,0,7);ctx.fill();}
+function foot(ctx,x,y,r,skin,ol){ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.3;
+  roundPoly(ctx,[{x:x-r*0.4,y:y},{x:x-r,y:y+r+2},{x:x+r+1.4,y:y+r+2}],1.6);ctx.fill();ctx.stroke();}
+function motion(phase,t,bounce){const ph=t*8.5,run=phase==='run',jump=phase==='jump';
+  let bob,sq,sw;
+  if(jump){bob=-11;sq=1.12;sw=4;}
+  else if(run){bob=Math.abs(Math.sin(ph))*-(bounce||3.6);sq=1+Math.sin(ph)*.05;sw=Math.sin(ph)*5;}
+  else{bob=Math.sin(t*2.4)*1.5;sq=1+Math.sin(t*2.4)*.034;sw=0;}
+  return{ph,run,jump,bob,sq,sw,blink:(t%3.3)<0.13};}
+
+/* full pose draw: idle/run/jump/slide/death */
+function drawFull(ctx,skin,s,phase,t,c){
+  const ol=shade(skin,.4),hi=shade(skin,1.55),dark=shade(skin,.12),glint=shade(skin,1.9);
+  if(phase==='death'){
+    ctx.save();ctx.scale(s,s);const dt=(t%2.3);const set=Math.min(1,dt/0.4);
+    const ang=-1.5*set+Math.sin(dt*9)*0.05*(1-set);const drop=set*7;
+    if(dt<0.95){const pp=dt/0.95;ctx.globalAlpha=Math.max(0,1-pp);ctx.fillStyle=skin;
+      for(let i=0;i<5;i++){const a=-Math.PI/2+(i-2)*0.55;const d=pp*24;
+        ctx.beginPath();ctx.arc(Math.cos(a)*d,-8+Math.sin(a)*d-pp*5,2.2,0,7);ctx.fill();}ctx.globalAlpha=1;}
+    ctx.translate(0,drop);ctx.rotate(ang);
+    ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.7;roundPoly(ctx,c.body,c.round);ctx.fill();ctx.stroke();
+    ctx.strokeStyle=dark;ctx.lineWidth=1.7;ctx.lineCap='round';
+    c.eyes.forEach(e=>{const r=e.r*0.9;ctx.beginPath();ctx.moveTo(e.x-r,e.y-r);ctx.lineTo(e.x+r,e.y+r);ctx.moveTo(e.x+r,e.y-r);ctx.lineTo(e.x-r,e.y+r);ctx.stroke();});
+    ctx.restore();return;}
+  if(phase==='slide'){
+    ctx.save();ctx.scale(s,s);
+    ctx.strokeStyle=shade(skin,.62);ctx.lineWidth=1.5;ctx.lineCap='round';
+    for(let i=0;i<3;i++){const off=(t*46+i*8)%26;ctx.globalAlpha=.55-i*.15;
+      ctx.beginPath();ctx.moveTo(-26+off-2,-3+i*5);ctx.lineTo(-16+off-2,-3+i*5);ctx.stroke();}
+    ctx.globalAlpha=1;
+    ctx.translate(0,8);ctx.transform(1.28,0,0,0.5,0,0);
+    ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=2.0;roundPoly(ctx,c.body,c.round);ctx.fill();ctx.stroke();
+    if(c.hi){ctx.fillStyle=hi;ctx.globalAlpha=.13;roundPoly(ctx,c.hi,3);ctx.fill();ctx.globalAlpha=1;}
+    c.eyes.forEach(e=>drawEye(ctx,e.x+3.5,e.y,e.r,false,dark,glint));
+    ctx.restore();return;}
+  const m=motion(phase,t,c.bounce);const lean=(c.lean??.12)*(phase==='idle'?.5:1);
+  ctx.save();ctx.scale(s,s);ctx.translate(0,m.bob);ctx.rotate(lean);ctx.scale(1/Math.sqrt(m.sq),m.sq);
+  if(c.feet)c.feet.forEach((fx,i)=>foot(ctx,fx+(i%2?-m.sw:m.sw),c.baseY??9,c.footR||3.6,skin,ol));
+  ctx.fillStyle=skin;ctx.strokeStyle=ol;ctx.lineWidth=1.7;roundPoly(ctx,c.body,c.round);ctx.fill();ctx.stroke();
+  if(c.hi){ctx.fillStyle=hi;ctx.globalAlpha=.13;roundPoly(ctx,c.hi,3);ctx.fill();ctx.globalAlpha=1;}
+  c.eyes.forEach(e=>drawEye(ctx,e.x,e.y,e.r,m.blink,dark,glint));
+  ctx.restore();
+}
+
+const CANDS=[
+ {kk:'#2',nm:'둥근 삼각',one:'삼각 = 트랙·브랜드 기하 일치 · 쿨한 긴장 쪽',
+  pts:['<b>브랜드 정체성 강</b> — 변형 기하 모티프와 한 형태 언어','각이 살아 "집중·긴장" 무드 유지','전방 눈 + 쏠린 꼭짓점 = 방향 명확'],
+  c:{body:[{x:4,y:-20},{x:15,y:9},{x:-13,y:9}],round:8,lean:.12,feet:[-5,6],eyes:[{x:4.5,y:-6,r:2.4},{x:10,y:-6,r:1.9}]}},
+ {kk:'#7',nm:'물방울',one:'곡선 = 가장 친근·말랑 · 귀여움 쪽 반 발',
+  pts:['<b>친근감 최강</b> — 둥근 곡선이 부드럽게 흐름','진행 방향으로 흐르는 형태 = run 자연','단 "기하" 브랜드 색은 삼각보다 옅음'],
+  c:{body:[{x:2,y:-18},{x:13,y:-3},{x:10,y:9},{x:-9,y:9},{x:-11,y:-3}],round:9,lean:.1,feet:[-5,6],eyes:[{x:4,y:-4,r:2.5},{x:10,y:-4,r:2}]}},
+];
+const POSES=[['idle','idle ×4'],['run','run ×6'],['jump','jump ×3'],['slide','slide ×2'],['death','death ×4']];
+
+let pose='idle',facing='R',skin='#55CCFF',T=0,trackD=0;const cards=[];
+function buildSkin(){const h=document.getElementById('skinpick');h.innerHTML='';
+  SKINS.forEach(s=>{const b=document.createElement('div');b.className='sk'+(s===skin?' on':'');b.style.background=s;b.dataset.s=s;
+    b.onclick=()=>{skin=s;[...h.children].forEach(c=>c.classList.toggle('on',c.dataset.s===s));};h.appendChild(b);});}
+function buildDuo(){const host=document.getElementById('duo');host.innerHTML='';
+  CANDS.forEach(cd=>{const col=document.createElement('div');col.className='col';
+    const seqCells=POSES.map(([p,l])=>`<div class="seqcell"><canvas width="64" height="66" data-pose="${p}"></canvas><div class="pn">${l}</div></div>`).join('');
+    col.innerHTML=`
+      <div class="top"><div class="kk">${cd.kk}</div><h3>${cd.nm}</h3><div class="one">${cd.one}</div></div>
+      <div class="stage"><canvas class="hero" width="300" height="270"></canvas></div>
+      <div class="seqwrap"><div class="seqlbl">5포즈 시퀀스 (스프라이트 세트)</div><div class="seq">${seqCells}</div></div>
+      <div class="swapwrap"><div class="seqlbl">스킨 8 스왑 (현재 포즈)</div><div class="swaprow"></div></div>
+      <div class="body"><ul class="pts">${cd.pts.map(p=>`<li>${p}</li>`).join('')}</ul></div>`;
+    host.appendChild(col);
+    const swap=col.querySelector('.swaprow');
+    SKINS.forEach(s=>{const cv=document.createElement('canvas');cv.width=30;cv.height=38;cv._s=s;swap.appendChild(cv);});
+    cards.push({cd,hero:col.querySelector('.hero'),seq:[...col.querySelectorAll('.seqcell canvas')],swaps:[...swap.querySelectorAll('canvas')]});});}
+function render(){
+  cards.forEach(({cd,hero,seq,swaps})=>{
+    let ctx=hero.getContext('2d');ctx.clearRect(0,0,300,270);
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(55,214.5);ctx.lineTo(245,214.5);ctx.stroke();
+    ctx.save();ctx.translate(150,190);if(facing==='L')ctx.scale(-1,1);drawFull(ctx,skin,3.4,pose,T,cd.c);ctx.restore();
+    seq.forEach(cv=>{const x=cv.getContext('2d');x.clearRect(0,0,64,66);x.save();x.translate(32,50);drawFull(x,skin,1.18,cv.dataset.pose,T,cd.c);x.restore();});
+    swaps.forEach(cv=>{const x=cv.getContext('2d');x.clearRect(0,0,30,38);x.save();x.translate(15,29);drawFull(x,cv._s,0.6,pose,T,cd.c);x.restore();});
+  });
+  drawTrack();
+}
+function polyPts(sides,rad,rot,cx,cy){const p=[];for(let i=0;i<sides;i++){const a=rot+i/sides*Math.PI*2-Math.PI/2;p.push({x:cx+Math.cos(a)*rad,y:cy+Math.sin(a)*rad});}return p;}
+function drawTrack(){
+  const cv=document.getElementById('trackStage'),ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);const cx=W/2,cy=H/2;
+  const morph=(Math.sin(T*0.3)+1)/2,rot=T*0.10,rad=132;
+  const sq=polyPts(4,rad,rot,cx,cy),di=polyPts(4,rad,rot+Math.PI/4,cx,cy);
+  const pts=sq.map((p,i)=>({x:p.x*(1-morph)+di[i].x*morph,y:p.y*(1-morph)+di[i].y*morph}));
+  const segs=pts.map((p,i)=>{const q=pts[(i+1)%4];return Math.hypot(q.x-p.x,q.y-p.y);});
+  const peri=segs.reduce((a,b)=>a+b,0);
+  ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1.5;ctx.lineJoin='round';
+  ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.22)';pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2.4,0,7);ctx.fill();});
+  let dist=((T*50)%peri),edge=0;while(dist>segs[edge]){dist-=segs[edge];edge=(edge+1)%4;}
+  const A=pts[edge],B=pts[(edge+1)%4],f=dist/segs[edge];
+  const px=A.x+(B.x-A.x)*f,py=A.y+(B.y-A.y)*f;
+  const ex=B.x-A.x,ey=B.y-A.y,len=Math.hypot(ex,ey),tx=ex/len,ty=ey/len;
+  let nx=-ty,ny=tx;const toC=(cx-px)*nx+(cy-py)*ny;if(toC<0){nx=-nx;ny=-ny;}
+  const ang=Math.atan2(ty,tx);
+  ctx.save();ctx.translate(28,26);ctx.strokeStyle='#5C7CFA';ctx.fillStyle='#5C7CFA';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-9,0);ctx.lineTo(7,0);ctx.stroke();ctx.beginPath();ctx.moveTo(7,-4);ctx.lineTo(13,0);ctx.lineTo(7,4);ctx.closePath();ctx.fill();ctx.restore();
+  ctx.fillStyle='#9AA0B0';ctx.font='10px JetBrains Mono, monospace';ctx.fillText('진행 방향',46,30);
+  ctx.save();ctx.translate(px+nx*11,py+ny*11);ctx.rotate(ang);
+  const upx=Math.sin(ang),upy=-Math.cos(ang);if(upx*nx+upy*ny<0)ctx.scale(1,-1);
+  drawFull(ctx,skin,2.7,'run',T,CANDS[trackD].c);ctx.restore();
+}
+document.querySelectorAll('.pose[data-p]').forEach(b=>{b.onclick=()=>{pose=b.dataset.p;document.querySelectorAll('.pose[data-p]').forEach(x=>x.classList.toggle('on',x===b));};});
+document.querySelectorAll('.pose[data-f]').forEach(b=>{b.onclick=()=>{facing=b.dataset.f;document.querySelectorAll('.pose[data-f]').forEach(x=>x.classList.toggle('on',x===b));};});
+document.querySelectorAll('.dt').forEach(b=>{b.onclick=()=>{trackD=+b.dataset.d;document.querySelectorAll('.dt').forEach(x=>x.classList.toggle('on',x===b));};});
+buildSkin();buildDuo();
+let last=performance.now();function loop(now){const dt=(now-last)/1000;last=now;T+=dt;render();requestAnimationFrame(loop);}requestAnimationFrame(loop);
+</script>
+</body>
+</html>
