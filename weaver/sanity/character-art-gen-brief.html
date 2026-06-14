@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 캐릭터 아트 생성 브리프 (둥근 삼각)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;
+    --tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;
+    --blue:#4DABF7;--prog:#5C7CFA;--ok:#51CF66;--coin:#FFE08A;--warn:#FF5A5A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+    --body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),
+      radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);text-decoration:underline;}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:820px;}.lede b{color:var(--tx);font-weight:700;}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .step{font-family:var(--mono);font-size:10.5px;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:6px 11px;}
+  .step b{color:var(--tx);} .step.me{border-color:rgba(92,124,250,.4);} .step.you{border-color:rgba(81,207,102,.4);}
+
+  .sec{margin:34px 0 12px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .sec .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);background:var(--prog);border-radius:6px;padding:3px 8px;}
+  .sec h2{font-size:17px;font-weight:800;}
+  .sec .s{font-size:11.5px;color:var(--dim);font-family:var(--mono);margin-left:auto;}
+
+  .cons{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:680px){.cons{grid-template-columns:1fr;}}
+  .con{background:var(--surf);border:1px solid var(--bd);border-radius:11px;padding:13px 15px;}
+  .con h4{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;gap:7px;align-items:center;}
+  .con h4 .b{font-family:var(--mono);font-size:9px;color:var(--ink);background:var(--coin);border-radius:5px;padding:1px 6px;}
+  .con p{font-size:11.5px;color:var(--sub);line-height:1.55;}.con p b{color:var(--tx);}
+  .con code{font-family:var(--mono);font-size:10.5px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+
+  .guard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media(max-width:680px){.guard{grid-template-columns:1fr;}}
+  .g{background:var(--surf);border:1px solid var(--bd);border-radius:11px;padding:12px 14px;}
+  .g .gn{font-family:var(--mono);font-size:10px;color:var(--prog);font-weight:700;}
+  .g h4{font-size:12.5px;font-weight:700;margin:3px 0 3px;}
+  .g p{font-size:11px;color:var(--sub);line-height:1.5;}
+
+  .prompt{background:#0a0a0e;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+  .prompt .ph{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--bd);background:rgba(255,255,255,.02);}
+  .prompt .ph .tool{font-size:13px;font-weight:800;}
+  .prompt .ph .tag{font-family:var(--mono);font-size:9.5px;color:var(--sub);border:1px solid var(--bd);border-radius:6px;padding:2px 7px;}
+  .prompt .ph .rec{font-family:var(--mono);font-size:9px;color:var(--ink);background:var(--ok);border-radius:5px;padding:2px 6px;margin-left:auto;}
+  .prompt .lbl{font-family:var(--mono);font-size:9.5px;color:var(--dim);padding:9px 14px 2px;letter-spacing:.05em;}
+  .prompt pre{font-family:var(--mono);font-size:11px;color:var(--tx);line-height:1.6;padding:4px 14px 12px;white-space:pre-wrap;word-break:break-word;}
+  .prompt pre.neg{color:#c98c8c;}
+
+  .out{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;}
+  .out ul{list-style:none;display:grid;gap:8px;}
+  .out li{font-size:12px;color:var(--sub);padding-left:18px;position:relative;line-height:1.55;}
+  .out li::before{content:"▸";position:absolute;left:0;color:var(--prog);}
+  .out li b{color:var(--tx);} .out li code{font-family:var(--mono);font-size:10.5px;color:var(--coin);background:rgba(255,224,138,.08);padding:1px 4px;border-radius:4px;}
+
+  .next{border:1px solid rgba(92,124,250,.4);border-radius:14px;background:linear-gradient(165deg,rgba(92,124,250,.08),rgba(177,151,252,.03));padding:18px;margin-top:26px;}
+  .next h4{font-size:13px;font-weight:800;margin-bottom:8px;}
+  .next p{font-size:12.5px;color:var(--sub);line-height:1.65;}.next b{color:var(--tx);}
+  footer{margin-top:38px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">character-art-gen-brief</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">ⓑ⁺ · 둥근 삼각 · AI 아트 생성 브리프</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">캐릭터 아트 생성 브리프</span></h1>
+    <p class="lede">
+      교정된 프로세스(매체 게이트 #8)로 만든 첫 산출물 — <b>캔버스 그림이 아니라 실제 생성용 프롬프트·가드</b>다.
+      이 브리프로 ComfyUI/Recraft에서 둥근 삼각 캐릭터의 <b>실제 아트 시안</b>을 뽑는다. 6층 기준선 충족이 목표.
+    </p>
+    <div class="flow">
+      <span class="step me"><b>저(디자인)</b> → 프롬프트·가드 (이 문서)</span>
+      <span class="step you"><b>당신</b> → ComfyUI/Recraft 생성</span>
+      <span class="step">같이 → 후보 큐레이션 → 1종</span>
+      <span class="step">리드 → SoT 반영 + Unity VFX</span>
+    </div>
+  </header>
+
+  <!-- 불변 제약 -->
+  <div class="sec"><span class="n">1</span><h2>불변 제약 (프롬프트보다 우선)</h2><span class="s">메커니즘이 깨지면 BM·게임이 깨짐</span></div>
+  <div class="cons">
+    <div class="con"><h4><span class="b">스왑</span>본체 단일 명도 마스터</h4><p><b>본체 = 흰~밝은 회색 한 색 + 음영만</b> (채색 X) → Unity 셰이더가 <b>스킨 8색으로 틴트</b>. 눈=다크, 글린트=흰 만 별색. 본체에 여러 색 칠하면 스킨 스왑 붕괴.</p></div>
+    <div class="con"><h4><span class="b">회전</span>진행 방향 + 미러</h4><p>캐릭터는 <b>우향(+x)</b> 기준 1벌. 좌향은 미러. 벽 주행 회전 대비 <b>정면 대칭 의존 금지</b> — 전방(눈·기울기)이 분명한 형태.</p></div>
+    <div class="con"><h4><span class="b">무기</span>캐릭터엔 무기 없음</h4><p>무기는 <b>손에 안 듦</b> — 캐릭터 아트엔 무기 미포함. 무기 = 별도 런타임 VFX(플로팅 포드/머즐). 팔로 무기 들기 금지.</p></div>
+    <div class="con"><h4><span class="b">포즈</span>idle 먼저 → 확장</h4><p><b>idle 1종 먼저</b> 확정 → 같은 캐릭터로 <code>run·jump·slide·death</code> 확장(img2img 일관성). 처음부터 5포즈 X.</p></div>
+  </div>
+
+  <!-- 스타일 가드 -->
+  <div class="sec"><span class="n">2</span><h2>스타일 가드 (6층 기준선 → 생성 요구)</h2><span class="s">납작 도형 = 실패. 깊이·글로우가 핵심</span></div>
+  <div class="guard">
+    <div class="g"><div class="gn">형태 ①</div><h4>둥근 삼각 + 큰 눈</h4><p>둥근 삼각 몸 · 전방 큰 눈 2개 + 흰 글린트 · 친근하지만 절제(마스코트 X).</p></div>
+    <div class="g"><div class="gn">깊이 ②</div><h4>셀 셰이딩 + 림라이트</h4><p>평면 단색 금지. <b>상단 광원 림라이트 + 내부 음영</b>으로 입체. 이게 그동안 빠졌던 핵심.</p></div>
+    <div class="g"><div class="gn">글로우 ③</div><h4>네온 발광 아웃라인</h4><p>다크 배경(<code style="font-family:var(--mono);font-size:10px">#0C0C11</code>)에서 <b>네온 글로우</b>로 떠 보이게. 모바일 아케이드 "프리미엄" 공식.</p></div>
+    <div class="g"><div class="gn">색 규칙</div><h4>카테고리 4색 금지</h4><p>캐릭터 본체엔 🔵🔴🟡🟣 안 씀(무기 전용). 스킨 = 시안 등 부드러운 색. 코인색도 회피.</p></div>
+    <div class="g"><div class="gn">juice ④·애니 ⑥</div><h4>= 런타임 (생성 X)</h4><p>히트스톱·셰이크·트레일·이징은 <b>Unity 연출</b>. 생성은 <b>정지 포즈의 매력</b>에만 집중.</p></div>
+    <div class="g"><div class="gn">무기 ⑤</div><h4>= 별도 VFX</h4><p>생성 캐릭터엔 무기 없음. 무기 와우는 발사 VFX(런타임).</p></div>
+  </div>
+
+  <!-- 프롬프트 -->
+  <div class="sec"><span class="n">3</span><h2>프롬프트 (복붙)</h2><span class="s">두 갈래 시안 권장 — 벡터풍 vs 픽셀풍</span></div>
+
+  <div class="prompt">
+    <div class="ph"><span class="tool">ComfyUI / SDXL</span><span class="tag">벡터·셰이딩풍</span><span class="rec">권장</span></div>
+    <div class="lbl">POSITIVE</div>
+    <pre>2D mobile game character, cute minimalist geometric creature, rounded triangle body, two large round eyes with bright white glint, friendly determined expression, soft cel shading with bright rim light on top edge, subtle inner gradient, glowing neon cyan outline, dark near-black background, bold clean silhouette, full body, slight forward lean facing right, centered, polished arcade game art, high contrast, crisp edges, game asset</pre>
+    <div class="lbl">NEGATIVE</div>
+    <pre class="neg">text, letters, watermark, signature, two characters, human, realistic, photorealistic, 3d render, clay, detailed background, scenery, gradient sky, gun, weapon, rifle, arms, hands holding object, clutter, busy, noisy, blurry, low contrast, dull, muddy, jpeg artifacts, extra limbs</pre>
+    <div class="lbl">권장: SDXL + flat-vector/clean LoRA · CFG 6~8 · 1024² · 여러 시드 배치</div>
+  </div>
+
+  <div class="prompt">
+    <div class="ph"><span class="tool">Recraft v3</span><span class="tag">웹·간편</span></div>
+    <div class="lbl">PROMPT (style = Digital Illustration / Vector)</div>
+    <pre>Flat vector game character, cute geometric rounded-triangle creature, two big eyes with white glint, soft shading and top rim light, neon cyan glow outline, dark near-black background, single centered mascot, bold silhouette, facing right with slight forward lean, mobile arcade game art, high contrast, no weapon, no text</pre>
+    <div class="lbl">팁: "no text / no background scenery" 강조 · 시안 4장 배치 후 비교</div>
+  </div>
+
+  <div class="prompt">
+    <div class="ph"><span class="tool">Retro Diffusion</span><span class="tag">픽셀풍 (대안 갈래)</span></div>
+    <div class="lbl">PROMPT</div>
+    <pre>pixel art game character sprite, cute geometric rounded-triangle creature, two big eyes with glint, top rim light, neon outline, dark background, limited palette, single character, facing right, clean readable silhouette, no weapon</pre>
+    <div class="lbl">팁: 64² 내외 · 본체 단일 hue · 벡터풍과 나란히 비교해 weaver 결 선택</div>
+  </div>
+
+  <!-- 출력 스펙 -->
+  <div class="sec"><span class="n">4</span><h2>출력 스펙 + 뽑는 법</h2></div>
+  <div class="out">
+    <ul>
+      <li><b>우향 1캐릭터·풀바디·중앙</b>, 다크 또는 투명 배경(컷아웃 용이). 배경 풍경 X.</li>
+      <li><b>2갈래 시안 권장:</b> (A) 벡터·셰이딩풍(SDXL/Recraft) vs (B) 픽셀풍(Retro Diffusion) — 어느 결이 weaver에 맞는지 <b>나란히 비교</b>가 이번 1차 목표.</li>
+      <li><b>idle 포즈 먼저</b> 각 갈래 4~6장 → 마음에 드는 1~2개만 추림. (run/jump/slide/death 확장은 캐릭터 확정 후.)</li>
+      <li><b>최종 마스터 정리(후속):</b> 본체 단일 명도(틴트용)·눈 다크·글린트 흰. <b>글로우는 Unity 가산 레이어</b>(베이크 X). 1차 시안은 appeal 판단 우선 — 마스터 정리는 1종 확정 후.</li>
+      <li>막히면 알려주세요 — 프롬프트는 결과 보고 <b>같이 튜닝</b>합니다(1회로 안 끝남).</li>
+    </ul>
+  </div>
+
+  <div class="next">
+    <h4>다음 루프</h4>
+    <p><b>당신 생성 → 시안 모음을 저에게</b> (이미지·스샷) → 제가 <b>큐레이션 보드</b>로 정리해 비교 → <b>1종 확정</b> → 같은 캐릭터 5포즈 확장 프롬프트 → 확정본 <b>brief.md 에셋목록 + design-system <code style="font-family:var(--mono);font-size:11px;color:var(--coin)">hero_character</code></b> 반영(리드) → unity 임포트·Unity VFX 패스(무기·juice).</p>
+  </div>
+
+  <footer>
+    weaver / sanity / character-art-gen-brief.html · 둥근 삼각 AI 생성 브리프<br>
+    노출 = unlisted (noindex) · 매체 게이트 #8 적용 첫 산출물 (디렉션·프롬프트 = 디자인 세션 / 생성 = 사용자+외부 도구, workflow §8.4) · 선행 = art-reference-board(기준선)
+  </footer>
+</div>
+</body>
+</html>
