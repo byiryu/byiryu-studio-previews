@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — death 방식 선택 (slide와 구분)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0C0C11;--panel:#12121A;--surf:#15151D;--bd:#2A2A36;--tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;--prog:#5C7CFA;--ok:#51CF66;--warn:#FF5A5A;--mono:"JetBrains Mono",ui-monospace,monospace;--body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 80px;
+    background-image:radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.10), transparent 60%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:auto,34px 34px,34px 34px;min-height:100vh;}
+  .wrap{max-width:920px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:20px;}.crumb a{color:#6f7ba8;text-decoration:none;}
+  header{border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d,#0e0e15);padding:24px 24px 22px;margin-bottom:18px;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(20px,5vw,27px);font-weight:800;margin:8px 0 0;}h1 .wm{letter-spacing:.18em;margin-right:.16em;}
+  .lede{color:var(--sub);font-size:13.5px;margin-top:11px;}.lede b{color:var(--tx);}
+  .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:8px;}
+  @media(max-width:680px){.row{grid-template-columns:1fr;max-width:340px;margin:8px auto 0;}}
+  .c{border:1px solid var(--bd);border-radius:14px;background:var(--surf);overflow:hidden;}
+  .c.ref{opacity:.92;}
+  .c.rec{border-color:rgba(81,207,102,.5);box-shadow:0 0 0 1px rgba(81,207,102,.15);}
+  .c .h{padding:11px 14px 9px;border-bottom:1px solid var(--bd);position:relative;}
+  .c .tg{font-family:var(--mono);font-size:9px;font-weight:700;border-radius:5px;padding:2px 7px;position:absolute;top:11px;right:12px;}
+  .c .tg.r{background:var(--ok);color:var(--ink);} .c .tg.x{background:rgba(255,255,255,.06);color:var(--sub);}
+  .c h3{font-size:14px;font-weight:800;}.c .sub{font-size:11px;color:var(--sub);margin-top:2px;}
+  .c .stage{background:#0a0a0e;display:grid;place-items:center;padding:14px;}
+  .c img{width:170px;height:170px;image-rendering:pixelated;display:block;}
+  .c .d{padding:11px 14px 13px;font-size:11.5px;color:var(--sub);line-height:1.5;}.c .d b{color:var(--tx);}
+  .ask{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(81,207,102,.4);background:linear-gradient(180deg,rgba(81,207,102,.10),rgba(81,207,102,.03));border-radius:14px;padding:15px 17px;margin-top:20px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--ok);font-size:20px;flex:none;}.ask p{font-size:13px;color:var(--tx);}.ask b{color:var(--ok);}
+  footer{margin-top:30px;border-top:1px solid var(--bd);padding-top:16px;font-family:var(--mono);font-size:10px;color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> / <a href="index.html">sanity</a> / death-style-board</div>
+  <header>
+    <div class="kicker">death ↔ slide 구분 · 측면(east) GIF</div>
+    <h1><span class="wm">WEAVER</span>death 방식 선택</h1>
+    <p class="lede">"death가 slide랑 비슷하다" 해결. slide는 회피용이라 앞으로 낮게 OK → <b>death를 명확히 다르게.</b>
+    아래 GIF는 폰에서 실제 재생. <b>slide(참고)</b> 옆에 death 2안을 놓고 구분되는지 보세요.</p>
+  </header>
+
+  <div class="row">
+    <div class="c ref">
+      <div class="h"><span class="tg x">참고</span><h3>slide</h3><div class="sub">회피 — 앞으로 낮게</div></div>
+      <div class="stage"><img src="cand/cmp-slide.gif" alt="slide"></div>
+      <div class="d">유지 확정분. death가 이것과 달라야 함.</div>
+    </div>
+    <div class="c">
+      <div class="h"><span class="tg x">death 안</span><h3>A. 무릎 붕괴</h3><div class="sub">주저앉아 무너짐</div></div>
+      <div class="stage"><img src="cand/cmp-death-kneel.gif" alt="death kneel"></div>
+      <div class="d">물리적 쓰러짐. 단 <b>여전히 낮게 깔려 slide와 다소 유사.</b></div>
+    </div>
+    <div class="c rec">
+      <div class="h"><span class="tg r">추천</span><h3>B. 분해/소멸</h3><div class="sub">기화 — 조각으로 흩어짐</div></div>
+      <div class="stage"><img src="cand/cmp-death-dissolve.gif" alt="death dissolve"></div>
+      <div class="d"><b>slide와 절대 안 헷갈림</b>(바닥 X·위로 흩어짐) + 우주항해자 "기화" 테마 정합. 사망 피드백 명료.</div>
+    </div>
+  </div>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>death 방식 택1 (A 무릎 붕괴 / B 분해·소멸 — 추천).</b> 고르면 east·south 둘 다 확정·교체하고 5종 애니를 닫습니다.</p>
+  </div>
+
+  <footer>weaver / sanity / death-style-board.html · death↔slide 구분 · 실제 PixelLab 생성 · character_id 520aa672</footer>
+</div>
+</body>
+</html>
