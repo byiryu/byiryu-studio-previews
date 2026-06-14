@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 캐릭터 형태 시안 (생물·휴머노이드 3종)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;
+    --tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;--blue:#4DABF7;--prog:#5C7CFA;--ok:#51CF66;--coin:#FFE08A;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;--body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1040px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);text-decoration:underline;}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d 0%,#0e0e15 100%);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;word-break:keep-all;}
+  h1 .wm{display:inline-block;font-weight:800;letter-spacing:.18em;color:var(--tx);margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:820px;}.lede b{color:var(--tx);font-weight:700;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:5px 11px;}.tag b{color:var(--tx);}
+
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px;}
+  @media(max-width:760px){.trio{grid-template-columns:1fr;max-width:460px;margin:6px auto 0;}}
+  .col{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;display:flex;flex-direction:column;}
+  .col.rec{border-color:rgba(81,207,102,.5);box-shadow:0 0 0 1px rgba(81,207,102,.15);}
+  .col .top{padding:14px 16px 12px;border-bottom:1px solid var(--bd);position:relative;}
+  .col .rb{position:absolute;top:13px;right:14px;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--ink);background:var(--ok);border-radius:6px;padding:3px 8px;}
+  .col .kk{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--prog);}
+  .col h3{font-size:15.5px;font-weight:800;margin-top:3px;}
+  .col .imgs{display:flex;gap:8px;justify-content:center;align-items:flex-end;background:#0a0a0e;padding:16px 10px;border-bottom:1px solid var(--bd);}
+  .col .imgs figure{text-align:center;}
+  .col .imgs img{width:128px;height:128px;image-rendering:pixelated;display:block;}
+  .col .imgs.sm img{width:84px;height:84px;}
+  .col .imgs figcaption{font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-top:4px;}
+  .col .body{padding:13px 16px 16px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .vibe{font-size:12px;color:var(--tx);font-weight:600;}
+  .pts{list-style:none;display:grid;gap:5px;}
+  .pts li{font-size:11.5px;color:var(--sub);padding-left:16px;position:relative;line-height:1.5;}
+  .pts li::before{content:"·";position:absolute;left:4px;color:var(--prog);font-weight:700;}
+  .fit{font-size:11px;color:var(--dim);border-top:1px solid var(--bd);padding-top:9px;margin-top:auto;}.fit b{color:var(--ok);}
+
+  .note{border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:16px 18px;margin-top:24px;}
+  .note h4{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;gap:8px;align-items:center;}
+  .note h4 .b{font-family:var(--mono);font-size:10px;color:var(--ink);background:var(--prog);border-radius:5px;padding:2px 7px;}
+  .note p{font-size:12.5px;color:var(--sub);line-height:1.65;}.note p+p{margin-top:7px;}.note b{color:var(--tx);}
+  .ask{display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(81,207,102,.4);background:linear-gradient(180deg,rgba(81,207,102,.10),rgba(81,207,102,.03));border-radius:14px;padding:15px 18px;margin-top:14px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--ok);font-size:22px;line-height:1;flex:none;}
+  .ask p{font-size:13px;color:var(--tx);}.ask b{color:var(--ok);}
+  footer{margin-top:36px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb">
+    <a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> /
+    <a href="index.html">sanity</a> / <span style="color:#9AA0B0">creature-archetype-board</span>
+  </div>
+
+  <header class="hero">
+    <div class="kicker">PixelLab · 다크네온 · 생물·휴머노이드 3종</div>
+    <h1><span class="wm">WEAVER</span><span class="ttl">캐릭터 형태 시안 — 3종</span></h1>
+    <p class="lede">
+      "귀여운 기하 블롭은 톤이 안 맞다 → 생물·휴머노이드 계열" 방향 반영. PixelLab으로 <b>다크네온 톤</b> 3종 실제 생성
+      (각 8방향 자동 — 정면 + 우향 표시). 전부 <b>긴장된 네온 액션</b> 톤 · 전투원으로 읽힘 · 진짜 게임 스프라이트.
+    </p>
+    <div class="meta-row">
+      <span class="tag">실제 PixelLab 생성물 (8방향)</span>
+      <span class="tag">크레딧 <b>6 사용 / ~12 남음</b></span>
+      <span class="tag">애니(idle/walk) <b>다음 단계</b></span>
+    </div>
+  </header>
+
+  <div class="trio">
+    <div class="col">
+      <div class="top"><div class="kk">TYPE A</div><h3>슬릭 스트라이커</h3></div>
+      <div class="imgs"><figure><img src="cand/arch-striker-front.png" alt="front"><figcaption>정면</figcaption></figure><figure class="sm" style="align-self:center"><img src="cand/arch-striker-side.png" alt="side"><figcaption>우향 ▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">각진 사이파이 전투 휴머노이드</div>
+        <ul class="pts"><li>액션 정체성 가장 직관 ("전투원" 즉시)</li><li>run/jump/slide/attack 애니 최적</li><li>단 휴머노이드는 다소 흔함 — 차별화는 실루엣·네온</li></ul>
+        <div class="fit"><b>핏:</b> 안전·정통 액션</div></div>
+    </div>
+
+    <div class="col rec">
+      <div class="top"><div class="rb">생물 ✓</div><div class="kk">TYPE B</div><h3>전투형 크리처</h3></div>
+      <div class="imgs"><figure><img src="cand/arch-creature-front.png" alt="front"><figcaption>정면</figcaption></figure><figure class="sm" style="align-self:center"><img src="cand/arch-creature-side.png" alt="side"><figcaption>우향 ▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">날렵·공격적 다크 비스트 (네온 가시·발광 눈)</div>
+        <ul class="pts"><li><b>"생물" 직감에 직답</b> — 귀엽지 않고 강함</li><li>다크+시안 발광 = 브랜드 톤 정합 최상</li><li>가장 독창적 — 흔한 러너 캐릭터 아님</li></ul>
+        <div class="fit"><b>핏:</b> 생물 방향 + 차별화 — 추천</div></div>
+    </div>
+
+    <div class="col">
+      <div class="top"><div class="kk">TYPE C</div><h3>후드 사이버 대셔</h3></div>
+      <div class="imgs"><figure><img src="cand/arch-hood-front.png" alt="front"><figcaption>정면</figcaption></figure><figure class="sm" style="align-self:center"><img src="cand/arch-hood-side.png" alt="side"><figcaption>우향 ▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">두건 쓴 사이버 닌자 (시안 바이저)</div>
+        <ul class="pts"><li>쿨·긴장 무드 최상 · 강한 실루엣</li><li>대시/스트라이크 애니 잘 어울림</li><li>단 닌자는 장르에서 흔한 편</li></ul>
+        <div class="fit"><b>핏:</b> 무드·쿨함 우선</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h4><span class="b">디자이너 의견</span>추천 = B 전투형 크리처</h4>
+    <p>당신이 "생물이 맞다"고 한 직감에 가장 직접 답하는 게 <b>B</b>입니다 — 귀여운 블롭과 정반대로 <b>날렵하고 공격적인 다크 비스트</b>라 긴장된 네온 액션 톤과 맞고, 다크+시안 발광이 브랜드 팔레트와 정합돼요. 셋 중 <b>가장 독창적</b>(흔한 휴머노이드·닌자 아님)이라 스토어에서도 눈에 띕니다. A는 가장 안전한 정통 액션, C는 무드는 최고지만 닌자가 다소 흔함.</p>
+    <p><b>참고:</b> 지금 시안은 다소 디테일이 많은 편(124px). brief의 미니멀 톤에 맞춰 <b>크기·디테일을 줄여 더 깔끔하게</b> 조절 가능 — 방향 정하면 그 결로 다듬습니다.</p>
+  </div>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>형태 택1 (A 스트라이커 / B 크리처 / C 후드) — 또는 "B인데 이렇게 바꿔" 식 피드백.</b> 정하면 그 1종으로 <b>다크네온 정제 + idle/walk 애니 1개</b>를 뽑아 "게임에서 진짜 이렇게 움직인다"까지 확인합니다.</p>
+  </div>
+
+  <footer>
+    weaver / sanity / creature-archetype-board.html · 생물·휴머노이드 3종 (PixelLab 다크네온)<br>
+    노출 = unlisted (noindex) · 실제 API 생성물 · 선행 = art-tool-curation-board(PixelLab 주력) · 다음 = 형태 확정 → 애니 검증 → design-system hero_character(리드)
+  </footer>
+</div>
+</body>
+</html>
