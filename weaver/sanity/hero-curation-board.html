@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 주인공 히어로 큐레이션 (스프레이→#1 필터→3)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0C0C11;--panel:#12121A;--surf:#15151D;--surf-a:#1C2030;--bd:#2A2A36;--tx:#EEEEF2;--sub:#9AA0B0;--dim:#556070;--blue:#4DABF7;--prog:#5C7CFA;--ok:#51CF66;--warn:#FF5A5A;--coin:#FFE08A;--mono:"JetBrains Mono",ui-monospace,monospace;--body:"Pretendard","Pretendard Variable",-apple-system,sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}html{-webkit-text-size-adjust:100%;}
+  body{font-family:var(--body);background:var(--ink);color:var(--tx);line-height:1.55;padding:28px 18px 90px;overflow-x:hidden;
+    background-image:radial-gradient(900px 520px at 82% -8%, rgba(92,124,250,.12), transparent 60%),radial-gradient(700px 480px at 8% 4%, rgba(177,151,252,.06), transparent 55%),linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;background-position:0 0,0 0,-1px -1px,-1px -1px;min-height:100vh;}
+  .wrap{max-width:1040px;margin:0 auto;}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:20px;}
+  .crumb a{color:#6f7ba8;text-decoration:none;}.crumb a:hover{color:var(--blue);}
+  header.hero{position:relative;border:1px solid var(--bd);border-radius:18px;background:linear-gradient(160deg,#13131d,#0e0e15);padding:26px 26px 24px;overflow:hidden;margin-bottom:14px;}
+  header.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 92% 0%, rgba(92,124,250,.13), transparent 70%);pointer-events:none;}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--prog);text-transform:uppercase;}
+  h1{font-size:clamp(22px,5.6vw,30px);font-weight:800;letter-spacing:-.01em;margin:8px 0 0;line-height:1.18;}
+  h1 .wm{font-weight:800;letter-spacing:.18em;margin-right:.18em;}
+  .lede{color:var(--sub);font-size:14px;margin-top:12px;max-width:820px;}.lede b{color:var(--tx);}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .tag{font-family:var(--mono);font-size:10.5px;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:5px 11px;}.tag b{color:var(--tx);}
+  .filter{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(92,124,250,.34);background:linear-gradient(180deg,rgba(92,124,250,.08),rgba(92,124,250,.02));border-radius:14px;padding:14px 17px;margin-bottom:24px;}
+  .filter .i{font-size:15px;flex:none;margin-top:1px;}.filter p{font-size:12.5px;color:var(--tx);line-height:1.6;}.filter b{color:var(--prog);}.filter span{color:var(--sub);}
+  .sec{margin:32px 0 14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .sec .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);background:var(--prog);border-radius:6px;padding:3px 9px;}
+  .sec h2{font-size:18px;font-weight:800;}.sec .s{font-size:11.5px;color:var(--dim);font-family:var(--mono);margin-left:auto;}
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}@media(max-width:760px){.trio{grid-template-columns:1fr;max-width:460px;margin:0 auto;}}
+  .col{border:1px solid var(--bd);border-radius:16px;background:linear-gradient(170deg,#14141e,#0e0e15);overflow:hidden;display:flex;flex-direction:column;}
+  .col.rec{border-color:rgba(81,207,102,.5);box-shadow:0 0 0 1px rgba(81,207,102,.15);}
+  .col .top{padding:14px 16px 11px;border-bottom:1px solid var(--bd);position:relative;}
+  .col .rb{position:absolute;top:13px;right:14px;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--ink);background:var(--ok);border-radius:6px;padding:3px 8px;}
+  .col .kk{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--prog);}
+  .col h3{font-size:15.5px;font-weight:800;margin-top:3px;}
+  .col .imgs{display:flex;gap:8px;justify-content:center;align-items:flex-end;background:#0a0a0e;padding:16px 10px;border-bottom:1px solid var(--bd);}
+  .col .imgs img{image-rendering:pixelated;display:block;}
+  .col .imgs .f{width:120px;height:120px;}.col .imgs .s{width:78px;height:78px;align-self:center;}
+  .col .imgs figcaption{font-family:var(--mono);font-size:8.5px;color:var(--dim);text-align:center;margin-top:3px;}
+  .col .body{padding:12px 16px 15px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .col .vibe{font-size:12px;color:var(--tx);font-weight:600;}
+  .pts{list-style:none;display:grid;gap:5px;}.pts li{font-size:11.5px;color:var(--sub);padding-left:15px;position:relative;line-height:1.5;}
+  .pts li::before{content:"·";position:absolute;left:4px;color:var(--prog);font-weight:700;}.pts li b{color:var(--tx);}
+  .fit{font-size:11px;color:var(--dim);border-top:1px solid var(--bd);padding-top:8px;margin-top:auto;}.fit b{color:var(--ok);}
+  .rej{display:flex;gap:14px;flex-wrap:wrap;border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:14px 16px;}
+  .rej .rc{text-align:center;}.rej .rc img{width:70px;height:70px;image-rendering:pixelated;opacity:.55;filter:grayscale(.3);}
+  .rej .rc .why{font-family:var(--mono);font-size:9.5px;color:var(--warn);margin-top:4px;max-width:90px;line-height:1.4;}
+  .rej .rc .nm{font-size:10.5px;color:var(--sub);font-weight:700;}
+  .rej .lead{font-size:12px;color:var(--sub);align-self:center;max-width:160px;line-height:1.5;}.rej .lead b{color:var(--tx);}
+  .note{border:1px solid var(--bd);border-radius:14px;background:var(--panel);padding:16px 18px;margin-top:22px;}
+  .note h4{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;gap:8px;align-items:center;}.note h4 .b{font-family:var(--mono);font-size:10px;color:var(--ink);background:var(--prog);border-radius:5px;padding:2px 7px;}
+  .note p{font-size:12.5px;color:var(--sub);line-height:1.65;}.note p+p{margin-top:7px;}.note b{color:var(--tx);}
+  .ask{display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(81,207,102,.4);background:linear-gradient(180deg,rgba(81,207,102,.10),rgba(81,207,102,.03));border-radius:14px;padding:15px 18px;margin-top:14px;}
+  .ask .q{font-family:var(--mono);font-weight:700;color:var(--ok);font-size:22px;flex:none;}.ask p{font-size:13px;color:var(--tx);}.ask b{color:var(--ok);}
+  footer{margin-top:36px;border-top:1px solid var(--bd);padding-top:18px;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="../../index.html">previews</a> / <a href="../index.html">weaver</a> / <a href="index.html">sanity</a> / <span style="color:#9AA0B0">hero-curation-board</span></div>
+
+  <header class="hero">
+    <div class="kicker">주인공 스프레이 → #1 히어로 필터 → 3 큐레이션</div>
+    <h1><span class="wm">WEAVER</span>주인공 히어로 — 최종 3 후보</h1>
+    <p class="lede">
+      "정체성 먼저" 합의 후 — <b>#1 히어로 정체성</b>(절제·발광·아이콘·날렵·주인공·틴트몸·무기분리)을 *필터*로 두고
+      PixelLab로 6종 스프레이 → 그 필터로 <b>3종만 통과</b>시켰다. 탈락 2종은 이유 명시(드리프트 방지).
+    </p>
+    <div class="meta-row">
+      <span class="tag">발산 6 → 수렴 <b>3</b></span>
+      <span class="tag">전부 실제 PixelLab 생성</span>
+      <span class="tag">PixelLab Tier2 · 순차생성</span>
+    </div>
+  </header>
+
+  <div class="filter">
+    <div class="i">⌖</div>
+    <p><b>#1 히어로 필터 = 통과 조건.</b> <span>발광·미니멀 아이콘 / 날렵·집중 / 주인공-코드(적 몬스터와 대비) / 밝은 틴트 가능 몸(스킨) / 디테일·몬스터·흙빛 ❌. 색=정보라 캐릭터는 조용해야 트랙·무기색이 산다.</span></p>
+  </div>
+
+  <div class="sec"><span class="n">통과</span><h2>최종 3 후보</h2><span class="s">정면 + 우향(8방향 중)</span></div>
+  <div class="trio">
+    <div class="col rec">
+      <div class="top"><div class="rb">정체성 ◎</div><div class="kk">HERO A</div><h3>스피릿</h3></div>
+      <div class="imgs"><figure><img class="f" src="cand/hero-spirit-front.png"><figcaption>정면</figcaption></figure><figure><img class="s" src="cand/hero-spirit-side.png"><figcaption>우향▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">발광 흰 정령 (Ori 결)</div>
+        <ul class="pts"><li><b>가장 정체성 정통</b> — 절제·발광·아이콘</li><li>흰 몸 = 기본 스킨과 직결 · 틴트 최적</li><li>미니멀 — 트랙·무기색을 안 잡아먹음</li></ul>
+        <div class="fit"><b>핏:</b> weaver DNA 정통 — 추천</div></div>
+    </div>
+    <div class="col rec">
+      <div class="top"><div class="rb">매력 ◎</div><div class="kk">HERO B</div><h3>우주항해자</h3></div>
+      <div class="imgs"><figure><img class="f" src="cand/hero-voyager-front.png"><figcaption>정면</figcaption></figure><figure><img class="s" src="cand/hero-voyager-side.png"><figcaption>우향▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">시안 바이저 우주 영웅</div>
+        <ul class="pts"><li><b>가장 기억에 남는 주인공</b> — 또렷·매력</li><li>흰 슈트 = 틴트 OK · 바이저 = 발광</li><li>스토어·스킨 BM에 강함</li></ul>
+        <div class="fit"><b>핏:</b> 매력·차별화 — 추천</div></div>
+    </div>
+    <div class="col">
+      <div class="top"><div class="kk">HERO C</div><h3>크리스탈 존재</h3></div>
+      <div class="imgs"><figure><img class="f" src="cand/hero-crystal-front.png"><figcaption>정면</figcaption></figure><figure><img class="s" src="cand/hero-crystal-side.png"><figcaption>우향▶</figcaption></figure></div>
+      <div class="body"><div class="vibe">발광 결정질 영웅</div>
+        <ul class="pts"><li><b>기하 브랜드 연결</b> — 변형 트랙과 한 언어</li><li>반투명·발광 = 다크네온 정합</li><li>단 셋 중 디테일이 가장 많음(절제 ↓)</li></ul>
+        <div class="fit"><b>핏:</b> 브랜드 기하 정합</div></div>
+    </div>
+  </div>
+
+  <div class="sec"><span class="n">탈락</span><h2>필터 아웃</h2><span class="s">왜 빠졌나</span></div>
+  <div class="rej">
+    <div class="rc"><img src="cand/hero-rej-alien.png"><div class="nm">외계영웅</div><div class="why">뿔·다크 = 몬스터 코드</div></div>
+    <div class="rc"><img src="cand/hero-rej-runner.png"><div class="nm">슬릭러너</div><div class="why">흙빛·범용 = 발광 정체성 미달</div></div>
+    <div class="rc"><img src="cand/hero-light-front.png"><div class="nm">빛존재</div><div class="why">매력적이나 "히어로 키드" — 아이콘성 ↓ (보류)</div></div>
+    <div class="lead">스프레이 6 중 <b>3 탈락</b> — 정체성 필터가 작동. (전체 펼치는 드리프트 X)</div>
+  </div>
+
+  <div class="note">
+    <h4><span class="b">디자이너 의견</span>스피릿 ↔ 우주항해자</h4>
+    <p>둘 다 정체성 통과. <b>스피릿</b> = weaver의 "절제·색=정보" DNA에 가장 충실(가장 미니멀·아이콘적, 흰=기본 스킨). <b>우주항해자</b> = 가장 또렷하고 매력적이라 <b>스킨 BM·스토어</b>에 유리. 크리스탈은 기하 브랜드 연결이 매력이나 디테일이 많아 미니멀에선 한 발 뒤.</p>
+    <p>판단축: <b>"DNA 순도(스피릿)"</b> ↔ <b>"주인공 매력·기억성(우주항해자)"</b>. 둘 다 좋은 답이라 취향·전략 선택입니다.</p>
+  </div>
+
+  <div class="ask">
+    <div class="q">?</div>
+    <p><b>최종 1 (스피릿 / 우주항해자 / 크리스탈) — 또는 "이것 기반으로 이렇게" 피드백.</b> 정하면 그 1종으로 <b>8방향 풀세트 + idle/walk 애니 + 스킨 스왑 시연</b>까지 뽑아 게임 적용 최종 확인합니다.</p>
+  </div>
+
+  <footer>
+    weaver / sanity / hero-curation-board.html · 스프레이→#1 필터→3 큐레이션<br>
+    노출 = unlisted (noindex) · 실제 PixelLab 생성물 · 정체성 = "절제된 발광 아이콘 히어로"(escalation: ideas/2026-06-14) · 다음 = 1종 확정 → 8방향+애니+스킨
+  </footer>
+</div>
+</body>
+</html>
