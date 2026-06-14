@@ -56,7 +56,7 @@
     <h1><span class="wm">WEAVER</span>주인공 확정 — 우주항해자</h1>
     <p class="lede">
       <b>B 우주항해자 확정.</b> 정체성("절제된 발광 아이콘 히어로") 통과 + 게임에 실제로 쓸 수 있는지 3대 검증 완료 —
-      <b>움직임(walk 애니) · 8방향 회전 · 스킨 스왑.</b> 아래 GIF는 폰에서 실제로 움직입니다.
+      <b>움직임(idle·walk·jump·slide·death 5종 애니) · 8방향 회전 · 스킨 스왑.</b> 아래 GIF는 폰에서 실제로 움직입니다.
     </p>
     <div class="meta-row">
       <span class="tag">PixelLab · 실제 생성</span>
@@ -65,11 +65,15 @@
     </div>
   </header>
 
-  <div class="sec"><span class="n">1</span><h2>움직임 — walk 애니 ▶</h2><span class="s">실제 재생 (GIF)</span></div>
+  <div class="sec"><span class="n">1</span><h2>움직임 — 풀 애니 세트 5종 ▶</h2><span class="s">실제 재생 (GIF)</span></div>
   <div class="walkbox">
-    <figure><img src="cand/voyager-walk-south.gif" alt="walk south"><figcaption>정면 walk</figcaption></figure>
-    <figure><img src="cand/voyager-walk-east.gif" alt="walk east"><figcaption>우향 walk ▶</figcaption></figure>
+    <figure><img style="width:140px;height:140px" src="cand/voyager-idle.gif" alt="idle"><figcaption>idle</figcaption></figure>
+    <figure><img style="width:140px;height:140px" src="cand/voyager-walk-south.gif" alt="walk"><figcaption>walk</figcaption></figure>
+    <figure><img style="width:140px;height:140px" src="cand/voyager-jump.gif" alt="jump"><figcaption>jump</figcaption></figure>
+    <figure><img style="width:140px;height:140px" src="cand/voyager-slide.gif" alt="slide"><figcaption>slide</figcaption></figure>
+    <figure><img style="width:140px;height:140px" src="cand/voyager-death.gif" alt="death"><figcaption>death</figcaption></figure>
   </div>
+  <p style="font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:center;margin-top:8px">정면 기준 · 각 8방향 생성 가능 (walk·idle·jump·slide·death = 인게임 풀 사이클)</p>
 
   <div class="sec"><span class="n">2</span><h2>8방향 회전</h2><span class="s">벽 주행 = 진짜 방향 스프라이트(시머 0)</span></div>
   <div class="panel"><img src="cand/voyager-8dir.png" alt="8 directions"><div class="cap">S · SE · E · NE · N(뒤·백팩) · NW · W · SW — 한 캐릭터 일관</div></div>
@@ -80,7 +84,7 @@
   <div class="note">
     <h4>게임 적용 검증 ✅</h4>
     <ul>
-      <li><b>움직임:</b> walk 사이클 자연스러움 — idle/jump/slide/death도 같은 방식으로 확장 가능</li>
+      <li><b>움직임:</b> idle·walk·jump·slide·death 풀 사이클 생성 완료 — 인게임 애니 셋 확보(각 8방향 확장 가능)</li>
       <li><b>방향:</b> 8방향 네이티브 → 벽·코너 주행(§2.4)에서 픽셀 시머 없음(진짜 방향 스프라이트)</li>
       <li><b>스킨:</b> 슈트 단일 틴트 마스터 → design-system 8스킨 그대로 적용(바이저=고정 발광 포인트)</li>
       <li><b>무기:</b> 몸이 예약 4색 안 씀 → 무기 포드/VFX(카테고리색) 또렷 (분리 유지)</li>
