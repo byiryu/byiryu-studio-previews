@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>weaver · 무기 손 부착 검증 — M2 진입 전</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --ink:#0C0C11; --panel:#12121A; --surf:#15151D; --surf2:#1C2030; --border:#2A2A36;
+    --tx:#EEEEF2; --tx2:#9AA0B0; --tx3:#556070;
+    --blue:#4DABF7; --red:#FF6B6B; --yellow:#FFD43B; --purple:#B197FC;
+    --coin:#FFE08A; --ok:#51CF66;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--ink); color:var(--tx);
+    font-family:"Pretendard Variable",Pretendard,sans-serif;
+    background-image:
+      radial-gradient(1100px 620px at 78% -8%, rgba(77,171,247,.07), transparent 60%),
+      radial-gradient(820px 520px at 8% 102%, rgba(177,151,252,.06), transparent 55%);
+    background-attachment:fixed;
+    line-height:1.5; letter-spacing:-.01em;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:40px 24px 88px}
+
+  /* ---- header ---- */
+  header{border-bottom:1px solid var(--border);padding-bottom:26px;margin-bottom:36px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--tx3);display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--blue)}
+  h1{font-size:clamp(26px,4.4vw,42px);font-weight:800;margin:14px 0 6px;letter-spacing:-.03em}
+  h1 .dim{color:var(--tx2);font-weight:700}
+  .lede{color:var(--tx2);font-size:15px;max-width:660px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .chip{font-family:var(--mono);font-size:11px;padding:5px 11px;border:1px solid var(--border);border-radius:999px;color:var(--tx2);background:var(--surf)}
+  .chip.ok{color:var(--ok);border-color:rgba(81,207,102,.4)}
+  .chip b{color:var(--tx)}
+
+  /* ---- section ---- */
+  section{margin-top:52px}
+  .sh{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sh .num{font-family:var(--mono);font-size:13px;color:var(--blue);font-weight:600}
+  .sh h2{font-size:20px;font-weight:750;margin:0;letter-spacing:-.02em}
+  .sdesc{color:var(--tx2);font-size:14px;margin:0 0 22px;max-width:720px}
+  .sdesc code{font-family:var(--mono);font-size:12px;color:var(--tx);background:var(--surf);padding:1px 6px;border-radius:5px;border:1px solid var(--border)}
+
+  /* ---- catalog ---- */
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:880px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+  .card{background:linear-gradient(180deg,var(--surf),#101017);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative}
+  .card .bar{height:3px}
+  .card .stagebox{height:150px;display:flex;align-items:center;justify-content:center;background:
+      radial-gradient(120px 120px at 50% 44%, rgba(255,255,255,.035), transparent 70%),var(--ink);
+      position:relative}
+  .card .stagebox img{image-rendering:pixelated;width:118px;height:118px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+  .card .meta{padding:13px 14px 16px}
+  .card .cn{display:flex;align-items:center;gap:8px;font-weight:750;font-size:15px}
+  .dotc{width:10px;height:10px;border-radius:50%;box-shadow:0 0 9px currentColor}
+  .card .shape{font-size:12.5px;color:var(--tx2);margin-top:3px}
+  .card .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--tx3);margin-top:11px;border-top:1px solid var(--border);padding-top:9px}
+  .card .row b{color:var(--tx2);font-weight:500}
+
+  /* ---- attach stages ---- */
+  .stagerow{display:flex;flex-wrap:wrap;gap:16px}
+  .vstage{position:relative;width:200px;height:200px;background:
+      linear-gradient(180deg,#0e0e15,#0a0a0f);
+      border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .vstage .floor{position:absolute;left:0;right:0;bottom:0;height:34%;
+      background:linear-gradient(180deg,transparent,rgba(77,171,247,.05));border-top:1px solid rgba(77,171,247,.14)}
+  .voy{position:absolute;left:18px;top:14px;width:172px;height:172px;image-rendering:pixelated;z-index:2}
+  /* hand anchor: native (47,51)/88 on a 172px voyager (offset 18,14) => 18+47*1.954=110 , 14+51*1.954=114 */
+  .hand{position:absolute;left:110px;top:114px;width:0;height:0;z-index:3}
+  .wpn{position:absolute;image-rendering:pixelated;width:64px;height:64px;left:-25.6px;top:-46px;transform-origin:25.6px 46px}
+  .mir{transform:scaleX(-1)}
+  .cap{font-size:12px;color:var(--tx2);text-align:center;margin-top:7px}
+  .cap .k{font-family:var(--mono);font-size:10.5px;color:var(--tx3);display:block;margin-top:2px}
+  .anchordot{position:absolute;left:110px;top:114px;width:7px;height:7px;border-radius:50%;background:var(--red);transform:translate(-50%,-50%);box-shadow:0 0 0 1.5px #fff,0 0 8px var(--red);z-index:4}
+
+  /* ---- readability track ---- */
+  .track{position:relative;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:
+      linear-gradient(180deg,#0c0c12,#08080d);padding:0}
+  .track .lane{position:relative;height:128px;display:flex;align-items:center;gap:0;padding:0 8px}
+  .track .lane+.lane{border-top:1px dashed rgba(255,255,255,.06)}
+  .tunit{position:relative;width:150px;height:120px;flex:0 0 auto}
+  .tunit .voy{left:8px;top:6px;width:108px;height:108px}
+  .tunit .hand{left:77px;top:74px} /* scaled: 8+47*1.227=66? recomputed below via inline */
+  .tunit .wpn{width:42px;height:42px;left:-16.8px;top:-30px;transform-origin:16.8px 30px}
+  .tlabel{position:absolute;right:12px;top:50%;transform:translateY(-50%);text-align:right}
+  .tlabel .n{font-weight:700;font-size:14px;display:flex;align-items:center;gap:7px;justify-content:flex-end}
+  .tlabel .s{font-size:11.5px;color:var(--tx2);margin-top:2px}
+  .tlabel .h{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px}
+
+  /* ---- decisions ---- */
+  .dec{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:16px 18px;margin-bottom:11px}
+  .dec h3{margin:0 0 4px;font-size:14.5px;font-weight:700}
+  .dec p{margin:0;color:var(--tx2);font-size:13.5px}
+  .dec .rec{color:var(--blue);font-weight:600}
+  .note{font-size:12.5px;color:var(--tx3);font-family:var(--mono);margin-top:8px;padding-left:2px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:18px;font-size:12px;color:var(--tx2);margin-top:14px}
+  .legend span{display:flex;align-items:center;gap:7px}
+  footer{margin-top:64px;border-top:1px solid var(--border);padding-top:18px;font-family:var(--mono);font-size:11px;color:var(--tx3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  a.back{color:var(--tx2);text-decoration:none;font-family:var(--mono);font-size:12px}
+  a.back:hover{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="../index.html">← weaver 인덱스</a>
+    <div class="eyebrow" style="margin-top:14px">WEAVER · DESIGN · WEAPON SYSTEMS</div>
+    <h1>무기 손 부착 검증 <span class="dim">— M2 진입 전</span></h1>
+    <p class="lede">주인공(우주항해자)이 카테고리 4종 무기를 <b>손에 들고</b>, 자동사격 각도에 맞춰 <b>손 앵커에서 회전</b>한다. 캐릭터 애니 6종은 그대로 재사용 — 무기별 재애니 없음. 이 보드는 <b>부착 메커니즘 · 발사 회전 · 카테고리색 가독성</b>을 실제 생성 에셋으로 검증한다.</p>
+    <div class="chips">
+      <span class="chip ok">✓ 매체게이트 #8 — 실제 PixelLab 생성</span>
+      <span class="chip">PixelLab · <b>1-dir 48px</b></span>
+      <span class="chip">모델 · <b>단일 east 사이클 + 미러</b></span>
+      <span class="chip">2026-06-15</span>
+    </div>
+  </header>
+
+  <!-- §1 catalog -->
+  <section>
+    <div class="sh"><span class="num">§1</span><h2>카테고리 카탈로그</h2></div>
+    <p class="sdesc">색 + 실루엣이 함께 카테고리를 텔레그래프 (정답 키). 무기 본체·머즐·투사체·손 아우라가 카테고리색을 운반 — 본체(우주항해자)·몬스터 몸체는 4색 회피로 색=정보 가독 유지. 해금 순서 = <code>§2.11 커리큘럼</code> (P1→P4).</p>
+    <div class="cat-grid">
+      <div class="card">
+        <div class="bar" style="background:var(--blue)"></div>
+        <div class="stagebox"><img src="cand/wpn-ranged.png" alt="원거리"></div>
+        <div class="meta">
+          <div class="cn"><span class="dotc" style="color:var(--blue);background:var(--blue)"></span>원거리</div>
+          <div class="shape">blaster — 시안 에너지 코어</div>
+          <div class="row"><b>#4DABF7</b><span>P1 해금</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="bar" style="background:var(--red)"></div>
+        <div class="stagebox"><img src="cand/wpn-melee.png" alt="근거리"></div>
+        <div class="meta">
+          <div class="cn"><span class="dotc" style="color:var(--red);background:var(--red)"></span>근거리</div>
+          <div class="shape">blade — 레드 플라즈마 날</div>
+          <div class="row"><b>#FF6B6B</b><span>P2 해금</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="bar" style="background:var(--yellow)"></div>
+        <div class="stagebox"><img src="cand/wpn-aa.png" alt="대공"></div>
+        <div class="meta">
+          <div class="cn"><span class="dotc" style="color:var(--yellow);background:var(--yellow)"></span>대공</div>
+          <div class="shape">flak — 더블 배럴 런처</div>
+          <div class="row"><b>#FFD43B</b><span>P3 해금</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="bar" style="background:var(--purple)"></div>
+        <div class="stagebox"><img src="cand/wpn-special.png" alt="특수"></div>
+        <div class="meta">
+          <div class="cn"><span class="dotc" style="color:var(--purple);background:var(--purple)"></span>특수</div>
+          <div class="shape">orb — 퍼플 에너지 오브</div>
+          <div class="row"><b>#B197FC</b><span>P4 해금</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">각 카테고리 = 3 후보 중 추천 1종 (대안 = 매니페스트 object_id). 후보 비교 = wpn-compare 렌더.</p>
+  </section>
+
+  <!-- §2 attach -->
+  <section>
+    <div class="sh"><span class="num">§2</span><h2>손 부착 — east 사이클 + 미러</h2></div>
+    <p class="sdesc">무기 = 손 앵커에 parent 되는 별도 스프라이트. <b>단일 east 사이클 + 미러</b> 모델 (8방향 스냅 폐기) — east 손 앵커 1점이면 west는 <code>scaleX(-1)</code> 미러로 자동. 손 앵커 = east 88px 프레임 native <code>(47, 51)</code>.</p>
+    <div class="stagerow">
+      <div>
+        <div class="vstage">
+          <div class="floor"></div>
+          <img class="voy" src="cand/voyager-master-east.png" alt="east">
+          <div class="hand"><img class="wpn" src="cand/wpn-ranged.png"></div>
+        </div>
+        <div class="cap">east (인게임 주행 방향)<span class="k">손 앵커 native (47,51)</span></div>
+      </div>
+      <div>
+        <div class="vstage">
+          <div class="floor"></div>
+          <img class="voy" src="cand/voyager-master-east.png" alt="east anchor">
+          <div class="hand"><img class="wpn" src="cand/wpn-ranged.png"></div>
+          <div class="anchordot"></div>
+        </div>
+        <div class="cap">앵커 점 표시<span class="k">grip pivot (0.40, 0.72)</span></div>
+      </div>
+      <div>
+        <div class="vstage mir">
+          <div class="floor"></div>
+          <img class="voy" src="cand/voyager-master-east.png" alt="west mirror">
+          <div class="hand"><img class="wpn" src="cand/wpn-ranged.png"></div>
+        </div>
+        <div class="cap">west = east 미러 (무비용)<span class="k">scaleX(-1)</span></div>
+      </div>
+      <div>
+        <div class="vstage">
+          <div class="floor"></div>
+          <img class="voy" src="cand/voyager-east-run.gif" alt="run">
+          <div class="hand"><img class="wpn" src="cand/wpn-ranged.png"></div>
+        </div>
+        <div class="cap">run 사이클 (모션)<span class="k">근사 고정앵커 · 정밀=unity 본</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §3 rotation -->
+  <section>
+    <div class="sh"><span class="num">§3</span><h2>발사 회전 데모</h2></div>
+    <p class="sdesc">자동사격은 조준 입력 없이 유효 타깃으로 발사 — 무기가 <b>grip pivot을 중심으로 회전</b>해 각도를 표현. 캐릭터 애니는 그대로. 벽 주행(§2.4) 시 = 캐릭터 전체가 트랙 접선으로 회전, 무기는 손에 붙은 채 함께 돈다.</p>
+    <div class="stagerow">
+      <div>
+        <div class="vstage">
+          <div class="floor"></div><img class="voy" src="cand/voyager-master-east.png">
+          <div class="hand"><img class="wpn" src="cand/wpn-ranged.png" style="transform:rotate(0deg)"></div>
+        </div>
+        <div class="cap">🔵 정면 0° (원거리)<span class="k">전방 타깃</span></div>
+      </div>
+      <div>
+        <div class="vstage">
+          <div class="floor"></div><img class="voy" src="cand/voyager-master-east.png">
+          <div class="hand"><img class="wpn" src="cand/wpn-aa.png" style="transform:rotate(-48deg)"></div>
+        </div>
+        <div class="cap">🟡 상방 −48° (대공)<span class="k">낙하물 요격</span></div>
+      </div>
+      <div>
+        <div class="vstage">
+          <div class="floor"></div><img class="voy" src="cand/voyager-master-east.png">
+          <div class="hand"><img class="wpn" src="cand/wpn-aa.png" style="transform:rotate(-78deg)"></div>
+        </div>
+        <div class="cap">🟡 상방 −78°<span class="k">상단 위협</span></div>
+      </div>
+      <div>
+        <div class="vstage">
+          <div class="floor" style="height:100%;background:linear-gradient(90deg,rgba(77,171,247,.06),transparent);border:0;border-left:1px solid rgba(77,171,247,.18)"></div>
+          <div style="position:absolute;inset:0;transform:rotate(-90deg)">
+            <img class="voy" src="cand/voyager-master-east.png">
+            <div class="hand"><img class="wpn" src="cand/wpn-ranged.png" style="transform:rotate(0deg)"></div>
+          </div>
+        </div>
+        <div class="cap">벽 주행 — 리그 전체 회전<span class="k">캐릭터+무기 = 접선 −90°</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §4 readability -->
+  <section>
+    <div class="sh"><span class="num">§4</span><h2>인게임 스케일 가독성 — 다크 트랙</h2></div>
+    <p class="sdesc">실제 인게임 상대 크기로 다크 트랙 위에 배치. <b>색 + 실루엣만으로 카테고리를 즉시 구분</b>할 수 있는가? (paranoia #5 인게임 가독성 1순위) — 발사 순간의 머즐 플래시·투사체·손 아우라는 Unity 런타임 VFX가 토큰색을 정확히 운반(스프라이트 글로우는 근사).</p>
+    <div class="track">
+      <div class="lane">
+        <div class="tunit"><img class="voy" src="cand/voyager-master-east.png"><div class="hand" style="left:66px;top:64px"><img class="wpn" src="cand/wpn-ranged.png"></div></div>
+        <div class="tlabel"><div class="n"><span class="dotc" style="color:var(--blue);background:var(--blue)"></span>원거리 · blaster</div><div class="s">시안 코어 + 슬림 배럴</div><div class="h">#4DABF7</div></div>
+      </div>
+      <div class="lane">
+        <div class="tunit"><img class="voy" src="cand/voyager-master-east.png"><div class="hand" style="left:66px;top:64px"><img class="wpn" src="cand/wpn-melee.png"></div></div>
+        <div class="tlabel"><div class="n"><span class="dotc" style="color:var(--red);background:var(--red)"></span>근거리 · blade</div><div class="s">레드 날 = 짧은 실루엣</div><div class="h">#FF6B6B</div></div>
+      </div>
+      <div class="lane">
+        <div class="tunit"><img class="voy" src="cand/voyager-master-east.png"><div class="hand" style="left:66px;top:64px"><img class="wpn" src="cand/wpn-aa.png"></div></div>
+        <div class="tlabel"><div class="n"><span class="dotc" style="color:var(--yellow);background:var(--yellow)"></span>대공 · flak</div><div class="s">골드 더블배럴 = 묵직</div><div class="h">#FFD43B</div></div>
+      </div>
+      <div class="lane">
+        <div class="tunit"><img class="voy" src="cand/voyager-master-east.png"><div class="hand" style="left:66px;top:64px"><img class="wpn" src="cand/wpn-special.png"></div></div>
+        <div class="tlabel"><div class="n"><span class="dotc" style="color:var(--purple);background:var(--purple)"></span>특수 · orb</div><div class="s">퍼플 오브 = 둥근 끝</div><div class="h">#B197FC</div></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="dotc" style="color:var(--blue);background:var(--blue)"></span>원거리</span>
+      <span><span class="dotc" style="color:var(--red);background:var(--red)"></span>근거리</span>
+      <span><span class="dotc" style="color:var(--yellow);background:var(--yellow)"></span>대공</span>
+      <span><span class="dotc" style="color:var(--purple);background:var(--purple)"></span>특수</span>
+    </div>
+  </section>
+
+  <!-- §5 decisions -->
+  <section>
+    <div class="sh"><span class="num">§5</span><h2>결정 항목 &amp; 핸드오프</h2></div>
+    <p class="sdesc">사용자(디렉터) 확정 대상. 확정 시 → 스테이징 <code>assets/weaver/weapons/</code> + 매니페스트 에셋 2 기록 → plat(unity M2) 임포트·VFX.</p>
+
+    <div class="dec">
+      <h3>① 형태↔카테고리 매핑 — <span class="rec">blaster / blade / flak / orb</span></h3>
+      <p>4종이 색 + 실루엣 양쪽으로 구분되는가? (정답 형태 텔레그래프) — §4 가독성 트랙 기준.</p>
+    </div>
+    <div class="dec" style="border-left-color:var(--red)">
+      <h3>② 카테고리별 hero 후보</h3>
+      <p>현재 추천 = 🔵 c12(시안 코어) · 🔴 c2(클린 날) · 🟡 c4(더블배럴) · 🟣 c5(오브 글로우). 대안 후보 각 2종 보유 — 교체 원하면 지정.</p>
+    </div>
+    <div class="dec" style="border-left-color:var(--yellow)">
+      <h3>③ 손 부착 스탠스 + 스케일</h3>
+      <p>현재 = <span class="rec">hip-mount</span> (손이 허리 높이 → 무기 전방). 무기:캐릭터 ≈ 0.37× 높이. 자동슈터 표준 (Soul Knight·Archero 류). OK / 조정?</p>
+    </div>
+    <div class="dec" style="border-left-color:var(--purple)">
+      <h3>④ 🔵 글로우 = 시안 vs 토큰 #4DABF7</h3>
+      <p>생성 글로우가 토큰보다 더 시안(밝음). 인게임 머즐·투사체 VFX가 정확한 #4DABF7 운반 예정 — 스프라이트 글로우는 그대로 둘지(에너지 무기 톤) / 더 블루로 재생성할지.</p>
+    </div>
+    <div class="dec" style="border-left-color:var(--ok)">
+      <h3>⑤ 다음 (M2 본 에셋 트랜치)</h3>
+      <p>무기 확정 후 → <b>몬스터 void fauna 3~4종</b> (일반🔵·장갑🔴·요격낙하물🟡·특수🟣) + <b>장애물</b>(가시·바·낙하물·잔해). 동일 PixelLab 파이프라인.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>weaver · weapon-attach-board · 매체게이트 #8</span>
+    <span>PixelLab object_ids → asset-manifest.md</span>
+  </footer>
+
+</div>
+</body>
+</html>
