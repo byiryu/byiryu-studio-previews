@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weaver · 무기 양산 세트 — 전 자세 ready + 4무기 부착</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a0f;--bg2:#0c1119;--panel:#0e1521;--panel2:#111b2b;
+    --line:#1c2a3e;--line2:#26384f;--ink:#e8f0fb;--mut:#7e93ad;--dim:#52647d;
+    --cy:#4DABF7;--cy-soft:#8fd0ff;--red:#FF6B6B;--yel:#FFD43B;--pur:#B197FC;
+    --good:#37d39b;--warn:#ffb454;
+    --mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:
+      radial-gradient(1100px 600px at 80% -8%,rgba(77,171,247,.10),transparent 60%),
+      radial-gradient(900px 700px at 8% 108%,rgba(177,151,252,.06),transparent 55%),var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.5;padding:30px 18px 80px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:linear-gradient(160deg,var(--panel2),var(--panel));padding:26px 28px 24px;margin-bottom:22px}
+  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:8px 0 6px}
+  h1 .sub{color:var(--cy-soft)}
+  .lead{color:var(--mut);font-size:14px;max-width:780px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--mut);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;background:#0a1019}
+  .tag b{color:var(--ink);font-weight:600}
+  .verdict{position:absolute;right:24px;top:22px;text-align:right}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:600;font-size:12px;color:#03150e;
+    background:linear-gradient(135deg,#5ee7b0,#37d39b);padding:8px 14px;border-radius:999px;box-shadow:0 6px 22px rgba(55,211,155,.25)}
+  .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#03150e}
+  .verdict small{display:block;color:var(--dim);font-family:var(--mono);font-size:10.5px;margin-top:8px}
+
+  section{margin:30px 0}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);border-radius:7px;padding:3px 8px}
+  .sec-h h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .sec-h .note{color:var(--dim);font-size:12.5px;font-family:var(--mono);margin-left:auto}
+  .panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:22px}
+
+  .pose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:720px){.pose-grid{grid-template-columns:repeat(2,1fr)}}
+  .cell{border:1px solid var(--line2);border-radius:13px;overflow:hidden;background:#060a11}
+  .cell .stage-wrap{position:relative;height:230px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(320px 200px at 50% 40%,rgba(77,171,247,.07),transparent 70%),
+      repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),
+      repeating-linear-gradient(90deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),#060a11}
+  .cell .grnd{position:absolute;left:12%;right:12%;bottom:54px;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent)}
+  .stage{position:relative;image-rendering:pixelated}
+  .char{image-rendering:pixelated;background-repeat:no-repeat}
+  .wpn{position:absolute;image-rendering:pixelated}
+  .cell .cap{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-top:1px solid var(--line)}
+  .cell .cap .nm{font-size:13px;font-weight:700}
+  .cell .cap .nm small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim);font-weight:400;margin-top:2px}
+  .behav{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:999px;border:1px solid var(--line2);white-space:nowrap}
+  .behav.fwd{color:var(--cy);border-color:rgba(77,171,247,.4);background:rgba(77,171,247,.08)}
+  .behav.tuck{color:var(--yel);border-color:rgba(255,212,59,.4);background:rgba(255,212,59,.08)}
+  .behav.none{color:var(--red);border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08)}
+
+  /* weapon swap */
+  .swap{display:grid;grid-template-columns:1fr .8fr;gap:20px}
+  @media(max-width:760px){.swap{grid-template-columns:1fr}}
+  .swap .big{position:relative;border:1px solid var(--line2);border-radius:14px;min-height:380px;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(420px 280px at 50% 38%,rgba(77,171,247,.08),transparent 70%),
+      repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),
+      repeating-linear-gradient(90deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),#060a11}
+  .swap .grnd{position:absolute;left:8%;right:8%;bottom:70px;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent)}
+  .wsel{display:flex;flex-direction:column;gap:10px}
+  .wbtn{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);
+    padding:12px 14px;cursor:pointer;transition:.15s;text-align:left}
+  .wbtn:hover{border-color:var(--line2)}
+  .wbtn.on{border-color:var(--cy);background:rgba(77,171,247,.06)}
+  .wbtn .sw{width:8px;height:34px;border-radius:3px;flex:none}
+  .wbtn .t{flex:1}
+  .wbtn .t .n{font-size:13.5px;font-weight:700}
+  .wbtn .t .d{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:2px}
+  .wbtn .px{width:38px;height:38px;image-rendering:pixelated;flex:none}
+
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:680px){.rules{grid-template-columns:1fr}}
+  .rule{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:15px}
+  .rule .h{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}
+  .rule.fwd .h{color:var(--cy)} .rule.tuck .h{color:var(--yel)} .rule.none .h{color:var(--red)}
+  .rule p{font-size:12.5px;color:var(--mut);line-height:1.55}
+  .rule p b{color:var(--ink)}
+
+  .spec{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:680px){.spec{grid-template-columns:repeat(2,1fr)}}
+  .b{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:14px}
+  .b .t{font-family:var(--mono);font-size:10.5px;color:var(--cy);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}
+  .b .v{font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .b .v span{font-size:12px;color:var(--mut);font-weight:600}
+  .b p{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5}
+
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:6px;font-family:var(--mono);font-size:12px}
+  .flow .step{border:1px solid var(--line2);border-radius:9px;padding:8px 12px;background:#0a1019;color:var(--mut)}
+  .flow .step.done{color:var(--good);border-color:rgba(55,211,155,.4)}
+  .flow .step.now{color:#03150e;background:var(--cy);border-color:var(--cy);font-weight:700}
+  .flow .arr{color:var(--dim)}
+  .listrow{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}
+  .ll{flex:1;min-width:280px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:15px 17px}
+  .ll h4{font-size:12.5px;font-family:var(--mono);margin-bottom:9px}
+  .ll.risk h4{color:var(--warn)} .ll.next h4{color:var(--cy)}
+  .ll ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .ll li{font-size:12.5px;color:var(--mut);padding-left:16px;position:relative;line-height:1.5}
+  .ll li::before{content:"›";position:absolute;left:2px;color:var(--dim);font-family:var(--mono)}
+  .ll li b{color:var(--ink)}
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;
+    justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="verdict"><span class="badge">전 자세 ready 세트 생성 완료</span><small>기기 판정 대기</small></div>
+    <div class="kick">weaver · M2 · 무기 양산 세트</div>
+    <h1>전 자세 ready 포즈 + <span class="sub">4무기 부착</span></h1>
+    <p class="lead">무기 부착 모델(A) 양산분 일괄 생성 — 캐릭터 east 인게임/히어로 자세를 "오른팔 전방 ready 포즈"(빈손 그립)로 재생성, 무기는 그 위 손 앵커 오버레이로 <b style="color:var(--ink)">스왑</b>(무기별 재애니 X). 기기 판정은 전부 뽑은 뒤 한 번에.</p>
+    <div class="meta">
+      <span class="tag">캐릭터 <b>88px · east</b></span>
+      <span class="tag">자세 <b>run·jump·idle·walk·slide·death</b></span>
+      <span class="tag">무기 <b>blaster·blade·launcher·staff</b></span>
+      <span class="tag">손 앵커 <b>≈(60,39)</b> · grip(.40,.72)</span>
+      <span class="tag">메뉴 south = <b>non-ready 유지</b></span>
+    </div>
+  </header>
+
+  <!-- §1 전 자세 -->
+  <section>
+    <div class="sec-h"><span class="no">01</span><h2>전 자세 ready 세트 — 무기 거동별</h2>
+      <span class="note">동일 손 앵커 리그 · 라이브</span></div>
+    <div class="panel">
+      <div class="pose-grid" id="poseGrid"></div>
+    </div>
+  </section>
+
+  <!-- §2 4무기 스왑 -->
+  <section>
+    <div class="sec-h"><span class="no">02</span><h2>4무기 스왑 — 같은 run 리그</h2>
+      <span class="note">무기 = 오버레이 교체만 · 캐릭터 애니 공유</span></div>
+    <div class="panel">
+      <div class="swap">
+        <div class="big" id="swapBig">
+          <div class="grnd"></div>
+          <div class="stage" id="swapStage">
+            <div class="char" id="swapChar"></div>
+            <img class="wpn" id="swapWpn" src="w_blaster.png">
+          </div>
+        </div>
+        <div class="wsel" id="wsel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §3 무기 거동 규칙 -->
+  <section>
+    <div class="sec-h"><span class="no">03</span><h2>인게임 무기 거동 규칙 (panel 결론)</h2></div>
+    <div class="rules">
+      <div class="rule fwd"><div class="h">▶ 전방 — run·jump·idle·walk</div>
+        <p>손 앵커 <b>전방 그립</b> + 자동사격 <b>조준 콘 회전</b> + 발사 머즐 VFX. ready 포즈 빈손이라 4무기 깨끗이 스왑.</p></div>
+      <div class="rule tuck"><div class="h">◣ 가슴 tuck — slide</div>
+        <p>슬라이딩 회피 중 무기 <b>가슴으로 당김</b>(색 유지·완전숨김 X). 기존 baseball slide 자산 재사용 — 무기 앵커만 chest로.</p></div>
+      <div class="rule none"><div class="h">✕ 분리 — death</div>
+        <p>피격 소멸 = 무기 <b>detach</b>(드롭/페이드). 캐릭터는 흰 플래시→시안 픽셀 디졸브(완전 기화).</p></div>
+    </div>
+  </section>
+
+  <!-- §4 spec + handoff -->
+  <section>
+    <div class="sec-h"><span class="no">04</span><h2>스펙 · 잔여 · 다음</h2></div>
+    <div class="spec" style="margin-bottom:16px">
+      <div class="b"><div class="t">생성 자세</div><div class="v">6 <span>poses east</span></div><p>run·jump·idle·walk = ready 빈손 / slide·death = 기존</p></div>
+      <div class="b"><div class="t">무기 스프라이트</div><div class="v">4 <span>카테고리</span></div><p>blaster·blade·launcher·staff (실루엣 구분)</p></div>
+      <div class="b"><div class="t">손 앵커</div><div class="v">60,39 <span>px·KF 2~3</span></div><p>per-action AnchorTable (unity 미세조정)</p></div>
+      <div class="b"><div class="t">미러</div><div class="v">scaleX <span>(-1)</span></div><p>west = east 미러 · 8방향 앵커 불요</p></div>
+    </div>
+    <div class="listrow">
+      <div class="ll risk"><h4>⚠ 기기 판정 대상</h4>
+        <ul>
+          <li><b>jump 빈손</b> 재생성 적용(구 베이크 총 기각) — 공중 부착·조준 자연스러운지</li>
+          <li><b>slide tuck</b> 기존 슬라이드에 무기 chest 앵커 — 거동 검증(unity)</li>
+          <li><b>코너 임의각</b> 벽주행 회전 시 리그+무기 트랙 접선 동반</li>
+          <li><b>4무기 스케일</b> launcher(청키)·staff(긴 봉) 손앵커 균형 — grip pivot 미세조정</li>
+        </ul>
+      </div>
+      <div class="ll next"><h4>→ 다음 (unity 세션)</h4>
+        <ul>
+          <li><b>임포트</b> voyager 12 anim 스트립 + 무기 4 스프라이트 (asset-manifest 레시피)</li>
+          <li><b>WeaponMount 리그</b> per-action AnchorTable·미러 단위테스트·조준 콘·발사 VFX·slide tuck·death detach</li>
+          <li><b>기기 1회 종합 판정</b> (전 자세×4무기) → 통과 = M2 양산 확정</li>
+          <li>스킨 8 리컬러·무기 변형 = M5</li>
+        </ul>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:14px">
+      <span class="step done">검증 (A) ready</span><span class="arr">→</span>
+      <span class="step done">de-risk run+blaster</span><span class="arr">→</span>
+      <span class="step now">전 자세+4무기 생성 ✅</span><span class="arr">→</span>
+      <span class="step">unity WeaponMount</span><span class="arr">→</span>
+      <span class="step">기기 종합 판정</span><span class="arr">→</span>
+      <span class="step">양산 확정</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>weaver · design session · unlisted (noindex)</span>
+    <span>SoT = asset-manifest 에셋1/2 · spec §2.5 · design-system weapon_attach</span>
+    <span>2026-06-15</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // weapon native grip pivot (fraction of 48px) and per-weapon display scale
+  var WPN={
+    blaster:{src:'w_blaster.png',scale:.50,gx:.40,gy:.72},
+    blade:  {src:'w_blade.png',  scale:.50,gx:.34,gy:.66},
+    launcher:{src:'w_launcher.png',scale:.52,gx:.40,gy:.66},
+    staff:  {src:'w_staff.png',   scale:.56,gx:.30,gy:.78}
+  };
+  var NAT=88;
+
+  // build a running rig inside a stage element
+  function buildStage(host, cfg){
+    var S=cfg.scale, px=NAT*S;
+    var stage=document.createElement('div'); stage.className='stage';
+    stage.style.width=px+'px'; stage.style.height=px+'px';
+    var ch=document.createElement('div'); ch.className='char';
+    ch.style.width=px+'px'; ch.style.height=px+'px';
+    ch.style.backgroundImage='url('+cfg.strip+')';
+    ch.style.backgroundSize=(px*cfg.frames)+'px '+px+'px';
+    stage.appendChild(ch);
+    var wImg=null;
+    if(cfg.mode!=='none'){
+      wImg=document.createElement('img'); wImg.className='wpn';
+      stage.appendChild(wImg);
+    }
+    host.appendChild(stage);
+    var st={frame:0};
+    function applyWeapon(wkey){
+      if(!wImg) return;
+      var w=WPN[wkey]; wImg.src=w.src;
+      var BW=48*w.scale*S; wImg.style.width=BW+'px';
+      st.GX=48*w.gx*w.scale*S; st.GY=48*w.gy*w.scale*S;
+      wImg.style.transformOrigin=st.GX+'px '+st.GY+'px';
+      st.w=w;
+    }
+    if(wImg) applyWeapon(cfg.weapon||'blaster');
+    function place(){
+      ch.style.backgroundPosition=(-st.frame*px)+'px 0';
+      if(wImg){
+        var a=cfg.anchor, hx=a[0]*S, hy=a[1]*S;
+        var rot = cfg.mode==='tuck' ? 18 : 0;
+        wImg.style.left=(hx-st.GX)+'px';
+        wImg.style.top=(hy-st.GY)+'px';
+        wImg.style.transform='rotate('+rot+'deg)';
+      }
+    }
+    place();
+    setInterval(function(){ st.frame=(st.frame+1)%cfg.frames; place(); }, cfg.fps||120);
+    return {applyWeapon:applyWeapon};
+  }
+
+  // §1 pose grid
+  var POSES=[
+    {key:'run',  strip:'run.png',  frames:9, anchor:[60,39], mode:'forward', nm:'run',  sub:'질주 (인게임 기본)', behav:'fwd', bt:'▶ 전방'},
+    {key:'jump', strip:'jump.png', frames:9, anchor:[60,36], mode:'forward', nm:'jump', sub:'점프 (빈손 재생성)', behav:'fwd', bt:'▶ 전방'},
+    {key:'idle', strip:'idle.png', frames:9, anchor:[61,40], mode:'forward', nm:'idle', sub:'대기/히어로 (무기고)', behav:'fwd', bt:'▶ 전방'},
+    {key:'walk', strip:'walk.png', frames:9, anchor:[60,40], mode:'forward', nm:'walk', sub:'보행 (미리보기)', behav:'fwd', bt:'▶ 전방'},
+    {key:'slide',strip:'slide.png',frames:7, anchor:[44,46], mode:'tuck',    nm:'slide',sub:'슬라이드 회피', behav:'tuck', bt:'◣ 가슴 tuck'},
+    {key:'death',strip:'death.png',frames:11,anchor:[0,0],   mode:'none',    nm:'death',sub:'소멸 (무기 분리)', behav:'none', bt:'✕ 분리', fps:95}
+  ];
+  var grid=document.getElementById('poseGrid');
+  POSES.forEach(function(p){
+    var cell=document.createElement('div'); cell.className='cell';
+    var sw=document.createElement('div'); sw.className='stage-wrap';
+    var gr=document.createElement('div'); gr.className='grnd'; sw.appendChild(gr);
+    cell.appendChild(sw);
+    var cap=document.createElement('div'); cap.className='cap';
+    cap.innerHTML='<div class="nm">'+p.nm+'<small>'+p.sub+'</small></div><span class="behav '+p.behav+'">'+p.bt+'</span>';
+    cell.appendChild(cap);
+    grid.appendChild(cell);
+    buildStage(sw,{strip:p.strip,frames:p.frames,anchor:p.anchor,mode:p.mode,scale:2.4,weapon:'blaster',fps:p.fps});
+  });
+
+  // §2 swap — single big run stage
+  var swapHost=document.getElementById('swapStage');
+  // remove placeholder children, rebuild
+  swapHost.innerHTML='';
+  var swapRig=buildStage(swapHost,{strip:'run.png',frames:9,anchor:[60,39],mode:'forward',scale:4.4,weapon:'blaster'});
+  var WL=[
+    {k:'blaster', c:'var(--cy)', n:'🔵 blaster', d:'원거리 · P1'},
+    {k:'blade',   c:'var(--red)',n:'🔴 blade',   d:'근거리 · P2'},
+    {k:'launcher',c:'var(--yel)',n:'🟡 launcher', d:'대공 · P3'},
+    {k:'staff',   c:'var(--pur)',n:'🟣 orb staff',d:'특수 · P4'}
+  ];
+  var wsel=document.getElementById('wsel');
+  WL.forEach(function(w,i){
+    var b=document.createElement('button'); b.className='wbtn'+(i===0?' on':'');
+    b.innerHTML='<span class="sw" style="background:'+w.c+'"></span>'+
+      '<img class="px" src="'+WPN[w.k].src+'"><div class="t"><div class="n">'+w.n+'</div><div class="d">'+w.d+'</div></div>';
+    b.onclick=function(){ swapRig.applyWeapon(w.k);
+      [].forEach.call(wsel.children,function(c){c.classList.remove('on')}); b.classList.add('on'); };
+    wsel.appendChild(b);
+  });
+})();
+</script>
+</body>
+</html>
