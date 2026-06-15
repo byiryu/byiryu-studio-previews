@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weaver · 무기 부착 de-risk — run + blaster ready 포즈</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a0f; --bg2:#0c1119; --panel:#0e1521; --panel2:#111b2b;
+    --line:#1c2a3e; --line2:#26384f;
+    --ink:#e8f0fb; --mut:#7e93ad; --dim:#52647d;
+    --cy:#4DABF7; --cy-soft:#8fd0ff;
+    --red:#FF6B6B; --yel:#FFD43B; --pur:#B197FC;
+    --good:#37d39b; --warn:#ffb454;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(1100px 600px at 78% -8%, rgba(77,171,247,.10), transparent 60%),
+      radial-gradient(900px 700px at 10% 108%, rgba(177,151,252,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:var(--sans); line-height:1.5;
+    padding:30px 18px 80px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  /* grain */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* header */
+  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:linear-gradient(160deg,var(--panel2),var(--panel));padding:26px 28px 24px;margin-bottom:22px}
+  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
+  h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin:8px 0 6px}
+  h1 .sub{color:var(--cy-soft);font-weight:700}
+  .lead{color:var(--mut);font-size:14px;max-width:760px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--mut);border:1px solid var(--line2);
+    border-radius:999px;padding:5px 11px;background:#0a1019}
+  .tag b{color:var(--ink);font-weight:600}
+  .verdict{position:absolute;right:24px;top:22px;text-align:right}
+  .verdict .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:600;
+    font-size:12.5px;color:#03150e;background:linear-gradient(135deg,#5ee7b0,#37d39b);
+    padding:8px 14px;border-radius:999px;box-shadow:0 6px 22px rgba(55,211,155,.25)}
+  .verdict .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#03150e;
+    box-shadow:0 0 0 3px rgba(3,21,14,.25)}
+  .verdict small{display:block;color:var(--dim);font-family:var(--mono);font-size:10.5px;margin-top:8px}
+
+  section{margin:30px 0}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);
+    border-radius:7px;padding:3px 8px}
+  .sec-h h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .sec-h .note{color:var(--dim);font-size:12.5px;font-family:var(--mono);margin-left:auto}
+
+  .panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:22px}
+
+  /* live rig */
+  .rig-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}
+  @media(max-width:780px){.rig-grid{grid-template-columns:1fr}}
+  .stage-wrap{position:relative;border:1px solid var(--line2);border-radius:14px;
+    background:
+      radial-gradient(420px 280px at 50% 35%, rgba(77,171,247,.08), transparent 70%),
+      repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),
+      repeating-linear-gradient(90deg,transparent 0 23px,rgba(255,255,255,.018) 23px 24px),
+      #060a11;
+    min-height:430px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .ground{position:absolute;left:6%;right:6%;bottom:74px;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent)}
+  .stage{position:relative;image-rendering:pixelated}
+  .char{background-image:url(wd-strip.png);background-repeat:no-repeat;image-rendering:pixelated}
+  .blaster{position:absolute;image-rendering:pixelated;filter:drop-shadow(0 0 0 transparent)}
+  .muzzle{position:absolute;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle,rgba(143,208,255,.95),rgba(77,171,247,.5) 45%,transparent 70%);
+    opacity:0;pointer-events:none}
+  .markers circle{}
+  .anchor-dot{position:absolute;width:9px;height:9px;margin:-4.5px;border-radius:50%;
+    background:var(--cy);box-shadow:0 0 0 2px #060a11,0 0 10px var(--cy);opacity:.0}
+
+  .ctl{display:flex;flex-direction:column;gap:16px}
+  .ctl .card{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:14px 16px}
+  .ctl h3{font-size:12px;font-family:var(--mono);color:var(--cy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+  .row{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:13px;color:var(--mut)}
+  .row label{min-width:64px;color:var(--ink);font-weight:600;font-size:12.5px}
+  input[type=range]{flex:1;accent-color:var(--cy);height:3px}
+  .val{font-family:var(--mono);font-size:12px;color:var(--cy-soft);min-width:48px;text-align:right}
+  .toggle{display:inline-flex;gap:6px}
+  .toggle button{font-family:var(--mono);font-size:11.5px;color:var(--mut);background:#0a1019;
+    border:1px solid var(--line2);border-radius:8px;padding:6px 12px;cursor:pointer;transition:.15s}
+  .toggle button.on{color:#03150e;background:var(--cy);border-color:var(--cy);font-weight:700}
+  .legend{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--mut);font-family:var(--mono)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+
+  /* category chips */
+  .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+  @media(max-width:560px){.cats{grid-template-columns:repeat(2,1fr)}}
+  .cat{border:1px solid var(--line);border-radius:11px;background:var(--bg2);padding:12px;text-align:center}
+  .cat .sw{width:100%;height:5px;border-radius:3px;margin-bottom:9px}
+  .cat .nm{font-size:13px;font-weight:700}
+  .cat .ds{font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:3px}
+
+  /* finding */
+  .find-img{width:100%;border:1px solid var(--line2);border-radius:12px;background:#fff;display:block}
+  .rows-key{display:grid;gap:8px;margin-top:14px}
+  .rk{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;font-size:13px}
+  .rk .lab{font-family:var(--mono);font-size:11.5px;font-weight:600;text-align:right;color:var(--ink)}
+  .rk .lab small{display:block;color:var(--dim);font-weight:400}
+  .rk.win .lab{color:var(--good)}
+  .rk .txt{color:var(--mut)}
+  .rk .txt b{color:var(--ink)}
+  .pill{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line2)}
+  .pill.ok{color:var(--good);border-color:rgba(55,211,155,.4);background:rgba(55,211,155,.08)}
+  .pill.no{color:var(--red);border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08)}
+
+  /* spec */
+  .spec{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:680px){.spec{grid-template-columns:1fr}}
+  .spec .b{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:16px}
+  .spec .b .t{font-family:var(--mono);font-size:11px;color:var(--cy);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  .spec .b .v{font-size:20px;font-weight:800;letter-spacing:-.01em}
+  .spec .b .v span{font-size:13px;color:var(--mut);font-weight:600}
+  .spec .b p{font-size:12px;color:var(--mut);margin-top:7px;line-height:1.55}
+
+  /* split lists */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:680px){.split{grid-template-columns:1fr}}
+  .list{border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:16px 18px}
+  .list h4{font-size:13px;font-family:var(--mono);letter-spacing:.04em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .list.risk h4{color:var(--warn)} .list.next h4{color:var(--cy)}
+  .list ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .list li{font-size:13px;color:var(--mut);padding-left:18px;position:relative;line-height:1.5}
+  .list li::before{content:"›";position:absolute;left:2px;color:var(--dim);font-family:var(--mono)}
+  .list li b{color:var(--ink);font-weight:600}
+
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:12px}
+  .flow .step{border:1px solid var(--line2);border-radius:9px;padding:8px 12px;background:#0a1019;color:var(--mut)}
+  .flow .step.done{color:var(--good);border-color:rgba(55,211,155,.4)}
+  .flow .step.now{color:#03150e;background:var(--cy);border-color:var(--cy);font-weight:700}
+  .flow .arr{color:var(--dim)}
+
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;
+    font-family:var(--mono);font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="verdict">
+      <span class="badge">미감 PASS · 부착 가능</span>
+      <small>기기 판정 → 양산</small>
+    </div>
+    <div class="kick">weaver · M2 선행 · 무기 부착 de-risk</div>
+    <h1>run + blaster <span class="sub">"ready 포즈"</span> 재생성 — 부착 시제</h1>
+    <p class="lead">검증 결론(A): tucked-arm 러너엔 무기 쥘 손이 없어 단일 고정앵커가 모션 중 분리됨 → <b style="color:var(--ink)">오른팔 전방 ready 포즈로 east 애니 재생성</b>(다리·몸통만 애니, 총-팔 안정). 무기 = 별도 스프라이트(조준 회전·발사 VFX 유지). 본 보드 = 실제 PixelLab 재생성 + blaster 손 부착 시제(매체 게이트 #8 — 실제 아트).</p>
+    <div class="meta">
+      <span class="tag">베이스 = <b>run-ready-empty</b> (빈손 그립)</span>
+      <span class="tag">캐릭터 <b>88px · east</b></span>
+      <span class="tag">무기 <b>blaster 48px</b></span>
+      <span class="tag">손 앵커 ≈ <b>(60, 39)</b></span>
+      <span class="tag">미러 = <b>scaleX(-1)</b></span>
+    </div>
+  </header>
+
+  <!-- §1 LIVE RIG -->
+  <section>
+    <div class="sec-h"><span class="no">01</span><h2>라이브 부착 리그 — 달리며 조준</h2>
+      <span class="note">design = 앵커·모션 개념 / unity = 소켓·반동·파티클</span></div>
+    <div class="panel">
+      <div class="rig-grid">
+        <div class="stage-wrap" id="stageWrap">
+          <div class="ground"></div>
+          <div class="stage" id="stage">
+            <div class="char" id="char"></div>
+            <img class="blaster" id="blaster" src="wd-blaster.png" alt="blaster">
+            <div class="muzzle" id="muzzle"></div>
+            <div class="anchor-dot" id="adot"></div>
+          </div>
+        </div>
+        <div class="ctl">
+          <div class="card">
+            <h3>자동사격 조준</h3>
+            <div class="row"><label>조준각</label>
+              <input type="range" id="aim" min="-35" max="35" value="0">
+              <span class="val" id="aimv">0°</span></div>
+            <div class="row" style="font-size:12px;color:var(--dim)">전방 콘 ±35° (뒤·위 극단은 콘 제한 — spec §2.5)</div>
+            <div class="row"><label>발사</label>
+              <span class="toggle"><button id="fireBtn">머즐 VFX 미리보기</button></span></div>
+          </div>
+          <div class="card">
+            <h3>표시</h3>
+            <div class="row"><label>방향</label>
+              <span class="toggle"><button id="dE" class="on">east →</button><button id="dW">west ← (미러)</button></span></div>
+            <div class="row"><label>앵커</label>
+              <span class="toggle"><button id="kON" class="on">키프레임 보정</button><button id="kOFF">단일앵커</button></span></div>
+            <div class="row"><label>마커</label>
+              <span class="toggle"><button id="mON">손 앵커 표시</button></span></div>
+          </div>
+          <div class="card">
+            <h3>읽는 법</h3>
+            <div class="legend">
+              <span><i style="background:var(--cy)"></i>blaster = 손 앵커 parent · grip pivot 회전</span>
+              <span><i style="background:var(--cy-soft)"></i>머즐 글로우/발사 = unity 런타임 VFX</span>
+              <span><i style="background:var(--dim)"></i>다리·몸통 = 애니 / 총-팔 = 안정</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §2 무기 4종 (부착 동일 리그) -->
+  <section>
+    <div class="sec-h"><span class="no">02</span><h2>카테고리 4종 — 같은 손 앵커 리그</h2>
+      <span class="note">de-risk = blaster 1종만 / 나머지는 형태 확정·양산 대기</span></div>
+    <div class="panel">
+      <div class="cats">
+        <div class="cat"><div class="sw" style="background:var(--cy)"></div><div class="nm">🔵 blaster</div><div class="ds">원거리 · P1 · 본 시제</div></div>
+        <div class="cat"><div class="sw" style="background:var(--red)"></div><div class="nm">🔴 blade</div><div class="ds">근거리 · P2</div></div>
+        <div class="cat"><div class="sw" style="background:var(--yel)"></div><div class="nm">🟡 launcher</div><div class="ds">대공 · P3</div></div>
+        <div class="cat"><div class="sw" style="background:var(--pur)"></div><div class="nm">🟣 orb staff</div><div class="ds">특수 · P4</div></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--mut);margin-top:14px;line-height:1.55">4종 실루엣 구분은 확정 사안(asset-manifest 에셋2). de-risk 하드게이트는 <b style="color:var(--ink)">run + slide + blaster</b> 하나로 좁혀 미감·조준·코너 안정을 본 뒤 양산 — 무기마다 캐릭터 재애니 없이 <b style="color:var(--ink)">동일 손 앵커 리그</b>로 스왑.</p>
+    </div>
+  </section>
+
+  <!-- §3 THE FIND -->
+  <section>
+    <div class="sec-h"><span class="no">03</span><h2>왜 빈손(empty)이 양산 베이스인가</h2>
+      <span class="note">실제 PixelLab 재생성 3종 · east 9f</span></div>
+    <div class="panel">
+      <img class="find-img" src="wd-compare.png" alt="비교: aim / empty / old">
+      <div class="rows-key">
+        <div class="rk"><div class="lab">run-ready-aim<small>1행</small></div>
+          <div class="txt"><span class="pill no">무기·머즐 베이크</span> 팔은 뻗지만 손에 총+머즐 글로우가 그려짐 → 별도 무기 오버레이·조준 회전과 충돌. <b>기각</b>.</div></div>
+        <div class="rk win"><div class="lab">run-ready-empty<small>2행 · 채택</small></div>
+          <div class="txt"><span class="pill ok">빈손 그립</span> 팔 전방 안정(프레임 2~8) + 손 비움 → blaster가 깨끗이 얹힘. <b>양산 베이스</b>.</div></div>
+        <div class="rk"><div class="lab">기존 run<small>3행</small></div>
+          <div class="txt"><span class="pill no">tucked-arm</span> 양팔이 몸에 붙음 — 무기 쥘 손 없음(검증 문서가 지목한 원래 문제).</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §4 SPEC -->
+  <section>
+    <div class="sec-h"><span class="no">04</span><h2>부착 스펙 (unity 핸드오프)</h2></div>
+    <div class="spec">
+      <div class="b"><div class="t">손 앵커 (east, 88px)</div><div class="v">60, 39 <span>px</span></div>
+        <p>가슴 높이·전방. 기존 보드의 (47,51)=골반 오측을 정정. 미러 west = scaleX(-1).</p></div>
+      <div class="b"><div class="t">키프레임</div><div class="v">2~3 <span>개</span></div>
+        <p>프레임 0~1 팔 상승 중 → 저위치, 2~8 전방 고정. 프레임별 전수 불요(verify 예측 일치).</p></div>
+      <div class="b"><div class="t">무기 스케일 / 그립</div><div class="v">~0.5× <span>· grip(.40,.72)</span></div>
+        <p>blaster 48px → 핸드헬드 ~24px. grip pivot 중심 회전. 발사·머즐·피격 = unity VFX.</p></div>
+    </div>
+  </section>
+
+  <!-- §5 VERDICT -->
+  <section>
+    <div class="sec-h"><span class="no">05</span><h2>판정 · 잔여 리스크 · 다음</h2></div>
+    <div class="split">
+      <div class="list risk"><h4>⚠ 잔여 리스크 (기기 판정 대상)</h4>
+        <ul>
+          <li><b>측면 러너 + 전방 무기</b> 정지 스샷은 멋지나 — 실제 60fps 주행 중 느낌은 기기 확인</li>
+          <li><b>슬라이드</b> 슬라이딩 태클 중 총-팔 어색 가능 → 가슴 tuck(색 유지) 처리 검증 (de-risk에 slide 포함)</li>
+          <li><b>조준 콘</b> 뒤·위 극단각은 팔과 무기 벌어짐 → 콘 제한으로 회피(전방 플레이)</li>
+          <li><b>코너 임의각</b> 벽주행 회전 시 리그 전체 트랙 접선 동반 — 안 튀는지</li>
+        </ul>
+      </div>
+      <div class="list next"><h4>→ 다음 (verify 문서 de-risk 플랜)</h4>
+        <ul>
+          <li><b>디자인 ✅</b> run + blaster ready 재생성 (본 보드)</li>
+          <li><b>+ slide</b> ready 포즈 재생성 (하드게이트 셋 완성)</li>
+          <li><b>unity</b> Play 씬 WeaponMount 시제 — 부착·미러 단위테스트·조준 회전·발사 VFX</li>
+          <li><b>기기 1회 판정</b> (유기성·조준·발사·미감) → 통과 시 4무기×전애니 양산</li>
+        </ul>
+      </div>
+    </div>
+    <div class="flow">
+      <span class="step done">검증 (A) ready 포즈</span><span class="arr">→</span>
+      <span class="step now">run+blaster 재생성 ✅</span><span class="arr">→</span>
+      <span class="step">slide 재생성</span><span class="arr">→</span>
+      <span class="step">unity WeaponMount 시제</span><span class="arr">→</span>
+      <span class="step">기기 판정</span><span class="arr">→</span>
+      <span class="step">양산</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>weaver · design session · unlisted (noindex)</span>
+    <span>SoT = spec §2.5 · design-system weapon_attach · asset-manifest 에셋1/2</span>
+    <span>2026-06-15</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var SCALE=4.6, NAT=88;
+  var stage=document.getElementById('stage'),
+      char=document.getElementById('char'),
+      blaster=document.getElementById('blaster'),
+      muzzle=document.getElementById('muzzle'),
+      adot=document.getElementById('adot'),
+      wrap=document.getElementById('stageWrap');
+
+  // stage + char sizing
+  var px=NAT*SCALE;
+  stage.style.width=px+'px'; stage.style.height=px+'px';
+  char.style.width=px+'px'; char.style.height=px+'px';
+  char.style.backgroundSize=(px*9)+'px '+px+'px';
+
+  // blaster sizing (native 48, scaled to ~0.5 of char-native)
+  var WSCALE=0.5, BW=48*WSCALE*SCALE;
+  blaster.style.width=BW+'px';
+  // grip pivot within blaster native (gx,gy) → display offset
+  var GX=19.2*WSCALE*SCALE, GY=34.6*WSCALE*SCALE;
+  blaster.style.transformOrigin=GX+'px '+GY+'px';
+
+  // per-frame hand anchor (native px) — keyframe-corrected rig
+  var KF=[[52,43],[55,41],[59,40],[60,39],[61,39],[60,38],[60,39],[59,40],[61,39]];
+  var SINGLE=[60,39];
+
+  var state={frame:0,aim:0,dir:1,kf:true,marker:false,fire:false};
+
+  function place(){
+    var a = state.kf ? KF[state.frame] : SINGLE;
+    var hx=a[0]*SCALE, hy=a[1]*SCALE;
+    // char frame
+    char.style.backgroundPosition=(-state.frame*px)+'px 0';
+    // blaster: grip → hand anchor, then rotate by aim (east). west handled by stage mirror.
+    blaster.style.left=(hx-GX)+'px';
+    blaster.style.top=(hy-GY)+'px';
+    blaster.style.transform='rotate('+(state.aim)+'deg)';
+    // muzzle at blaster tip (right end), rotated about grip
+    var len=BW-GX-2, ang=state.aim*Math.PI/180;
+    var mx=hx + Math.cos(ang)*len, my=hy + Math.sin(ang)*len;
+    muzzle.style.left=(mx-7)+'px'; muzzle.style.top=(my-7)+'px';
+    // anchor dot
+    adot.style.left=hx+'px'; adot.style.top=hy+'px';
+    adot.style.opacity=state.marker?1:0;
+  }
+  function tick(){ state.frame=(state.frame+1)%9; place(); }
+  place();
+  setInterval(tick,115);
+
+  // fire muzzle pulse
+  var fireOn=false;
+  document.getElementById('fireBtn').addEventListener('click',function(){
+    fireOn=!fireOn; this.classList.toggle('on',fireOn);
+    this.textContent=fireOn?'발사 중 (VFX)':'머즐 VFX 미리보기';
+  });
+  setInterval(function(){
+    if(!fireOn){muzzle.style.opacity=0;return;}
+    muzzle.style.opacity = muzzle.style.opacity==='1'?'0.25':'1';
+  },90);
+
+  // aim
+  var aim=document.getElementById('aim'),aimv=document.getElementById('aimv');
+  aim.addEventListener('input',function(){state.aim=+aim.value;aimv.textContent=aim.value+'°';place();});
+
+  // direction (mirror)
+  function setDir(d){
+    state.dir=d;
+    stage.style.transform = d<0 ? 'scaleX(-1)':'none';
+    document.getElementById('dE').classList.toggle('on',d>0);
+    document.getElementById('dW').classList.toggle('on',d<0);
+  }
+  document.getElementById('dE').onclick=function(){setDir(1)};
+  document.getElementById('dW').onclick=function(){setDir(-1)};
+
+  // keyframe toggle
+  function setKF(on){state.kf=on;
+    document.getElementById('kON').classList.toggle('on',on);
+    document.getElementById('kOFF').classList.toggle('on',!on);place();}
+  document.getElementById('kON').onclick=function(){setKF(true)};
+  document.getElementById('kOFF').onclick=function(){setKF(false)};
+
+  // marker
+  document.getElementById('mON').onclick=function(){
+    state.marker=!state.marker;this.classList.toggle('on',state.marker);place();
+  };
+})();
+</script>
+</body>
+</html>
