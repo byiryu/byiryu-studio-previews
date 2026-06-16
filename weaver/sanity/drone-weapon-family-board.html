@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>weaver · 무기-드론 패밀리 컨셉</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a0f;--bg2:#0c1119;--panel:#0e1521;--panel2:#111b2b;
+    --line:#1c2a3e;--line2:#26384f;--ink:#e8f0fb;--mut:#7e93ad;--dim:#52647d;
+    --cy:#4DABF7;--cy-soft:#8fd0ff;--red:#FF6B6B;--yel:#FFD43B;--pur:#B197FC;
+    --good:#37d39b;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:30px 18px 90px;max-width:1060px;margin:0 auto;-webkit-font-smoothing:antialiased;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");}
+  img{image-rendering:pixelated}
+  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--panel2),var(--panel));padding:26px 28px 24px;margin-bottom:22px}
+  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:9px 0 7px}
+  h1 b{color:var(--cy-soft)}
+  .lead{color:var(--mut);font-size:13.5px;max-width:800px}
+  .lead b{color:var(--ink)}
+  .dna{margin-top:14px;border:1px solid var(--line2);border-radius:11px;background:#0a1019;padding:12px 15px;font-size:12.5px;color:var(--mut)}
+  .dna b{color:var(--cy-soft)}
+  section{margin-top:26px}
+  .sec-h{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);border-radius:7px;padding:3px 8px;background:#0a1019}
+  .sec-h h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .sec-h .note{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-left:auto}
+  .panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:20px}
+  .strip{display:flex;flex-wrap:wrap;gap:13px}
+  .card{flex:1 1 220px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:16px}
+  .card.rec{box-shadow:0 0 0 1px rgba(77,171,247,.25),0 0 26px rgba(77,171,247,.07)}
+  .card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .card .nm{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .badge{font-family:var(--mono);font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:999px}
+  .b-rec{background:linear-gradient(135deg,#5ee7b0,#37d39b);color:#03150e}
+  .b-fix{background:linear-gradient(135deg,#ffe08a,#FFD43B);color:#1e1606}
+  .b-alt{border:1px solid var(--line2);color:var(--mut)}
+  .stage{display:flex;justify-content:center;align-items:center;background:radial-gradient(120% 120% at 50% 45%,#0c1622,#06090e);border:1px solid #16202f;border-radius:11px;padding:16px;min-height:108px}
+  .stage img{width:84px;height:84px}
+  .desc{color:var(--mut);font-size:12px;margin-top:11px}
+  .desc b{font-weight:600}
+  .pill{font-family:var(--mono);font-size:9.5px;color:var(--dim);border:1px solid var(--line2);border-radius:5px;padding:2px 6px;background:#0a1019}
+  .dec{border:1px solid #2f6da3;border-radius:14px;background:linear-gradient(160deg,#0f1d2d,#0b1420);padding:20px 22px}
+  .dec h3{font-size:14px;margin-bottom:12px;color:var(--cy-soft)}
+  .dec ol{margin-left:18px;font-size:13px;color:var(--mut)}.dec ol li{padding:5px 0}.dec ol li b{color:var(--ink)}
+  .foot{margin-top:30px;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">weaver · weapon-drone family · concept</div>
+  <h1>무기-드론 <b>패밀리</b> — 드론 자체가 곧 무기</h1>
+  <p class="lead">방향 전환: "단일 본체 + 스왑 모듈" 폐기 → <b>카테고리별로 생긴 게 다른 무기-드론 4종</b>. 드론 본체 자체가 무기에 맞게 디자인됨. 무기는 한 번에 하나 장착 → "내 장착 무기 = 내 동반 드론".</p>
+  <div class="dna">🧬 <b>공유 DNA 가드</b> — 4종이 따로 놀지 않게: <b>다크 보이드 셸 + 카테고리색 코어 글로우 + 동일 픽셀 톤</b>. "같은 AI 드론 패밀리, 무기별 변형". · PixelLab 실 생성(매체 게이트 #8) · 평시 dim·발사 순간 피크 / 거동·VFX = Unity 런타임.</div>
+</header>
+
+<!-- §1 확정 방향 -->
+<section>
+  <div class="sec-h"><span class="no">01</span><h2>확정 방향 — 🔵 원거리 · 🟡 대공</h2><span class="note">방향 명확 (시안 확정 진행)</span></div>
+  <div class="panel"><div class="strip">
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--cy-soft)">🔵 원거리 — 건드론</span><span class="badge b-fix">방향 확정</span></div>
+      <div class="stage"><img src="drone/wd-ranged.png" alt=""></div>
+      <p class="desc">전방 통합 배럴/에미터가 본체에 박힌 <b style="color:var(--cy-soft)">건-드론</b>. 곁에서 따라다니며 전방 투사체 발사. 가장 기본 거동.</p>
+    </div>
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--yel)">🟡 대공 — 상향 요격 드론</span><span class="badge b-fix">방향 확정</span></div>
+      <div class="stage"><img src="drone/wd-aa.png" alt=""></div>
+      <p class="desc"><b style="color:var(--yel)">공중에 떠 따라다니는</b> 드론(터렛 X) + <b>상향 옐로 런처 2기</b>. 목적 = 바닥에 있을 때 <b>천장에서 떨어지는 장애물 요격</b>. 원거리(전방 정밀)와 차별 = 상방 + 산탄/광역.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- §2 근접 3시안 -->
+<section>
+  <div class="sec-h"><span class="no">02</span><h2>🔴 근접 — 3 시안 (팔·분리 칼 회피)</h2><span class="note">택1 → 정교화</span></div>
+  <div class="panel"><div class="strip">
+    <div class="card rec">
+      <div class="top"><span class="nm" style="color:var(--red)">A 버즈소우 링</span><span class="badge b-rec">추천</span></div>
+      <div class="stage"><img src="drone/wd-melee_saw.png" alt=""></div>
+      <p class="desc">코어 둘레가 <b style="color:var(--red)">회전 에너지 톱날 링</b>. dash하며 슬라이스. <b>드론 자체가 칼날</b> — 팔·분리 칼 없음. 가장 "근접 무기" 즉독 + juicy.</p>
+    </div>
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--red)">B 아크 방전</span><span class="badge b-alt">시안</span></div>
+      <div class="stage"><img src="drone/wd-melee_arc.png" alt=""></div>
+      <p class="desc">칼날 0. 적 근접 시 <b style="color:var(--red)">전기 아크 방전</b>(번개). "칼이 이상하다" 근본 회피. 현 시안은 다소 크리처스러움(정교화 시 드론化).</p>
+    </div>
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--red)">C 램-프로우</span><span class="badge b-alt">시안</span></div>
+      <div class="stage"><img src="drone/wd-melee_ram.png" alt=""></div>
+      <p class="desc">슬릭 저프로파일 + 각진 <b style="color:var(--red)">단검형 선체</b>. 적을 들이받는 dash(돌진 후 복귀). 날=본체 일부. 빠르고 공격적.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- §3 특수 3시안 -->
+<section>
+  <div class="sec-h"><span class="no">03</span><h2>🟣 특수 — 3 시안 (다른 3종과 차별)</h2><span class="note">택1 → 정교화</span></div>
+  <div class="panel"><div class="strip">
+    <div class="card rec">
+      <div class="top"><span class="nm" style="color:var(--pur)">A 궤도 오브</span><span class="badge b-rec">추천</span></div>
+      <div class="stage"><img src="drone/wd-special_orbit.png" alt=""></div>
+      <p class="desc">주위를 도는 퍼플 오브 <b style="color:var(--pur)">자동 요격</b> = 사방 패시브 방어. 상하좌우 벽타기 + 다방향 위협에 딱. (현 시안 오브 작음 → 정교화 시 강조)</p>
+    </div>
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--pur)">B 관통 빔</span><span class="badge b-alt">시안</span></div>
+      <div class="stage"><img src="drone/wd-special_beam.png" alt=""></div>
+      <p class="desc">지속 퍼플 <b style="color:var(--pur)">관통 레이저</b>(채널). 드라마틱한 "궁극기" 감·정밀 조준. ⚠ 현 시안 본체 갈색조 = DNA 이탈(선택 시 다크로 재조정).</p>
+    </div>
+    <div class="card">
+      <div class="top"><span class="nm" style="color:var(--pur)">C 노바 펄스</span><span class="badge b-alt">시안</span></div>
+      <div class="stage"><img src="drone/wd-special_nova.png" alt=""></div>
+      <p class="desc">충전 후 <b style="color:var(--pur)">방사형 충격파</b> = 주변 광역 클리어. 패닉 버튼/위기 탈출. 다크+동심원 = DNA 정합·시각 임팩트 강.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- §4 결정 -->
+<section>
+  <div class="sec-h"><span class="no">04</span><h2>결정</h2></div>
+  <div class="dec">
+    <h3>확인 항목</h3>
+    <ol>
+      <li><b>🔵 원거리 · 🟡 대공</b> — 위 방향 OK? (대공이 "떠다니는 요격 드론"으로 읽히는지)</li>
+      <li><b>🔴 근접</b> — A 버즈소우(추천) / B 아크 / C 램-프로우</li>
+      <li><b>🟣 특수</b> — A 궤도(추천) / B 빔 / C 노바</li>
+    </ol>
+    <p style="font-size:11.5px;color:var(--mut);margin-top:14px;font-family:var(--mono)">확정 시 → 4종 공유 DNA로 정교화(채택+대안) + idle hover + 인게임 합성/모션 → unity 핸드오프(독립GO 스프링추종 + 카테고리별 발사 거동/VFX) → 기기 판정.</p>
+  </div>
+</section>
+<div class="foot">weaver · weapon-drone family concept · PixelLab 실 생성 (매체 게이트 #8) · unlisted / noindex · 구 "본체+모듈" supersede</div>
+</body>
+</html>
