@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>weaver · 무기-드론 공격 모션</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a0f;--bg2:#0c1119;--panel:#0e1521;--panel2:#111b2b;
+    --line:#1c2a3e;--line2:#26384f;--ink:#e8f0fb;--mut:#7e93ad;--dim:#52647d;
+    --cy:#4DABF7;--cy-soft:#8fd0ff;--red:#FF6B6B;--yel:#FFD43B;--pur:#B197FC;
+    --good:#37d39b;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:30px 18px 90px;max-width:1060px;margin:0 auto;-webkit-font-smoothing:antialiased;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");}
+  img{image-rendering:pixelated}
+  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--panel2),var(--panel));padding:24px 26px;margin-bottom:20px}
+  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:8px 0 6px}
+  h1 b{color:var(--cy-soft)}
+  .lead{color:var(--mut);font-size:13px;max-width:800px}
+  .lead b{color:var(--ink)}
+  .sec-h{display:flex;align-items:center;gap:11px;margin:24px 0 13px}
+  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);border-radius:7px;padding:3px 8px;background:#0a1019}
+  .sec-h h2{font-size:16px;font-weight:700}
+  .sec-h .note{color:var(--dim);font-size:11px;font-family:var(--mono);margin-left:auto}
+  .strip{display:flex;flex-wrap:wrap;gap:13px}
+  .card{flex:1 1 330px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:14px}
+  .card.rec{box-shadow:0 0 0 1px rgba(55,211,155,.3)}
+  .card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .card .nm{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .badge{font-family:var(--mono);font-size:9px;font-weight:600;padding:3px 7px;border-radius:999px}
+  .b-rec{background:linear-gradient(135deg,#5ee7b0,#37d39b);color:#03150e}
+  .b-fix{background:linear-gradient(135deg,#ffe08a,#FFD43B);color:#1e1606}
+  .b-alt{border:1px solid var(--line2);color:var(--mut)}
+  .desc{color:var(--mut);font-size:11.5px;margin-top:9px}
+  .desc b{font-weight:600}
+  /* ===== game stage ===== */
+  .gs{position:relative;height:172px;border:1px solid #16202f;border-radius:11px;overflow:hidden;
+    background:radial-gradient(130% 110% at 65% 25%,#0d1622,#05080d)}
+  .gs .floor{position:absolute;left:0;right:0;bottom:34px;height:1px;background:linear-gradient(90deg,transparent,var(--line2) 25%,var(--line2) 75%,transparent)}
+  .voy{position:absolute;right:30px;bottom:34px;width:46px;height:46px}
+  .tgt{position:absolute;right:74px;bottom:40px;width:18px;height:18px;border-radius:3px;
+    background:repeating-linear-gradient(45deg,#3a2730 0 3px,#2a1a22 3px 6px);border:1px solid #5a3a44}
+  .hov{position:absolute;left:40px;bottom:78px;width:48px;height:48px;animation:bob 2.3s ease-in-out infinite}
+  .drn{position:relative;width:48px;height:48px}
+  .drn>img{width:100%;height:100%;image-rendering:pixelated}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .lbl{position:absolute;left:10px;top:9px;font-family:var(--mono);font-size:9px;color:var(--dim);background:rgba(7,10,15,.7);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+
+  /* 🔵 ranged: forward projectile */
+  .t-ranged .drn{animation:rangedDash 2.4s ease-out infinite}
+  .t-ranged .proj{position:absolute;left:46px;bottom:96px;width:10px;height:4px;border-radius:2px;background:linear-gradient(90deg,rgba(143,208,255,.2),var(--cy-soft));box-shadow:0 0 6px var(--cy);opacity:0;animation:rangedProj 2.4s linear infinite}
+  .t-ranged .muz{position:absolute;left:84px;bottom:94px;width:22px;height:11px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(143,208,255,.95),transparent 70%);animation:flash24 2.4s ease-out infinite}
+  @keyframes rangedDash{0%,40%{transform:translateX(0)}48%{transform:translateX(8px)}58%{transform:translateX(4px)}70%,100%{transform:translateX(0)}}
+  @keyframes rangedProj{0%,44%{opacity:0;transform:translateX(0)}48%{opacity:1;transform:translateX(6px)}66%{opacity:1;transform:translateX(150px)}72%,100%{opacity:0;transform:translateX(170px)}}
+  @keyframes flash24{0%,45%{opacity:0;transform:scaleX(.3)}49%{opacity:1;transform:scaleX(1)}58%{opacity:0}100%{opacity:0}}
+
+  /* 🟡 AA: intercept falling obstacle upward */
+  .t-aa .hov{left:46px}
+  .t-aa .fall{position:absolute;left:120px;top:8px;width:16px;height:16px;border-radius:3px;background:repeating-linear-gradient(45deg,#3a3527 0 3px,#2a2618 3px 6px);border:1px solid #5a5030;animation:aaFall 2.6s ease-in infinite}
+  .t-aa .flak{position:absolute;left:70px;bottom:104px;width:6px;height:12px;border-radius:3px;background:linear-gradient(0deg,rgba(255,212,59,.2),var(--yel));box-shadow:0 0 6px var(--yel);opacity:0;animation:aaFlak 2.6s linear infinite}
+  .t-aa .boom{position:absolute;left:108px;top:38px;width:34px;height:34px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,224,138,.95),rgba(255,212,59,.5) 45%,transparent 72%);animation:aaBoom 2.6s ease-out infinite}
+  @keyframes aaFall{0%{top:8px;opacity:1}55%{top:54px;opacity:1}60%{opacity:0}100%{opacity:0;top:54px}}
+  @keyframes aaFlak{0%,30%{opacity:0;transform:translate(0,0)}36%{opacity:1;transform:translate(0,0)}54%{opacity:1;transform:translate(58px,-66px)}58%{opacity:0;transform:translate(60px,-70px)}100%{opacity:0}}
+  @keyframes aaBoom{0%,54%{opacity:0;transform:scale(.3)}58%{opacity:1;transform:scale(1)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+
+  /* 🔴 saw: dash + spin */
+  .t-saw .drn{animation:sawDash 2.2s cubic-bezier(.5,0,.3,1) infinite}
+  .t-saw .drn>img{animation:spin .5s linear infinite}
+  .t-saw .slash{position:absolute;right:86px;bottom:42px;width:26px;height:26px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,154,154,.9),transparent 65%);animation:flashSlash 2.2s ease-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sawDash{0%,32%{transform:translateX(0)}50%{transform:translateX(120px)}62%{transform:translateX(96px)}82%,100%{transform:translateX(0)}}
+  @keyframes flashSlash{0%,50%{opacity:0;transform:scale(.4)}56%{opacity:1;transform:scale(1.1)}68%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+
+  /* 🔴 arc: electric discharge */
+  .t-arc .hov{left:96px}
+  .t-arc .arc{position:absolute;left:138px;bottom:88px;width:54px;height:3px;opacity:0;transform-origin:left center;
+    background:linear-gradient(90deg,var(--red),rgba(255,107,107,.2));box-shadow:0 0 7px var(--red);animation:arcZap 1.5s steps(1) infinite}
+  .t-arc .arc2{top:6px}
+  @keyframes arcZap{0%,40%{opacity:0;transform:rotate(8deg) scaleX(.7)}45%{opacity:1;transform:rotate(14deg) scaleX(1)}50%{opacity:.3;transform:rotate(4deg) scaleX(.9)}55%{opacity:1;transform:rotate(18deg) scaleX(1)}62%{opacity:0}100%{opacity:0}}
+
+  /* 🔴 ram: hard dash impact */
+  .t-ram .drn{animation:ramDash 2s cubic-bezier(.7,0,.3,1) infinite}
+  .t-ram .impact{position:absolute;right:84px;bottom:40px;width:30px;height:30px;border-radius:50%;opacity:0;background:radial-gradient(circle,#fff,rgba(255,107,107,.6) 40%,transparent 72%);animation:flashImpact 2s ease-out infinite}
+  @keyframes ramDash{0%,34%{transform:translateX(0)}40%{transform:translateX(-8px)}52%{transform:translateX(128px)}56%{transform:translateX(122px)}80%,100%{transform:translateX(0)}}
+  @keyframes flashImpact{0%,51%{opacity:0;transform:scale(.3)}55%{opacity:1;transform:scale(1.1)}66%{opacity:0;transform:scale(1.4)}100%{opacity:0}}
+
+  /* 🟣 orbit: orbs circle + zap */
+  .t-orbit .orbit{position:absolute;left:0;top:0;width:48px;height:48px;animation:spin 2.4s linear infinite}
+  .t-orbit .orb{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,var(--pur) 55%,transparent);box-shadow:0 0 6px var(--pur)}
+  .t-orbit .orb.o1{left:-9px;top:20px}.t-orbit .orb.o2{right:-9px;top:20px}
+  .t-orbit .zap{position:absolute;right:84px;bottom:46px;width:50px;height:2px;transform-origin:right center;opacity:0;background:linear-gradient(90deg,rgba(177,151,252,.2),var(--pur));box-shadow:0 0 6px var(--pur);animation:orbZap 2s steps(1) infinite}
+  @keyframes orbZap{0%,55%{opacity:0}60%{opacity:1}66%{opacity:0}72%{opacity:1}78%{opacity:0}100%{opacity:0}}
+
+  /* 🟣 beam: sustained beam */
+  .t-beam .beam{position:absolute;left:86px;bottom:96px;height:7px;border-radius:4px;transform-origin:left center;opacity:0;
+    background:linear-gradient(90deg,rgba(177,151,252,.95),rgba(177,151,252,.35));box-shadow:0 0 10px var(--pur);animation:beamFire 2.4s ease-in-out infinite}
+  @keyframes beamFire{0%,20%{opacity:0;width:0}30%{opacity:1;width:150px}70%{opacity:1;width:150px}80%{opacity:0;width:150px}100%{opacity:0;width:0}}
+
+  /* 🟣 nova: radial pulse */
+  .t-nova .hov{left:50%;margin-left:-24px}
+  .t-nova .drn{animation:novaCharge 2.6s ease-in-out infinite}
+  .t-nova .ring{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:3px solid var(--pur);opacity:0;box-shadow:0 0 12px var(--pur);animation:novaRing 2.6s ease-out infinite}
+  @keyframes novaCharge{0%,55%{transform:scale(1)}62%{transform:scale(1.18)}68%{transform:scale(.96)}80%,100%{transform:scale(1)}}
+  @keyframes novaRing{0%,60%{opacity:0;transform:scale(.2)}66%{opacity:1;transform:scale(1)}85%{opacity:0;transform:scale(4)}100%{opacity:0}}
+
+  .dec{margin-top:24px;border:1px solid #2f6da3;border-radius:14px;background:linear-gradient(160deg,#0f1d2d,#0b1420);padding:18px 20px}
+  .dec h3{font-size:13.5px;margin-bottom:10px;color:var(--cy-soft)}
+  .dec ol{margin-left:18px;font-size:12.5px;color:var(--mut)}.dec ol li{padding:4px 0}.dec ol li b{color:var(--ink)}
+  .foot{margin-top:28px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">weaver · weapon-drone · attack motion</div>
+  <h1>무기-드론 <b>인게임 공격 모션</b> (루프)</h1>
+  <p class="lead">각 무기-드론의 공격 거동을 인게임 미니씬으로 재생(실 스프라이트 + CSS VFX 합성). <b>개념 미리보기</b> — 실제 dash 커브·파티클·VFX·스프링 추종은 unity 런타임. 형태 보드 = <b>drone-weapon-family-board</b>.</p>
+</header>
+
+<!-- 확정 방향 -->
+<div class="sec-h"><span class="no">01</span><h2>확정 방향 — 🔵 원거리 · 🟡 대공</h2><span class="note">거동 확인</span></div>
+<div class="strip">
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--cy-soft)">🔵 원거리 — 전방 발사</span><span class="badge b-fix">방향 확정</span></div>
+    <div class="gs t-ranged"><div class="lbl">dash → 전방 투사체</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-ranged.png" alt=""></div></div><div class="proj"></div><div class="muz"></div></div>
+    <p class="desc">곁에서 따라다니며 <b style="color:var(--cy-soft)">전방으로 투사체 연사</b>. 기본 DPS.</p>
+  </div>
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--yel)">🟡 대공 — 천장 낙하물 요격</span><span class="badge b-fix">방향 확정</span></div>
+    <div class="gs t-aa"><div class="lbl">천장 낙하물 ↑ 상향 요격</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt="">
+      <div class="fall"></div><div class="hov"><div class="drn"><img src="drone/wd-aa.png" alt=""></div></div><div class="flak"></div><div class="boom"></div></div>
+    <p class="desc">바닥에 있을 때 <b style="color:var(--yel)">천장에서 떨어지는 장애물을 상향 요격</b>. 원거리(전방)와 역할 분리.</p>
+  </div>
+</div>
+
+<!-- 근접 -->
+<div class="sec-h"><span class="no">02</span><h2>🔴 근접 — 3 시안</h2><span class="note">택1</span></div>
+<div class="strip">
+  <div class="card rec">
+    <div class="top"><span class="nm" style="color:var(--red)">A 버즈소우 링</span><span class="badge b-rec">추천</span></div>
+    <div class="gs t-saw"><div class="lbl">dash + 톱날 회전 슬라이스</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-melee_saw.png" alt=""></div></div><div class="slash"></div></div>
+    <p class="desc">적에게 <b style="color:var(--red)">dash + 톱날 링 고속 회전</b> 슬라이스. 드론=칼날.</p>
+  </div>
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--red)">B 아크 방전</span><span class="badge b-alt">시안</span></div>
+    <div class="gs t-arc"><div class="lbl">근접 + 전기 아크</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt" style="right:30px"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-melee_arc.png" alt=""></div></div><div class="arc"></div><div class="arc arc2"></div></div>
+    <p class="desc">적 근접 시 <b style="color:var(--red)">전기 아크 방전</b> 연쇄. 칼날 0.</p>
+  </div>
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--red)">C 램-프로우</span><span class="badge b-alt">시안</span></div>
+    <div class="gs t-ram"><div class="lbl">강 dash 들이받기 + 복귀</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-melee_ram.png" alt=""></div></div><div class="impact"></div></div>
+    <p class="desc">단검형 선체로 <b style="color:var(--red)">강하게 들이받고</b> 탄성 복귀.</p>
+  </div>
+</div>
+
+<!-- 특수 -->
+<div class="sec-h"><span class="no">03</span><h2>🟣 특수 — 3 시안</h2><span class="note">택1</span></div>
+<div class="strip">
+  <div class="card rec">
+    <div class="top"><span class="nm" style="color:var(--pur)">A 궤도 오브</span><span class="badge b-rec">추천</span></div>
+    <div class="gs t-orbit"><div class="lbl">오브 궤도 + 자동 요격</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-special_orbit.png" alt=""><div class="orbit"><div class="orb o1"></div><div class="orb o2"></div></div></div></div><div class="zap"></div></div>
+    <p class="desc">주위를 도는 오브가 <b style="color:var(--pur)">사방 자동 요격</b>. 다방향 위협 방어.</p>
+  </div>
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--pur)">B 관통 빔</span><span class="badge b-alt">시안</span></div>
+    <div class="gs t-beam"><div class="lbl">지속 관통 레이저</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
+      <div class="hov"><div class="drn"><img src="drone/wd-special_beam.png" alt=""></div></div><div class="beam"></div></div>
+    <p class="desc"><b style="color:var(--pur)">지속 관통 빔</b>(채널). ⚠ 본체 색 DNA 재조정 필요.</p>
+  </div>
+  <div class="card">
+    <div class="top"><span class="nm" style="color:var(--pur)">C 노바 펄스</span><span class="badge b-alt">시안</span></div>
+    <div class="gs t-nova"><div class="lbl">충전 → 방사형 충격파</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt="">
+      <div class="hov"><div class="drn"><img src="drone/wd-special_nova.png" alt=""></div><div class="ring"></div></div></div>
+    <p class="desc">충전 후 <b style="color:var(--pur)">방사형 충격파</b> 광역 클리어. 위기 탈출.</p>
+  </div>
+</div>
+
+<div class="dec">
+  <h3>결정 — 거동까지 보고</h3>
+  <ol>
+    <li><b>🔵 원거리 · 🟡 대공</b> 거동 OK? (대공 = 천장 낙하물 상향 요격이 맞는지)</li>
+    <li><b>🔴 근접</b> — A 버즈소우(추천) / B 아크 / C 램</li>
+    <li><b>🟣 특수</b> — A 궤도(추천) / B 빔 / C 노바</li>
+  </ol>
+</div>
+<div class="foot">weaver · weapon-drone attack motion · 개념 미리보기(CSS 합성, 실 VFX=unity) · unlisted / noindex</div>
+</body>
+</html>
