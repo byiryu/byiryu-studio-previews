@@ -249,6 +249,81 @@
   </div>
 </section>
 
+<!-- §3b 거동 모션 미리보기 -->
+<style>
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .mstage{position:relative;height:190px;border:1px solid var(--line2);border-radius:13px;overflow:hidden;
+    background:linear-gradient(120% 100% at 30% 40%,#0c1622,#05080d)}
+  .mstage .mfloor{position:absolute;left:0;right:0;bottom:46px;height:1px;background:linear-gradient(90deg,transparent,var(--line2) 30%,var(--line2) 70%,transparent)}
+  .mstage .mlbl{position:absolute;left:12px;top:10px;font-family:var(--mono);font-size:10.5px;font-weight:600}
+  .mstage .msub{position:absolute;left:12px;bottom:10px;right:12px;font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+  .mtarget{position:absolute;right:40px;bottom:52px;width:22px;height:22px;border-radius:4px;
+    background:repeating-linear-gradient(45deg,#27384f 0 3px,#1a2738 3px 6px);border:1px solid #344d66;opacity:.7}
+  .fireS .mtarget{border:1px solid #3a4d66}
+  .mhover{position:absolute;left:54px;bottom:60px;width:40px;height:40px;animation:mbob 2.2s ease-in-out infinite}
+  .mdrone{position:relative;width:40px;height:40px}
+  .mdrone>img.core{width:100%;height:100%;image-rendering:pixelated;filter:brightness(.7) saturate(.75)}
+  .mmod{position:absolute;right:-14px;top:9px;width:20px;height:20px;image-rendering:pixelated;opacity:0}
+  .marc{position:absolute;right:-20px;top:4px;width:30px;height:30px;image-rendering:pixelated;opacity:0;transform-origin:left center}
+  .mmuzzle{position:absolute;right:-26px;top:50%;width:30px;height:13px;border-radius:50%;transform:translateY(-50%);opacity:0;
+    background:radial-gradient(circle,rgba(143,208,255,.95),rgba(77,171,247,.55) 45%,transparent 72%)}
+  .mproj{position:absolute;right:-24px;top:50%;width:9px;height:4px;border-radius:2px;transform:translateY(-50%);opacity:0;
+    background:linear-gradient(90deg,rgba(143,208,255,.2),var(--cy-soft));box-shadow:0 0 6px var(--cy)}
+  @keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  /* fire sequence */
+  .fireS .mdrone{animation:fireDash 2.8s cubic-bezier(.5,0,.3,1) infinite}
+  .fireS .mdrone>img.core{animation:firePeak 2.8s ease-in-out infinite}
+  .fireS .mmod{animation:fireMod 2.8s ease-out infinite}
+  .fireS .mmuzzle{animation:fireMuz 2.8s ease-out infinite}
+  .fireS .mproj{animation:fireProj 2.8s linear infinite}
+  @keyframes fireDash{0%,32%{transform:translateX(0)}38%{transform:translateX(-4px)}46%{transform:translateX(20px)}58%{transform:translateX(11px)}74%,100%{transform:translateX(0)}}
+  @keyframes firePeak{0%,38%{filter:brightness(.7) saturate(.75)}46%,56%{filter:brightness(1.25) saturate(1.3) drop-shadow(0 0 7px rgba(77,171,247,.85))}72%,100%{filter:brightness(.7) saturate(.75)}}
+  @keyframes fireMod{0%,40%{opacity:0}46%,56%{opacity:1}66%,100%{opacity:0}}
+  @keyframes fireMuz{0%,45%{opacity:0;transform:translateY(-50%) scaleX(.3)}49%{opacity:1;transform:translateY(-50%) scaleX(1)}60%{opacity:0;transform:translateY(-50%) scaleX(.5)}100%{opacity:0}}
+  @keyframes fireProj{0%,47%{opacity:0;transform:translate(0,-50%)}49%{opacity:1;transform:translate(2px,-50%)}68%{opacity:1;transform:translate(120px,-50%)}74%,100%{opacity:0;transform:translate(140px,-50%)}}
+  /* melee sequence */
+  .meleeS .mdrone{animation:meleeDash 2.4s cubic-bezier(.4,0,.25,1) infinite}
+  .meleeS .mdrone>img.core{animation:meleePeak 2.4s ease-in-out infinite}
+  .meleeS .marc{animation:meleeArc 2.4s ease-out infinite}
+  @keyframes meleeDash{0%,30%{transform:translateX(0)}40%{transform:translateX(-5px)}52%{transform:translateX(46px)}64%{transform:translateX(30px)}82%,100%{transform:translateX(0)}}
+  @keyframes meleePeak{0%,40%{filter:brightness(.7) saturate(.75)}52%,62%{filter:brightness(1.2) saturate(1.3) drop-shadow(0 0 7px rgba(255,107,107,.85))}80%,100%{filter:brightness(.7) saturate(.75)}}
+  @keyframes meleeArc{0%,48%{opacity:0;transform:scale(.4) rotate(-38deg)}54%{opacity:1;transform:scale(1.15) rotate(0deg)}62%{opacity:.9;transform:scale(1.2) rotate(34deg)}70%{opacity:0;transform:scale(1) rotate(46deg)}100%{opacity:0}}
+</style>
+<section>
+  <div class="sec-h"><span class="no">03b</span><h2>거동 모션 미리보기 — 발사 / 근접 (루프)</h2><span class="note">실 스프라이트 합성 · unity 런타임 거동 개념</span></div>
+  <div class="panel">
+    <div class="mgrid">
+      <div class="mstage fireS">
+        <div class="mlbl" style="color:var(--cy-soft)">🔵 발사 (원거리)</div>
+        <div class="mfloor"></div>
+        <div class="mtarget"></div>
+        <div class="mhover">
+          <div class="mdrone">
+            <img class="core" src="drone/dr-core-hover.gif" alt="">
+            <img class="mmod" src="drone/dr-mod.png" alt="">
+            <div class="mmuzzle"></div>
+            <div class="mproj"></div>
+          </div>
+        </div>
+        <div class="msub">idle hover → 짧은 dash → 🔵 모듈 돌출 + 머즐 피크 → 투사체 발사 → 반동 → 스프링 복귀</div>
+      </div>
+      <div class="mstage meleeS">
+        <div class="mlbl" style="color:var(--red)">🔴 근접 (블레이드 림)</div>
+        <div class="mfloor"></div>
+        <div class="mtarget"></div>
+        <div class="mhover">
+          <div class="mdrone">
+            <img class="core" src="drone/dr-core-hover.gif" alt="">
+            <img class="marc" src="drone/dr-mod-melee.png" alt="">
+          </div>
+        </div>
+        <div class="msub">idle hover → 전진 dash(적 근접) → 에너지 블레이드 림 아크 스윕 → 반동 → 복귀 (칼날 = 런타임 VFX)</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--dim);margin-top:13px;font-family:var(--mono)">⚠ 위 모션 = <b style="color:var(--mut)">개념 미리보기</b>(CSS 합성). 실제 dash 커브·머즐 파티클·블레이드 아크 VFX·스프링 추종 = unity 런타임 (기기 판정 시제). 스프라이트 = 드론 베이스(hover) + 모듈만.</p>
+  </div>
+</section>
+
 <!-- §4 게이트 + 분업 -->
 <section>
   <div class="sec-h"><span class="no">04</span><h2>기기 판정 7항 (양산 하드게이트)</h2><span class="note">unity 시제 → 기기 1회 판정 → 통과 시 4모듈+근접 양산</span></div>
