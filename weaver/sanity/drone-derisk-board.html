@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>weaver · 동반 드론 de-risk 보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a0f; --bg2:#0c1119; --panel:#0e1521; --panel2:#111b2b;
+    --line:#1c2a3e; --line2:#26384f;
+    --ink:#e8f0fb; --mut:#7e93ad; --dim:#52647d;
+    --cy:#4DABF7; --cy-soft:#8fd0ff;
+    --red:#FF6B6B; --yel:#FFD43B; --pur:#B197FC;
+    --good:#37d39b; --warn:#ffb454;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.55;
+    padding:30px 18px 90px; -webkit-font-smoothing:antialiased; max-width:1080px; margin:0 auto;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+  }
+  img{image-rendering:pixelated}
+  /* header */
+  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:linear-gradient(160deg,var(--panel2),var(--panel));padding:26px 28px 24px;margin-bottom:22px}
+  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
+  h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin:9px 0 7px}
+  h1 b{color:var(--cy-soft)}
+  .lead{color:var(--mut);font-size:14px;max-width:780px}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .tag{font-family:var(--mono);font-size:10.5px;color:var(--mut);border:1px solid var(--line2);
+    border-radius:999px;padding:5px 11px;background:#0a1019}
+  .tag b{color:var(--ink);font-weight:600}
+  .tag.gate{color:#1a0c02;background:linear-gradient(135deg,#ffd07a,#ffb454);border-color:transparent;font-weight:600}
+  /* section */
+  section{margin-top:26px}
+  .sec-h{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);
+    border-radius:7px;padding:3px 8px;background:#0a1019}
+  .sec-h h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .sec-h .note{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-left:auto}
+  .panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:22px}
+  /* candidate grid */
+  .cands{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .cand{border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:18px;position:relative}
+  .cand.pick{border-color:#2f6da3;box-shadow:0 0 0 1px rgba(77,171,247,.25),0 0 30px rgba(77,171,247,.08)}
+  .cand .lbl{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .cand .lbl .nm{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600}
+  .cand .lbl .pid{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+  .badge-pick{font-family:var(--mono);font-size:9.5px;font-weight:600;color:#03150e;
+    background:linear-gradient(135deg,#5ee7b0,#37d39b);padding:3px 8px;border-radius:999px}
+  .badge-alt{font-family:var(--mono);font-size:9.5px;color:var(--mut);border:1px solid var(--line2);padding:3px 8px;border-radius:999px}
+  .sprite-row{display:flex;align-items:flex-end;gap:22px;justify-content:center;
+    padding:18px 8px;border-radius:11px;
+    background:radial-gradient(120% 120% at 50% 40%,#0c131e,#060a11);border:1px solid #16202f}
+  .sprite-row .col{display:flex;flex-direction:column;align-items:center;gap:7px}
+  .sprite-row .col span{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+  .sp-native{width:48px;height:48px}
+  .sp-game{width:24px;height:24px}      /* drone in-game ≈ 45% of ~52px char-draw */
+  .sp-game-mod{width:17px;height:17px}
+  .desc{color:var(--mut);font-size:12px;margin-top:13px}
+  .desc b{color:var(--cy-soft);font-weight:600}
+  /* composite stage */
+  .stage{position:relative;height:300px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;
+    background:radial-gradient(140% 120% at 70% 30%,#0d1622,#05080d);}
+  .stage .grid{position:absolute;inset:0;opacity:.5;
+    background:
+      repeating-linear-gradient(90deg,transparent 0 47px,rgba(38,56,79,.18) 47px 48px),
+      repeating-linear-gradient(0deg,transparent 0 47px,rgba(38,56,79,.18) 47px 48px);}
+  .stage .floor{position:absolute;left:0;right:0;bottom:64px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--line2) 25%,var(--line2) 75%,transparent)}
+  .rig{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);width:230px;height:170px}
+  .voyager{position:absolute;right:34px;bottom:0;width:62px;height:62px}
+  /* drone sits upper-rear (behind = left of east-facing char) quadrant */
+  .drone{position:absolute;left:34px;bottom:74px;width:30px;height:30px;
+    filter:brightness(.62) saturate(.7);
+    animation:hover 2.4s ease-in-out infinite;}
+  .drone .mod{position:absolute;right:-13px;top:50%;width:18px;height:18px;transform:translateY(-50%);
+    opacity:0;transition:opacity .12s}
+  .muzzle{position:absolute;left:34px;bottom:74px;width:30px;height:30px;pointer-events:none}
+  .muzzle::after{content:"";position:absolute;right:-30px;top:50%;transform:translateY(-50%) scaleX(.4);
+    width:46px;height:14px;border-radius:50%;opacity:0;
+    background:radial-gradient(circle,rgba(143,208,255,.95),rgba(77,171,247,.5) 45%,transparent 72%)}
+  @keyframes hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  /* fire state */
+  .stage.fire .drone{filter:brightness(1.15) saturate(1.25) drop-shadow(0 0 7px rgba(77,171,247,.8))}
+  .stage.fire .drone .mod{opacity:1}
+  .stage.fire .muzzle::after{opacity:1;animation:flash .5s ease-out infinite}
+  @keyframes flash{0%{opacity:1;transform:translateY(-50%) scaleX(.3)}60%{opacity:.5;transform:translateY(-50%) scaleX(.9)}100%{opacity:.9;transform:translateY(-50%) scaleX(.45)}}
+  .spring{position:absolute;left:64px;bottom:80px;width:130px;height:2px;pointer-events:none;
+    background:repeating-linear-gradient(90deg,rgba(126,147,173,.4) 0 4px,transparent 4px 9px)}
+  .anno{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--mut);background:rgba(7,10,15,.78);
+    border:1px solid var(--line);border-radius:6px;padding:3px 7px}
+  .ctlbar{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--bg2);
+    border:1px solid var(--line2);border-radius:9px;padding:8px 14px;cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--cy);color:var(--cy-soft)}
+  .btn.on{background:rgba(77,171,247,.14);border-color:var(--cy);color:var(--cy-soft)}
+  .ctlbar .hint{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-left:auto}
+  /* gate list */
+  .gate{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .gate .g{border:1px solid var(--line);border-radius:11px;background:var(--bg2);padding:13px 15px;display:flex;gap:11px}
+  .gate .g .n{font-family:var(--mono);font-size:12px;color:var(--cy);font-weight:700;flex:none}
+  .gate .g .t{font-size:12.5px;color:var(--mut)}
+  .gate .g .t b{color:var(--ink);font-weight:600}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .split .s{border:1px solid var(--line);border-radius:12px;padding:15px 17px;background:var(--bg2)}
+  .split .s h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+  .split .s.des h3{color:var(--cy)} .split .s.uni h3{color:var(--pur)}
+  .split .s ul{list-style:none;font-size:12.5px;color:var(--mut)}
+  .split .s li{padding:4px 0 4px 16px;position:relative}
+  .split .s li::before{content:"▸";position:absolute;left:0;color:var(--dim)}
+  /* decision */
+  .dec{border:1px solid #2f6da3;border-radius:14px;background:linear-gradient(160deg,#0f1d2d,#0b1420);padding:20px 22px}
+  .dec h3{font-size:14px;margin-bottom:12px;color:var(--cy-soft)}
+  .dec ol{margin-left:18px;font-size:13px;color:var(--mut)}
+  .dec ol li{padding:5px 0}
+  .dec ol li b{color:var(--ink)}
+  .foot{margin-top:30px;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:2px 7px;border-radius:5px;
+    background:#0a1019;border:1px solid var(--line2);color:var(--mut)}
+  @media(max-width:720px){.cands,.gate,.split,.sprite-row{grid-template-columns:1fr}.stage{height:260px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kick">weaver · companion drone · de-risk</div>
+  <h1>무기 = <b>동반 드론</b> · de-risk 에셋</h1>
+  <p class="lead">손부착(A) 기기 실패 → <b style="color:var(--cy-soft)">무기를 손에 안 듦.</b> 캐릭터 곁 떠다니는 단일 다크 코어 드론(AI 코어)이 사용. 캐릭터 voyager 애니 0 수정. 본 보드 = 양산 전 <b style="color:var(--cy-soft)">기기 판정(매체 게이트 #8)</b>에 들어갈 실 에셋 — 드론 베이스 + 🔵 발사 모듈을 PixelLab 로 실제 생성(캔버스 도형 X).</p>
+  <div class="tags">
+    <span class="tag gate">매체 게이트 #8 — 실 PixelLab 아트</span>
+    <span class="tag">형태 락 · <b>본체 고정 + 발사 순간만 피크</b></span>
+    <span class="tag">3관점 패널 만장일치 <b>2026-06-16</b></span>
+    <span class="tag">PixelLab · 48px · sidescroller</span>
+  </div>
+</header>
+
+<!-- §1 드론 베이스 -->
+<section>
+  <div class="sec-h"><span class="no">01</span><h2>드론 베이스 — 다크 코어 (AI 코어)</h2><span class="note">보이드 셸 + 시안 코어 글로우</span></div>
+  <div class="cands">
+    <div class="cand pick">
+      <div class="lbl"><span class="nm">A · 코어 옵틱 ✓ 추천</span><span class="badge-pick">PICK</span></div>
+      <div class="sprite-row">
+        <div class="col"><img class="sp-native" src="drone/dr-core-hover.gif" alt=""><span>idle hover (라이브)</span></div>
+        <div class="col"><img class="sp-native" src="drone/dr-core.png" alt=""><span>native 48px</span></div>
+        <div class="col"><img class="sp-game" src="drone/dr-core.png" alt=""><span>인게임 ~24px</span></div>
+      </div>
+      <p class="desc">다크 건메탈 링 + <b>시안 옵틱 코어</b> = AI 센티넬 "눈"으로 즉독. 다크 셸 질량 충분 → <b>평시 dim 헤드룸</b> + 코어 contained → 발사 시 emission 피크 여지. 작게 줄여도 또렷.</p>
+      <p class="desc" style="font-size:9.5px;color:var(--dim)"><span class="pill">6497fda6</span></p>
+    </div>
+    <div class="cand">
+      <div class="lbl"><span class="nm">B · 액티브 글로우</span><span class="badge-alt">ALT</span></div>
+      <div class="sprite-row">
+        <div class="col"><img class="sp-native" src="drone/dr-core-alt.png" alt=""><span>native 48px</span></div>
+        <div class="col"><img class="sp-game" src="drone/dr-core-alt.png" alt=""><span>인게임 ~24px</span></div>
+      </div>
+      <p class="desc">동심원 시안 옵틱이 강하게 빛남 — 생명감↑ 이나 <b>거의 전체가 글로우</b>라 "평시 dim → 발사 피크" 대비 여지가 적음. 발사 상태 룩으로는 매력적.</p>
+      <p class="desc" style="font-size:9.5px;color:var(--dim)"><span class="pill">d7bed271</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- §2 모듈 -->
+<section>
+  <div class="sec-h"><span class="no">02</span><h2>🔵 발사 모듈 — 배럴 (돌출 VFX 레퍼런스)</h2><span class="note">발사 직전 0.15s 코어 앞 돌출</span></div>
+  <div class="cands">
+    <div class="cand pick">
+      <div class="lbl"><span class="nm">A · 에미터 콘 ✓ 추천</span><span class="badge-pick">PICK</span></div>
+      <div class="sprite-row">
+        <div class="col"><img class="sp-native" src="drone/dr-mod.png" alt=""><span>native 48px</span></div>
+        <div class="col"><img class="sp-game-mod" src="drone/dr-mod.png" alt=""><span>인게임 ~17px</span></div>
+      </div>
+      <p class="desc">테이퍼드 배럴 + 우향 <b>시안 에미터 콘</b> = 방향성·에너지 에미터 즉독. 짧고 컴팩트 → 코어 앞 짧은 돌출에 적합.</p>
+      <p class="desc" style="font-size:9.5px;color:var(--dim)"><span class="pill">ce632ecb</span></p>
+    </div>
+    <div class="cand">
+      <div class="lbl"><span class="nm">B · 블래스터 배럴</span><span class="badge-alt">ALT</span></div>
+      <div class="sprite-row">
+        <div class="col"><img class="sp-native" src="drone/dr-mod-alt.png" alt=""><span>native 48px</span></div>
+        <div class="col"><img class="sp-game-mod" src="drone/dr-mod-alt.png" alt=""><span>인게임 ~17px</span></div>
+      </div>
+      <p class="desc">컴팩트 블래스터 배럴 + 시안 머즐. 깔끔하나 <b>"총신"</b>에 가까움 — 손부착 잔상. 모듈은 "에미터"로 읽히는 편이 드론 정합.</p>
+      <p class="desc" style="font-size:9.5px;color:var(--dim)"><span class="pill">8b6eff52</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- §3 인게임 합성 -->
+<section>
+  <div class="sec-h"><span class="no">03</span><h2>인게임 합성 — 거동 미리보기</h2><span class="note">크기·위치·발사 피크 (개념 모형)</span></div>
+  <div class="panel">
+    <div class="stage" id="stage">
+      <div class="grid"></div>
+      <div class="floor"></div>
+      <div class="spring"></div>
+      <img class="voyager" src="drone/dr-voyager-east.png" alt="voyager">
+      <div class="drone"><img src="drone/dr-core-hover.gif" style="width:100%;height:100%" alt="drone"><img class="mod" src="drone/dr-mod.png" alt="module"></div>
+      <div class="muzzle"></div>
+      <div class="anno" style="left:14px;top:12px">드론 ≈ 캐릭터 45% · 뒤쪽 사분면</div>
+      <div class="anno" style="right:14px;bottom:90px">캐릭터 = 판정 원점 (east 주행)</div>
+      <div class="anno" style="left:78px;top:96px;color:var(--dim)">스프링 추종 (parent X · 독립 GO)</div>
+    </div>
+    <div class="ctlbar">
+      <button class="btn on" id="bIdle">idle hover (평시 dim)</button>
+      <button class="btn" id="bFire">발사 — 모듈 돌출 + 머즐 피크</button>
+      <span class="hint">수직 bob·발사 dash·머즐 = unity 런타임 / 스프라이트 = 코어 베이스만</span>
+    </div>
+  </div>
+</section>
+
+<!-- §4 게이트 + 분업 -->
+<section>
+  <div class="sec-h"><span class="no">04</span><h2>기기 판정 7항 (양산 하드게이트)</h2><span class="note">unity 시제 → 기기 1회 판정 → 통과 시 4모듈+근접 양산</span></div>
+  <div class="panel">
+    <div class="gate">
+      <div class="g"><span class="n">1</span><span class="t">드론이 voyager 종속 — <b>2초점 거부</b> 안 나나 (1화면 1주인공)</span></div>
+      <div class="g"><span class="n">2</span><span class="t"><b>dash–shoot–recoil–settle</b> juice 살아있나</span></div>
+      <div class="g"><span class="n">3</span><span class="t">발사 순간 <b>카테고리 색 변별</b> (🔵🔴🟡🟣)</span></div>
+      <div class="g"><span class="n">4</span><span class="t">코너/볼트 구간 <b>화면 튐 0</b> (스무딩 헤딩 공유)</span></div>
+      <div class="g"><span class="n">5</span><span class="t">P0~P1 발사 뜸할 때 <b>존재감</b> (idle hover)</span></div>
+      <div class="g"><span class="n">6</span><span class="t">드론 ↔ 낙하물 <b>텔레그래프 미가림</b> (위치 실측)</span></div>
+      <div class="g" style="grid-column:1/-1"><span class="n">7</span><span class="t">자동사격 <b>판정 원점 = 캐릭터</b> 일관성 (드론 = VFX 원점만)</span></div>
+    </div>
+    <div class="split">
+      <div class="s des"><h3>디자인 세션 (본 보드)</h3>
+        <ul><li>드론 베이스 스프라이트 (다크 코어 + 시안)</li><li>idle hover/코어 펄스 스프라이트 펄스</li><li>🔵 모듈 돌출 VFX 형태 레퍼런스</li><li>크기·위치·색 운반 디렉션</li></ul></div>
+      <div class="s uni"><h3>unity 세션 (핸드오프)</h3>
+        <ul><li>독립 GameObject + LateUpdate 스프링 추종</li><li>발사 dash → 탄성 복귀 · 코너 dash 억제</li><li>머즐·투사체·블레이드 림 VFX (런타임)</li><li>수직 bob 트랜스폼 · emission dim↔peak</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- §5 결정 -->
+<section>
+  <div class="sec-h"><span class="no">05</span><h2>결정 — 확인 항목</h2></div>
+  <div class="dec">
+    <h3>사용자 확인 (디자인 세션 추천 = A/A)</h3>
+    <ol>
+      <li><b>드론 베이스</b> — A 코어 옵틱(추천) vs B 액티브 글로우</li>
+      <li><b>🔵 모듈</b> — A 에미터 콘(추천) vs B 블래스터 배럴</li>
+      <li><b>크기·위치</b> — 캐릭터 45% · 뒤쪽 사분면 (정확 오프셋 = unity 기기 실측)</li>
+    </ol>
+    <p style="font-size:11.5px;color:var(--mut);margin-top:14px;font-family:var(--mono)">확정 시 → idle hover 애니 완성 · 스테이징 <span class="pill">assets/weaver/drone/</span> · asset-manifest 에셋2 드론 구조 재작성 · <b style="color:var(--cy-soft)">unity 핸드오프</b>(독립GO 시제 → 기기 7항).</p>
+  </div>
+</section>
+
+<div class="foot">weaver · drone de-risk · PixelLab 실 생성 (매체 게이트 #8) · unlisted / noindex</div>
+
+<script>
+  const stage=document.getElementById('stage'), bI=document.getElementById('bIdle'), bF=document.getElementById('bFire');
+  bI.onclick=()=>{stage.classList.remove('fire');bI.classList.add('on');bF.classList.remove('on')};
+  bF.onclick=()=>{stage.classList.add('fire');bF.classList.add('on');bI.classList.remove('on')};
+  if(location.hash==='#fire'){bF.onclick()}
+</script>
+</body>
+</html>
