@@ -83,8 +83,14 @@
   .nbody{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:26px;height:26px;border-radius:50% 50% 47% 47%;
     background:var(--neutral);box-shadow:0 0 0 1.5px var(--neutral-edge),0 0 11px rgba(126,138,160,.22)}
   .pip{position:absolute;width:7px;height:7px;border-radius:50%}
-  .seg{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;overflow:hidden;box-shadow:0 0 8px rgba(255,255,255,.15)}
-  .ring2{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:40px;height:40px;border-radius:50%}
+  /* B 분절 코어 = 플렉스 세그먼트 바 (conic 제거 — 견고) */
+  .segbar{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:flex;width:22px;height:10px;
+    border-radius:5px;overflow:hidden;border:1px solid rgba(0,0,0,.35);box-shadow:0 0 8px rgba(255,255,255,.2)}
+  .segbar i{flex:1;height:100%}
+  /* C 세그먼트 경고 링 = 중립 링 + 카테고리색 도트 (mask 제거 — 견고) */
+  .wring{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);width:42px;height:42px;border-radius:50%;
+    border:1.5px solid var(--neutral-edge);opacity:.45}
+  .rdot{position:absolute;width:7px;height:7px;border-radius:50%;box-shadow:0 0 7px currentColor}
 
   /* 몬스터 도식 */
   .mons{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
@@ -197,11 +203,11 @@
       <h3>B · 분절 코어 (코어 N등분)</h3>
       <div class="demos">
         <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="seg" style="background:var(--blue)"></div></div><div class="lbl">🔵</div></div>
+          <div class="segbar"><i style="background:var(--blue)"></i></div></div><div class="lbl">🔵</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="seg" style="background:linear-gradient(90deg,var(--blue) 50%,var(--red) 50%)"></div></div><div class="lbl">🔵+🔴</div></div>
+          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i></div></div><div class="lbl">🔵+🔴</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="seg" style="background:conic-gradient(var(--blue) 0 120deg,var(--red) 120deg 240deg,var(--yellow) 240deg 360deg)"></div></div><div class="lbl">🔵+🔴+🟡</div></div>
+          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i></div></div><div class="lbl">🔵+🔴+🟡</div></div>
       </div>
       <p>본체 코어 하나를 1·2·3 등분해 각 칸을 카테고리색으로.</p>
       <div class="pro">+ 본체 일체감(부착) · 코어 1개 위치 고정</div>
@@ -213,12 +219,18 @@
       <span class="tag">대안</span>
       <h3>C · 세그먼트 경고 링</h3>
       <div class="demos">
-        <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="ring2" style="border:2px solid var(--blue);opacity:.6"></div></div><div class="lbl">🔵</div></div>
-        <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="ring2" style="background:conic-gradient(var(--blue) 0 180deg,var(--red) 180deg 360deg);-webkit-mask:radial-gradient(transparent 60%,#000 61%);mask:radial-gradient(transparent 60%,#000 61%);opacity:.7"></div></div><div class="lbl">🔵+🔴</div></div>
-        <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="ring2" style="background:conic-gradient(var(--blue) 0 120deg,var(--red) 120deg 240deg,var(--yellow) 240deg 360deg);-webkit-mask:radial-gradient(transparent 60%,#000 61%);mask:radial-gradient(transparent 60%,#000 61%);opacity:.7"></div></div><div class="lbl">🔵+🔴+🟡</div></div>
+        <div class="ds"><div class="stg"><div class="nbody"></div><div class="wring"></div>
+          <span class="rdot" style="left:50%;top:20px;transform:translateX(-50%);background:var(--blue);color:var(--blue)"></span>
+        </div><div class="lbl">🔵</div></div>
+        <div class="ds"><div class="stg"><div class="nbody"></div><div class="wring"></div>
+          <span class="rdot" style="left:36%;top:24px;background:var(--blue);color:var(--blue)"></span>
+          <span class="rdot" style="left:55%;top:24px;background:var(--red);color:var(--red)"></span>
+        </div><div class="lbl">🔵+🔴</div></div>
+        <div class="ds"><div class="stg"><div class="nbody"></div><div class="wring"></div>
+          <span class="rdot" style="left:31%;top:28px;background:var(--blue);color:var(--blue)"></span>
+          <span class="rdot" style="left:50%;top:19px;transform:translateX(-50%);background:var(--red);color:var(--red)"></span>
+          <span class="rdot" style="left:62%;top:28px;background:var(--yellow);color:var(--yellow)"></span>
+        </div><div class="lbl">🔵+🔴+🟡</div></div>
       </div>
       <p>위협 경고 링(ring_warning)을 호로 분할해 각 호를 카테고리색으로.</p>
       <div class="pro">+ 기존 경고 링과 통합(별도 요소 0) · 텔레그래프와 한 몸</div>
