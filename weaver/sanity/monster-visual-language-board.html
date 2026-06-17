@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 몬스터 비주얼 언어 룰 (M2 선행 결정)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --ink:#0c0c11; --deep:#06060d; --srf:#15151d; --srf2:#1c2030; --line:#2a2a36;
+    --t1:#eeeef2; --t2:#9aa0b0; --t3:#6a7080;
+    --blue:#4DABF7; --red:#FF6B6B; --armor:#C92A2A; --yellow:#FFD43B; --purple:#B197FC;
+    --white:#E8E8F0; --neutral:#3a4150; --neutral-edge:#7e8aa0;
+    --ok:#51CF66;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;background:#08080d;color:var(--t1);
+    line-height:1.6;padding:34px 20px 70px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto}
+  .crumb{font-size:12.5px;color:var(--t3);margin-bottom:18px}
+  .crumb a{color:#5C7CFA;text-decoration:none}
+  h1{font-size:25px;letter-spacing:-.3px;font-weight:800;margin-bottom:6px}
+  .sub{color:var(--t2);font-size:13.5px;max-width:720px}
+  h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-weight:700;
+    margin:44px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
+  h2 .n{width:21px;height:21px;border-radius:50%;background:var(--srf2);border:1px solid var(--line);
+    display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--t1)}
+  p.lead{color:var(--t2);font-size:13.5px;margin-bottom:18px;max-width:760px}
+  b.hl{color:var(--t1);font-weight:700}
+
+  /* 매체 게이트 배너 */
+  .gate{background:linear-gradient(180deg,rgba(177,151,252,.10),rgba(177,151,252,.03));border:1px solid rgba(177,151,252,.35);
+    border-radius:14px;padding:15px 18px;margin:22px 0 8px;font-size:13px;color:#d9cdfb}
+  .gate b{color:#fff}
+
+  /* 충돌 카드 */
+  .clash{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-bottom:8px}
+  @media(max-width:680px){.clash{grid-template-columns:1fr}}
+  .cl{background:var(--srf);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+  .cl .k{font-size:11px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:6px}
+  .cl .v{font-size:13.5px;color:var(--t1)}
+  .cl .src{font-size:11px;color:var(--t3);margin-top:7px}
+  .vs{font-size:20px;color:var(--red);font-weight:800;text-align:center}
+  @media(max-width:680px){.vs{transform:rotate(90deg)}}
+
+  /* 채널 매핑 */
+  .chgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:680px){.chgrid{grid-template-columns:1fr}}
+  .ch{background:var(--srf);border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+  .ch .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;padding:2px 9px;border-radius:99px;
+    background:var(--srf2);color:var(--t2);margin-bottom:9px}
+  .ch h3{font-size:15px;font-weight:700;margin-bottom:5px}
+  .ch p{font-size:12.5px;color:var(--t2)}
+  .ch.primary{border-color:rgba(81,207,102,.4);background:linear-gradient(180deg,rgba(81,207,102,.06),transparent)}
+  .ch.primary .tag{background:rgba(81,207,102,.15);color:var(--ok)}
+
+  /* 몬스터 도식 카드 */
+  .mons{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+  .m{background:var(--srf);border:1px solid var(--line);border-radius:13px;padding:15px 14px 14px;position:relative;overflow:hidden}
+  .stage{position:relative;height:108px;border-radius:9px;background:
+      radial-gradient(120% 80% at 50% 18%,#101018 0%,#0a0a12 70%);overflow:hidden;margin-bottom:11px;
+      box-shadow:inset 0 0 0 1px #1a1a24}
+  .floor{position:absolute;left:0;right:0;bottom:20px;height:1px;background:rgba(255,255,255,.10)}
+  .floor.low{bottom:0;top:auto;height:20px;background:rgba(0,0,0,.4)}
+  .ceil{position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.07)}
+  /* 중립 본체 = 다크 슬레이트 + 림라이트 (4색·흰색 회피) */
+  .body{position:absolute;left:50%;bottom:23px;transform:translateX(-50%);background:var(--neutral);
+    box-shadow:0 0 0 1.5px var(--neutral-edge), 0 0 12px rgba(126,138,160,.25)}
+  .core{position:absolute;border-radius:50%;}
+  .dirarrow{position:absolute;font-size:13px;font-weight:800;opacity:.85}
+  .ring{position:absolute;border-radius:50%;border:1.5px solid;opacity:.5}
+  .badge{position:absolute;top:7px;left:7px;font-size:8.5px;font-weight:800;letter-spacing:.3px;
+    padding:2px 7px;border-radius:99px;background:rgba(8,8,13,.7);border:1px solid var(--line);color:var(--t2)}
+  .m h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:3px}
+  .cdot{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:0 0 7px currentColor}
+  .m .spec{font-size:11px;color:var(--t2);line-height:1.55}
+  .m .spec b{color:var(--t1)}
+  .m .cue{font-size:10.5px;color:var(--t3);margin-top:7px;padding-top:7px;border-top:1px dashed #23232e}
+
+  /* 다크 대비 검증 */
+  .contrast{background:var(--srf);border:1px solid var(--line);border-radius:13px;padding:18px;display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+  .swrow{display:flex;gap:14px;flex-wrap:wrap}
+  .sw{text-align:center;font-size:10px;color:var(--t2)}
+  .sw .chip{width:54px;height:54px;border-radius:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center}
+
+  /* 안전망 */
+  .safe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:680px){.safe{grid-template-columns:1fr}}
+  .sf{background:var(--srf);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:12.5px;color:var(--t2)}
+  .sf b{display:block;color:var(--t1);font-size:13px;margin-bottom:4px}
+
+  /* 결정 */
+  .decide{background:linear-gradient(180deg,rgba(92,124,250,.08),transparent);border:1px solid rgba(92,124,250,.3);
+    border-radius:14px;padding:20px 22px}
+  .decide ol{margin:10px 0 0 4px;padding-left:18px}
+  .decide li{font-size:13.5px;color:var(--t1);margin-bottom:11px}
+  .decide li span{color:var(--t2);font-size:12.5px}
+  .rec{color:var(--ok);font-weight:700}
+  .foot{margin-top:30px;font-size:11.5px;color:var(--t3);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="../index.html">← weaver 미리보기</a> / 몬스터 비주얼 언어 룰</div>
+  <h1>몬스터 비주얼 언어 룰</h1>
+  <p class="sub">M2 step-2 몬스터 에셋 <b class="hl">생성 전 선행 결정</b>. "정답=퍼즐(라벨 X)" 과 "본체 4색 회피" 충돌을 어떻게 양립시킬지 — <b class="hl">어느 시각 채널이 정답 단서를 운반하는가</b>를 확정한다.</p>
+
+  <div class="gate">
+    🛡 <b>매체 게이트 #8</b> — 이 보드 = <b>비주얼 언어 *룰*(시스템·가독성)</b> 검증. 아래 도형은 <b>"어느 채널이 단서를 나르나"를 보여주는 룰 도식</b>이지 <b>최종 몬스터 아트가 아니다.</b> 실제 크리처 appeal·깊이·림라이트·픽셀 craft = <b>PixelLab 생성으로 판정</b> (룰 확정 후). 도형의 밋밋함 ≠ 결과물 품질.
+  </div>
+
+  <h2><span class="n">1</span> 충돌 — 두 원칙이 부딪힌다</h2>
+  <div class="clash">
+    <div class="cl">
+      <div class="k">spec §2.6 — 퍼즐</div>
+      <div class="v">정답 무기를 <b class="hl">라벨로 안 알려줌.</b> 몬스터 <b class="hl">생김새가 학습 단서</b> → 배워서 읽는다(운 X).</div>
+      <div class="src">∴ 생김새가 solvableBy 를 *말해야* 한다</div>
+    </div>
+    <div class="vs">⚔</div>
+    <div class="cl">
+      <div class="k">asset-manifest — 색=정보</div>
+      <div class="v">카테고리 4색은 <b class="hl">무기·VFX 전용.</b> <b class="hl">본체·몬스터 몸체는 4색 회피</b> (트랙 위 색 가독 보호).</div>
+      <div class="src">∴ 몬스터 몸을 통째 카테고리색으로 칠할 수 없다</div>
+    </div>
+  </div>
+
+  <h2><span class="n">2</span> 양립안 — 본체는 중립, 단서는 채널 4개로</h2>
+  <p class="lead">몸 전체를 색칠하지 않고도 정답을 읽히게 한다. <b class="hl">본체 = 중립 다크(void fauna)</b> 위에 <b class="hl">단서 채널 4개</b>를 얹는다. 색은 <b class="hl">작은 코어/액센트에만</b> — 4색 회피 원칙(몸)과 색=정보(코어) 둘 다 성립.</p>
+  <div class="chgrid">
+    <div class="ch primary">
+      <span class="tag">1순위 단서</span>
+      <h3>① 카테고리색 코어 / 액센트</h3>
+      <p>몸은 중립, <b class="hl" style="color:#cfd4de">눈·코어·관절 글로우만</b> 카테고리색. = "이 코어색 = 이 무기-드론". 무기-드론과 같은 DNA(다크 셸 + 색 코어)라 <b class="hl" style="color:#cfd4de">"같은 색끼리 매칭"</b> 직관.</p>
+    </div>
+    <div class="ch">
+      <span class="tag">보강</span>
+      <h3>② 실루엣 클래스</h3>
+      <p>카테고리별 형태 언어 — 색맹·원거리·저대비에서도 구분. 둥근 부유체(일반) / 각진 장갑 덩어리(장갑) / 낙하 파편(요격) / 가로 게이트(베리어).</p>
+    </div>
+    <div class="ch">
+      <span class="tag">보강</span>
+      <h3>③ 출현 위치 · 방향</h3>
+      <p>등장 앵커가 단서 — 낙하물=천장에서↓ / 장갑=정면 접근 / 베리어=전폭. "어디서 오나"가 "무엇이냐"를 예고(텔레그래프 거리 = spec §2.6).</p>
+    </div>
+    <div class="ch">
+      <span class="tag">장갑 전용</span>
+      <h3>④ hits2 텔레그래프</h3>
+      <p>2히트 장갑 = <b class="hl" style="color:#cfd4de">굵은 2중 외곽 + 플레이트 분할</b> (데미지 X — "튼튼해 보임"이 곧 2히트 신호). 1히트 일반과 한눈에 구분.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span> M2 스코프 적용 — 룰 도식 (최종 아트 아님)</h2>
+  <p class="lead">M2 = <b class="hl">🔵 일반 · 🔴 장갑 · 🟡 요격 낙하물 · 🔵 베리어</b> + ⚪ 기본 낙하물(기존). 🟣 특수 = M3+. 위협 패턴 ~13 = 거동·배치(코드)지 아트 아님 → <b class="hl">같은 3~4 스프라이트 재사용.</b></p>
+  <div class="mons">
+
+    <!-- 🔵 일반 -->
+    <div class="m">
+      <div class="stage">
+        <div class="badge">solvableBy 🔵 · hits1</div>
+        <div class="floor"></div><div class="floor low"></div>
+        <span class="ring" style="width:46px;height:46px;left:50%;bottom:30px;transform:translateX(-50%);border-color:var(--blue)"></span>
+        <div class="body" style="width:30px;height:30px;border-radius:50% 50% 48% 48%"></div>
+        <div class="core" style="width:9px;height:9px;left:50%;bottom:36px;transform:translateX(-50%);background:var(--blue);box-shadow:0 0 9px var(--blue)"></div>
+        <span class="dirarrow" style="left:13px;bottom:30px;color:var(--blue)">→</span>
+      </div>
+      <h3><span class="cdot" style="background:var(--blue);color:var(--blue)"></span> 일반</h3>
+      <div class="spec">둥근 부유체 · 측면 접근(APPROACH) · 청색 코어 · <b>1히트</b></div>
+      <div class="cue">단서: 청 코어 + 둥근 실루엣 → 🔵 원거리</div>
+    </div>
+
+    <!-- 🔴 장갑 -->
+    <div class="m">
+      <div class="stage">
+        <div class="badge">solvableBy 🔴 · hits2</div>
+        <div class="floor"></div><div class="floor low"></div>
+        <span class="ring" style="width:50px;height:50px;left:50%;bottom:28px;transform:translateX(-50%);border-color:var(--red);border-width:2px"></span>
+        <!-- 굵은 2중 외곽 + 플레이트 (장갑 텔레그래프) -->
+        <div class="body" style="width:34px;height:30px;border-radius:6px;background:var(--armor);box-shadow:0 0 0 2px #ff9a9a, 0 0 0 4px rgba(201,42,42,.5), 0 0 13px rgba(255,107,107,.3)"></div>
+        <div style="position:absolute;left:50%;bottom:23px;transform:translateX(-50%);width:34px;height:30px;pointer-events:none">
+          <div style="position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(8,8,13,.55)"></div>
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(8,8,13,.55)"></div>
+        </div>
+        <div class="core" style="width:8px;height:8px;left:50%;bottom:34px;transform:translateX(-50%);background:var(--red);box-shadow:0 0 9px var(--red)"></div>
+        <span class="dirarrow" style="left:13px;bottom:28px;color:var(--red)">→</span>
+      </div>
+      <h3><span class="cdot" style="background:var(--red);color:var(--red)"></span> 장갑</h3>
+      <div class="spec">각진 덩어리 · <b>굵은 2중 외곽 + 플레이트 분할</b> · 적색 코어 · <b>2히트</b></div>
+      <div class="cue">단서: 두꺼운 장갑 외형 = 2히트 + 적 코어 → 🔴 근접</div>
+    </div>
+
+    <!-- 🟡 요격 낙하물 -->
+    <div class="m">
+      <div class="stage">
+        <div class="badge">solvableBy 🟡 · DESCEND</div>
+        <div class="ceil"></div><div class="floor"></div><div class="floor low"></div>
+        <!-- 천장에서 낙하 -->
+        <div class="body" style="width:20px;height:28px;left:50%;top:14px;bottom:auto;transform:translateX(-50%);border-radius:50% 50% 50% 50% / 38% 38% 62% 62%"></div>
+        <div class="core" style="width:8px;height:8px;left:50%;top:24px;transform:translateX(-50%);background:var(--yellow);box-shadow:0 0 9px var(--yellow)"></div>
+        <span class="dirarrow" style="left:50%;top:46px;transform:translateX(-50%);color:var(--yellow)">↓</span>
+        <div style="position:absolute;left:50%;bottom:21px;transform:translateX(-50%);width:26px;height:5px;border-radius:50%;border:1px dashed rgba(255,212,59,.6)"></div>
+      </div>
+      <h3><span class="cdot" style="background:var(--yellow);color:var(--yellow)"></span> 요격 낙하물</h3>
+      <div class="spec">천장에서 낙하(DESCEND) · 황색 코어 · 착탄 마커 · <b>상방 요격</b></div>
+      <div class="cue">단서: 위에서↓ + 황 코어 → 🟡 대공</div>
+    </div>
+
+    <!-- 🔵 베리어 -->
+    <div class="m">
+      <div class="stage">
+        <div class="badge">solvableBy 🔵 · STATIC 게이트</div>
+        <div class="floor"></div><div class="floor low"></div>
+        <!-- 전폭 가로 게이트 -->
+        <div style="position:absolute;left:7px;right:7px;bottom:26px;height:22px;border-radius:4px;background:var(--neutral);
+          box-shadow:0 0 0 1.5px var(--neutral-edge), 0 0 12px rgba(126,138,160,.22)"></div>
+        <div style="position:absolute;left:7px;right:7px;bottom:35px;height:2px;background:var(--blue);opacity:.85;box-shadow:0 0 8px var(--blue)"></div>
+        <div class="core" style="width:7px;height:7px;left:50%;bottom:33px;transform:translateX(-50%);background:var(--blue);box-shadow:0 0 9px var(--blue)"></div>
+      </div>
+      <h3><span class="cdot" style="background:var(--blue);color:var(--blue)"></span> 베리어</h3>
+      <div class="spec">전폭 차단(STATIC) · 청색 라인 코어 · 점프/슬라이드 불가 · <b>쏴서 개방</b></div>
+      <div class="cue">단서: 가로 전폭 + 청 라인 → 🔵 원거리로 파괴</div>
+    </div>
+
+    <!-- ⚪ 기본 낙하물 -->
+    <div class="m">
+      <div class="stage">
+        <div class="badge" style="color:var(--white)">무기 정답 없음</div>
+        <div class="ceil"></div><div class="floor"></div><div class="floor low"></div>
+        <div style="position:absolute;left:50%;top:18px;transform:translateX(-50%);width:16px;height:16px;border-radius:3px;background:var(--white);box-shadow:0 0 10px rgba(232,232,240,.5);transform:translateX(-50%) rotate(20deg)"></div>
+        <span class="dirarrow" style="left:50%;top:42px;transform:translateX(-50%);color:var(--white)">↓</span>
+        <div style="position:absolute;left:50%;bottom:21px;transform:translateX(-50%);width:24px;height:5px;border-radius:50%;border:1px dashed rgba(232,232,240,.5)"></div>
+      </div>
+      <h3><span class="cdot" style="background:var(--white);color:var(--white)"></span> 기본 낙하물 <span style="font-size:11px;color:var(--t3)">⚪</span></h3>
+      <div class="spec"><b>흰색 = 코어색 없음</b> = 무기 정답 없음 · <b>몸으로 회피</b>(점프 타이밍)</div>
+      <div class="cue">단서: 코어색 부재(흰색) → 쏘지 말고 피하라</div>
+    </div>
+
+  </div>
+
+  <h2><span class="n">4</span> 다크 트랙 대비 검증 (가독성 — paranoia #5)</h2>
+  <div class="contrast">
+    <div style="flex:1;min-width:220px">
+      <p style="font-size:13px;color:var(--t2)"><b class="hl">핵심 제약:</b> 중립 본체는 <b class="hl">⚪ 흰색(몸 회피)</b> 과도, <b class="hl">4색</b> 과도, <b class="hl">잉크 블랙 bg</b> 과도 달라야 한다. → 본체 = <b class="hl">다크 슬레이트 + 밝은 림라이트</b>(void 셸). 림이 어두운 트랙에서 형태를 살리고, <b class="hl">코어색</b>이 정답을 읽힌다.</p>
+    </div>
+    <div class="swrow">
+      <div class="sw"><div class="chip" style="background:#0C0C11;box-shadow:inset 0 0 0 1px #1a1a24"></div>bg<br>0C0C11</div>
+      <div class="sw"><div class="chip" style="background:var(--neutral);box-shadow:0 0 0 1.5px var(--neutral-edge)">몸</div>중립+림<br>3A4150</div>
+      <div class="sw"><div class="chip" style="background:var(--white)"></div>⚪ 회피<br>E8E8F0</div>
+      <div class="sw"><div class="chip" style="background:var(--blue)"></div>🔵 코어<br>4DABF7</div>
+      <div class="sw"><div class="chip" style="background:var(--armor);box-shadow:0 0 0 2px #ff9a9a"></div>🔴 장갑<br>C92A2A</div>
+      <div class="sw"><div class="chip" style="background:var(--yellow)"></div>🟡 코어<br>FFD43B</div>
+    </div>
+  </div>
+
+  <h2><span class="n">5</span> 퍼즐이 안전한 이유 (§2.6 — 3장치)</h2>
+  <div class="safe">
+    <div class="sf"><b>① 충돌 예산(하트 N)</b>처음 본 몬스터 못 잡아도 즉사 X — 하트 1만 깎이고 배운다.</div>
+    <div class="sf"><b>② 반복 등장</b>배운 비주얼 언어를 다음에 적용 → 마스터리.</div>
+    <div class="sf"><b>③ 일관된 룰</b>코어색·실루엣·방향이 *항상* 같은 의미 → 학습 가능(운 X).</div>
+  </div>
+
+  <h2><span class="n">✓</span> 결정 항목</h2>
+  <div class="decide">
+    <ol>
+      <li><b>양립안 채택?</b> — 본체 중립 + 코어색/실루엣/방향 단서 (몸 4색 회피 유지). <span class="rec">← 권장</span></li>
+      <li><b>단서 1순위 = 카테고리색 코어</b> 로 충분한가, 아니면 <b>실루엣 클래스</b>도 카테고리별로 강하게 못박을까? <span>(권장: 코어색 1순위 + 실루엣은 "유형"(부유/장갑/낙하/게이트) 구분에만 — 색이 정답, 실루엣은 보강. 색맹 대비는 ②+③가 커버)</span></li>
+      <li><b>장갑 hits2 텔레그래프</b> = 굵은 2중 외곽 / 플레이트 분할 / <span class="rec">둘 다(권장)</span>?</li>
+      <li><b>본체 중립색</b> = 다크 슬레이트 + 림라이트 방향 OK? <span>(⚪ 흰색·4색·bg 와 분리 + 다크 트랙 가독 — PixelLab 프롬프트 불변 제약으로 박음)</span></li>
+    </ol>
+    <p style="margin-top:14px;font-size:12.5px;color:var(--t2)">→ 확정 시: PixelLab로 <b class="hl">🔵 일반 · 🔴 장갑 · 🟡 요격 낙하물 · 🔵 베리어</b> 생성 (void fauna DNA + 위 룰을 프롬프트 불변 제약으로) → unity 핸드오프 + wireframes #5 위협 썸네일 확정 정합.</p>
+  </div>
+
+  <p class="foot">
+    weaver · 디자인 세션 · 2026-06-17 · M2 step-2 선행 결정 보드 · unlisted (출시 전 비공개)<br>
+    SoT: asset-manifest 에셋3 · spec §2.6/§2.11 (MonsterDef) · design-system 카테고리 4색 토큰 · 매체 게이트 #8
+  </p>
+</div>
+</body>
+</html>
