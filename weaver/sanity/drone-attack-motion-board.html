@@ -1,200 +1,564 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>weaver · 무기-드론 공격 모션</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<title>weaver — 드론 거동 안무 (카테고리 4)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <style>
-  :root{
-    --bg:#070a0f;--bg2:#0c1119;--panel:#0e1521;--panel2:#111b2b;
-    --line:#1c2a3e;--line2:#26384f;--ink:#e8f0fb;--mut:#7e93ad;--dim:#52647d;
-    --cy:#4DABF7;--cy-soft:#8fd0ff;--red:#FF6B6B;--yel:#FFD43B;--pur:#B197FC;
-    --good:#37d39b;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Pretendard',system-ui,sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:30px 18px 90px;max-width:1060px;margin:0 auto;-webkit-font-smoothing:antialiased;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");}
-  img{image-rendering:pixelated}
-  header{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--panel2),var(--panel));padding:24px 26px;margin-bottom:20px}
-  header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--cy),var(--pur))}
-  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--cy);text-transform:uppercase}
-  h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:8px 0 6px}
-  h1 b{color:var(--cy-soft)}
-  .lead{color:var(--mut);font-size:13px;max-width:800px}
-  .lead b{color:var(--ink)}
-  .sec-h{display:flex;align-items:center;gap:11px;margin:24px 0 13px}
-  .sec-h .no{font-family:var(--mono);font-size:12px;color:var(--cy);border:1px solid var(--line2);border-radius:7px;padding:3px 8px;background:#0a1019}
-  .sec-h h2{font-size:16px;font-weight:700}
-  .sec-h .note{color:var(--dim);font-size:11px;font-family:var(--mono);margin-left:auto}
-  .strip{display:flex;flex-wrap:wrap;gap:13px}
-  .card{flex:1 1 330px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);padding:14px}
-  .card.rec{box-shadow:0 0 0 1px rgba(55,211,155,.3)}
-  .card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .card .nm{font-family:var(--mono);font-size:12.5px;font-weight:600}
-  .badge{font-family:var(--mono);font-size:9px;font-weight:600;padding:3px 7px;border-radius:999px}
-  .b-rec{background:linear-gradient(135deg,#5ee7b0,#37d39b);color:#03150e}
-  .b-fix{background:linear-gradient(135deg,#ffe08a,#FFD43B);color:#1e1606}
-  .b-alt{border:1px solid var(--line2);color:var(--mut)}
-  .desc{color:var(--mut);font-size:11.5px;margin-top:9px}
-  .desc b{font-weight:600}
-  /* ===== game stage ===== */
-  .gs{position:relative;height:172px;border:1px solid #16202f;border-radius:11px;overflow:hidden;
-    background:radial-gradient(130% 110% at 65% 25%,#0d1622,#05080d)}
-  .gs .floor{position:absolute;left:0;right:0;bottom:34px;height:1px;background:linear-gradient(90deg,transparent,var(--line2) 25%,var(--line2) 75%,transparent)}
-  .voy{position:absolute;right:30px;bottom:34px;width:46px;height:46px}
-  .tgt{position:absolute;right:74px;bottom:40px;width:18px;height:18px;border-radius:3px;
-    background:repeating-linear-gradient(45deg,#3a2730 0 3px,#2a1a22 3px 6px);border:1px solid #5a3a44}
-  .hov{position:absolute;left:40px;bottom:78px;width:48px;height:48px;animation:bob 2.3s ease-in-out infinite}
-  .drn{position:relative;width:48px;height:48px}
-  .drn>img{width:100%;height:100%;image-rendering:pixelated}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-  .lbl{position:absolute;left:10px;top:9px;font-family:var(--mono);font-size:9px;color:var(--dim);background:rgba(7,10,15,.7);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+@font-face{font-family:'Pretendard';font-weight:300 800;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations');}
+:root{
+  --bg:#0C0C11; --panel:#13131A; --panel2:#16161F; --line:#2A2A36; --line2:#1D1D26;
+  --ink:#EDEDF3; --mut:#8A8A9A; --mut2:#5C5C6B;
+  --blue:#4DABF7; --red:#FF6B6B; --yellow:#FFD43B; --purple:#B197FC;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+  background-image:radial-gradient(900px 500px at 80% -10%, rgba(77,171,247,.06), transparent 60%),
+    radial-gradient(700px 460px at 10% 110%, rgba(177,151,252,.05), transparent 55%);}
+.wrap{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
 
-  /* 🔵 ranged: forward projectile */
-  .t-ranged .drn{animation:rangedDash 2.4s ease-out infinite}
-  .t-ranged .proj{position:absolute;left:46px;bottom:96px;width:10px;height:4px;border-radius:2px;background:linear-gradient(90deg,rgba(143,208,255,.2),var(--cy-soft));box-shadow:0 0 6px var(--cy);opacity:0;animation:rangedProj 2.4s linear infinite}
-  .t-ranged .muz{position:absolute;left:84px;bottom:94px;width:22px;height:11px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(143,208,255,.95),transparent 70%);animation:flash24 2.4s ease-out infinite}
-  @keyframes rangedDash{0%,40%{transform:translateX(0)}48%{transform:translateX(8px)}58%{transform:translateX(4px)}70%,100%{transform:translateX(0)}}
-  @keyframes rangedProj{0%,44%{opacity:0;transform:translateX(0)}48%{opacity:1;transform:translateX(6px)}66%{opacity:1;transform:translateX(150px)}72%,100%{opacity:0;transform:translateX(170px)}}
-  @keyframes flash24{0%,45%{opacity:0;transform:scaleX(.3)}49%{opacity:1;transform:scaleX(1)}58%{opacity:0}100%{opacity:0}}
+/* ── header ── */
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.32em;color:var(--mut2);
+  text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--line)}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:14px 0 6px}
+h1 .acc{background:linear-gradient(92deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lead{color:var(--mut);font-size:14px;max-width:620px}
+.lead b{color:var(--ink);font-weight:600}
 
-  /* 🟡 AA: intercept falling obstacle upward */
-  .t-aa .hov{left:46px}
-  .t-aa .fall{position:absolute;left:120px;top:8px;width:16px;height:16px;border-radius:3px;background:repeating-linear-gradient(45deg,#3a3527 0 3px,#2a2618 3px 6px);border:1px solid #5a5030;animation:aaFall 2.6s ease-in infinite}
-  .t-aa .flak{position:absolute;left:70px;bottom:104px;width:6px;height:12px;border-radius:3px;background:linear-gradient(0deg,rgba(255,212,59,.2),var(--yel));box-shadow:0 0 6px var(--yel);opacity:0;animation:aaFlak 2.6s linear infinite}
-  .t-aa .boom{position:absolute;left:108px;top:38px;width:34px;height:34px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,224,138,.95),rgba(255,212,59,.5) 45%,transparent 72%);animation:aaBoom 2.6s ease-out infinite}
-  @keyframes aaFall{0%{top:8px;opacity:1}55%{top:54px;opacity:1}60%{opacity:0}100%{opacity:0;top:54px}}
-  @keyframes aaFlak{0%,30%{opacity:0;transform:translate(0,0)}36%{opacity:1;transform:translate(0,0)}54%{opacity:1;transform:translate(58px,-66px)}58%{opacity:0;transform:translate(60px,-70px)}100%{opacity:0}}
-  @keyframes aaBoom{0%,54%{opacity:0;transform:scale(.3)}58%{opacity:1;transform:scale(1)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+/* ── shared structure ── */
+.struct{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:26px 0 6px}
+.struct .pill{font-size:12px;font-weight:600;padding:7px 13px;border-radius:999px;
+  background:var(--panel);border:1px solid var(--line);color:var(--ink)}
+.struct .pill.alt{background:transparent;color:var(--mut)}
+.struct .arr{color:var(--mut2);font-size:13px}
+.struct .tag{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--mut2);
+  border:1px dashed var(--line);padding:5px 9px;border-radius:7px;margin-left:6px;text-transform:uppercase}
 
-  /* 🔴 saw: dash + spin */
-  .t-saw .drn{animation:sawDash 2.2s cubic-bezier(.5,0,.3,1) infinite}
-  .t-saw .drn>img{animation:spin .5s linear infinite}
-  .t-saw .slash{position:absolute;right:86px;bottom:42px;width:26px;height:26px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,154,154,.9),transparent 65%);animation:flashSlash 2.2s ease-out infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes sawDash{0%,32%{transform:translateX(0)}50%{transform:translateX(120px)}62%{transform:translateX(96px)}82%,100%{transform:translateX(0)}}
-  @keyframes flashSlash{0%,50%{opacity:0;transform:scale(.4)}56%{opacity:1;transform:scale(1.1)}68%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+/* ── reference diagram ── */
+.ref{display:grid;grid-template-columns:300px 1fr;gap:22px;margin:18px 0 34px;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;align-items:center}
+.ref canvas{width:100%;height:auto;display:block;border-radius:10px;background:var(--bg)}
+.ref h3{font-size:13px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.zones{display:flex;flex-direction:column;gap:9px}
+.zone{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--mut)}
+.zone .dot{width:9px;height:9px;border-radius:3px;margin-top:5px;flex:none}
+.zone b{color:var(--ink);font-weight:600}
 
-  /* 🔴 arc: electric discharge */
-  .t-arc .hov{left:96px}
-  .t-arc .arc{position:absolute;left:138px;bottom:88px;width:54px;height:3px;opacity:0;transform-origin:left center;
-    background:linear-gradient(90deg,var(--red),rgba(255,107,107,.2));box-shadow:0 0 7px var(--red);animation:arcZap 1.5s steps(1) infinite}
-  .t-arc .arc2{top:6px}
-  @keyframes arcZap{0%,40%{opacity:0;transform:rotate(8deg) scaleX(.7)}45%{opacity:1;transform:rotate(14deg) scaleX(1)}50%{opacity:.3;transform:rotate(4deg) scaleX(.9)}55%{opacity:1;transform:rotate(18deg) scaleX(1)}62%{opacity:0}100%{opacity:0}}
+/* ── grid ── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  position:relative;transition:border-color .3s}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--cc);opacity:.7}
+.card:hover{border-color:color-mix(in srgb,var(--cc) 45%,var(--line))}
+.chead{display:flex;align-items:center;gap:11px;padding:16px 18px 13px}
+.cidx{font-size:11px;font-weight:700;color:var(--cc);letter-spacing:.1em}
+.cdot{width:13px;height:13px;border-radius:50%;background:var(--cc);
+  box-shadow:0 0 11px var(--cc);flex:none}
+.cname{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.csub{font-size:11.5px;color:var(--mut);font-weight:500}
+.cthreat{margin-left:auto;font-size:10.5px;font-weight:600;color:var(--cc);
+  background:color-mix(in srgb,var(--cc) 13%,transparent);
+  border:1px solid color-mix(in srgb,var(--cc) 30%,transparent);
+  padding:5px 10px;border-radius:999px;white-space:nowrap}
+.scene{width:100%;height:auto;display:block;background:
+  linear-gradient(180deg,#0a0a0f,#0e0e15)}
 
-  /* 🔴 ram: hard dash impact */
-  .t-ram .drn{animation:ramDash 2s cubic-bezier(.7,0,.3,1) infinite}
-  .t-ram .impact{position:absolute;right:84px;bottom:40px;width:30px;height:30px;border-radius:50%;opacity:0;background:radial-gradient(circle,#fff,rgba(255,107,107,.6) 40%,transparent 72%);animation:flashImpact 2s ease-out infinite}
-  @keyframes ramDash{0%,34%{transform:translateX(0)}40%{transform:translateX(-8px)}52%{transform:translateX(128px)}56%{transform:translateX(122px)}80%,100%{transform:translateX(0)}}
-  @keyframes flashImpact{0%,51%{opacity:0;transform:scale(.3)}55%{opacity:1;transform:scale(1.1)}66%{opacity:0;transform:scale(1.4)}100%{opacity:0}}
+/* phase timeline */
+.timeline{display:flex;gap:0;padding:12px 18px 4px;align-items:center}
+.tphase{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--mut2);
+  padding:6px 0;position:relative;transition:color .15s}
+.tphase.on{color:var(--cc)}
+.tphase::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:2px;border-radius:2px;
+  background:var(--line);transition:background .15s}
+.tphase.on::after{background:var(--cc);box-shadow:0 0 7px var(--cc)}
 
-  /* 🟣 orbit: orbs circle + zap */
-  .t-orbit .orbit{position:absolute;left:0;top:0;width:48px;height:48px;animation:spin 2.4s linear infinite}
-  .t-orbit .orb{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle,#fff,var(--pur) 55%,transparent);box-shadow:0 0 6px var(--pur)}
-  .t-orbit .orb.o1{left:-9px;top:20px}.t-orbit .orb.o2{right:-9px;top:20px}
-  .t-orbit .zap{position:absolute;right:84px;bottom:46px;width:50px;height:2px;transform-origin:right center;opacity:0;background:linear-gradient(90deg,rgba(177,151,252,.2),var(--pur));box-shadow:0 0 6px var(--pur);animation:orbZap 2s steps(1) infinite}
-  @keyframes orbZap{0%,55%{opacity:0}60%{opacity:1}66%{opacity:0}72%{opacity:1}78%{opacity:0}100%{opacity:0}}
+.cbody{padding:6px 18px 18px}
+.crow{display:flex;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line2)}
+.crow:last-child{border-bottom:0}
+.crow .lk{color:var(--mut2);font-weight:600;flex:none;width:54px;font-size:11px;letter-spacing:.04em;padding-top:1px}
+.crow .lv{color:var(--ink)}
+.crow .lv b{color:var(--cc);font-weight:700}
+.cnote{margin-top:11px;font-size:11.5px;color:var(--mut);line-height:1.5;
+  background:var(--panel2);border-left:2px solid var(--cc);border-radius:0 8px 8px 0;padding:9px 12px}
 
-  /* 🟣 beam: sustained beam */
-  .t-beam .beam{position:absolute;left:86px;bottom:96px;height:7px;border-radius:4px;transform-origin:left center;opacity:0;
-    background:linear-gradient(90deg,rgba(177,151,252,.95),rgba(177,151,252,.35));box-shadow:0 0 10px var(--pur);animation:beamFire 2.4s ease-in-out infinite}
-  @keyframes beamFire{0%,20%{opacity:0;width:0}30%{opacity:1;width:150px}70%{opacity:1;width:150px}80%{opacity:0;width:150px}100%{opacity:0;width:0}}
+/* ── footer decisions ── */
+.foot{margin-top:38px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.box h4{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut2);margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.box h4 .sq{width:7px;height:7px;border-radius:2px}
+.dlist{display:flex;flex-direction:column;gap:11px}
+.ditem{font-size:13px;color:var(--ink);display:flex;gap:10px;align-items:flex-start}
+.ditem .n{font-size:10px;font-weight:800;color:var(--bg);background:var(--ink);
+  width:18px;height:18px;border-radius:50%;display:grid;place-items:center;flex:none;margin-top:1px}
+.ditem .n.q{background:var(--yellow)}
+.ditem span b{font-weight:700}
+.ditem .mut{color:var(--mut);font-size:12px}
+.glist{display:flex;flex-direction:column;gap:9px}
+.gitem{font-size:12.5px;color:var(--mut);display:flex;gap:9px;align-items:flex-start}
+.gitem .gk{color:var(--ink);font-weight:600}
+.gitem::before{content:"▸";color:var(--mut2);flex:none}
 
-  /* 🟣 nova: radial pulse */
-  .t-nova .hov{left:50%;margin-left:-24px}
-  .t-nova .drn{animation:novaCharge 2.6s ease-in-out infinite}
-  .t-nova .ring{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:3px solid var(--pur);opacity:0;box-shadow:0 0 12px var(--pur);animation:novaRing 2.6s ease-out infinite}
-  @keyframes novaCharge{0%,55%{transform:scale(1)}62%{transform:scale(1.18)}68%{transform:scale(.96)}80%,100%{transform:scale(1)}}
-  @keyframes novaRing{0%,60%{opacity:0;transform:scale(.2)}66%{opacity:1;transform:scale(1)}85%{opacity:0;transform:scale(4)}100%{opacity:0}}
+.esc{margin-top:18px;font-size:12px;color:var(--mut);background:rgba(255,212,59,.05);
+  border:1px solid rgba(255,212,59,.22);border-radius:11px;padding:13px 16px;line-height:1.55}
+.esc b{color:var(--yellow);font-weight:700}
+.metafoot{margin-top:30px;font-size:11px;color:var(--mut2);letter-spacing:.03em;text-align:center}
 
-  .dec{margin-top:24px;border:1px solid #2f6da3;border-radius:14px;background:linear-gradient(160deg,#0f1d2d,#0b1420);padding:18px 20px}
-  .dec h3{font-size:13.5px;margin-bottom:10px;color:var(--cy-soft)}
-  .dec ol{margin-left:18px;font-size:12.5px;color:var(--mut)}.dec ol li{padding:4px 0}.dec ol li b{color:var(--ink)}
-  .foot{margin-top:28px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--dim)}
+@media(max-width:880px){
+  .grid{grid-template-columns:1fr}.foot{grid-template-columns:1fr}
+  .ref{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="kick">weaver · weapon-drone · attack motion</div>
-  <h1>무기-드론 <b>인게임 공격 모션</b> (루프)</h1>
-  <p class="lead">각 무기-드론의 공격 거동을 인게임 미니씬으로 재생(실 스프라이트 + CSS VFX 합성). <b>개념 미리보기</b> — 실제 dash 커브·파티클·VFX·스프링 추종은 unity 런타임. 형태 보드 = <b>drone-weapon-family-board</b>.</p>
-</header>
+<div class="wrap">
 
-<!-- 확정 방향 -->
-<div class="sec-h"><span class="no">01</span><h2>확정 방향 — 🔵 원거리 · 🟡 대공</h2><span class="note">거동 확인</span></div>
-<div class="strip">
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--cy-soft)">🔵 원거리 — 전방 발사</span><span class="badge b-fix">방향 확정</span></div>
-    <div class="gs t-ranged"><div class="lbl">dash → 전방 투사체</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-ranged.png" alt=""></div></div><div class="proj"></div><div class="muz"></div></div>
-    <p class="desc">곁에서 따라다니며 <b style="color:var(--cy-soft)">전방으로 투사체 연사</b>. 기본 DPS.</p>
+  <div class="eyebrow">weaver · design session · 무기-드론 패밀리</div>
+  <h1>드론 거동 안무 — <span class="acc">카테고리 4</span></h1>
+  <p class="lead">무기-드론 4종은 평시 <b>머리 왼쪽 위(뒤-상단)</b>에 떠 있다가, 위협을 만나면 카테고리별로 다르게 움직여 공격한다.
+  <b>움직임 벡터 = 그 무기가 막는 위협이 사는 곳</b> — 거동 자체가 가독 단서. <b>변형 16종은 이 거동 4를 공유</b>하고 발사 패턴·본체 모양만 다르다.</p>
+
+  <div class="struct">
+    <span class="pill alt">대기 <span style="color:var(--mut2);font-size:11px">스프링 추종</span></span>
+    <span class="arr">→</span>
+    <span class="pill">이동 <span style="color:var(--mut2);font-size:11px">카테고리별</span></span>
+    <span class="arr">→</span>
+    <span class="pill">공격 <span style="color:var(--mut2);font-size:11px">발사 패턴</span></span>
+    <span class="arr">→</span>
+    <span class="pill alt">복귀 <span style="color:var(--mut2);font-size:11px">스프링</span></span>
+    <span class="tag">공유 구조 · 이동·공격만 4분기</span>
   </div>
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--yel)">🟡 대공 — 천장 낙하물 요격</span><span class="badge b-fix">방향 확정</span></div>
-    <div class="gs t-aa"><div class="lbl">천장 낙하물 ↑ 상향 요격</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt="">
-      <div class="fall"></div><div class="hov"><div class="drn"><img src="drone/wd-aa.png" alt=""></div></div><div class="flak"></div><div class="boom"></div></div>
-    <p class="desc">바닥에 있을 때 <b style="color:var(--yel)">천장에서 떨어지는 장애물을 상향 요격</b>. 원거리(전방)와 역할 분리.</p>
+
+  <!-- reference -->
+  <div class="ref">
+    <canvas id="refcv" width="600" height="380"></canvas>
+    <div>
+      <h3>대기 위치 = 머리 왼쪽 위 (통일)</h3>
+      <div class="zones">
+        <div class="zone"><span class="dot" style="background:var(--blue)"></span><span><b>뒤-상단 = 유일 주차 가능 존.</b> 어깨 너머 호위 드론 → 비추월 위계 자연 유지(스프링 lag).</span></div>
+        <div class="zone"><span class="dot" style="background:var(--red)"></span><span><b>전방(오른쪽) = 위협 공간</b> → 비워야 함. 진행 방향 위협 가독 1순위.</span></div>
+        <div class="zone"><span class="dot" style="background:var(--yellow)"></span><span><b>인테리어/위 = 낙하물 공간</b> → 비워야 함. 드론이 주차하면 안 됨.</span></div>
+        <div class="zone"><span class="dot" style="background:var(--purple)"></span><span>위협이 뜨면 이 대기 슬롯에서 출발 → 공격 위치로 이동 → 다시 복귀.</span></div>
+      </div>
+    </div>
   </div>
+
+  <div class="grid" id="grid"></div>
+
+  <!-- footer -->
+  <div class="foot">
+    <div class="box">
+      <h4><span class="sq" style="background:var(--blue)"></span>확정/확인 필요</h4>
+      <div class="dlist">
+        <div class="ditem"><span class="n">1</span><span><b>대기 위치 = 머리 왼쪽 위(뒤-상단) 통일.</b> <span class="mut">4종 공통.</span></span></div>
+        <div class="ditem"><span class="n q">?</span><span><b>🔵/🔴 "앞으로" 강도 차등</b> — 🔵 어깨까지 살짝 / 🔴 적까지 깊숙이 돌진. <span class="mut">모션만으로 구분되게 (색·VFX 외).</span></span></div>
+        <div class="ditem"><span class="n q">?</span><span><b>🟡/🟣 "위쪽" 차별화</b> — 🟡 제자리 순간 점사 / 🟣 정수리 이동 + 지속 빔.</span></div>
+      </div>
+    </div>
+    <div class="box">
+      <h4><span class="sq" style="background:var(--red)"></span>거동 불변 가드</h4>
+      <div class="glist">
+        <div class="gitem"><span class="gk">전방·인테리어 비움</span> — 공격 순간 외엔 위협 공간 침범 X</div>
+        <div class="gitem"><span class="gk">비추월 위계</span> — 🔴 ram만 예외(짧은 burst + 스냅 복귀)</div>
+        <div class="gitem"><span class="gk">코너·볼트 dash 억제</span> — 회전 구간 거동 잠금</div>
+        <div class="gitem"><span class="gk">판정원점 = 캐릭터 고정</span> — 드론은 VFX 원점만</div>
+        <div class="gitem"><span class="gk">발광 = 발사 순간만 피크</span> — 평시 dim</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="esc">
+    <b>⚠ 리드 escalate</b> — 본 모델은 spec §2.5 A안 거동 표를 변경: 기존 <code>🟡 위로 솟아 / 🟣 위치 잡고 빔</code> → 새 <code>🟡 제자리 상방 / 🟣 머리 위 이동 빔</code>. M2 step-1 미착수라 지금 변경 자유. 확정 시 spec §2.5 + design-system <code>companion_drone</code> 거동 문구 갱신 = 리드 몫. · <b>보드 = 방향·의도까지만</b> · 최종 손맛(속도·복귀 커브·hitstop) = Unity + 기기 (M2 step-1 de-risk).
+  </div>
+
+  <div class="metafoot">weaver design session · drone-attack-motion-board · unlisted (noindex) · 캔버스 = 메커니즘 검증 전용 (매체 게이트 #8) · 본체 매력 판정 X</div>
+
 </div>
 
-<!-- 근접 -->
-<div class="sec-h"><span class="no">02</span><h2>🔴 근접 — 3 시안</h2><span class="note">택1</span></div>
-<div class="strip">
-  <div class="card rec">
-    <div class="top"><span class="nm" style="color:var(--red)">A 버즈소우 링</span><span class="badge b-rec">추천</span></div>
-    <div class="gs t-saw"><div class="lbl">dash + 톱날 회전 슬라이스</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-melee_saw.png" alt=""></div></div><div class="slash"></div></div>
-    <p class="desc">적에게 <b style="color:var(--red)">dash + 톱날 링 고속 회전</b> 슬라이스. 드론=칼날.</p>
-  </div>
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--red)">B 아크 방전</span><span class="badge b-alt">시안</span></div>
-    <div class="gs t-arc"><div class="lbl">근접 + 전기 아크</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt" style="right:30px"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-melee_arc.png" alt=""></div></div><div class="arc"></div><div class="arc arc2"></div></div>
-    <p class="desc">적 근접 시 <b style="color:var(--red)">전기 아크 방전</b> 연쇄. 칼날 0.</p>
-  </div>
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--red)">C 램-프로우</span><span class="badge b-alt">시안</span></div>
-    <div class="gs t-ram"><div class="lbl">강 dash 들이받기 + 복귀</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-melee_ram.png" alt=""></div></div><div class="impact"></div></div>
-    <p class="desc">단검형 선체로 <b style="color:var(--red)">강하게 들이받고</b> 탄성 복귀.</p>
-  </div>
-</div>
+<script>
+const C={bg:'#0C0C11',blue:'#4DABF7',red:'#FF6B6B',yellow:'#FFD43B',purple:'#B197FC',
+  char:'#C2CCD8',visor:'#7FE3FF',shell:'#1A1A24',shellEdge:'#33333f'};
+const DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+const lerp=(a,b,k)=>a+(b-a)*k;
+const ss=x=>{x=x<0?0:x>1?1:x;return x*x*(3-2*x);};
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
 
-<!-- 특수 -->
-<div class="sec-h"><span class="no">03</span><h2>🟣 특수 — 3 시안</h2><span class="note">택1</span></div>
-<div class="strip">
-  <div class="card rec">
-    <div class="top"><span class="nm" style="color:var(--pur)">A 궤도 오브</span><span class="badge b-rec">추천</span></div>
-    <div class="gs t-orbit"><div class="lbl">오브 궤도 + 자동 요격</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-special_orbit.png" alt=""><div class="orbit"><div class="orb o1"></div><div class="orb o2"></div></div></div></div><div class="zap"></div></div>
-    <p class="desc">주위를 도는 오브가 <b style="color:var(--pur)">사방 자동 요격</b>. 다방향 위협 방어.</p>
-  </div>
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--pur)">B 관통 빔</span><span class="badge b-alt">시안</span></div>
-    <div class="gs t-beam"><div class="lbl">지속 관통 레이저</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt=""><div class="tgt"></div>
-      <div class="hov"><div class="drn"><img src="drone/wd-special_beam.png" alt=""></div></div><div class="beam"></div></div>
-    <p class="desc"><b style="color:var(--pur)">지속 관통 빔</b>(채널). ⚠ 본체 색 DNA 재조정 필요.</p>
-  </div>
-  <div class="card">
-    <div class="top"><span class="nm" style="color:var(--pur)">C 노바 펄스</span><span class="badge b-alt">시안</span></div>
-    <div class="gs t-nova"><div class="lbl">충전 → 방사형 충격파</div><div class="floor"></div><img class="voy" src="drone/dr-voyager-east.png" alt="">
-      <div class="hov"><div class="drn"><img src="drone/wd-special_nova.png" alt=""></div><div class="ring"></div></div></div>
-    <p class="desc">충전 후 <b style="color:var(--pur)">방사형 충격파</b> 광역 클리어. 위기 탈출.</p>
-  </div>
-</div>
+const PANELS=[
+ {key:'ranged',idx:'CAT · 01',emoji:'🔵',color:C.blue,name:'원거리',sub:'건드론',threat:'전방 일반 몬스터',
+  move:'앞으로 — 어깨 라인까지 <b>살짝</b> (안 앞지름)',attack:'직선 탄 <b>전방 발사</b> + 반동 kick',pattern:'점사 (연사 변형)',
+  note:'전방을 비운 채 어깨까지만 나가 발사. 연사형이라 작고 빠른 반복 모션.'},
+ {key:'melee',idx:'CAT · 02',emoji:'🔴',color:C.red,name:'근거리',sub:'램-프로우',threat:'전방 장갑 몬스터',
+  move:'앞으로 — 적까지 <b>깊숙이·빠르게 돌진</b>',attack:'들이받기 + 블레이드 <b>베기 VFX</b>',pattern:'돌진/베기',
+  note:'🔵과 같은 "앞으로"지만 거리·속도로 차등. 짧은 anticipation → 강한 lunge → hitstop → 스냅 복귀. 유일하게 캐릭터를 앞지름.'},
+ {key:'aa',idx:'CAT · 03',emoji:'🟡',color:C.yellow,name:'대공',sub:'요격 호버',threat:'천장 낙하물',
+  move:'<b>제자리</b> — 머리 왼쪽 위 그대로',attack:'머즐 상방 회전 → <b>요격탄</b>',pattern:'순간 점사',
+  note:'이동 0 = 가장 빠른 반응 (낙하물은 반응속도가 생명). 이미 상단에 떠 있으니 제자리 상방 발사가 자연. 반동 down-kick으로 juice.'},
+ {key:'special',idx:'CAT · 04',emoji:'🟣',color:C.purple,name:'특수',sub:'궤도 폼+빔',threat:'특수 장애물',
+  move:'<b>머리 위로</b> — 정수리 중앙 anchor',attack:'차징 → <b>지속 빔</b>',pattern:'빔',
+  note:'느리고 묵직한 페이싱. 🟡과 위치(어깨 위↔정수리 중앙)·발사타입(점사↔지속 빔)으로 차별화. 차징 dim → 발사 순간 피크.'},
+];
 
-<div class="dec">
-  <h3>결정 — 거동까지 보고</h3>
-  <ol>
-    <li><b>🔵 원거리 · 🟡 대공</b> 거동 OK? (대공 = 천장 낙하물 상향 요격이 맞는지)</li>
-    <li><b>🔴 근접</b> — A 버즈소우(추천) / B 아크 / C 램</li>
-    <li><b>🟣 특수</b> — A 궤도(추천) / B 빔 / C 노바</li>
-  </ol>
-</div>
-<div class="foot">weaver · weapon-drone attack motion · 개념 미리보기(CSS 합성, 실 VFX=unity) · unlisted / noindex</div>
+/* ── phase timeline (cycle 0..1) ── */
+const PH=[['대기',0,0.28],['이동',0.28,0.46],['발사',0.46,0.74],['복귀',0.74,0.94],['대기',0.94,1.001]];
+function phaseOf(t){
+  for(let i=0;i<PH.length;i++){if(t>=PH[i][1]&&t<PH[i][2]){
+    return {name:PH[i][0],idx:i>=4?0:i,k:(t-PH[i][1])/(PH[i][2]-PH[i][1])};}}
+  return {name:'대기',idx:0,k:0};
+}
+
+/* ── draw a single scene ── */
+function drawScene(ctx,W,H,p,t){
+  ctx.clearRect(0,0,W,H);
+  const floorY=H*0.74, cx=W*0.345, charH=H*0.21, headY=floorY-charH;
+  // bg grain-ish vignette
+  let g=ctx.createRadialGradient(W*0.5,H*0.4,40,W*0.5,H*0.5,W*0.7);
+  g.addColorStop(0,'rgba(255,255,255,.018)');g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  // ── track floor (scrolling ticks) ──
+  ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,floorY);ctx.lineTo(W,floorY);ctx.stroke();
+  let off=(t*W*0.9)% 36;
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  for(let x=-36+ (W-off)%36; x<W;x+=36){ctx.beginPath();ctx.moveTo(x,floorY+4);ctx.lineTo(x-7,floorY+11);ctx.stroke();}
+  // forward-zone / interior-zone faint labels
+  ctx.font='600 9px Pretendard';ctx.textAlign='left';
+  ctx.fillStyle='rgba(255,107,107,.30)';ctx.fillText('전방 = 위협',W*0.66,floorY-charH*1.55);
+  ctx.fillStyle='rgba(255,212,59,.26)';ctx.fillText('↑ 낙하물',W*0.5,18);
+
+  const ph=phaseOf(t);
+  // ── threat actor (per category) ──
+  drawThreat(ctx,W,H,p,t,ph,{floorY,cx,charH,headY});
+
+  // ── character (runs right) ──
+  drawCharacter(ctx,cx,floorY,charH,t);
+
+  // ── drone position ──
+  const rest={x:cx-charH*0.62,y:headY-charH*0.18}; // head upper-left
+  const pos=dronePos(p,t,ph,{rest,cx,headY,floorY,charH,W,H});
+  // ── attack VFX (drawn relative to drone/target) ──
+  drawAttack(ctx,W,H,p,t,ph,pos,{floorY,cx,charH,headY,rest});
+  // ── drone body ──
+  drawDrone(ctx,pos.x,pos.y,p.color,charH*0.42,pos.glow,pos.ang,t);
+}
+
+/* drone motion per category */
+function dronePos(p,t,ph,o){
+  const {rest,cx,headY,charH,W,floorY}=o;
+  const bob=Math.sin(t*Math.PI*2*3)*2.2;
+  let atk,ang=0,glow=0.25;
+  if(p.key==='ranged') atk={x:cx+charH*0.30,y:headY+charH*0.20};
+  else if(p.key==='melee') atk={x:W*0.70,y:floorY-charH*0.55};
+  else if(p.key==='aa') atk={x:rest.x,y:rest.y-3};
+  else atk={x:cx,y:headY-charH*0.62}; // special: crown center, higher
+
+  if(ph.idx===0){return {x:rest.x,y:rest.y+bob,glow:0.22,ang};}
+  if(ph.idx===1){ // 이동
+    let k=ss(ph.k);
+    if(p.key==='melee'){
+      if(ph.k<0.32){let kk=ss(ph.k/0.32);return {x:lerp(rest.x,rest.x-7,kk),y:lerp(rest.y,rest.y-6,kk),glow:0.3,ang:-0.12};}
+      let kk=ss((ph.k-0.32)/0.68);return {x:lerp(rest.x-7,atk.x,kk),y:lerp(rest.y-6,atk.y,kk),glow:0.4+kk*0.3,ang:0.18*kk};
+    }
+    if(p.key==='aa') return {x:lerp(rest.x,atk.x,k),y:lerp(rest.y,atk.y,k),glow:0.3,ang:-0.5*k};
+    if(p.key==='special') return {x:lerp(rest.x,atk.x,k),y:lerp(rest.y,atk.y,k),glow:0.3+0.2*k,ang:0};
+    return {x:lerp(rest.x,atk.x,k),y:lerp(rest.y,atk.y,k),glow:0.3,ang:0};
+  }
+  if(ph.idx===2){ // 발사
+    glow=0.6+Math.sin(ph.k*Math.PI)*0.4;
+    if(p.key==='ranged'){ // recoil pulses
+      let r=Math.sin(ph.k*Math.PI*2*4); let kick=Math.max(0,r)*5;
+      return {x:atk.x-kick,y:atk.y,glow,ang:0};
+    }
+    if(p.key==='melee'){ // impact hitstop at start, slight settle
+      let s=ph.k<0.12?0:ss((ph.k-0.12)/0.4); // small recoil push back
+      return {x:atk.x+lerp(0,8,s),y:atk.y+lerp(0,-3,s),glow:0.7+(ph.k<0.15?0.3:0),ang:0.1};
+    }
+    if(p.key==='aa'){let r=Math.sin(ph.k*Math.PI*2*4);let kick=Math.max(0,r)*4;
+      return {x:atk.x,y:atk.y+kick,glow,ang:-0.6};} // recoil down
+    // special: hold + slight vibration during beam
+    let chg=ph.k<0.35; let vib=chg?0:(Math.sin(t*120)*0.8);
+    return {x:atk.x+vib,y:atk.y,glow:chg?0.4+ph.k*0.6:0.95,ang:0};
+  }
+  // 복귀
+  let k=ss(ph.k);
+  if(p.key==='ranged') atk={x:cx+charH*0.30,y:headY+charH*0.20};
+  else if(p.key==='melee') atk={x:W*0.70,y:floorY-charH*0.55};
+  else if(p.key==='aa') atk={x:rest.x,y:rest.y-3};
+  else atk={x:cx,y:headY-charH*0.62};
+  // small overshoot spring
+  let os=Math.sin(ph.k*Math.PI)*3*(1-ph.k);
+  return {x:lerp(atk.x,rest.x,k)-os,y:lerp(atk.y,rest.y,k)+bob*k,glow:0.22,ang:lerp(ang,0,k)};
+}
+
+/* threats */
+function drawThreat(ctx,W,H,p,t,ph,o){
+  const {floorY,charH,cx,headY}=o;
+  const active = ph.idx===2;
+  if(p.key==='ranged'||p.key==='melee'){
+    const ex= p.key==='ranged'? W*0.84 : W*0.78;
+    const ey= floorY-charH*0.32;
+    let hit = active && ph.k>0.1;
+    let shake = (p.key==='melee'&&active&&ph.k<0.3)?Math.sin(t*140)*2:0;
+    ctx.save();ctx.translate(ex+shake,ey);
+    let dead = p.key==='melee'&&active&&ph.k>0.35;
+    if(dead){ // shatter
+      let f=(ph.k-0.35)/0.65;ctx.globalAlpha=1-f;
+      for(let i=0;i<7;i++){let a=i/7*6.28;let d=f*22;
+        ctx.fillStyle=p.color;ctx.fillRect(Math.cos(a)*d-2,Math.sin(a)*d-2,4,4);}
+    }else{
+      // warning ring
+      ctx.strokeStyle=p.color;ctx.globalAlpha=hit?0.9:0.55;ctx.lineWidth=2;
+      let pr=charH*0.30+Math.sin(t*5)*1.3;
+      ctx.beginPath();ctx.arc(0,0,pr,0,6.28);ctx.stroke();
+      // armored = double ring + facets
+      if(p.key==='melee'){ctx.globalAlpha=0.4;ctx.beginPath();ctx.arc(0,0,pr+4,0,6.28);ctx.stroke();}
+      ctx.globalAlpha=1;
+      ctx.fillStyle='#15151D';ctx.beginPath();ctx.arc(0,0,charH*0.20,0,6.28);ctx.fill();
+      ctx.fillStyle=p.color;ctx.globalAlpha=hit?1:0.85;
+      if(p.key==='melee'){ // hex armored
+        ctx.beginPath();for(let i=0;i<6;i++){let a=i/6*6.28;let r=charH*0.12;
+          ctx[i?'lineTo':'moveTo'](Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.fill();
+      }else{ctx.beginPath();ctx.arc(0,0,charH*0.10,0,6.28);ctx.fill();}
+      // hit flash
+      if(hit){ctx.globalAlpha=clamp(1-(ph.k-0.1)*4,0,1);ctx.fillStyle='#fff';
+        ctx.beginPath();ctx.arc(0,0,charH*0.22,0,6.28);ctx.fill();}
+    }
+    ctx.restore();
+  }
+  else if(p.key==='aa'){ // falling object from top, intercepted
+    let fy, fx=cx+charH*0.10;
+    let interceptY=headY-charH*0.55;
+    if(ph.idx<2){ // falling
+      let prog = ph.idx===0? ph.k*0.5 : 0.5+ph.k*0.5;
+      fy=lerp(-10,interceptY,prog);
+    } else if(ph.idx===2 && ph.k<0.5){
+      fy=interceptY;
+      // shatter
+      let f=ph.k/0.5;ctx.save();ctx.translate(fx,fy);ctx.globalAlpha=1-f;
+      for(let i=0;i<7;i++){let a=i/7*6.28;let d=f*20;ctx.fillStyle=p.color;
+        ctx.fillRect(Math.cos(a)*d-2,Math.sin(a)*d-2,4,4);}ctx.restore();return;
+    } else return;
+    ctx.save();ctx.translate(fx,fy);
+    ctx.strokeStyle=p.color;ctx.globalAlpha=0.5;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,charH*0.22+Math.sin(t*6)*1.2,0,6.28);ctx.stroke();
+    ctx.globalAlpha=1;ctx.fillStyle='#15151D';ctx.beginPath();ctx.arc(0,0,charH*0.15,0,6.28);ctx.fill();
+    // downward chevrons
+    ctx.fillStyle=p.color;ctx.beginPath();
+    ctx.moveTo(-5,-2);ctx.lineTo(5,-2);ctx.lineTo(0,5);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  else if(p.key==='special'){ // special obstacle ahead-up
+    let ex=W*0.76, ey=headY-charH*0.40;
+    let hit=ph.idx===2&&ph.k>0.4;
+    ctx.save();ctx.translate(ex,ey);ctx.rotate(t*0.6);
+    ctx.strokeStyle=p.color;ctx.globalAlpha=hit?0.9:0.55;ctx.lineWidth=2;
+    let r=charH*0.26;
+    ctx.beginPath();for(let i=0;i<3;i++){let a=i/3*6.28-1.57;
+      ctx[i?'lineTo':'moveTo'](Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.stroke();
+    ctx.rotate(-t*0.6);
+    ctx.globalAlpha=1;ctx.fillStyle='#15151D';ctx.beginPath();ctx.arc(0,0,charH*0.15,0,6.28);ctx.fill();
+    ctx.fillStyle=p.color;ctx.globalAlpha=hit?1:0.8;ctx.beginPath();ctx.arc(0,0,charH*0.07,0,6.28);ctx.fill();
+    if(hit){ctx.globalAlpha=Math.sin(t*30)*0.4+0.4;ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(0,0,charH*0.10,0,6.28);ctx.fill();}
+    ctx.restore();
+  }
+}
+
+/* attack VFX */
+function drawAttack(ctx,W,H,p,t,ph,pos,o){
+  if(ph.idx!==2) return;
+  const {charH,cx,headY,floorY}=o;
+  ctx.save();
+  if(p.key==='ranged'){ // tracer dots forward + muzzle flash
+    let mx=pos.x+charH*0.42, my=pos.y;
+    for(let i=0;i<3;i++){
+      let tt=(ph.k*4 + i*0.33)%1;
+      let px=lerp(mx,W*0.84,tt);
+      ctx.globalAlpha=1-tt*0.7;ctx.fillStyle=p.color;
+      ctx.shadowColor=p.color;ctx.shadowBlur=8;
+      ctx.fillRect(px,my-1.6,7,3.2);
+    }
+    ctx.shadowBlur=0;ctx.globalAlpha=Math.max(0,Math.sin(ph.k*Math.PI*2*4))*0.9;
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(mx,my,4,0,6.28);ctx.fill();
+  }
+  else if(p.key==='melee'){ // blade arc + impact ring
+    let ex=W*0.78, ey=floorY-charH*0.32;
+    if(ph.k<0.4){
+      let f=ph.k/0.4;
+      // impact ring
+      ctx.globalAlpha=1-f;ctx.strokeStyle=p.color;ctx.lineWidth=3;ctx.shadowColor=p.color;ctx.shadowBlur=12;
+      ctx.beginPath();ctx.arc(ex,ey,8+f*30,0,6.28);ctx.stroke();
+      // blade slash arc
+      ctx.globalAlpha=1-f*0.8;ctx.lineWidth=4;
+      ctx.beginPath();ctx.arc(pos.x+charH*0.3,pos.y,charH*0.5,-0.9+f*1.2,0.5+f*1.2);ctx.stroke();
+      ctx.shadowBlur=0;
+      // white flash
+      ctx.globalAlpha=clamp(1-f*3,0,1);ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(ex,ey,18,0,6.28);ctx.fill();
+    }
+  }
+  else if(p.key==='aa'){ // upward tracer to falling object
+    let mx=pos.x, my=pos.y-charH*0.42;
+    let interceptY=headY-charH*0.55;
+    for(let i=0;i<3;i++){
+      let tt=(ph.k*4+i*0.33)%1;
+      let py=lerp(my,interceptY,tt);
+      ctx.globalAlpha=1-tt*0.7;ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=8;
+      ctx.fillRect(mx-1.6,py,3.2,7);
+    }
+    ctx.shadowBlur=0;ctx.globalAlpha=Math.max(0,Math.sin(ph.k*Math.PI*2*4))*0.9;
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(mx,my,4,0,6.28);ctx.fill();
+  }
+  else if(p.key==='special'){ // charge then sustained beam
+    let ex=W*0.76, ey=headY-charH*0.40;
+    if(ph.k<0.35){ // charge dots converging
+      let f=ph.k/0.35;
+      for(let i=0;i<6;i++){let a=i/6*6.28;let d=lerp(charH*0.7,charH*0.18,f);
+        ctx.globalAlpha=f;ctx.fillStyle=p.color;
+        ctx.beginPath();ctx.arc(pos.x+Math.cos(a)*d,pos.y+Math.sin(a)*d,2.2,0,6.28);ctx.fill();}
+    }else{ // beam
+      let f=(ph.k-0.35)/0.65;
+      let bw=(2.5+Math.sin(t*30)*1.2)*(1+ (f<0.15? (0.15-f)*8:0));
+      ctx.globalAlpha=0.9;ctx.strokeStyle=p.color;ctx.lineWidth=bw;
+      ctx.shadowColor=p.color;ctx.shadowBlur=14;
+      ctx.beginPath();ctx.moveTo(pos.x,pos.y);ctx.lineTo(ex,ey);ctx.stroke();
+      ctx.globalAlpha=0.9;ctx.strokeStyle='#fff';ctx.lineWidth=bw*0.4;
+      ctx.beginPath();ctx.moveTo(pos.x,pos.y);ctx.lineTo(ex,ey);ctx.stroke();
+      ctx.shadowBlur=0;
+    }
+  }
+  ctx.restore();
+}
+
+/* character (minimal voyager running right) */
+function drawCharacter(ctx,cx,floorY,h,t){
+  const w=h*0.46, bodyY=floorY-h;
+  const stride=Math.sin(t*Math.PI*2*3.2);
+  ctx.save();ctx.translate(cx,0);
+  // legs
+  ctx.strokeStyle=C.char;ctx.lineWidth=h*0.10;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(0,floorY-h*0.42);ctx.lineTo(stride*w*0.5,floorY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,floorY-h*0.42);ctx.lineTo(-stride*w*0.5,floorY-h*0.03);ctx.stroke();
+  // body (lean forward)
+  ctx.save();ctx.translate(0,floorY-h*0.55);ctx.rotate(0.12);
+  ctx.fillStyle=C.char;
+  roundRect(ctx,-w*0.34,-h*0.30,w*0.68,h*0.56,w*0.3);ctx.fill();
+  ctx.restore();
+  // head
+  ctx.fillStyle=C.char;ctx.beginPath();ctx.arc(w*0.16,bodyY+h*0.13,h*0.15,0,6.28);ctx.fill();
+  // visor (faces right)
+  ctx.fillStyle=C.visor;ctx.shadowColor=C.visor;ctx.shadowBlur=6;
+  roundRect(ctx,w*0.18,bodyY+h*0.07,h*0.13,h*0.10,2);ctx.fill();ctx.shadowBlur=0;
+  ctx.restore();
+}
+
+/* drone body — dark void shell + category core */
+function drawDrone(ctx,x,y,col,r,glow,ang,t){
+  ctx.save();ctx.translate(x,y);ctx.rotate(ang||0);
+  // outer glow
+  ctx.shadowColor=col;ctx.shadowBlur=18*glow;
+  // shell (rounded diamond/hex)
+  ctx.fillStyle=C.shell;ctx.strokeStyle=C.shellEdge;ctx.lineWidth=1.4;
+  ctx.beginPath();
+  const pts=[[0,-r],[r*0.9,-r*0.35],[r*0.9,r*0.35],[0,r],[-r*0.9,r*0.35],[-r*0.9,-r*0.35]];
+  pts.forEach((q,i)=>ctx[i?'lineTo':'moveTo'](q[0],q[1]));ctx.closePath();
+  ctx.fill();ctx.shadowBlur=0;ctx.stroke();
+  // core
+  let cg=ctx.createRadialGradient(0,0,0,0,0,r*0.6);
+  cg.addColorStop(0,'#fff');cg.addColorStop(0.3,col);cg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.globalAlpha=clamp(0.35+glow,0,1);
+  ctx.fillStyle=cg;ctx.beginPath();ctx.arc(0,0,r*0.55,0,6.28);ctx.fill();
+  ctx.globalAlpha=1;
+  ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10*glow;
+  ctx.beginPath();ctx.arc(0,0,r*0.26,0,6.28);ctx.fill();ctx.shadowBlur=0;
+  // muzzle nub (front)
+  ctx.fillStyle=C.shellEdge;roundRect(ctx,r*0.7,-r*0.16,r*0.5,r*0.32,2);ctx.fill();
+  ctx.restore();
+}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+/* reference scene (static-ish) */
+function drawRef(ctx,W,H){
+  ctx.clearRect(0,0,W,H);
+  const floorY=H*0.78,cx=W*0.42,charH=H*0.34,headY=floorY-charH;
+  // zones shading
+  ctx.fillStyle='rgba(255,107,107,.05)';ctx.fillRect(cx+charH*0.4,0,W,floorY);
+  ctx.fillStyle='rgba(255,212,59,.045)';ctx.fillRect(0,0,W,headY-charH*0.1);
+  ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,floorY);ctx.lineTo(W,floorY);ctx.stroke();
+  ctx.font='600 11px Pretendard';
+  ctx.fillStyle='rgba(255,107,107,.6)';ctx.fillText('전방 = 위협 →',cx+charH*0.6,headY-charH*0.4);
+  ctx.fillStyle='rgba(255,212,59,.55)';ctx.fillText('↑ 낙하물',W*0.5,22);
+  drawCharacter(ctx,cx,floorY,charH,0.15);
+  // rest slot marker
+  let rx=cx-charH*0.62,ry=headY-charH*0.18;
+  ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(rx,ry,charH*0.46,0,6.28);ctx.stroke();ctx.setLineDash([]);
+  drawDrone(ctx,rx,ry,C.blue,charH*0.42,0.3,0,0.1);
+  ctx.fillStyle='rgba(237,237,243,.85)';ctx.font='700 10px Pretendard';ctx.textAlign='center';
+  ctx.fillText('대기 슬롯',rx,ry-charH*0.6);
+  ctx.textAlign='left';
+}
+
+/* ── build cards & run ── */
+const grid=document.getElementById('grid');
+const scenes=[];
+PANELS.forEach(p=>{
+  const card=document.createElement('div');card.className='card';card.style.setProperty('--cc',p.color);
+  card.innerHTML=`
+    <div class="chead">
+      <span class="cdot"></span>
+      <div><div class="cname">${p.emoji} ${p.name} <span class="csub">· ${p.sub}</span></div>
+        <div class="cidx">${p.idx}</div></div>
+      <span class="cthreat">${p.threat}</span>
+    </div>
+    <canvas class="scene" width="${440}" height="${235}"></canvas>
+    <div class="timeline">
+      ${['대기','이동','발사','복귀'].map(n=>`<div class="tphase" data-n="${n}">${n}</div>`).join('')}
+    </div>
+    <div class="cbody">
+      <div class="crow"><span class="lk">이동</span><span class="lv">${p.move}</span></div>
+      <div class="crow"><span class="lk">공격</span><span class="lv">${p.attack}</span></div>
+      <div class="crow"><span class="lk">패턴</span><span class="lv"><b>${p.pattern}</b></span></div>
+      <div class="cnote">${p.note}</div>
+    </div>`;
+  grid.appendChild(card);
+  const cv=card.querySelector('.scene');
+  const ctx=setupCanvas(cv,440,235);
+  scenes.push({p,ctx,W:440,H:235,phases:card.querySelectorAll('.tphase')});
+});
+
+function setupCanvas(cv,w,h){
+  cv.width=w*DPR;cv.height=h*DPR;cv.style.aspectRatio=w+'/'+h;
+  const ctx=cv.getContext('2d');ctx.scale(DPR,DPR);return ctx;
+}
+const refcv=document.getElementById('refcv');
+const refctx=setupCanvas(refcv,600,380);refcv.style.width='100%';
+
+const FREEZE=new URLSearchParams(location.search).get('t');
+let start=null;
+function frame(ts){
+  if(!start)start=ts;
+  const elapsed=(ts-start)/1000;
+  const cycle=3.6;
+  let t=(elapsed%cycle)/cycle;
+  if(FREEZE!==null) t=parseFloat(FREEZE);
+  scenes.forEach(s=>{
+    drawScene(s.ctx,s.W,s.H,s.p,t);
+    const ph=phaseOf(t);
+    s.phases.forEach((el,i)=>el.classList.toggle('on',i===ph.idx));
+  });
+  drawRef(refctx,600,380);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
 </body>
 </html>
