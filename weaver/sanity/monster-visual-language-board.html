@@ -44,11 +44,12 @@
   @media(max-width:680px){.vs{transform:rotate(90deg)}}
 
   /* 분리 아키텍처 */
-  .arch{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px}
-  @media(max-width:680px){.arch{grid-template-columns:1fr}}
+  .arch{display:flex;gap:14px;margin-bottom:10px;align-items:stretch}
+  .arch .layer{flex:1 1 0;min-width:0}
+  @media(max-width:680px){.arch{flex-direction:column}}
   .layer{border-radius:13px;padding:17px 18px}
-  .layer.body{background:linear-gradient(180deg,rgba(126,138,160,.10),transparent);border:1px solid rgba(126,138,160,.4)}
-  .layer.cue{background:linear-gradient(180deg,rgba(92,124,250,.10),transparent);border:1px solid rgba(92,124,250,.4)}
+  .layer.lbody{background:linear-gradient(180deg,rgba(126,138,160,.10),transparent);border:1px solid rgba(126,138,160,.4)}
+  .layer.lcue{background:linear-gradient(180deg,rgba(92,124,250,.10),transparent);border:1px solid rgba(92,124,250,.4)}
   .layer h3{font-size:15px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
   .layer .who{font-size:10px;font-weight:800;letter-spacing:.5px;padding:2px 9px;border-radius:99px}
   .who.des{background:rgba(126,138,160,.2);color:#c6cdd9}
@@ -156,12 +157,12 @@
   <h2><span class="n">2</span> 해법 — 본체와 단서를 분리한다</h2>
   <p class="lead">색을 본체에 굽는 대신, <b class="hl">중립 본체 스프라이트(아키타입만)</b> 위에 <b class="hl">단서 레이어(런타임 틴트)</b> 를 얹는다. 캐릭터·드론의 "흰 마스터 → 런타임 스킨 틴트" 패턴을 그대로 재적용 — 본체 스프라이트는 <b class="hl"><code>solvableBy</code>를 모른다.</b></p>
   <div class="arch">
-    <div class="layer body">
+    <div class="layer lbody">
       <h3>🪨 본체 레이어 <span class="who des">디자인 · PixelLab</span></h3>
       <p>중립 void fauna 스프라이트. <b class="hl" style="color:#cfd4de">아키타입(부유/장갑/낙하/게이트) + hits(장갑)</b> 만 인코딩. 카테고리 4색·<code>solvableBy</code> <b class="hl" style="color:#cfd4de">안 박음.</b></p>
       <p class="ex">∴ 본체 종류 = 아키타입 3~4개뿐 (조합 폭발 0). 다크 셸+림라이트로 다크 트랙 가독.</p>
     </div>
-    <div class="layer cue">
+    <div class="layer lcue">
       <h3>💠 단서 레이어 <span class="who rt">디자인 룰 + 런타임 조립</span></h3>
       <p><code>solvableBy</code> 집합을 <b class="hl" style="color:#bcccf8">카테고리색 단서 요소 1~N개</b>로 표시(런타임 틴트·배치). 틴트 <b class="hl" style="color:#bcccf8">마스터 1장</b>(흰 코어) 재사용.</p>
       <p class="ex">∴ 다중 정답 = 데이터로 무한 조합. {🔵} {🔵🔴} {🔵🔴🟡}… 모두 같은 본체 + 단서 N개.</p>
