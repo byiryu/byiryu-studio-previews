@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 몬스터 애니 파일럿 (idle/run)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{--deep:#06060d;--srf:#15151d;--line:#2a2a36;--t1:#eeeef2;--t2:#9aa0b0;--t3:#6a7080;--ok:#51CF66;--prog:#5C7CFA;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;background:#08080d;color:var(--t1);
+    line-height:1.6;padding:32px 20px 64px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto}
+  .crumb{font-size:12.5px;color:var(--t3);margin-bottom:16px}.crumb a{color:var(--prog);text-decoration:none}
+  h1{font-size:23px;font-weight:800;margin-bottom:6px}
+  .sub{color:var(--t2);font-size:13.5px}
+  b.hl{color:var(--t1)}
+  .note{background:linear-gradient(180deg,rgba(81,207,102,.10),transparent);border:1px solid rgba(81,207,102,.4);
+    border-radius:12px;padding:12px 16px;margin:16px 0 24px;font-size:12.5px;color:#c4e8cd}.note b{color:#fff}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:620px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--srf);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .tt{font-size:15px;font-weight:800;margin-bottom:2px}
+  .ttn{font-size:11px;color:var(--t3);margin-bottom:14px}
+  .stg{border-radius:11px;background:radial-gradient(120% 80% at 50% 28%,#101018,#0a0a12 72%);
+    box-shadow:inset 0 0 0 1px #1a1a24;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .stg img{width:140px;height:140px;image-rendering:pixelated}
+  .strip{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;background:#0c0c12;border-radius:8px;padding:7px}
+  .strip img{width:30px;height:30px;image-rendering:pixelated;background:#0a0a12;border-radius:3px}
+  .sl{font-size:10px;color:var(--t3);margin:9px 0 4px;text-align:center}
+  .decide{background:linear-gradient(180deg,rgba(92,124,250,.08),transparent);border:1px solid rgba(92,124,250,.3);
+    border-radius:13px;padding:16px 20px;margin-top:24px;font-size:13.5px}.decide b{color:var(--t1)}
+  .foot{margin-top:24px;font-size:11px;color:var(--t3);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="index.html">← weaver 미리보기</a> / 몬스터 애니 파일럿</div>
+  <h1>몬스터 애니 베이크 — 파일럿 (idle / run)</h1>
+  <p class="sub">PixelLab <b class="hl">animate_object (v3, 9프레임)</b> 파이프라인 검증. 부유=idle / 다리=run 두 케이스. 좋으면 나머지 6 몬스터 배치.</p>
+  <div class="note">▶ <b>아래 큰 이미지 = 움직이는 GIF</b> (폰/브라우저에서 재생) · 작은 줄 = 9프레임 스트립. 인게임 = idle(등장·미리보기) / run(이동).</div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="tt">🟩 초록 슬라임 — idle</div>
+      <div class="ttn">부유 호버·숨 (등장/미리보기용)</div>
+      <div class="stg"><img src="ccand/anim/slime_idle.gif"></div>
+      <div class="sl">9프레임</div>
+      <div class="strip">
+        <img src="ccand/anim/slime_0.png"><img src="ccand/anim/slime_1.png"><img src="ccand/anim/slime_2.png"><img src="ccand/anim/slime_3.png"><img src="ccand/anim/slime_4.png"><img src="ccand/anim/slime_5.png"><img src="ccand/anim/slime_6.png"><img src="ccand/anim/slime_7.png"><img src="ccand/anim/slime_8.png">
+      </div>
+    </div>
+    <div class="card">
+      <div class="tt">🟥 뿔 돌진수 — run</div>
+      <div class="ttn">네 다리 질주 (인게임 이동)</div>
+      <div class="stg"><img src="ccand/anim/charger_run.gif"></div>
+      <div class="sl">9프레임</div>
+      <div class="strip">
+        <img src="ccand/anim/charger_0.png"><img src="ccand/anim/charger_1.png"><img src="ccand/anim/charger_2.png"><img src="ccand/anim/charger_3.png"><img src="ccand/anim/charger_4.png"><img src="ccand/anim/charger_5.png"><img src="ccand/anim/charger_6.png"><img src="ccand/anim/charger_7.png"><img src="ccand/anim/charger_8.png">
+      </div>
+    </div>
+  </div>
+
+  <div class="decide">
+    <b>판정:</b> 베이크 품질·움직임 OK? → 나머지 6 몬스터 배치 (게·외눈·비틀·거미·박쥐나방·삼중눈 — 다리/날개=run, 부유=idle). 톤·프레임수 조정 필요하면 알려주세요.
+    <br><span style="color:var(--t2);font-size:12px">🔧 효과·death·구조물/장애물 애니 = Unity 런타임(plat 핸드오프) — 베이크 아님.</span>
+  </div>
+  <p class="foot">weaver · 디자인 세션 · 2026-06-17 · PixelLab animate_object v3 · slime aa91fb92 / charger 8758ac8e · unlisted</p>
+</div>
+</body>
+</html>
