@@ -165,7 +165,7 @@
     <div class="layer lcue">
       <h3>💠 단서 레이어 <span class="who rt">디자인 룰 + 런타임 조립</span></h3>
       <p><code>solvableBy</code> 집합을 <b class="hl" style="color:#bcccf8">카테고리색 단서 요소 1~N개</b>로 표시(런타임 틴트·배치). 틴트 <b class="hl" style="color:#bcccf8">마스터 1장</b>(흰 코어) 재사용.</p>
-      <p class="ex">∴ 다중 정답 = 데이터로 무한 조합. {🔵} {🔵🔴} {🔵🔴🟡}… 모두 같은 본체 + 단서 N개.</p>
+      <p class="ex">∴ 다중 정답 = 데이터로 무한 조합. 🔵 / 🔵·🔴 / 🔵·🔴·🟡 …(전부 <b style="color:#bcccf8">OR</b> — 아무거나 하나) · 본체는 동일, 단서만 N개.</p>
     </div>
   </div>
   <table>
@@ -175,7 +175,10 @@
   </table>
 
   <h2><span class="n">3</span> 다중 정답 표시 문법 — 1~N개가 한 몸에 어떻게 읽히나 <span style="color:var(--prog);font-size:11px;text-transform:none;letter-spacing:0">★ 핵심 결정</span></h2>
-  <p class="lead">분리의 대가로 생긴 <b class="hl">새 디자인 숙제</b>. 빠른 플레이 중 "이건 🔵, 저건 🔵+🔴" 가 0.x초에 읽혀야 한다. 세 후보 — 각 1개 / 2개 / 3개 정답 표시:</p>
+  <p class="lead">분리의 대가로 생긴 <b class="hl">새 디자인 숙제</b>. 빠른 플레이 중 "이건 🔵만, 저건 🔵·🔴 <b class="hl">아무거나</b>" 가 0.x초에 읽혀야 한다. 세 후보 — 각 1개 / 2개 / 3개 정답 표시:</p>
+  <div class="gate" style="border-color:rgba(81,207,102,.4);background:linear-gradient(180deg,rgba(81,207,102,.09),transparent);color:#c4e8cd;margin:0 0 18px">
+    ⚠ <b style="color:#fff">여러 색 = OR(아무거나 하나면 처치) · AND(조합) 아님.</b> 무기-드론은 <b style="color:#fff">한 번에 하나만 장착</b>(스왑) → 동시 사용 불가 ∴ 여러 색은 자연히 "OR"로 읽힌다. <b style="color:#fff">색 많음 = 정답 무기 많음 = 더 쉬움</b> · 단색 = 그 무기만(엄격). 표기 = <b style="color:#fff">🔵 / 🔴</b> ("또는") — "+"(합산) 아님.
+  </div>
   <div class="opts">
 
     <!-- A 궤도 pips -->
@@ -187,11 +190,11 @@
           <div class="pip" style="left:50%;top:14px;transform:translateX(-50%);background:var(--blue);box-shadow:0 0 7px var(--blue)"></div></div><div class="lbl">🔵</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
           <div class="pip" style="left:38%;top:14px;background:var(--blue);box-shadow:0 0 7px var(--blue)"></div>
-          <div class="pip" style="left:54%;top:14px;background:var(--red);box-shadow:0 0 7px var(--red)"></div></div><div class="lbl">🔵+🔴</div></div>
+          <div class="pip" style="left:54%;top:14px;background:var(--red);box-shadow:0 0 7px var(--red)"></div></div><div class="lbl">🔵 / 🔴</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
           <div class="pip" style="left:33%;top:14px;background:var(--blue);box-shadow:0 0 7px var(--blue)"></div>
           <div class="pip" style="left:46%;top:14px;background:var(--red);box-shadow:0 0 7px var(--red)"></div>
-          <div class="pip" style="left:59%;top:14px;background:var(--yellow);box-shadow:0 0 7px var(--yellow)"></div></div><div class="lbl">🔵+🔴+🟡</div></div>
+          <div class="pip" style="left:59%;top:14px;background:var(--yellow);box-shadow:0 0 7px var(--yellow)"></div></div><div class="lbl">🔵 / 🔴 / 🟡</div></div>
       </div>
       <p>본체 위에 카테고리색 점 1~N개. 런타임이 점 개수만 늘리면 끝.</p>
       <div class="pro">+ 다중 = 점 추가(가산 직관) · 본체 스프라이트 0 의존 · 가장 빠른 가독</div>
@@ -206,9 +209,9 @@
         <div class="ds"><div class="stg"><div class="nbody"></div>
           <div class="segbar"><i style="background:var(--blue)"></i></div></div><div class="lbl">🔵</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i></div></div><div class="lbl">🔵+🔴</div></div>
+          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i></div></div><div class="lbl">🔵 / 🔴</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div>
-          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i></div></div><div class="lbl">🔵+🔴+🟡</div></div>
+          <div class="segbar"><i style="background:var(--blue)"></i><i style="background:var(--red)"></i><i style="background:var(--yellow)"></i></div></div><div class="lbl">🔵 / 🔴 / 🟡</div></div>
       </div>
       <p>본체 코어 하나를 1·2·3 등분해 각 칸을 카테고리색으로.</p>
       <div class="pro">+ 본체 일체감(부착) · 코어 1개 위치 고정</div>
@@ -226,12 +229,12 @@
         <div class="ds"><div class="stg"><div class="nbody"></div><div class="wring"></div>
           <span class="rdot" style="left:36%;top:24px;background:var(--blue);color:var(--blue)"></span>
           <span class="rdot" style="left:55%;top:24px;background:var(--red);color:var(--red)"></span>
-        </div><div class="lbl">🔵+🔴</div></div>
+        </div><div class="lbl">🔵 / 🔴</div></div>
         <div class="ds"><div class="stg"><div class="nbody"></div><div class="wring"></div>
           <span class="rdot" style="left:31%;top:28px;background:var(--blue);color:var(--blue)"></span>
           <span class="rdot" style="left:50%;top:19px;transform:translateX(-50%);background:var(--red);color:var(--red)"></span>
           <span class="rdot" style="left:62%;top:28px;background:var(--yellow);color:var(--yellow)"></span>
-        </div><div class="lbl">🔵+🔴+🟡</div></div>
+        </div><div class="lbl">🔵 / 🔴 / 🟡</div></div>
       </div>
       <p>위협 경고 링(ring_warning)을 호로 분할해 각 호를 카테고리색으로.</p>
       <div class="pro">+ 기존 경고 링과 통합(별도 요소 0) · 텔레그래프와 한 몸</div>
