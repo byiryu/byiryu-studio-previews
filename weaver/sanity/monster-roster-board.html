@@ -80,14 +80,13 @@
     <div class="cell"><div class="stg"><img src="ccand/tarch.png"></div><div class="nm">스파이크 아치</div><div class="tg">슬라이드 ⤵ <span style="color:var(--t2)">(구 천장스파이크)</span></div></div>
     <div class="cell"><div class="stg"><img src="ccand/ospike.png"></div><div class="nm">바닥 가시</div><div class="tg">점프 ▲</div></div>
     <div class="cell"><div class="stg"><img src="ccand/tblock.png"></div><div class="nm">점프 블록</div><div class="tg">점프 ▲</div></div>
-    <div class="cell"><div class="stg"><span class="anim">애니</span><img src="ccand/tsaw.png"></div><div class="nm">트랙 톱날</div><div class="tg">점프/타이밍 <span style="color:var(--t2)">(구 펜듈럼)</span></div></div>
-    <div class="cell"><div class="stg"><span class="anim">애니</span><img src="ccand/tslam.png"></div><div class="nm">슬램 게이트</div><div class="tg">타이밍 <span style="color:var(--t2)">(구 천장크러셔)</span></div></div>
+    <div class="cell"><div class="stg"><span class="anim">애니</span><img src="ccand/tsaw.png"></div><div class="nm">트랙 톱날</div><div class="tg">점프 ▲ <span style="color:var(--t2)">(구 펜듈럼)</span></div></div>
   </div>
 
   <h2>③ 구조물 <span class="pill p-body">슬라이드</span> <span class="pill p-wpn">게이트=사격</span></h2>
   <div class="hh">벽 터렛·셔터 = 슬라이드 통과(발사 X) · 에너지 게이트 = 🔵 쏴서 개방</div>
   <div class="grid">
-    <div class="cell"><div class="stg"><img src="ccand/sturret.png"></div><div class="nm">벽 터렛 (정적)</div><div class="tg">슬라이드 ⤵</div></div>
+    <div class="cell"><div class="stg"><span class="anim">애니</span><img src="ccand/sturret.png"></div><div class="nm">벽 터렛</div><div class="tg">슬라이드 ⤵ · 발사 연출만(투사체 X)</div></div>
     <div class="cell"><div class="stg"><span class="anim">애니</span><img src="ccand/sshutter.png"></div><div class="nm">셔터 게이트</div><div class="tg">슬라이드 ⤵ + 열림 애니</div></div>
     <div class="cell"><div class="stg"><div class="dots"><span class="dot" style="background:var(--blue);color:var(--blue)"></span></div><img src="ccand/gatec-0.png"></div><div class="nm">에너지 게이트</div><div class="tg">🔵 사격 개방</div></div>
   </div>
@@ -104,15 +103,15 @@
   </div>
 
   <div class="meta">
-    <div class="mbox"><b>🟪 애니 필요 목록</b>셔터 열림 · 트랙 톱날 회전 · 슬램 게이트 개폐 · 가시폭탄 착지 점화 (+ 전 위협 death VFX·idle = Unity 런타임)</div>
-    <div class="mbox"><b>컷/재분류</b>위험 기둥 = 컷 · 천장 크러셔→슬램 게이트 · 천장 스파이크→스파이크 아치 · 톱날 펜듈럼→트랙 톱날 (전부 트랙·진행방향)</div>
+    <div class="mbox"><b>🟪 애니 (🎨베이크 / 🔧Unity)</b>🎨 몬스터 idle·다리/날개 이동 / 🔧 머리바 전기·스파이크 상하·톱날 회전·셔터 열림·게이트 흐름·터렛 발사연출(투사체 X)·낙하/착지점화·전 위협 death(기화)</div>
+    <div class="mbox"><b>컷/재분류</b><b>슬램 게이트·위험 기둥 = 컷</b> · 천장 스파이크→스파이크 아치 · 톱날 펜듈럼→트랙 톱날 (no-ceiling 트랙·진행방향) · ★타이밍 회피 없음(애니=juice)</div>
   </div>
 
   <div class="decide">
     <b>거의 확정 단계.</b> 이 v2가 맞으면 → 측면/스케일 정리 + dot 스타일 확정 + SoT 갱신(본체 중립→컬러 개체+dot·대공 규칙·no-ceiling·낙하 A) + 스테이징·asset-manifest + 애니 목록 → unity 핸드오프.
     <br><span style="color:var(--t2);font-size:12px">남은 선택: 각 몬스터 본체 *변형*(1차 컬러보드 4컷 중) 고를지 / 형태 추가·교체 여부. dot 색은 예시(런타임 solvableBy 가변).</span>
   </div>
-  <p class="foot">weaver · 디자인 세션 · 2026-06-17 · 로스터 v2 · 몬스터8·장애물6·구조물3·낙하물6 · no-ceiling·대공전용·낙하A 반영 · unlisted</p>
+  <p class="foot">weaver · 디자인 세션 · 2026-06-17 · 로스터 v2 (확정) · 몬스터8·장애물5·구조물3·낙하물6 · no-ceiling·대공전용·낙하A·타이밍없음·슬램컷 · unlisted</p>
 </div>
 </body>
 </html>
