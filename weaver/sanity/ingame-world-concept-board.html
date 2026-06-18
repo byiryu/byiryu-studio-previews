@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C0C11; --panel:#12121A; --surface:#15151D; --border:#2A2A36;
+  --text:#EEEEF2; --text2:#9AA0B0; --faint:#556070;
+  --c-blue:#4DABF7; --c-red:#FF6B6B; --c-yellow:#FFD43B; --c-purple:#B197FC;
+  --prog:#5C7CFA; --ok:#51CF66;
+}
+*{margin:0;box-sizing:border-box}
+body{background:#08080c;color:var(--text);font-family:Pretendard,system-ui,sans-serif;
+  padding:34px 30px 70px;-webkit-font-smoothing:antialiased}
+.h{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--c-blue);text-transform:uppercase}
+h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:6px 0 6px}
+.lede{color:var(--text2);font-size:13px;line-height:1.65;max-width:760px}
+.lede b{color:var(--text)} .lede .ph{color:var(--c-yellow);font-weight:700}
+.gate{margin:14px 0 0;font-size:11.5px;color:var(--text2);background:rgba(255,212,59,.06);border-left:2px solid var(--c-yellow);padding:8px 13px;border-radius:0 8px 8px 0;max-width:760px;line-height:1.55}
+.gate b{color:var(--c-yellow)}
+
+.row{display:flex;gap:34px;margin-top:30px;align-items:flex-start;flex-wrap:wrap}
+.sectit{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
+
+/* ===== HERO play mockup ===== */
+.stage{width:300px;flex:none}
+.phone{border-radius:30px;background:linear-gradient(180deg,#0e0e15,#0b0b10);border:1px solid #20202c;padding:11px;box-shadow:0 30px 70px -24px #000}
+.play{position:relative;height:520px;border-radius:21px;overflow:hidden;background:#05060a}
+/* far parallax: void + stars + nebula */
+.void{position:absolute;inset:0;background:
+  radial-gradient(60% 45% at 50% 30%, rgba(70,40,120,.30), transparent 70%),
+  radial-gradient(80% 60% at 70% 12%, rgba(40,90,150,.18), transparent 60%),
+  #05060a}
+.stars{position:absolute;inset:0;background-image:
+  radial-gradient(1.2px 1.2px at 20% 14%, #fff8, transparent),
+  radial-gradient(1px 1px at 64% 8%, #fff6, transparent),
+  radial-gradient(1.4px 1.4px at 82% 22%, #fff7, transparent),
+  radial-gradient(1px 1px at 38% 26%, #fff5, transparent),
+  radial-gradient(1px 1px at 88% 40%, #fff4, transparent),
+  radial-gradient(1.2px 1.2px at 12% 38%, #fff5, transparent);}
+/* mid: the CORE you orbit (placeholder) */
+.core{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%, rgba(120,150,255,.55), rgba(60,70,160,.32) 45%, rgba(30,30,70,.12) 70%, transparent 78%);
+  box-shadow:0 0 80px rgba(90,110,230,.25);display:grid;place-items:center}
+.core .veins{position:absolute;inset:14%;border-radius:50%;border:1px solid rgba(150,170,255,.25);
+  background:radial-gradient(circle at 50% 50%, rgba(140,160,255,.18), transparent 65%)}
+.core .nucleus{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,#cdd6ff,#7a86d8 60%,#3a3f7c);
+  box-shadow:0 0 30px rgba(150,170,255,.7);position:relative}
+.corelbl{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:5;font-size:9.5px;color:#cdd6ff;
+  background:rgba(8,8,16,.75);border:1px dashed rgba(150,170,255,.5);border-radius:7px;padding:3px 8px;white-space:nowrap;font-weight:600;margin-top:90px}
+/* track rim = structure (bottom band) */
+.rim{position:absolute;left:-4%;right:-4%;bottom:9%;height:30px;border-radius:50%/22px;
+  background:linear-gradient(180deg,#1a2238,#0d1018);border-top:2px solid var(--c-blue);
+  box-shadow:0 -8px 22px rgba(77,171,247,.28), inset 0 2px 0 rgba(120,180,255,.4)}
+.rim .pulse{position:absolute;top:-2px;left:30%;width:34px;height:3px;border-radius:3px;background:var(--c-blue);box-shadow:0 0 10px var(--c-blue);opacity:.9}
+/* character + threats on rim */
+.hero-c{position:absolute;left:32%;bottom:15%;width:30px;height:38px;border-radius:7px;background:linear-gradient(180deg,#e9edf6,#aeb6c8);box-shadow:0 0 16px rgba(120,200,255,.4);z-index:4}
+.mob{position:absolute;right:18%;bottom:14.5%;width:48px;height:48px;image-rendering:pixelated;z-index:4;filter:drop-shadow(0 2px 6px #000)}
+.emerge{position:absolute;right:17%;bottom:23%;font-size:8.5px;color:var(--text2);background:rgba(8,8,16,.7);padding:2px 6px;border-radius:5px;z-index:5}
+/* HUD hint */
+.hud{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:3px;z-index:6}
+.hud i{width:11px;height:11px;border-radius:2px;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.hud i.f{background:var(--c-red)} .hud i.e{background:#2A2A36}
+.ctrl{position:absolute;bottom:10px;width:100%;display:flex;justify-content:space-between;padding:0 14px;z-index:6}
+.ctrl b{width:42px;height:42px;border-radius:50%;background:rgba(21,21,29,.85);border:1.5px solid var(--border)}
+/* foreground contrast note pins */
+.pin{position:absolute;font-size:8.5px;font-weight:700;color:#08080c;background:var(--c-yellow);padding:2px 6px;border-radius:5px;z-index:7}
+
+/* annotation list */
+.notes{flex:1;min-width:300px;max-width:460px}
+.note{margin-bottom:15px}
+.nh{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;margin-bottom:4px}
+.nd{width:11px;height:11px;border-radius:50%;flex:none}
+.nb{font-size:12px;color:var(--text2);line-height:1.55;padding-left:20px}
+.nb b{color:var(--text)} .nb .pl{color:var(--c-purple);font-weight:700} .nb .pr{color:var(--ok);font-weight:700} .nb .cd{color:var(--text2);font-weight:700}
+
+/* layer / zone / state strips */
+.block{margin-top:40px}
+.zones,.states{display:flex;gap:16px;flex-wrap:wrap}
+.zcard{width:200px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface)}
+.zsky{height:120px;position:relative;display:grid;place-items:center}
+.z1{background:radial-gradient(circle at 50% 45%,rgba(90,130,255,.5),rgba(30,50,120,.25) 55%,#06080f 80%)}
+.z2{background:radial-gradient(circle at 50% 45%,rgba(255,150,90,.5),rgba(140,60,40,.28) 55%,#0f0805 80%)}
+.z3{background:radial-gradient(circle at 50% 45%,rgba(255,90,120,.45),rgba(120,30,60,.3) 50%,#0c0509 80%)}
+.zorb{width:56px;height:56px;border-radius:50%;box-shadow:0 0 24px rgba(255,255,255,.2)}
+.z1 .zorb{background:radial-gradient(circle,#cdd6ff,#5a6ad8)}
+.z2 .zorb{background:radial-gradient(circle,#ffd8b0,#e07a3a);animation:none}
+.z3 .zorb{background:radial-gradient(circle,#ffc0c0,#c92a4a);clip-path:polygon(20% 0,80% 8%,100% 60%,70% 100%,15% 92%,0 40%)}
+.zmeta{padding:10px 12px}
+.zmeta .zt{font-size:12.5px;font-weight:700} .zmeta .zs{font-size:10.5px;color:var(--text2);margin-top:3px;line-height:1.4}
+.placeholder-tag{position:absolute;bottom:6px;font-size:8px;color:#fff9;background:rgba(0,0,0,.4);padding:1px 6px;border-radius:4px;border:1px dashed #fff4}
+
+.states .scard{width:178px}
+.sbox{height:108px;border-radius:12px;position:relative;overflow:hidden;border:1px solid var(--border);display:grid;place-items:center}
+.sbox .o{width:64px;height:64px;border-radius:50%}
+.s-norm{background:#06080f} .s-norm .o{background:radial-gradient(circle,#cdd6ff,#5a6ad8);box-shadow:0 0 26px rgba(120,140,255,.5)}
+.s-low{background:radial-gradient(circle at 50% 120%,rgba(255,60,60,.25),#0a0406)} .s-low .o{background:radial-gradient(circle,#ffd0d0,#d83a3a);box-shadow:0 0 34px rgba(255,80,80,.8);animation:pulse 1.2s ease-in-out infinite}
+.s-low::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 40px rgba(255,40,40,.5);border-radius:12px}
+.s-kill{background:#06080f} .s-kill .o{background:radial-gradient(circle,#cdd6ff,#5a6ad8)} .s-kill::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 60%,rgba(77,171,247,.5),transparent 45%)}
+@keyframes pulse{50%{transform:scale(1.08);filter:brightness(1.3)}}
+.scap{font-size:11px;color:var(--text2);margin-top:7px;text-align:center}
+.scap b{color:var(--text)}
+
+/* readability gate diagram */
+.gatebox{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--border);max-width:520px}
+.gcol{flex:1;padding:16px 14px;text-align:center}
+.gbg{background:#0a0c14;border-right:1px solid var(--border)} .gfg{background:#0a0c14}
+.gswatch{height:40px;border-radius:8px;margin-bottom:9px}
+.gbg .gswatch{background:linear-gradient(135deg,#1a2240,#12182e);opacity:.5}
+.gfg .gswatch{background:linear-gradient(135deg,var(--c-blue),#1a2240);box-shadow:0 0 14px rgba(77,171,247,.4)}
+.gt{font-size:12px;font-weight:700} .gs{font-size:10.5px;color:var(--text2);margin-top:3px;line-height:1.4}
+
+/* legend */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.lg{font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface)}
+.lg b{font-weight:700}
+.lg.pl{border-color:rgba(177,151,252,.4)} .lg.pl b{color:var(--c-purple)}
+.lg.pr{border-color:rgba(81,207,102,.4)} .lg.pr b{color:var(--ok)}
+.lg.cd b{color:var(--text2)}
+</style></head>
+<body>
+  <div class="h">weaver · in-game world concept</div>
+  <h1>"허공"이 아니라 — 거대한 코어를 공전한다</h1>
+  <p class="lede">현재 인게임 = 빈 다각형 위 달리기(허공). 제안 = brief의 <b>"살아 움직이는 트랙"</b>을 실현 — 비어있던 <b>인테리어 32%</b>(spec §2.4)를 <b>공전 대상 코어</b>로 채우고, 트랙을 선이 아닌 <b>구조물</b>로, 스폰을 <b>세계에서 솟는 것</b>으로. <span class="ph">중앙 큰 도형 = 플레이스홀더 (PixelLab 생성 대상, 최종 아트 아님)</span> — 이 보드는 <b>구도·층·무드·가독</b>만 굳힘.</p>
+  <div class="gate"><b>매체 게이트 #8:</b> 코어·창조물·성운 = 코드로 안 그림 → 방향 확정 후 <b>PixelLab</b>. 보드의 그라디언트 블롭 = 자리·크기·읽힘 표시용 더미. 스타필드·트랙기하·펄스·VFX = plat 절차.</p>
+
+  <div class="row">
+    <div class="stage">
+      <div class="sectit">인게임 구도 (1:1 영역)</div>
+      <div class="phone"><div class="play">
+        <div class="void"></div>
+        <div class="stars"></div>
+        <div class="core"><div class="veins"></div><div class="nucleus"></div></div>
+        <div class="corelbl">◈ 공전 코어 [PixelLab 생성]</div>
+        <div class="hud"><i class="f"></i><i class="f"></i><i class="e"></i></div>
+        <div class="rim"><div class="pulse"></div></div>
+        <div class="hero-c"></div>
+        <img class="mob" src="file:///Users/kj/Desktop/ApplicationProject/assets/weaver/monster/crab/scuttle/0.png">
+        <div class="emerge">↑ 코어서 솟음</div>
+        <div class="pin" style="left:30%;bottom:30%">전경 = 풀대비</div>
+        <div class="ctrl"><b></b><b></b></div>
+      </div></div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="nh"><span class="nd" style="background:var(--c-purple)"></span>① 공전 코어 = 인테리어 32% 채움</div>
+        <div class="nb"><b>플레이어가 도는 "그것".</b> 잠든 리액터·거대 생물·붕괴 코어… 구역별 교체 = <b>배경이 곧 진행 서사</b>. 회전 트랙에 *목적* 부여("왜 도나 → 공략하니까"). <span class="pl">제작 = PixelLab</span></div></div>
+      <div class="note"><div class="nh"><span class="nd" style="background:var(--c-blue)"></span>② 트랙 = 구조물(달리는 림)</div>
+        <div class="nb">선 → <b>깊이 있는 림 + 림라이트 발광</b>. 활성 무기 카테고리색으로 글로우. 에너지 펄스가 레일을 타고 흐름. <span class="pr">제작 = plat 절차/VFX</span></div></div>
+      <div class="note"><div class="nh"><span class="nd" style="background:var(--ok)"></span>③ 세계에서 솟는 스폰</div>
+        <div class="nb">몬스터 = 코어 균열·헐 벤트서 기어나옴 / 낙하물 = 인테리어서 떨어짐 / 장애물 = 표면서 솟음(no-ceiling, 이미 spec). <b>세계가 위협의 출처</b> = 응집. <span class="pl">몬스터=PixelLab(완료)</span> · 솟는 연출 <span class="pr">=plat</span></div></div>
+      <div class="note"><div class="nh"><span class="nd" style="background:var(--text2)"></span>④ 3층 패럴랙스</div>
+        <div class="nb">원경 성운<span class="pl">(PixelLab)</span>·스타필드<span class="pr">(plat)</span> / 중경 코어 / 근경 = 트랙 뒤로만 스쳐가는 실루엣(레인 침범 X). 깊이감.</div></div>
+      <div class="note"><div class="nh"><span class="nd" style="background:var(--c-yellow)"></span>⑤ 전경 = 풀대비 (가독 사수)</div>
+        <div class="nb">트랙면+위협만 고대비·풀채도. 배경(코어·성운)은 <b>저주파·명도상한</b> 아래 → 맥동해도 위협 실루엣 안 가림(paranoia #5).</div></div>
+    </div>
+  </div>
+
+  <!-- ZONES -->
+  <div class="block">
+    <div class="sectit">구역별 코어 = 진행 서사 (무드·팔레트 변주 · 코어 도형 = 더미)</div>
+    <div class="zones">
+      <div class="zcard"><div class="zsky z1"><div class="zorb"></div><span class="placeholder-tag">PixelLab 생성 대상</span></div>
+        <div class="zmeta"><div class="zt">구역 1 · 잠든 리액터</div><div class="zs">쿨 블루 · 정적·안정 · 부드러운 맥동</div></div></div>
+      <div class="zcard"><div class="zsky z2"><div class="zorb"></div><span class="placeholder-tag">PixelLab 생성 대상</span></div>
+        <div class="zmeta"><div class="zt">구역 2 · 깨어나는 생물</div><div class="zs">웜 앰버 · 균열·움직임 시작 · 유기적</div></div></div>
+      <div class="zcard"><div class="zsky z3"><div class="zorb"></div><span class="placeholder-tag">PixelLab 생성 대상</span></div>
+        <div class="zmeta"><div class="zt">구역 3 · 붕괴 코어</div><div class="zs">데인저 레드 · 불안정·파편 · 긴장 최고조</div></div></div>
+    </div>
+  </div>
+
+  <!-- REACTIVITY -->
+  <div class="block">
+    <div class="sectit">반응형 코어 — 게임 상태가 배경에 산다</div>
+    <div class="states">
+      <div class="scard"><div class="sbox s-norm"><div class="o"></div></div><div class="scap"><b>평시</b> · 잔잔한 맥동·자전</div></div>
+      <div class="scard"><div class="sbox s-low"><div class="o"></div></div><div class="scap"><b>하트 1 (위기)</b> · 코어 붉게 맥동 + vignette (budget==1 연출 통합)</div></div>
+      <div class="scard"><div class="sbox s-kill"><div class="o"></div></div><div class="scap"><b>처치</b> · 주변부 카테고리색 플래시 (중앙 침범 X)</div></div>
+    </div>
+  </div>
+
+  <!-- READABILITY -->
+  <div class="block">
+    <div class="sectit">가독 게이트 — 어떻게 화려해도 위협이 뜨나</div>
+    <div class="gatebox">
+      <div class="gcol gbg"><div class="gswatch"></div><div class="gt">배경 (코어·성운)</div><div class="gs">저주파·저대비·명도 상한 아래. 깊이/무드만 — 정보 없음</div></div>
+      <div class="gcol gfg"><div class="gswatch"></div><div class="gt">전경 (트랙·위협)</div><div class="gs">풀대비·풀채도·선명 실루엣. 유일한 "읽는" 레이어</div></div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="block">
+    <div class="sectit">제작 분담 (보드 확정 후)</div>
+    <div class="legend">
+      <span class="lg pl"><b>PixelLab</b> — 공전 코어·창조물·성운·구조물 set-dressing (아트 appeal)</span>
+      <span class="lg pr"><b>plat 절차/VFX</b> — 스타필드·그라디언트·트랙 기하·림 글로우·에너지 펄스·반응 연출</span>
+      <span class="lg cd"><b>코드/vector</b> — HUD·버튼</span>
+    </div>
+    <div class="gate" style="margin-top:14px"><b>게이트:</b> 코어 set-dressing PixelLab 생산은 <b>(가) 구역 테마 확정</b> + <b>(나) 위협 기기 렌더 후 가독 상한 정량화</b> 뒤. 이 보드 = 그 방향·구도·가독 룰을 굳혀 plat 절차 백드롭을 가이드 + 후속 art de-risk.</div>
+  </div>
+</body></html>
