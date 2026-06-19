@@ -1,6 +1,6 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>weaver — 트랙면 룩 후보 보드</title>
+<title>weaver — 트랙면 룩 후보 보드 (평면 2D·선 기반)</title>
 <style>
   :root{
     --ink:#0C0C11; --panel:#12121A; --surf:#15151D; --surf2:#1C2030;
@@ -21,40 +21,41 @@
     -webkit-font-smoothing:antialiased;line-height:1.5;
   }
   .wrap{max-width:1180px;margin:0 auto;padding:40px 22px 90px}
-
-  /* header */
   .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--amber);margin:0 0 14px}
   h1{font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;line-height:1.05}
   h1 .dim{color:var(--tx3);font-weight:300}
-  .lede{max-width:720px;color:var(--tx2);font-size:15px;margin:0 0 8px}
+  .lede{max-width:740px;color:var(--tx2);font-size:15px;margin:0 0 8px}
   .lede b{color:var(--tx)}
 
-  /* problem strip */
+  .fix{margin:22px 0 0;display:flex;gap:10px;flex-wrap:wrap}
+  .fixp{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:8px;border:1px solid var(--border);color:var(--tx2)}
+  .fixp b{color:var(--good)}
+  .fixp.no b{color:var(--crack)}
+
   .problem{
-    margin:30px 0 8px;display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:center;
+    margin:30px 0 8px;display:grid;grid-template-columns:160px 160px 1fr;gap:20px;align-items:center;
     background:linear-gradient(180deg,rgba(201,42,42,.07),rgba(201,42,42,.02));
     border:1px solid rgba(255,90,90,.22);border-radius:16px;padding:20px 22px;
   }
-  @media(max-width:640px){.problem{grid-template-columns:1fr}}
-  .problem h3{margin:0 0 6px;font-size:13px;letter-spacing:.04em;color:var(--crack);text-transform:uppercase;font-family:var(--mono)}
-  .problem p{margin:0;font-size:13.5px;color:var(--tx2)}
-  .problem p b{color:var(--tx)}
+  @media(max-width:680px){.problem{grid-template-columns:1fr 1fr}}
+  .problem .frame{aspect-ratio:1;border-radius:12px;border:1px solid rgba(255,90,90,.2);overflow:hidden;background:var(--ink)}
+  .problem .frame.bad{border-color:rgba(255,90,90,.35)}
+  .problem .frame svg{display:block;width:100%;height:100%}
+  .problem .txt h3{margin:0 0 6px;font-size:13px;letter-spacing:.04em;color:var(--crack);text-transform:uppercase;font-family:var(--mono)}
+  .problem .txt p{margin:0;font-size:13px;color:var(--tx2)}
+  .problem .txt p b{color:var(--tx)}
+  .flabel{font-family:var(--mono);font-size:10px;color:var(--tx3);text-align:center;margin:6px 0 0}
 
-  /* section */
   .sec{margin:54px 0 0}
   .sec-h{display:flex;align-items:baseline;gap:14px;margin:0 0 6px;flex-wrap:wrap}
   .sec-h .n{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.2em}
   .sec-h h2{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0}
-  .sec-sub{color:var(--tx2);font-size:13.5px;max-width:760px;margin:0 0 26px}
+  .sec-sub{color:var(--tx2);font-size:13.5px;max-width:780px;margin:0 0 26px}
   .sec-sub code{font-family:var(--mono);font-size:12px;color:var(--gold);background:rgba(255,224,138,.08);padding:1px 6px;border-radius:5px}
+  .sec-sub b{color:var(--tx)}
 
-  /* candidate grid */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px}
-  .card{
-    background:linear-gradient(180deg,#13131b,#0f0f15);
-    border:1px solid var(--border);border-radius:16px;overflow:hidden;
-    transition:border-color .2s, transform .2s;
-  }
+  .card{background:linear-gradient(180deg,#13131b,#0f0f15);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s, transform .2s}
   .card:hover{border-color:#3a3f52;transform:translateY(-3px)}
   .card.win{border-color:rgba(81,207,102,.5);box-shadow:0 0 0 1px rgba(81,207,102,.25), 0 14px 40px -18px rgba(81,207,102,.4)}
   .frame{position:relative;aspect-ratio:1;background:var(--ink);overflow:hidden}
@@ -66,27 +67,21 @@
   .cap .reads{margin:7px 0 0;font-size:12.5px;color:var(--tx2)}
   .cap .reads .lead{color:var(--tx);font-weight:600}
   .pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 8px;border-radius:20px;border:1px solid var(--border);color:var(--tx2);white-space:nowrap}
-  .pill.ok{color:var(--good);border-color:rgba(81,207,102,.35);background:rgba(81,207,102,.08)}
-  .pill.no{color:var(--crack);border-color:rgba(255,90,90,.35);background:rgba(255,90,90,.07)}
-  .pill.mid{color:var(--yel);border-color:rgba(255,212,59,.3);background:rgba(255,212,59,.06)}
   .pill.rec{color:#0C0C11;background:var(--good);border-color:var(--good);font-weight:700}
-  .gate{margin:10px 0 0;display:flex;gap:6px;flex-wrap:wrap}
+  .gate{margin:10px 0 0;display:flex;gap:10px;flex-wrap:wrap}
   .gate .g{font-family:var(--mono);font-size:10px;color:var(--tx3)}
   .gate .g b{color:var(--tx2);font-weight:500}
 
-  /* zone row */
   .zrow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   @media(max-width:760px){.zrow{grid-template-columns:1fr}}
   .zcard{background:linear-gradient(180deg,#13131b,#0f0f15);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-  .zcard .frame{aspect-ratio:4/3}
   .zhead{padding:13px 15px;display:flex;align-items:center;gap:9px}
   .swatch{width:13px;height:13px;border-radius:4px;flex:none}
   .zhead h4{margin:0;font-size:14.5px;font-weight:700}
   .zhead .z{font-family:var(--mono);font-size:10.5px;color:var(--tx3);margin-left:auto}
   .zcard p{margin:0;padding:0 15px 15px;font-size:12px;color:var(--tx2)}
 
-  /* readability gate big frame */
-  .gatebox{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:center}
+  .gatebox{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
   @media(max-width:760px){.gatebox{grid-template-columns:1fr}}
   .gateframe{background:var(--ink);border:1px solid var(--border);border-radius:18px;overflow:hidden;aspect-ratio:3/4;max-width:380px}
   .gateframe svg{display:block;width:100%;height:100%}
@@ -99,10 +94,7 @@
   .gatelist p{margin:0;font-size:12.5px;color:var(--tx2)}
   .gatelist code{font-family:var(--mono);font-size:11px;color:var(--gold)}
 
-  /* decision */
-  .decision{margin-top:30px;background:
-    linear-gradient(180deg,rgba(81,207,102,.06),rgba(81,207,102,.015));
-    border:1px solid rgba(81,207,102,.3);border-radius:18px;padding:26px 28px}
+  .decision{margin-top:30px;background:linear-gradient(180deg,rgba(81,207,102,.06),rgba(81,207,102,.015));border:1px solid rgba(81,207,102,.3);border-radius:18px;padding:26px 28px}
   .decision h3{margin:0 0 4px;font-size:12px;font-family:var(--mono);letter-spacing:.2em;color:var(--good);text-transform:uppercase}
   .decision .big{font-size:20px;font-weight:700;margin:0 0 16px;letter-spacing:-.01em}
   .decision .big span{color:var(--good)}
@@ -120,53 +112,66 @@
   .qbox li{font-size:13px;color:var(--tx2);margin:0 0 7px}
   .qbox li b{color:var(--tx)}
 
-  .foot{margin-top:40px;border-top:1px solid var(--border);padding-top:18px;font-family:var(--mono);font-size:11px;color:var(--tx3);line-height:1.8}
-  .foot b{color:var(--tx2);font-weight:500}
-  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 0;font-family:var(--mono);font-size:11px;color:var(--tx2)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:30px 0 0;font-family:var(--mono);font-size:11px;color:var(--tx2)}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .dotk{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+  .foot{margin-top:34px;border-top:1px solid var(--border);padding-top:18px;font-family:var(--mono);font-size:11px;color:var(--tx3);line-height:1.8}
+  .foot b{color:var(--tx2);font-weight:500}
 </style>
 
 <div class="wrap">
 
-  <p class="kicker">weaver · 디자인 세션 · 트랙면 트리트먼트</p>
-  <h1>달리는 표면인가, <span class="dim">아니면 벽인가.</span></h1>
-  <p class="lede"><b>트랙 = 공전 코어의 표면.</b> 캐릭터는 회전 다각형 둘레의 안쪽 면을 벽주행하고, 코어는 인테리어에 떠 있다. 발밑 band 가 "내가 가로질러 달리는 표면"으로 읽혀야 하는데 — unity step-8 의 균일 갈색 밴드는 <b>벽/레인/가드레일</b>로 읽혔다.</p>
-  <p class="lede" style="color:var(--tx3);font-size:13px">동일 게임 1프레임(회전 사각 트랙·리액터 코어·벽주행 캐릭터) 위에 후보 7종. 제작은 unity 절차 셰이더 — 이 보드는 <b style="color:var(--tx2)">룩 타겟</b>만 정한다(드론 안무 보드 패턴). rim/pulse 존치 후보 · body 재작업.</p>
+  <p class="kicker">weaver · 디자인 세션 · 트랙면 트리트먼트 · rev.2 평면 2D</p>
+  <h1>살아있는 선인가, <span class="dim">허공의 선인가.</span></h1>
+  <p class="lede"><b>트랙 = 얇은 다각형 선.</b> 캐릭터는 그 <b>선 위</b>를 달리고, 위협은 선에서 <b>안쪽(법선)으로</b> 솟고, 코어는 인테리어에 평평하게 떠 있다 — <b>정면 평면 2D</b>(프로토 v3 검증). 트랙면은 두께를 줄 대상이 아니라 <b>선 그 자체</b>. 풀 질문 = 이 평평한 선을 "공전 코어 표면의 가장자리(살아 움직임)"로 읽히게, 두께/입체 없이, 안쪽 위협 가독 침범 없이.</p>
+
+  <div class="fix">
+    <span class="fixp no">✗ rev.1 오류 = <b>3D 두께·베벨</b> (위에서 내려다본 입체 링 도로)</span>
+    <span class="fixp">✓ rev.2 = <b>평면 정면 · 선 기반</b> (band 폐기)</span>
+    <span class="fixp">✓ 캐릭터 = 선 위 · 위협 = 선 안쪽으로</span>
+  </div>
 
   <div class="problem">
-    <div class="frame" style="border-radius:12px;border:1px solid rgba(255,90,90,.2);aspect-ratio:1;max-width:170px"><svg viewBox="0 0 300 300" data-cand="fail"></svg></div>
     <div>
-      <h3>↳ 무엇이 실패했나 (step-8 baseline)</h3>
-      <p><b>body 밴드: +Normal 오프셋 · 폭 70 · 알파 0.32 균일 칠.</b> 밝은 주행 엣지선과 평행하게 같은 밝기 띠가 코어 방향으로 깔리니, "표면이 깊이로 후퇴"가 아니라 <b>두 선 사이의 면적 = 벽/채널</b>로 읽힌다. 깊이·표면·모션 단서가 전부 0. → 진단: 평행 띠는 <b>방향감 없는 면적 칠</b>일 뿐, "달림"의 신호가 없다.</p>
+      <div class="frame"><svg viewBox="0 0 300 300" data-cand="proto"></svg></div>
+      <div class="flabel">현재 프로토 (순수 선)</div>
+    </div>
+    <div>
+      <div class="frame bad"><svg viewBox="0 0 300 300" data-cand="fail"></svg></div>
+      <div class="flabel">step-8 (안쪽 band)</div>
+    </div>
+    <div class="txt">
+      <h3>↳ 양끝 다 실패</h3>
+      <p><b>순수 선</b>(좌) = brief "살아 움직이는 트랙" 미구현 — 허공에 뜬 죽은 윤곽선. <b>step-8 안쪽 band</b>(우) = 선과 평행한 채운 띠가 <b>벽/레인</b>으로 읽히고, 위협이 솟는 안쪽 공간을 침범. → 정답은 둘 사이: <b>선을 살리되, 안쪽으로 띠를 깔지 않는다.</b></p>
     </div>
   </div>
 
-  <!-- ===== SECTION 1: candidates ===== -->
+  <!-- ===== SECTION 1 ===== -->
   <div class="sec">
-    <div class="sec-h"><span class="n">01</span><h2>후보 7종 — "달리는 표면"으로 읽히는가</h2></div>
-    <p class="sec-sub">해법 축 = <b style="color:var(--tx)">깊이</b>(균일→후퇴→베벨) · <b style="color:var(--tx)">표면 마커</b>(없음→진행 수직 트레드→패널 심→센터라인) · <b style="color:var(--tx)">머티리얼</b>(에너지/헐/균열). 각 후보 = 같은 프레임, band 트리트먼트만 교체. 게이트 = <code>읽힘</code> 의도 부합 · <code>모션</code> 진행 단서 · <code>가독</code> 전경 미가림.</p>
+    <div class="sec-h"><span class="n">01</span><h2>후보 7종 — 선을 "살아있는 코어 표면"으로</h2></div>
+    <p class="sec-sub">전부 <b>평면 2D · 선 위 트리트먼트</b>(두께·band 없음). 동일 게임 1프레임(회전 다이아 트랙·리액터 코어·선 위 캐릭터·안쪽 위협). 게이트 = <code>읽힘</code> 코어 표면감 · <code>생동</code> 살아 움직임 · <code>가독</code> 안쪽 위협 미침범.</p>
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- ===== SECTION 2: zone materials ===== -->
+  <!-- ===== SECTION 2 ===== -->
   <div class="sec">
-    <div class="sec-h"><span class="n">02</span><h2>구역 머티리얼 변주 — 권장 구조에 적용</h2></div>
-    <p class="sec-sub">엣지(주행선)는 <b style="color:var(--tx)">구역 무관 항상 동일</b>(게임 앵커·안 꾸밈). body 질감만 구역 테마로 교체 — 같은 "표면" 구조에 머티리얼만. 구역 배정(spec §9.5) = 리액터·네온도시·붕괴 (MVP 컷 3타입).</p>
+    <div class="sec-h"><span class="n">02</span><h2>구역 머티리얼 변주 — 권장 트리트먼트에 적용</h2></div>
+    <p class="sec-sub">선의 <b>기본 림라이트는 구역 무관 동일</b>(주행 앵커). 색·결·코어만 구역 테마로. 구역 배정(spec §9.5) = 리액터·네온도시·붕괴(MVP 컷 3타입).</p>
     <div class="zrow" id="zrow"></div>
   </div>
 
-  <!-- ===== SECTION 3: readability gate ===== -->
+  <!-- ===== SECTION 3 ===== -->
   <div class="sec">
-    <div class="sec-h"><span class="n">03</span><h2>가독 게이트 — 전경을 가리지 않는가 (paranoia #5)</h2></div>
-    <p class="sec-sub">권장안 위에 실제 전경 요소를 얹는다: 머리 위 <b style="color:var(--tx)">정답 dot</b> · 동반 <b style="color:var(--tx)">드론</b> · <b style="color:var(--tx)">⚪ 낙하물</b> · <b style="color:var(--tx)">위협 dot</b>. §9.1.6 = 전경 풀대비 / 표면 저주파·명도↓·후면. 장식이 위협 가독 해치면 거부.</p>
+    <div class="sec-h"><span class="n">03</span><h2>가독 게이트 — 안쪽 위협을 가리지 않는가 (paranoia #5)</h2></div>
+    <p class="sec-sub">권장안 위에 실제 전경: 머리 위 <b>정답 dot</b> · 동반 <b>드론</b> · 안쪽 솟는 <b>가시</b> · <b>몬스터</b> · <b>⚪ 낙하물</b> · <b>코인</b>. §9.1.6 = 전경 풀대비 / 코어·선 글로우 = 저주파·후면. 장식이 위협 가독 해치면 거부.</p>
     <div class="gatebox">
       <div class="gateframe"><svg viewBox="0 0 300 400" data-cand="gate"></svg></div>
       <ul class="gatelist">
-        <li><span class="ck y">✓</span><div><h5>주행 엣지 = 최고 명도 앵커</h5><p>엣지선만 풀 글로우(<code>#EEEEF2</code> 코어 + 카테고리 펄스). body 는 엣지보다 항상 ≥40% 어둡게 → 캐릭터 발밑선이 늘 가장 밝아 "여기가 바닥".</p></div></li>
-        <li><span class="ck y">✓</span><div><h5>body 명도 상한 = 코어보다 밝게, 전경보다 어둡게</h5><p>표면 휘도 밴드 <code>L 28–46%</code>. 위협 dot·드론·낙하물(<code>L 70%+</code>)과 분리. 표면 채도는 전경 카테고리 4색 회피(앰버/시안/적 = 무채에 가까운 틴트).</p></div></li>
-        <li><span class="ck y">✓</span><div><h5>모션은 저주파·표면 한정</h5><p>트레드 스크롤은 band 안쪽(코어 쪽)으로 페이드 — 엣지선 위 0px 침범. 깜빡임 X(자동플레이감 회피, 드론/위협 텔레그래프와 구분).</p></div></li>
-        <li><span class="ck q">?</span><div><h5>정량 상한 = 기기 렌더 후 잠금</h5><p>명도/대비 수치(L·ΔE)는 <b>위협 기기 실렌더 1회</b> 후 확정(§9.1.6 "정량화 = 위협 기기 렌더 후"). 보드 = 구조·상대 위계만.</p></div></li>
+        <li><span class="ck y">✓</span><div><h5>모든 트리트먼트 = 선 위 only</h5><p>발광·세그먼트·흐름 전부 선의 <code>±2px</code> 이내. 위협이 솟는 안쪽 공간(법선 방향)엔 0 침범 — step-8 band 가 침범했던 곳을 비운다.</p></div></li>
+        <li><span class="ck y">✓</span><div><h5>코어 = 중심·저주파·후면</h5><p>코어 글로우는 <b>중심에 모이고</b> 위협 존(선 안쪽 가까이)에선 명도↓. 위협 dot·드론·낙하물(<code>L70%+</code>)이 항상 코어보다 밝게 떠오름.</p></div></li>
+        <li><span class="ck y">✓</span><div><h5>생동은 저주파·선 따라</h5><p>흐르는 세그먼트는 선을 따라(접선) 흐름 — 깜빡임 X(자동플레이감·위협 텔레그래프 혼동 회피). 주행 속도 동기.</p></div></li>
+        <li><span class="ck q">?</span><div><h5>정량 상한 = 기기 렌더 후 잠금</h5><p>코어 글로우 명도·선 bloom 반경 상한(L·반경px)은 <b>위협 기기 실렌더 1회</b> 후 §9.1.6 확정. 보드 = 구조·상대 위계만.</p></div></li>
       </ul>
     </div>
   </div>
@@ -176,25 +181,25 @@
     <div class="sec-h"><span class="n">04</span><h2>권장 & 잠금 대상</h2></div>
     <div class="decision">
       <h3>디자이너 권장</h3>
-      <p class="big">구조 = <span>D 베벨 렛지 + E 트레드</span> 합본 · 머티리얼만 구역 교체</p>
+      <p class="big">G 합본 = <span>발광 림 + 흐르는 세그먼트 + 코어 림 연결</span></p>
       <div class="dgrid">
         <div>
           <h6>왜</h6>
           <ul>
-            <li><b>베벨 렛지(D)</b> = "내가 솔리드 링 위에 올라서 있다"는 깊이를 단번에 줌 — band 가 평행 띠(벽)가 아니라 <b>두께 있는 단(ledge)의 윗면</b>으로 뒤집힘. 실패의 직접 해독제.</li>
-            <li><b>진행 수직 트레드(E)</b> = 스크롤하는 가로 결이 "이 면을 따라 달린다"는 모션을 줌. 정적 띠엔 없던 유일한 "달림" 신호.</li>
-            <li>둘 다 <b>절차 친화</b> — 베벨 = 엣지 아래 그라데이션+섀도선, 트레드 = 수직 라인 스크롤. 타일셋 0(임의각 시머 회피, spec §9.3).</li>
-            <li>rim(엣지 림라이트)·pulse(카테고리색)는 <b>존치</b> — 실패한 건 body 뿐.</li>
+            <li><b>발광 림(B)</b> = 죽은 윤곽선 → 살아있는 에너지 가장자리. 카테고리색 bloom·위기 펄스 = "이 선이 코어의 발광 표면".</li>
+            <li><b>흐르는 세그먼트(D)</b> = 선을 따라 흐르는 결 = 유일한 "달림·살아 움직임" 신호(brief 충족). 접선 방향·저주파.</li>
+            <li><b>코어 림 연결(E)</b> = 코어 글로우가 선에 닿아 "선 = 코어의 빛나는 가장자리(limb)" — 허공의 선 탈피. 단 중심 집중·안쪽 저주파로 위협 가독 보존.</li>
+            <li>전부 <b>선 위 only · 평면</b> — 두께/band/입체 0. 절차 친화(스트로크 bloom·dash offset·radial). 타일셋 0(임의각 시머 회피).</li>
           </ul>
         </div>
         <div>
-          <h6>확정 시 design-system <code>track_surface</code> 정밀화</h6>
+          <h6>확정 시 design-system <code>track_surface</code> 재정의</h6>
           <ul>
-            <li><b>① 엣지</b> = 림라이트 <code>#EEEEF2</code> 코어 2px + 외측 글로우, 구역 무관 고정.</li>
-            <li><b>② body</b> = 엣지 아래 <code>L46%→L28%</code> 인워드 그라데이션(베벨) + 코어쪽 끝 1px 섀도선. <b>폭 ≈ 36</b>(구 70 → 축소, "면적 칠" 탈피).</li>
-            <li><b>③ 트레드</b> = 진행 수직 결, 간격 ~14, 명도 ±8%, band 안쪽 페이드, 스크롤 = 주행 속도 동기.</li>
-            <li><b>④ pulse</b> = 활성 카테고리색 엣지 글로우 · 위기(budget==1) 붉게.</li>
-            <li><b>⑤ 머티리얼</b> = 리액터(앰버 헐 패널) / 도시(시안 회로 라인) / 붕괴(적 균열·들뜸) — body 텍스처만 교체, 구조 동일.</li>
+            <li><b>① 주행 선(rim)</b> = <code>#EEEEF2</code> 2px + 카테고리색 bloom(blur~3·opacity~.35). <b>구역 무관 고정</b> 앵커.</li>
+            <li><b>② 세그먼트 흐름</b> = 선 위 dash(<code>14 10</code>) 카테고리색, 접선 방향 스크롤 = 주행 속도 동기. <b>안쪽 오프셋 0</b>.</li>
+            <li><b>③ 코어 림</b> = 중심 radial, 위협 존 명도 상한 <code>L≤?</code>(기기 후 잠금) · 위기(budget==1) 붉게 맥동.</li>
+            <li><b>④ 머티리얼</b> = 리액터(앰버) / 도시(시안 세그먼트=회로) / 붕괴(적 + 선 균열 노이즈) — 색·결만 교체, 구조 동일.</li>
+            <li><b>★ band(안쪽 채운 띠) = 폐기</b> — step-8 body 코드 삭제. rim/pulse = 본 모델로 흡수.</li>
           </ul>
         </div>
       </div>
@@ -203,10 +208,11 @@
     <div class="qbox">
       <h4>↳ 사용자 결정 (택1 + 옵션)</h4>
       <ol>
-        <li><b>구조 안</b> — 권장 <b>D+E 합본</b> / 또는 단독(D 베벨 / E 트레드 / F 헐패널 / G 에너지 리본 / C 후퇴 그라데이션 / B 림온리).</li>
-        <li><b>트레드 방향감</b> — 진행 <b>수직 결</b>(권장·"달림" 강함) vs 센터라인+레일(도로감, 더 "트랙") vs 결 없음(미니멀).</li>
-        <li><b>모션 강도</b> — 스크롤 트레드 on(권장) / 정적(절차 비용↓·차분).</li>
-        <li><b>(옵션) AI 무드 레퍼런스</b> — 확정 구조의 무드 이미지 1~2장 PixelLab/외부 생성 여부(절차 구현 목표 이미지용).</li>
+        <li><b>먼저 — 평면/선 기반 베이스가 맞나?</b> (rev.1 두께 오류 교정 확인) → OK면 아래로.</li>
+        <li><b>트리트먼트</b> — 권장 <b>G 합본</b> / 또는 단독(B 발광 / C 세그먼트 셸 / D 흐름 / E 코어 림 / F 이중선).</li>
+        <li><b>생동 강도</b> — 흐르는 세그먼트 on(권장·살아 움직임) / 정적(차분·절차 비용↓).</li>
+        <li><b>코어 림 연결</b> — on(권장·허공 탈피) / off(선만, 코어는 멀리 중심).</li>
+        <li><b>(옵션) AI 무드 레퍼런스</b> 1~2장(절차 구현 목표 이미지).</li>
       </ol>
     </div>
   </div>
@@ -221,285 +227,209 @@
   </div>
 
   <div class="foot">
-    <b>출처</b> = unity M3 step-8 기기 실패 escalate · <b>SoT</b> = spec §9.3 / design-system <code>track_surface</code> / capture 2026-06-19-weaver-track-surface-treatment<br>
-    <b>매체 게이트</b> = 레이아웃·머티리얼 리딩(가) → 캔버스 보드 OK · 최종 제작 = unity 절차 셰이더 · <b>plat 정합</b> = unity step-8 body 재작업 대기(rim/pulse 존치·코어 매크로/구역모델/위기연출 재사용)<br>
-    <b>가독 정량</b> = 위협 기기 렌더 후 §9.1.6 명도/대비 상한 잠금 · 디자인 세션 · 2026-06-19
+    <b>출처</b> = unity M3 step-8 기기 실패 escalate + 사용자 구조 교정(rev.2 평면 2D) · <b>SoT</b> = spec §9.3 / design-system <code>track_surface</code> / prototype-v3.2 실렌더(선 기반)<br>
+    <b>매체 게이트</b> = 레이아웃·머티리얼 리딩(가) → 캔버스 보드 OK · 최종 제작 = unity 절차(스트로크 bloom·dash·radial) · <b>plat 정합</b> = unity step-8 body(band) 삭제·재구현<br>
+    <b>가독 정량</b> = 위협 기기 렌더 후 §9.1.6 명도/반경 상한 잠금 · 디자인 세션 · 2026-06-19
   </div>
 </div>
 
 <script>
-// ============ shared geometry: inside-the-drum square track ============
-const S=300, M=38, R=24, BW=36;   // outer margin, corner radius, band width (inward)
-const ROT=6;                      // live tilt
-const CX=S/2, CY=S/2;
-
-function rrPath(x,y,w,h,r){
-  return `M${x+r},${y} H${x+w-r} A${r},${r} 0 0 1 ${x+w},${y+r} V${y+h-r} A${r},${r} 0 0 1 ${x+w-r},${y+h} H${x+r} A${r},${r} 0 0 1 ${x},${y+h-r} V${y+r} A${r},${r} 0 0 1 ${x+r},${y} Z`;
+// ===================== TRUE FLAT GEOMETRY (prototype-v3 model) =====================
+// 트랙 = 얇은 다각형 선 / 캐릭터 = 선 위(살짝 안쪽) / 위협 = 선에서 법선 안쪽으로 / 코어 = 중심 평면
+const S=300, CX=150, CY=150, RAD=118, ROT=10*Math.PI/180;
+function diamond(){ const v=[]; for(let i=0;i<4;i++){const a=ROT-Math.PI/2+i*Math.PI/2; v.push([CX+RAD*Math.cos(a),CY+RAD*Math.sin(a)]);} return v;}
+const V=diamond();
+function poly(v){return 'M'+v.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L')+' Z';}
+function inset(v,d){return v.map(p=>{const dx=CX-p[0],dy=CY-p[1],l=Math.hypot(dx,dy);return [p[0]+dx/l*d,p[1]+dy/l*d];});}
+function edgePt(i,t){const A=V[i],B=V[(i+1)%4];return [A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t];}
+function edgeFrame(i,t){ // returns {x,y, tx,ty (tangent), nx,ny (inward normal)}
+  const A=V[i],B=V[(i+1)%4]; let tx=B[0]-A[0],ty=B[1]-A[1]; const l=Math.hypot(tx,ty); tx/=l;ty/=l;
+  let nx=-ty,ny=tx; const p=edgePt(i,t); if((CX-p[0])*nx+(CY-p[1])*ny<0){nx=-nx;ny=-ny;}
+  return {x:p[0],y:p[1],tx,ty,nx,ny};
 }
-function rrPathRev(x,y,w,h,r){ // reversed for evenodd hole
-  return `M${x+r},${y} A${r},${r} 0 0 0 ${x},${y+r} V${y+h-r} A${r},${r} 0 0 0 ${x+r},${y+h} H${x+w-r} A${r},${r} 0 0 0 ${x+w},${y+h-r} V${y+r} A${r},${r} 0 0 0 ${x+w-r},${y} Z`;
+let UID=0; const uid=()=>'u'+(UID++);
+
+// per-edge perpendicular ticks ON the line (in-plane, flat) — for segmented shell
+function ticks(spacing, len, col, op){
+  let s=`<g stroke="${col}" stroke-width="1.4" opacity="${op}">`;
+  for(let i=0;i<4;i++){
+    const A=V[i],B=V[(i+1)%4]; const L=Math.hypot(B[0]-A[0],B[1]-A[1]); const n=Math.floor(L/spacing);
+    for(let k=1;k<n;k++){ const f=edgeFrame(i,k/n);
+      s+=`<line x1="${(f.x - f.nx*len*0.5).toFixed(1)}" y1="${(f.y - f.ny*len*0.5).toFixed(1)}" x2="${(f.x + f.nx*len*0.6).toFixed(1)}" y2="${(f.y + f.ny*len*0.6).toFixed(1)}"/>`;
+    }
+  }
+  return s+'</g>';
 }
 
-// outer rect (running edge) & inner rect (core side)
-const OX=M, OY=M, OW=S-2*M, OH=S-2*M;
-const IX=M+BW, IY=M+BW, IW=S-2*(M+BW), IH=S-2*(M+BW), IR=Math.max(R-BW,5);
+function coreFill(id,coreCol,reach){ // reach: 'center' (deep) or 'limb' (reaches line)
+  if(reach==='limb'){
+    // bright ring hugging just inside the line, dark center -> "line = glowing limb of core"
+    return {
+      def:`<radialGradient id="cl-${id}" cx="50%" cy="50%" r="58%">
+        <stop offset="0%" stop-color="${coreCol[1]}" stop-opacity=".10"/>
+        <stop offset="55%" stop-color="${coreCol[1]}" stop-opacity=".06"/>
+        <stop offset="84%" stop-color="${coreCol[0]}" stop-opacity=".30"/>
+        <stop offset="100%" stop-color="${coreCol[0]}" stop-opacity=".05"/>
+      </radialGradient>`,
+      use:`<path d="${poly(V)}" fill="url(#cl-${id})"/>`
+    };
+  }
+  return {
+    def:`<radialGradient id="cc-${id}" cx="50%" cy="50%" r="42%">
+      <stop offset="0%" stop-color="${coreCol[0]}" stop-opacity=".55"/>
+      <stop offset="40%" stop-color="${coreCol[0]}" stop-opacity=".18"/>
+      <stop offset="75%" stop-color="${coreCol[1]}" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="${coreCol[0]}" stop-opacity="0"/>
+    </radialGradient>`,
+    use:`<circle cx="${CX}" cy="${CY}" r="${RAD*0.82}" fill="url(#cc-${id})"/>`
+  };
+}
+function coreInner(zone,c){
+  if(zone==='reactor') return `<circle cx="${CX}" cy="${CY}" r="20" fill="none" stroke="${c[0]}" stroke-width="1" opacity=".4"/><circle cx="${CX}" cy="${CY}" r="11" fill="${c[0]}" opacity=".22"/>`;
+  if(zone==='city') return `<g opacity=".35" stroke="${c[0]}" stroke-width=".8" fill="none"><rect x="${CX-12}" y="${CY-12}" width="24" height="24"/><path d="M${CX-22},${CY}H${CX+22}M${CX},${CY-22}V${CY+22}"/></g>`;
+  return `<g opacity=".4" stroke="${c[0]}" stroke-width="1" fill="none"><path d="M${CX-18},${CY-14}L${CX-4},${CY+4}L${CX-12},${CY+18}M${CX+16},${CY-16}L${CX+2},${CY+2}"/></g>`;
+}
 
-const walls=[ // local coords; rungs perpendicular to travel
-  {o:'h', a:OX+R, b:OX+OW-R, c:OY, sign:+1},        // top  (band goes down)
-  {o:'v', a:OY+R, b:OY+OH-R, c:OX+OW, sign:-1},      // right(band goes left)
-  {o:'h', a:OX+R, b:OX+OW-R, c:OY+OH, sign:-1},      // bottom(band up)
-  {o:'v', a:OY+R, b:OY+OH-R, c:OX, sign:+1},         // left (band right)
-];
+// character glyph on the line (feet on line, head inward) — uses proto rotation atan2(nx,-ny)
+function character(f){
+  const ang=Math.atan2(f.nx,-f.ny)*180/Math.PI;
+  return `<g transform="translate(${f.x.toFixed(1)},${f.y.toFixed(1)}) rotate(${ang.toFixed(1)})">
+    <g transform="translate(0,-9)">
+      <path d="M-5,9 Q-7,0 0,-9 Q7,0 5,9 Z" fill="#EEEEF2"/>
+      <circle cx="0" cy="-1.5" r="2.2" fill="#5BC8E8"/>
+    </g></g>`;
+}
+// spike threat sticking inward
+function spike(f,col,h){
+  const ax=f.x+f.nx*h, ay=f.y+f.ny*h;
+  const b1x=f.x+f.tx*7, b1y=f.y+f.ty*7, b2x=f.x-f.tx*7, b2y=f.y-f.ty*7;
+  return `<path d="M${b1x.toFixed(1)},${b1y.toFixed(1)} L${ax.toFixed(1)},${ay.toFixed(1)} L${b2x.toFixed(1)},${b2y.toFixed(1)} Z" fill="${col}"/>`;
+}
 
-let UID=0;
-function uid(){return 'u'+(UID++)}
+// ===================== band/line renderers =====================
+// each: (id, zone, coreCol) -> {defs, core, line}  (core drawn behind, line on top)
+function R_proto(id,z,c){const cf=coreFill(id,c,'center');return{defs:cf.def,core:cf.use,line:`<path d="${poly(V)}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/>`};}
 
-// build one game frame svg given a band renderer
-function buildFrame(svg, bandFn, opts={}){
-  const ns='http://www.w3.org/2000/svg';
+function R_fail(id,z,c){ // step-8 inner band (the wall)
+  const cf=coreFill(id,c,'center');
+  const band=inset(V,24);
+  return{defs:cf.def,core:cf.use,
+    line:`<path d="${poly(V)} ${poly(band).replace('M','M')}" fill="${c[1]}" fill-rule="evenodd" opacity=".5"/>
+          <path d="${poly(V)} ${poly(band)}" fill="${c[0]}" fill-rule="evenodd" opacity=".22"/>
+          <path d="${poly(V)}" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>`};
+}
+
+function R_glow(id,z,c){const cf=coreFill(id,c,'center');return{defs:cf.def,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="6" opacity=".30" filter="blur(3px)"/>
+        <path d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="2.6" opacity=".7"/>
+        <path d="${poly(V)}" fill="none" stroke="#EEEEF2" stroke-width="1.6"/>`};}
+
+function R_seg(id,z,c){const cf=coreFill(id,c,'center');return{defs:cf.def,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="#EEEEF2" stroke-width="1.8"/>`+ticks(13,9,c[0],.7)};}
+
+function R_flow(id,z,c){const cf=coreFill(id,c,'center');return{defs:cf.def+`<style>.fl-${id}{animation:fl-${id} 1.3s linear infinite}@keyframes fl-${id}{to{stroke-dashoffset:-24}}</style>`,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.6"/>
+        <path class="fl-${id}" d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="2.4" stroke-dasharray="14 10" stroke-linecap="round" opacity=".8"/>`};}
+
+function R_limb(id,z,c){const cf=coreFill(id,c,'limb');return{defs:cf.def,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="4" opacity=".25" filter="blur(2px)"/>
+        <path d="${poly(V)}" fill="none" stroke="#EEEEF2" stroke-width="1.8"/>`};}
+
+function R_double(id,z,c){const cf=coreFill(id,c,'center');const inn=inset(V,5);return{defs:cf.def,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="#EEEEF2" stroke-width="1.8"/>
+        <path d="${poly(inn)}" fill="none" stroke="${c[0]}" stroke-width="1" opacity=".5"/>`};}
+
+// recommended combo: glow rim + flow + limb core
+function R_combo(id,z,c){const cf=coreFill(id,c,'limb');return{defs:cf.def+`<style>.fc-${id}{animation:fc-${id} 1.3s linear infinite}@keyframes fc-${id}{to{stroke-dashoffset:-24}}</style>`,core:cf.use,
+  line:`<path d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="6" opacity=".28" filter="blur(3px)"/>
+        <path d="${poly(V)}" fill="none" stroke="#EEEEF2" stroke-width="1.8"/>
+        <path class="fc-${id}" d="${poly(V)}" fill="none" stroke="${c[0]}" stroke-width="2.2" stroke-dasharray="14 10" stroke-linecap="round" opacity=".85"/>`};}
+
+const REND={proto:R_proto,fail:R_fail,glow:R_glow,seg:R_seg,flow:R_flow,limb:R_limb,double:R_double,combo:R_combo};
+
+// ===================== frame builder =====================
+function build(svg, key, opts={}){
   const zone=opts.zone||'reactor';
-  const tall=opts.tall||false;
-  const VBH = tall? 400:300;
-  const yoff = tall? (VBH-S)/2 : 0; // center square in tall frame
-
+  const tall=opts.tall||false; const VBH=tall?400:300; const yoff=tall?(VBH-S)/2:0;
   const id=uid();
-  const coreCol = {reactor:['#E8A33D','#7a4d10'],city:['#5BC8E8','#11414f'],collapse:['#FF5A5A','#5a1414']}[zone];
+  const coreCol={reactor:['#E8A33D','#7a4d10'],city:['#5BC8E8','#11414f'],collapse:['#FF5A5A','#5a1414']}[zone];
+  const r=REND[key](id,zone,coreCol);
 
-  let defs=`
-    <radialGradient id="core-${id}" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="${coreCol[0]}" stop-opacity=".85"/>
-      <stop offset="35%" stop-color="${coreCol[0]}" stop-opacity=".30"/>
-      <stop offset="70%" stop-color="${coreCol[1]}" stop-opacity=".22"/>
-      <stop offset="100%" stop-color="#0C0C11" stop-opacity="0"/>
-    </radialGradient>
-    <clipPath id="ring-${id}"><path d="${rrPath(OX,OY,OW,OH,R)} ${rrPathRev(IX,IY,IW,IH,IR)}" fill-rule="evenodd"/></clipPath>
-    <clipPath id="core-clip-${id}"><path d="${rrPath(IX,IY,IW,IH,IR)}"/></clipPath>
-  `;
+  // stars
+  let stars=''; const seed=[[22,30],[60,18],[110,52],[170,24],[250,40],[285,90],[40,120],[20,200],[280,210],[44,270],[120,288],[205,278],[270,255],[88,86]];
+  seed.forEach((p,i)=>{stars+=`<circle cx="${p[0]}" cy="${p[1]}" r="${i%3==0?1.4:.8}" fill="#fff" opacity="${i%2?.5:.28}"/>`;});
 
-  // starfield
-  let stars='';
-  const seed=[ [22,30],[60,18],[110,52],[170,24],[250,40],[285,90],[40,120],[20,200],[280,200],[44,270],[120,285],[200,278],[270,265],[88,90],[210,70] ];
-  seed.forEach((p,i)=>{ const r=(i%3==0)?1.4:0.8; const o=(i%2)?.5:.28; stars+=`<circle cx="${p[0]}" cy="${p[1]+yoff*0}" r="${r}" fill="#fff" opacity="${o}"/>`;});
+  // character on edge 0 (upper-right), slightly inside
+  const cf=edgeFrame(0,0.5);
+  const ch=character({x:cf.x+cf.nx*3,y:cf.y+cf.ny*3,nx:cf.nx,ny:cf.ny});
 
-  // band rendered by candidate fn (returns {fill, deco})
-  const band=bandFn(id, zone, coreCol);
+  // base threats (always): a spike on edge 1, a monster on edge 3
+  const sf=edgeFrame(1,0.45);
+  let threats=spike(sf,'#FF5A5A',22);
+  const mf=edgeFrame(3,0.55);
+  threats+=`<circle cx="${(mf.x+mf.nx*11).toFixed(1)}" cy="${(mf.y+mf.ny*11).toFixed(1)}" r="8" fill="#C92A2A"/><circle cx="${(mf.x+mf.nx*11-2).toFixed(1)}" cy="${(mf.y+mf.ny*11-1).toFixed(1)}" r="1.5" fill="#fff"/><circle cx="${(mf.x+mf.nx*11+2.5).toFixed(1)}" cy="${(mf.y+mf.ny*11-1).toFixed(1)}" r="1.5" fill="#fff"/>`;
 
-  // running edge (rim) — bright, always same
-  const rim=`<path d="${rrPath(OX,OY,OW,OH,R)}" fill="none" stroke="#EEEEF2" stroke-width="2.1" opacity=".92"/>
-             <path d="${rrPath(OX,OY,OW,OH,R)}" fill="none" stroke="${coreCol[0]}" stroke-width="5" opacity=".18" filter="blur(2px)"/>`;
-
-  // character on top wall (voyager) running right, standing on inner side of top edge
-  const chX=OX+OW*0.40, chY=OY;
-  const ch=`<g transform="translate(${chX},${chY})">
-      <ellipse cx="0" cy="13" rx="9" ry="3.2" fill="#000" opacity=".35"/>
-      <g>
-        <path d="M-5,12 Q-7,2 0,-9 Q7,2 5,12 Z" fill="#EEEEF2"/>
-        <circle cx="1.5" cy="-1" r="2.4" fill="#5BC8E8"/>
-        <path d="M-5,12 Q-7,2 0,-9 Q7,2 5,12 Z" fill="none" stroke="#5BC8E8" stroke-width=".7" opacity=".5"/>
-      </g>
-    </g>`;
-
-  // optional foreground (gate)
   let fg='';
   if(opts.foreground){
-    // answer dot above character (cyan)
-    fg+=`<g transform="translate(${chX},${chY-22})"><circle r="4.5" fill="#4DABF7"/><circle r="4.5" fill="none" stroke="#0C0C11" stroke-width="1"/></g>`;
-    // companion drone (upper-left of char)
-    fg+=`<g transform="translate(${chX-26},${chY-12})"><rect x="-6" y="-5" width="12" height="10" rx="3" fill="#1a1a24" stroke="#2A2A36" stroke-width="1"/><circle r="2.2" fill="#4DABF7"/><circle r="4" fill="none" stroke="#4DABF7" stroke-width=".6" opacity=".5"/></g>`;
-    // a monster on right wall with red dot
-    const mx=OX+OW, my=OY+OH*0.46;
-    fg+=`<g transform="translate(${mx-13},${my})"><circle r="8" fill="#C92A2A"/><circle cx="-2" cy="-1" r="1.6" fill="#fff"/><circle cx="2.5" cy="-1" r="1.6" fill="#fff"/></g>`;
-    fg+=`<g transform="translate(${mx-13},${my-15})"><circle r="4" fill="#FF6B6B"/><circle r="4" fill="none" stroke="#0C0C11" stroke-width="1"/></g>`;
-    // falling object (white diamond) near top
-    fg+=`<g transform="translate(${OX+OW*0.7},${OY+30})"><rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" fill="#E8E8F0"/></g>`;
-    // gold coin
-    fg+=`<circle cx="${OX+OW*0.25}" cy="${OY+40}" r="5" fill="#FFE08A"/>`;
+    // answer dot above character (head = -inward normal direction)
+    fg+=`<g transform="translate(${(cf.x-cf.nx*9).toFixed(1)},${(cf.y-cf.ny*9).toFixed(1)})"><circle r="4.2" fill="#4DABF7"/><circle r="4.2" fill="none" stroke="#0C0C11" stroke-width="1"/></g>`;
+    // drone near char (along tangent back + slight inward)
+    fg+=`<g transform="translate(${(cf.x-cf.tx*22+cf.nx*14).toFixed(1)},${(cf.y-cf.ty*22+cf.ny*14).toFixed(1)})"><rect x="-6" y="-5" width="12" height="10" rx="3" fill="#1a1a24" stroke="#2A2A36"/><circle r="2.2" fill="#4DABF7"/></g>`;
+    // red dot over monster
+    fg+=`<g transform="translate(${(mf.x+mf.nx*11).toFixed(1)},${(mf.y+mf.ny*11-15).toFixed(1)})"><circle r="3.8" fill="#FF6B6B"/><circle r="3.8" fill="none" stroke="#0C0C11" stroke-width="1"/></g>`;
+    // falling object (white diamond) in interior
+    const of=edgeFrame(0,0.18); const ox=of.x+of.nx*40, oy=of.y+of.ny*40;
+    fg+=`<rect x="${(ox-5).toFixed(1)}" y="${(oy-5).toFixed(1)}" width="10" height="10" transform="rotate(45 ${ox.toFixed(1)} ${oy.toFixed(1)})" fill="#E8E8F0"/>`;
+    // coin
+    const kf=edgeFrame(2,0.4); fg+=`<circle cx="${(kf.x+kf.nx*18).toFixed(1)}" cy="${(kf.y+kf.ny*18).toFixed(1)}" r="5" fill="#FFE08A"/>`;
   }
 
-  svg.innerHTML=`<defs>${defs}${band.defs||''}</defs>
+  svg.innerHTML=`<defs>${r.defs}</defs>
     <g transform="translate(0,${yoff})">
       <rect x="0" y="${-yoff}" width="${S}" height="${VBH}" fill="#0C0C11"/>
-      <g opacity=".9">${stars}</g>
-      <g transform="rotate(${ROT} ${CX} ${CY})">
-        <g clip-path="url(#core-clip-${id})">
-          <rect x="${IX}" y="${IY}" width="${IW}" height="${IH}" fill="url(#core-${id})"/>
-          ${coreDeco(zone,coreCol)}
-        </g>
-        <g clip-path="url(#ring-${id})">${band.deco}</g>
-        ${rim}
-        ${ch}
-        ${fg}
-      </g>
+      <g>${stars}</g>
+      ${r.core}
+      ${coreInner(zone,coreCol)}
+      ${r.line}
+      ${threats}
+      ${ch}
+      ${fg}
     </g>`;
 }
 
-function coreDeco(zone,c){
-  if(zone==='reactor') return `<circle cx="${CX}" cy="${CY}" r="26" fill="none" stroke="${c[0]}" stroke-width="1.2" opacity=".5"/><circle cx="${CX}" cy="${CY}" r="16" fill="${c[0]}" opacity=".25"/>`;
-  if(zone==='city') return `<g opacity=".4" stroke="${c[0]}" stroke-width=".8" fill="none"><path d="M${CX-30},${CY} H${CX+30} M${CX},${CY-30} V${CX-30+0}"/><rect x="${CX-14}" y="${CY-14}" width="28" height="28"/></g>`;
-  return `<g opacity=".5" stroke="${c[0]}" stroke-width="1" fill="none"><path d="M${CX-24},${CY-18} L${CX-6},${CY+4} L${CX-14},${CY+22} M${CX+22},${CY-20} L${CX+4},${CY+2}"/></g>`;
-}
-
-// ============ band renderers ============
-// each returns {defs?, deco}  — drawn clipped to the ring
-function rungs(densepx, ampPct, anim){
-  // perpendicular treads per wall, clipped to ring already
-  let s='';
-  walls.forEach((w,wi)=>{
-    let g='';
-    if(w.o==='h'){
-      for(let x=w.a;x<=w.b;x+=densepx){
-        const y1=w.c, y2=w.c + w.sign*BW;
-        g+=`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" />`;
-      }
-    }else{
-      for(let y=w.a;y<=w.b;y+=densepx){
-        const x1=w.c, x2=w.c + w.sign*BW;
-        g+=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" />`;
-      }
-    }
-    const cls = anim? `tread-${w.o}-${w.sign>0?'p':'n'}`:'';
-    s+=`<g class="${cls}" stroke="#fff" stroke-width="1" opacity="${(ampPct||8)/100*1.1+.04}">${g}</g>`;
-  });
-  return s;
-}
-
-const RENDER={
-  // FAIL baseline — uniform fill
-  fail:(id,z,c)=>({deco:`<rect x="0" y="0" width="${S}" height="${S}" fill="${c[1]}" opacity=".5"/><rect x="0" y="0" width="${S}" height="${S}" fill="${c[0]}" opacity=".22"/>`}),
-
-  // B rim-only (minimal) — almost no band, tiny inner glow
-  rimonly:(id,z,c)=>({
-    defs:`<linearGradient id="b-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c[0]}" stop-opacity=".22"/><stop offset="100%" stop-color="${c[0]}" stop-opacity="0"/></linearGradient>`,
-    deco:`<rect x="0" y="0" width="${S}" height="${S}" fill="url(#b-${id})" opacity=".5"/>`
-  }),
-
-  // C depth recede gradient — bright at edge -> transparent toward core
-  recede:(id,z,c)=>{
-    let g='';
-    // four directional gradients via per-wall rects
-    g+=`<rect x="${OX}" y="${OY}" width="${OW}" height="${BW}" fill="url(#rec-t-${id})"/>`;
-    g+=`<rect x="${OX+OW-BW}" y="${OY}" width="${BW}" height="${OH}" fill="url(#rec-r-${id})"/>`;
-    g+=`<rect x="${OX}" y="${OY+OH-BW}" width="${OW}" height="${BW}" fill="url(#rec-b-${id})"/>`;
-    g+=`<rect x="${OX}" y="${OY}" width="${BW}" height="${OH}" fill="url(#rec-l-${id})"/>`;
-    const stops=`<stop offset="0%" stop-color="${c[0]}" stop-opacity=".5"/><stop offset="55%" stop-color="${c[1]}" stop-opacity=".35"/><stop offset="100%" stop-color="${c[0]}" stop-opacity="0"/>`;
-    return {defs:`
-      <linearGradient id="rec-t-${id}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>
-      <linearGradient id="rec-b-${id}" x1="0" y1="1" x2="0" y2="0">${stops}</linearGradient>
-      <linearGradient id="rec-l-${id}" x1="0" y1="0" x2="1" y2="0">${stops}</linearGradient>
-      <linearGradient id="rec-r-${id}" x1="1" y1="0" x2="0" y2="0">${stops}</linearGradient>`, deco:g};
-  },
-
-  // D beveled ledge — top-lit gradient + inner shadow line (reads as 3D lip)
-  bevel:(id,z,c)=>{
-    const stops=`<stop offset="0%" stop-color="#fff" stop-opacity=".30"/><stop offset="18%" stop-color="${c[0]}" stop-opacity=".34"/><stop offset="60%" stop-color="${c[1]}" stop-opacity=".40"/><stop offset="100%" stop-color="#06060a" stop-opacity=".62"/>`;
-    let g='';
-    g+=`<rect x="${OX}" y="${OY}" width="${OW}" height="${BW}" fill="url(#bv-t-${id})"/>`;
-    g+=`<rect x="${OX+OW-BW}" y="${OY}" width="${BW}" height="${OH}" fill="url(#bv-r-${id})"/>`;
-    g+=`<rect x="${OX}" y="${OY+OH-BW}" width="${OW}" height="${BW}" fill="url(#bv-b-${id})"/>`;
-    g+=`<rect x="${OX}" y="${OY}" width="${BW}" height="${OH}" fill="url(#bv-l-${id})"/>`;
-    // inner shadow line at core edge of band
-    g+=`<path d="${rrPath(IX,IY,IW,IH,IR)}" fill="none" stroke="#000" stroke-width="2" opacity=".5"/>`;
-    g+=`<path d="${rrPath(IX-1,IY-1,IW+2,IH+2,IR)}" fill="none" stroke="${c[0]}" stroke-width=".8" opacity=".4"/>`;
-    return {defs:`
-      <linearGradient id="bv-t-${id}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>
-      <linearGradient id="bv-b-${id}" x1="0" y1="1" x2="0" y2="0">${stops}</linearGradient>
-      <linearGradient id="bv-l-${id}" x1="0" y1="0" x2="1" y2="0">${stops}</linearGradient>
-      <linearGradient id="bv-r-${id}" x1="1" y1="0" x2="0" y2="0">${stops}</linearGradient>`, deco:g};
-  },
-
-  // E tread — perpendicular scrolling rungs over a modest base
-  tread:(id,z,c)=>{
-    const base=RENDER.bevel(id,z,c); // bevel base for depth + treads on top
-    return {defs:base.defs, deco: base.deco + rungs(14,9,true)};
-  },
-
-  // F hull plating — panels with seams + rivets (reactor hull)
-  hull:(id,z,c)=>{
-    const stops=`<stop offset="0%" stop-color="#2a2a30" stop-opacity=".9"/><stop offset="100%" stop-color="#101016" stop-opacity=".95"/>`;
-    let g=`<rect x="0" y="0" width="${S}" height="${S}" fill="url(#hl-${id})"/>`;
-    g+=rungs(26,6,false); // panel seams
-    // rivets near edge
-    walls.forEach(w=>{
-      if(w.o==='h'){for(let x=w.a;x<=w.b;x+=26){g+=`<circle cx="${x+13}" cy="${w.c+w.sign*7}" r="1.1" fill="${c[0]}" opacity=".55"/>`;}}
-      else{for(let y=w.a;y<=w.b;y+=26){g+=`<circle cx="${w.c+w.sign*7}" cy="${y+13}" r="1.1" fill="${c[0]}" opacity=".55"/>`;}}
-    });
-    // inner shadow
-    g+=`<path d="${rrPath(IX,IY,IW,IH,IR)}" fill="none" stroke="#000" stroke-width="1.6" opacity=".45"/>`;
-    return {defs:`<linearGradient id="hl-${id}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>`, deco:g};
-  },
-
-  // G energy ribbon (Tron) — translucent glow + bright rails + flowing dashes
-  energy:(id,z,c)=>{
-    let g=`<rect x="0" y="0" width="${S}" height="${S}" fill="${c[0]}" opacity=".10"/>`;
-    // inner rail (bright line on core side)
-    g+=`<path d="${rrPath(IX,IY,IW,IH,IR)}" fill="none" stroke="${c[0]}" stroke-width="1.6" opacity=".7"/>`;
-    g+=`<path d="${rrPath(IX,IY,IW,IH,IR)}" fill="none" stroke="${c[0]}" stroke-width="4" opacity=".2" filter="blur(2px)"/>`;
-    // flowing dashes mid-band along travel
-    const midO = (BW/2);
-    g+=`<path class="flow-${id}" d="${rrPath(OX+midO,OY+midO,OW-2*midO,OH-2*midO,Math.max(R-midO,4))}" fill="none" stroke="${c[0]}" stroke-width="2.4" stroke-dasharray="10 16" opacity=".55" stroke-linecap="round"/>`;
-    return {defs:`<style>.flow-${id}{animation:dash-${id} 1.4s linear infinite}@keyframes dash-${id}{to{stroke-dashoffset:-26}}</style>`, deco:g};
-  },
-};
-
-// ============ mount ============
+// ===================== mount =====================
 const CANDS=[
-  {key:'rimonly', id:'B', name:'림 온리 (미니멀)', reads:['선/벼랑','band 제거 — 엣지선 + 미세 글로우만. 표면이 "면"이 아니라 "선". Downwell 식.'], gate:['읽힘:선','모션:—','가독:◎'], cls:'mid'},
-  {key:'recede', id:'C', name:'후퇴 그라데이션', reads:['깊이로 후퇴하는 바닥','엣지서 밝고 코어로 투명 페이드 — band 가 "벽"이 아니라 "깊이로 멀어지는 면". 평행감 해소.'], gate:['읽힘:바닥','모션:—','가독:○'], cls:'ok'},
-  {key:'bevel', id:'D', name:'베벨 렛지 (3D 단)', reads:['솔리드 링 윗면','상단 라이트 + 코어쪽 섀도선 = "두께 있는 단의 윗면에 올라섬". 벽→렛지 뒤집기.','win'], gate:['읽힘:◎렛지','모션:—','가독:○'], cls:'ok', win:true},
-  {key:'tread', id:'E', name:'트레드 (진행 수직 결)', reads:['달리는 트레드','베벨 + 스크롤하는 가로 결 = 유일한 "달림" 모션 신호. 권장 합본의 모션 축.','win'], gate:['읽힘:◎표면','모션:◎','가독:○'], cls:'ok', win:true},
-  {key:'hull', id:'F', name:'헐 플레이팅 (패널)', reads:['구조물 외피','패널 심 + 리벳 = "리액터 헐 위를 가로지름". 머티리얼감 최강·차분.'], gate:['읽힘:외피','모션:○','가독:◎'], cls:'ok'},
-  {key:'energy', id:'G', name:'에너지 리본 (트론)', reads:['에너지 로드','반투명 글로우 + 흐르는 대시 = "에너지 트랙". 화려하나 전경 카테고리색과 경합 위험.'], gate:['읽힘:로드','모션:◎','가독:△'], cls:'mid'},
+  {key:'glow',  id:'B', name:'발광 에너지 림', reads:['살아있는 가장자리','선 자체를 발광 에너지 필라멘트로 — 죽은 윤곽선 탈피. 카테고리색 bloom·위기 펄스.'], gate:['읽힘:표면','생동:○','가독:◎']},
+  {key:'seg',   id:'C', name:'세그먼트 셸 (수직 틱)', reads:['코어의 외피','선을 가로지르는 짧은 인-플레인 틱 = "구의 가장자리(edge-on) 결". 평평·정적.'], gate:['읽힘:외피','생동:○','가독:◎']},
+  {key:'flow',  id:'D', name:'흐르는 세그먼트 (모션)', reads:['따라 흐르는 표면','선을 따라(접선) 흐르는 대시 = "살아 움직임"·달림 신호. brief 직답.'], gate:['읽힘:흐름','생동:◎','가독:◎']},
+  {key:'limb',  id:'E', name:'코어 림 (코어가 선에 닿음)', reads:['빛나는 코어 가장자리','코어 글로우가 선까지 닿아 "선 = 코어 디스크의 빛나는 limb". 허공 탈피·중심 집중.'], gate:['읽힘:◎코어면','생동:○','가독:○']},
+  {key:'double',id:'F', name:'이중선 크러스트', reads:['얇은 크러스트 엣지','선 안쪽 1px 보조선만(폭~5) = 미세 in-plane 결. band 아닌 "해안선" 두께감.'], gate:['읽힘:엣지','생동:—','가독:◎']},
+  {key:'combo', id:'G', name:'★ 권장 합본 (B+D+E)', reads:['살아있는 코어 표면','발광 림 + 흐름 + 코어 limb. 살아 움직이는 코어 가장자리를 달린다.','win'], gate:['읽힘:◎','생동:◎','가독:○'], win:true},
 ];
-
 const grid=document.getElementById('grid');
 CANDS.forEach(c=>{
-  const card=document.createElement('div');
-  card.className='card'+(c.win?' win':'');
-  const gateHtml=c.gate.map(g=>{const [k,v]=g.split(':');return `<span class="g"><b>${k}</b> ${v}</span>`}).join('');
-  card.innerHTML=`
-    <div class="frame"><svg viewBox="0 0 300 300"></svg></div>
-    <div class="cap">
-      <div class="tag"><span class="id">${c.id}</span>${c.win?'<span class="pill rec">권장 합본</span>':''}</div>
-      <h4>${c.name}</h4>
-      <p class="reads"><span class="lead">→ ${c.reads[0]}</span> · ${c.reads[1]}</p>
-      <div class="gate">${gateHtml}</div>
-    </div>`;
-  grid.appendChild(card);
-  buildFrame(card.querySelector('svg'), RENDER[c.key], {});
+  const card=document.createElement('div'); card.className='card'+(c.win?' win':'');
+  const gh=c.gate.map(g=>{const[k,v]=g.split(':');return `<span class="g"><b>${k}</b> ${v}</span>`}).join('');
+  card.innerHTML=`<div class="frame"><svg viewBox="0 0 300 300"></svg></div>
+    <div class="cap"><div class="tag"><span class="id">${c.id}</span>${c.win?'<span class="pill rec">권장</span>':''}</div>
+    <h4>${c.name}</h4><p class="reads"><span class="lead">→ ${c.reads[0]}</span> · ${c.reads[1]}</p>
+    <div class="gate">${gh}</div></div>`;
+  grid.appendChild(card); build(card.querySelector('svg'), c.key);
 });
 
-// failed baseline (problem strip)
-buildFrame(document.querySelector('svg[data-cand="fail"]'), RENDER.fail, {});
+build(document.querySelector('svg[data-cand="proto"]'),'proto');
+build(document.querySelector('svg[data-cand="fail"]'),'fail');
 
-// zone variants (apply tread = recommended structure)
 const ZONES=[
-  {zone:'reactor', name:'리액터 헐', z:'구역 1 · 앰버', sw:'#E8A33D', desc:'앰버 헐 패널 + 림. 도입·밝음. 베벨+트레드 위에 헐 톤.'},
-  {zone:'city', name:'네온도시 회로', z:'구역 2 · 시안', sw:'#5BC8E8', desc:'시안 회로 라인 결. 전기·차가움. 트레드 = 회로 펄스.'},
-  {zone:'collapse', name:'붕괴 균열', z:'구역 3 · 적색', sw:'#FF5A5A', desc:'적색 균열·들뜬 판. 종말 클라이맥스. 위기 펄스와 자연 결합.'},
+  {zone:'reactor',name:'리액터',z:'구역 1 · 앰버',sw:'#E8A33D',desc:'앰버 발광 림 + 흐름. 도입·밝음.'},
+  {zone:'city',name:'네온도시',z:'구역 2 · 시안',sw:'#5BC8E8',desc:'시안 세그먼트 = 회로 펄스. 전기·차가움.'},
+  {zone:'collapse',name:'붕괴',z:'구역 3 · 적색',sw:'#FF5A5A',desc:'적 발광 + 선 균열. 위기 펄스와 결합.'},
 ];
 const zrow=document.getElementById('zrow');
-ZONES.forEach(z=>{
-  const card=document.createElement('div');
-  card.className='zcard';
+ZONES.forEach(z=>{const card=document.createElement('div');card.className='zcard';
   card.innerHTML=`<div class="frame"><svg viewBox="0 0 300 300"></svg></div>
-    <div class="zhead"><span class="swatch" style="background:${z.sw}"></span><h4>${z.name}</h4><span class="z">${z.z}</span></div>
-    <p>${z.desc}</p>`;
-  zrow.appendChild(card);
-  buildFrame(card.querySelector('svg'), RENDER.tread, {zone:z.zone});
-});
+    <div class="zhead"><span class="swatch" style="background:${z.sw}"></span><h4>${z.name}</h4><span class="z">${z.z}</span></div><p>${z.desc}</p>`;
+  zrow.appendChild(card); build(card.querySelector('svg'),'combo',{zone:z.zone});});
 
-// readability gate — recommended (tread) with foreground, tall frame
-buildFrame(document.querySelector('svg[data-cand="gate"]'), RENDER.tread, {zone:'reactor', tall:true, foreground:true});
+build(document.querySelector('svg[data-cand="gate"]'),'combo',{zone:'reactor',tall:true,foreground:true});
 </script>
-
-<style>
-/* tread scroll animations (perpendicular rungs travel along each wall) */
-@keyframes trd-h-p{to{transform:translateX(-14px)}}
-@keyframes trd-h-n{to{transform:translateX(14px)}}
-@keyframes trd-v-p{to{transform:translateY(14px)}}
-@keyframes trd-v-n{to{transform:translateY(-14px)}}
-.tread-h-p{animation:trd-h-p .7s linear infinite}
-.tread-h-n{animation:trd-h-n .7s linear infinite}
-.tread-v-p{animation:trd-v-p .7s linear infinite}
-.tread-v-n{animation:trd-v-n .7s linear infinite}
-</style>
