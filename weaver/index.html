@@ -36,6 +36,11 @@
   .tag.sup { background: #fde2e2; color: #b03636; }      /* 대체됨 */
   .tag.hist { background: #ece8e1; color: #8a8276; }     /* 탐색 이력 */
   .tag.old { background: #e6ecf6; color: #51699e; }      /* 구버전 */
+  .tag.ok { background: #e3f3e6; color: #2f7d3f; }       /* 확정 룰·참조 */
+  .grouplabel { font-size: 12px; font-weight: 700; color: #2c4e80; letter-spacing: .5px; margin: 22px 0 9px; display: flex; align-items: center; gap: 8px; }
+  .grouplabel::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: #2c4e80; }
+  .grouplabel:first-of-type { margin-top: 6px; }
+  .section-note.ref { border-left-color: #c9a86a; }
 </style>
 </head>
 <body>
@@ -50,138 +55,151 @@
     <p class="description">벽 타기 액션 아케이드 게임 (Unity, 오리지널 IP) — M2 진입 준비 (아트·에셋 트랙)</p>
   </header>
 
-  <h2>✅ 확정 결과물</h2>
+  <h2>🎮 게임 개발 산출물</h2>
   <div class="section-note">
-    현재 <b>확정된 산출물</b>만 모았습니다. 아래 “이력 · 기각”의 탐색·대체된 보드는 의사결정 기록으로 보존하되 <b>비활성(클릭 불가)</b> 처리했습니다.
+    실제 게임 개발(에셋 임포트 · 화면 구현 · 거동)에 직접 참조하는 산출물만 도메인별로 모았습니다. 확정된 룰 · 결정은 아래 <b>"확정 룰 · 참조"</b>, 탐색 · 대체분은 <b>"이력 · 기각"</b>으로 분리.
   </div>
-  <div class="files">
 
+  <div class="grouplabel">화면 · UI</div>
+  <div class="files">
+    <a href="design/" class="file-link" style="border-left:3px solid #51cf66;">
+      <div>
+        <div class="file-name">🎮 메타화면 프로토타입 v3 — 16화면 (+ 디자인 토큰 · 컴포넌트)</div>
+        <div class="file-meta">확정 미러 · v3 (2026-06-19) — 동반 무기-드론 · 충돌 예산 하트 HUD(+마지막 1칸 긴장) · 퍼즐 입장 · 교습 6판/변주 순차 · 속도 토글 · #5 형태배지+최고기록. <b>★ 교습(튜토리얼) 화면 = #4 교습 6판 구획 · #5 교습 입장(전 슬롯 잠금 예고) · #14 ④ 졸업 모먼트.</b> SoT = wireframes.md</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
     <a href="sanity/tutorial-curriculum-board.html" class="file-link" style="border-left:3px solid #51cf66;">
       <div>
         <div class="file-name">🎓 교습 6판 커리큘럼 — 튜토리얼 레벨 설계 (어떻게 가르치고 넘어가는가)</div>
-        <div class="file-meta">2026-06-19 · spec §7.3/§9 시각화. 핸드홀딩 튜토리얼 없음(교습 6판=튜토리얼·퍼즐 학습). 6판 진행(형태·cap 점진)·색 도입 P0⚪→P4🟣·단색→복수정답 스캐폴딩·안전망·졸업 게이트. 목업 #4/#5 6판 정합 동반</div>
+        <div class="file-meta">2026-06-19 · spec §7.3/§9 시각화. 핸드홀딩 튜토리얼 없음(교습 6판=튜토리얼·퍼즐 학습). 6판 진행(형태·cap 점진)·색 도입 P0⚪→P4🟣·단색→복수정답 스캐폴딩·안전망·졸업 게이트. M3 authored 6판 = 본 보드 기준</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
+  </div>
 
-    <a href="sanity/core-final-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">✅ 공전 코어 확정 세트 — 6타입 11변주 (idle 베이크)</div>
-        <div class="file-meta">2026-06-18 확정(사용자) · 붕괴0·3/생명수0·1/리액터0·2/잠든생물1·3/심해1/네온도시2·3. 전부 idle 베이크 재생. 정적+idle 스테이징 완료(assets/weaver/world/). 8방향 불요(코어 자전=Unity). 배경=Unity 절차</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/core-anim-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🎞 코어 애니 + 배경 — 라이브 데모 (베이크/런타임 분담)</div>
-        <div class="file-meta">2026-06-18 · ① 배경=plat 절차 스타필드+성운(드리프트) ② 코어 애니=PixelLab 베이크(내부 유기 모션, 리액터·심장 실 9프레임 재생) + Unity 런타임(자전·펄스·위기반응). 분담 모델 실증</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/ingame-world-concept-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🪐 인게임 월드 컨셉 — "공전하는 코어" (허공 탈피) (흡수됨)</div>
-        <div class="file-meta">2026-06-18 spec §9 흡수(리드 회수) · 빈 인테리어 32%를 공전 대상 코어로 · 트랙=구조물(림) · 스폰=세계서 솟음 · 3층 패럴랙스 · 반응형 코어 · 가독 게이트. brief "살아 움직이는 트랙" 실현. 코어=PixelLab / 절차=plat. 구역 배정만 미결</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/stage-detail-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🗺 스테이지 상세 패널 — 입장 #5 강화 (탭 → 펼침) (확정)</div>
-        <div class="file-meta">2026-06-18 확정(사용자 OK) · 카드 탭 → #5 풀스크린 강화. 형태 헤더·별조건3·몬스터 프리뷰(생김새, dot X)·허용 슬롯수·속도·티켓 CTA. wireframes #5·목업 v3 정합 완료</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/menu-icon-ab-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🧭 메뉴 순서 · 아이콘 표기 · 스테이지 형태 아이콘 — A/B (확정)</div>
-        <div class="file-meta">2026-06-18 확정(사용자) · spec §1 보류 3건 전부 B — ① 아이콘+초소형 라벨 ② nav 순서 = 무기고·데일리런·랭킹(무기고 좌측) ③ 스테이지 카드 형태 글리프 병기. design-system·wireframes·목업 v3 정합 완료</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/monster-roster-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🗂 위협 로스터 v2 — 4버킷 (확정)</div>
-        <div class="file-meta">2026-06-17 확정 · 몬스터8·장애물5·구조물3·낙하물6. 컬러 개체+머리위 dot · 🟡대공 공중전용 · no-ceiling · 타이밍없음 · 가시폭탄 A 2단계 · 슬램/기둥 컷 · 터렛 발사연출만</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/monster-anim-pilot-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🎬 몬스터 애니 8종 — idle/이동 (확정 · GIF)</div>
-        <div class="file-meta">2026-06-17 확정(사용자 OK) · animate_object v3 9프레임. 부유 idle / 다리·날개 이동. object_id 재현 = asset-manifest. 효과·death·dot = Unity 런타임</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/monster-visual-language-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🧬 몬스터 비주얼 언어 룰 — 본체 ⊥ 단서 분리 (확정)</div>
-        <div class="file-meta">2026-06-17 확정(인터뷰) · 본체=중립 아키타입(PixelLab) ⊥ 단서=런타임 틴트 핍 · solvableBy=OR(아무거나) · 다중 문법 A 궤도 핍 · 장갑 hits2=2중외곽+플레이트 · 본체색=다크 슬레이트+림라이트. → 생성 단계</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="design/" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🎮 메타화면 프로토타입 v2 — 16화면 (+ 디자인 토큰 · 컴포넌트)</div>
-        <div class="file-meta">확정 미러 · 2026-06-17 v2 — 동반 무기-드론 · 충돌 예산 하트 HUD(+마지막 1칸 긴장) · 퍼즐 입장(정답 무기 X) · 교습/변주 순차 진행 · 속도 토글. SoT = wireframes.md (spec §2.6/§2.11/§2.12)</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/art-direction-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🎨 아트 디렉션 — 로그인 = 보이드 우주 / 메인 = V2-C</div>
-        <div class="file-meta">확정 · 2026-06-11 — 메인 = V2-C(캐릭터 클로즈업 + 구역 진행 레일). wireframes #3 + design-system 토큰 SoT 반영 완료</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
-    <a href="sanity/track-shapes-board.html" class="file-link" style="border-left:3px solid #51cf66;">
-      <div>
-        <div class="file-name">🔷 트랙 형태 5종 — 정사각 · 마름모 · 오각 · 삼각 · 별 (+ 코너 라운딩 · 볼트)</div>
-        <div class="file-meta">확정 · 2026-06-12 — 턴각 ≥90° = 자동 볼트 / &lt;90° = 주행. 월드 3.0× · 인테리어 바이어스 32%. spec §2.4/§2.11</div>
-      </div>
-      <div class="file-arrow">→</div>
-    </a>
-
+  <div class="grouplabel">캐릭터 · 무기-드론</div>
+  <div class="files">
     <a href="sanity/voyager-final-board.html" class="file-link" style="border-left:3px solid #51cf66;">
       <div>
         <div class="file-name">🚀 주인공 — 우주항해자 (풀 애니 · 8방향 · 스킨 8)</div>
-        <div class="file-meta">확정 · 2026-06-14 — 게임 적용 검증 완료(walk 애니 · 8방향 네이티브 · 스킨 8색 틴트). PixelLab 생성 · character_id 보관</div>
+        <div class="file-meta">에셋 임포트 ref · run/slide/jump/death + idle/walk · 스킨 8 PixelLab 리컬러 · character_id 보관 = asset-manifest 에셋1</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
-
     <a href="sanity/drone-weapon-family-board.html" class="file-link" style="border-left:3px solid #51cf66;">
       <div>
         <div class="file-name">🛸 무기-드론 패밀리 base 4종 — 🔵 원거리 · 🔴 근접 · 🟡 대공 · 🟣 특수</div>
-        <div class="file-meta">확정 · 2026-06-16 — 드론 본체 자체가 곧 무기(공유 DNA). base 4종 PixelLab 생성·다운로드 완료. 변형 16종 = M5 양산</div>
+        <div class="file-meta">에셋 임포트 ref · base 4 + idle hover 4 다운로드 완료(assets/weaver/drone/). 변형 16 = M5 양산. object_id = asset-manifest 에셋2</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
-
     <a href="sanity/drone-attack-motion-board.html" class="file-link" style="border-left:3px solid #51cf66;">
       <div>
         <div class="file-name">▶ 드론 거동 안무 — 카테고리 4 (대기 → 이동 → 공격 → 복귀)</div>
-        <div class="file-meta">확정 · 2026-06-17 — 대기 = 머리 왼쪽 위. 🔵 앞으로 살짝+직선탄 · 🔴 깊숙이 돌진+베기 · 🟡 제자리 상방 요격 · 🟣 정수리 위로+지속 빔. 손맛 = Unity 기기 판정(M2 step-1 de-risk)</div>
+        <div class="file-meta">★ Unity 구현 ref (기기 판정 대기) · 🔵 어깨까지+직선탄 · 🔴 깊숙이 돌진+베기 · 🟡 제자리 상방 요격 · 🟣 정수리 위로+지속 빔. 런타임 transform = M2 step-1 de-risk</div>
       </div>
       <div class="file-arrow">→</div>
     </a>
+  </div>
 
-    <a href="sanity/art-reference-board.html" class="file-link" style="border-left:3px solid #51cf66;">
+  <div class="grouplabel">위협 · 몬스터</div>
+  <div class="files">
+    <a href="sanity/monster-roster-board.html" class="file-link" style="border-left:3px solid #51cf66;">
       <div>
-        <div class="file-name">🎯 아트 품질 기준선 — 6층 체크리스트</div>
-        <div class="file-meta">진행 중 기준선 — 형태 · 깊이/림라이트 · 글로우 · juice · 무기 VFX · 애니 craft. 모든 생성물 판정 기준(매체 게이트 #8)</div>
+        <div class="file-name">🗂 위협 로스터 v2 — 4버킷 (제작 인벤토리)</div>
+        <div class="file-meta">생성 대상 목록 · 몬스터8·장애물5·구조물3·낙하물6. 정적 본체 14 promote + 다운로드 완료. M2/M3 임포트 대상</div>
       </div>
       <div class="file-arrow">→</div>
+    </a>
+    <a href="sanity/monster-anim-pilot-board.html" class="file-link" style="border-left:3px solid #51cf66;">
+      <div>
+        <div class="file-name">🎬 몬스터 애니 8종 — idle/이동 (GIF)</div>
+        <div class="file-meta">에셋 임포트 ref · animate_object v3 9프레임 · 부유 idle / 다리·날개 이동. object_id 재현 = asset-manifest 에셋3. 효과·death·dot = Unity 런타임</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="grouplabel">인게임 월드</div>
+  <div class="files">
+    <a href="sanity/core-final-board.html" class="file-link" style="border-left:3px solid #51cf66;">
+      <div>
+        <div class="file-name">🌀 공전 코어 확정 세트 — 6타입 11변주 (idle 베이크)</div>
+        <div class="file-meta">에셋 임포트 ref · 정적 본체 + idle 9프레임 스테이징 완료(assets/weaver/world/). 자전·배경·매크로 = Unity 절차. 구역 배정만 미결(리드/사용자)</div>
+      </div>
+      <div class="file-arrow">→</div>
+    </a>
+  </div>
+
+  <h2>📐 확정 룰 · 결정 (참조 — 새 작업 아님)</h2>
+  <div class="section-note ref">
+    이미 확정돼 <b>spec · design-system에 흡수</b>된 룰 · 결정입니다. 개발 중 참조용 — 새로 만들 건 없습니다 (SoT는 spec/design-system).
+  </div>
+  <div class="files">
+
+    <a href="sanity/track-shapes-board.html" class="file-link">
+      <div>
+        <div class="file-name">🔷 트랙 형태 5종 + 코너 라운딩 · 볼트 룰</div>
+        <div class="file-meta">정사각·마름모·오각·삼각·별 · 턴각 ≥90°=자동 볼트. spec §2.4/§2.11 흡수</div>
+      </div>
+      <span class="tag ok">확정 룰</span>
+    </a>
+
+    <a href="sanity/monster-visual-language-board.html" class="file-link">
+      <div>
+        <div class="file-name">🧬 몬스터 비주얼 언어 — 본체 ⊥ 단서 분리</div>
+        <div class="file-meta">본체=아키타입 ⊥ 단서=런타임 틴트 핍 · solvableBy=OR. spec §6 흡수 (구현 = unity 핍 조립)</div>
+      </div>
+      <span class="tag ok">확정 룰</span>
+    </a>
+
+    <a href="sanity/stage-detail-board.html" class="file-link">
+      <div>
+        <div class="file-name">🗺 스테이지 상세 패널 — 입장 #5 강화</div>
+        <div class="file-meta">형태 헤더·별조건3·프리뷰(dot X)·슬롯수·CTA. 목업 v3 #5에 반영됨</div>
+      </div>
+      <span class="tag ok">확정</span>
+    </a>
+
+    <a href="sanity/menu-icon-ab-board.html" class="file-link">
+      <div>
+        <div class="file-name">🧭 메뉴 순서 · 아이콘 · 형태 글리프 — A/B</div>
+        <div class="file-meta">전부 B 확정 · 무기고 좌측 · 아이콘+라벨 · 카드 글리프. 목업 v3 반영됨</div>
+      </div>
+      <span class="tag ok">확정</span>
+    </a>
+
+    <a href="sanity/art-direction-board.html" class="file-link">
+      <div>
+        <div class="file-name">🎨 아트 디렉션 — 로그인=보이드 / 메인=V2-C</div>
+        <div class="file-meta">2026-06-11 확정 · wireframes #3 + design-system 토큰 반영</div>
+      </div>
+      <span class="tag ok">확정</span>
+    </a>
+
+    <a href="sanity/art-reference-board.html" class="file-link">
+      <div>
+        <div class="file-name">🎯 아트 품질 기준선 — 6층 체크리스트</div>
+        <div class="file-meta">형태·깊이·글로우·juice·VFX·애니 craft. 모든 생성물 판정 기준(매체 게이트 #8)</div>
+      </div>
+      <span class="tag ok">기준선</span>
+    </a>
+
+    <a href="sanity/ingame-world-concept-board.html" class="file-link">
+      <div>
+        <div class="file-name">🪐 인게임 월드 컨셉 — "공전하는 코어"</div>
+        <div class="file-meta">방향 제안 · spec §9 흡수. 실제 에셋 = 위 "공전 코어 확정 세트"</div>
+      </div>
+      <span class="tag ok">흡수됨</span>
+    </a>
+
+    <a href="sanity/core-anim-board.html" class="file-link">
+      <div>
+        <div class="file-name">🎞 코어 애니 + 배경 — 베이크/런타임 분담 실증</div>
+        <div class="file-meta">코어 애니=PixelLab 베이크 / 배경·매크로=Unity 절차. 분담 모델 데모</div>
+      </div>
+      <span class="tag ok">분담 실증</span>
     </a>
 
   </div>
