@@ -346,34 +346,33 @@
   <div class="scr" data-s="stages">
     <div class="ttl"><span class="back" onclick="go('main')">←</span> 스테이지
       <div class="bar" style="margin-left:6px"><i style="width:30%"></i></div><span class="dim">변주 23⭐</span></div>
-    <div class="zone">🎓 교습 인트로 <span class="dim" style="float:right;letter-spacing:0">8/12 · 순서 강제 · 별 없음 · 🎫 면제 · 1.0x</span></div>
+    <div class="zone">🎓 교습 6판 (= 튜토리얼) <span class="dim" style="float:right;letter-spacing:0">2/6 · 순서 강제 · 별 없음 · 🎫 면제 · 1.0x</span></div>
     <div class="grid6">
-      <div class="scard">1<small>✓</small></div><div class="scard">2<small>✓</small></div><div class="scard">3<small>✓</small></div>
-      <div class="scard">4<small>✓</small></div><div class="scard">5<small>✓</small></div><div class="scard">6<small>✓</small></div>
+      <div class="scard" data-sh="sq">1<small>✓</small></div>
+      <div class="scard" data-sh="di">2<small>✓</small></div>
+      <div class="scard" data-sh="pe" style="border-color:var(--prog);box-shadow:0 0 10px rgba(92,124,250,.3)" onclick="go('loadout');ldv('s')">3<small style="color:var(--prog)">▶ 현재</small></div>
+      <div class="scard" data-sh="tr" style="opacity:.4">4<small>🔒</small></div>
+      <div class="scard" data-sh="sq" style="opacity:.4">5<small>🔒</small></div>
+      <div class="scard" data-sh="st" style="opacity:.4">6<small>🔒</small></div>
     </div>
-    <div class="grid6" style="margin-top:6px">
-      <div class="scard">7<small>✓</small></div>
-      <div class="scard" style="border-color:var(--prog);box-shadow:0 0 10px rgba(92,124,250,.3)" onclick="go('loadout')">8<small style="color:var(--prog)">▶ 현재</small></div>
-      <div class="scard" style="opacity:.4">9<small>🔒</small></div><div class="scard" style="opacity:.4">10<small>🔒</small></div>
-      <div class="scard" style="opacity:.4">11<small>🔒</small></div><div class="scard" style="opacity:.4">12<small>🔒</small></div>
-    </div>
-    <div class="unlockline" style="opacity:.55">── 🎓 졸업 게이트 ── <span class="dim" style="display:block;font-size:8.5px;margin-top:2px">통과 = 변주 풀 + 무기 3·4 + 데일리런 + 속도 토글 해금</span></div>
-    <div class="zone" style="opacity:.5">변주 스테이지 <span class="dim" style="float:right;letter-spacing:0">순차 (13→14→15) · 구성 다채</span></div>
+    <p class="dim" style="font-size:8.5px;margin-top:5px;letter-spacing:0">판마다 동사 1개 — cap 0·0·<span class="b">🔵</span>1·<span class="r">🔴</span>2·<span class="y">🟡</span>3·혼합4(졸업) · 형태 점진 □◇⬠△□★ · 트랙 ~15–28s</p>
+    <div class="unlockline" style="opacity:.55">── 🎓 졸업 게이트 (판 6) ── <span class="dim" style="display:block;font-size:8.5px;margin-top:2px">통과 = 변주 풀 + 무기 3·4 + 데일리런 + 속도 토글 해금 (#14 ④)</span></div>
+    <div class="zone" style="opacity:.5">변주 스테이지 <span class="dim" style="float:right;letter-spacing:0">졸업 후 개방 · 순차 (7→8→9) · 구성 다채</span></div>
     <div class="grid6" style="opacity:.5">
-      <div class="scard">13<small><b>✦✦</b>✧</small></div>
-      <div class="scard" style="opacity:.5">14<small>🔒</small></div>
-      <div class="scard" style="opacity:.4">15<small>🔒</small></div>
-      <div class="scard" style="opacity:.28">16<small>🔒</small></div>
-      <div class="scard" style="opacity:.28">17<small>🔒</small></div>
+      <div class="scard" data-sh="di" style="opacity:.5">7<small>🔒</small></div>
+      <div class="scard" data-sh="pe" style="opacity:.4">8<small>🔒</small></div>
+      <div class="scard" data-sh="tr" style="opacity:.4">9<small>🔒</small></div>
+      <div class="scard" data-sh="st" style="opacity:.28">10<small>🔒</small></div>
+      <div class="scard" data-sh="sq" style="opacity:.28">11<small>🔒</small></div>
       <div class="scard" style="opacity:.28">⋮<small></small></div>
     </div>
     <div class="grow"></div>
-    <p class="dim" style="font-size:9px">교습 = 순서 강제·관대 · 변주 = 직전 클리어 시 다음 1판 오픈 · 난이도 = 조합(밀도+무기수+속도+조건), 무작정 상승 X</p>
+    <p class="dim" style="font-size:9px">교습 6판 = 핸드홀딩 튜토리얼 없음, 레벨 설계로 가르침(퍼즐) · 변주 = 직전 클리어 시 다음 1판 오픈 · 난이도 = 조합(밀도+무기수+속도+조건), 무작정 상승 X</p>
   </div>
 
   <!-- 5 입장/로드아웃 (티켓 게이트) -->
   <div class="scr" data-s="loadout">
-    <div class="ttl"><span class="back" onclick="go('stages')">←</span> <span id="ldtitle">STAGE 14 <span class="dim">· 변주</span></span>
+    <div class="ttl"><span class="back" onclick="go('stages')">←</span> <span id="ldtitle">STAGE 7 <span class="dim">· 변주</span></span>
       <span class="chip" style="margin-left:auto"><svg class="ic ln" viewBox="0 0 24 24" style="stroke:var(--prog)"><use href="#i-ticket"/></svg>3</span></div>
     <div style="display:flex;gap:6px;margin-top:10px">
       <span class="uvar" data-l="s" onclick="ldv('s')">🎓 교습 (간소)</span>
@@ -391,20 +390,22 @@
       <div class="card" style="margin-top:8px;cursor:default">
         <div style="font-size:11px;line-height:1.6"><span class="gold">🎓 별 없음 · 티켓 면제</span> &nbsp;·&nbsp; 속도 <span class="spfixed">[1.0x] 고정</span> <span class="dim" style="font-size:8.5px">(졸업 시 토글 해금)</span></div>
       </div>
-      <p class="dim" style="margin-top:9px;font-size:9px">로드아웃 없음 — <span class="cdot" style="background:var(--blue);width:6px;height:6px"></span> 1슬롯 자동 (P1 · 스왑은 구역 3부터)</p>
+      <div class="dim" style="margin:9px 0 5px">무기 슬롯 — 교습 = 전 슬롯 잠금 예고 <span style="font-size:8.5px;opacity:.8">(다가올 무기 숨김 X · cap 1 · §7.3)</span></div>
+      <div class="row">
+        <div class="wslot on"><span class="cdot" style="background:var(--blue)"></span><small>🔵 사격</small></div>
+        <div class="wslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg><small>판 4 🔴</small></div>
+        <div class="wslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg><small>판 5 🟡</small></div>
+        <div class="wslot lk"><svg class="ln" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-lock"/></svg><small>졸업 🟣</small></div>
+      </div>
       <div class="grow" style="display:flex;align-items:center;justify-content:center">
         <div style="text-align:center">
           <div style="position:relative;width:88px;height:88px;margin:0 auto">
-            <div style="position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.18);border-radius:2px"></div>
-            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;left:-2.5px"></i>
-            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);top:-2.5px;right:-2.5px"></i>
-            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);bottom:-2.5px;left:-2.5px"></i>
-            <i style="position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);bottom:-2.5px;right:-2.5px"></i>
-            <div style="position:absolute;bottom:-4px;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7)"></div>
+            <svg viewBox="0 0 88 88" style="position:absolute;inset:0;width:88px;height:88px"><polygon points="44,4 84,33 69,80 19,80 4,33" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/></svg>
+            <div style="position:absolute;bottom:6px;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7)"></div>
             <div style="position:absolute;bottom:-15px;left:58%;font-size:9px;color:var(--t2)">▸</div>
             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;color:var(--t3)">×3</div>
           </div>
-          <div class="dim" style="font-size:9px;margin-top:14px">교습 — 정사각 · 완주 3바퀴 · 시작 = 바닥 → 우향<br><span style="font-size:8px;opacity:.7">(위협 위치·정답 무기 비공개 — 여정 미리보기)</span></div>
+          <div class="dim" style="font-size:9px;margin-top:14px">교습 판 3 — 오각 ⬠ · 🔵 사격 입문 · 완주 3바퀴 · 시작 = 바닥 → 우향<br><span style="font-size:8px;opacity:.7">(위협 위치·정답 무기 비공개 — 여정 미리보기)</span></div>
         </div>
       </div>
     </div>
@@ -779,7 +780,7 @@ function ldv(k){
   document.getElementById('ld-s').style.display = k==='s' ? 'flex' : 'none';
   document.getElementById('ld-f').style.display = k==='f' ? 'flex' : 'none';
   document.getElementById('ldtitle').innerHTML = k==='s'
-    ? 'STAGE 8 <span class="dim">· 🎓 교습</span>' : 'STAGE 14 <span class="dim">· 변주</span>';
+    ? 'STAGE 3 <span class="dim">· 🎓 교습</span>' : 'STAGE 7 <span class="dim">· 변주</span>';
   document.querySelectorAll('[data-l]').forEach(x=>x.classList.toggle('on',x.dataset.l===k));
 }
 /* 속도 토글 레버 (변주 — spec §2.12) */
@@ -819,15 +820,18 @@ function setUnlock(k){const u=UNLOCKS[k];
   document.querySelectorAll('.uvar').forEach(x=>x.classList.toggle('on',x.dataset.k===k));
 }
 setUnlock('weapon');
-/* 스테이지 카드 형태 글리프 (card_stage shape_badge — 2026-06-18 결정 B) : 교습 그리드=정사각 · 변주 그리드=마름모 */
+/* 스테이지 카드 형태 글리프 (card_stage shape_badge — 2026-06-18 B) : 판별 형태 = data-sh (교습 6판 형태 점진 §7.3) */
 (function(){
-  const sq='<svg class="sg" viewBox="0 0 17 17"><rect x="3" y="3" width="11" height="11" rx="1.5" fill="none" stroke="#9aa0b0" stroke-width="1.5"/></svg>';
-  const di='<svg class="sg" viewBox="0 0 17 17"><rect x="4.3" y="4.3" width="8.4" height="8.4" rx="1" transform="rotate(45 8.5 8.5)" fill="none" stroke="#9aa0b0" stroke-width="1.5"/></svg>';
-  document.querySelectorAll('[data-s="stages"] .grid6').forEach((g,i)=>{
-    g.querySelectorAll('.scard').forEach(c=>{
-      if(c.textContent.trim().startsWith('⋮'))return;
-      c.insertAdjacentHTML('afterbegin', i<2?sq:di);
-    });
+  const G={
+    sq:'<rect x="3" y="3" width="11" height="11" rx="1.5" fill="none" stroke="#9aa0b0" stroke-width="1.5"/>',
+    di:'<rect x="4.3" y="4.3" width="8.4" height="8.4" rx="1" transform="rotate(45 8.5 8.5)" fill="none" stroke="#9aa0b0" stroke-width="1.5"/>',
+    pe:'<polygon points="8.5,2.5 14.5,7 12,14 5,14 2.5,7" fill="none" stroke="#9aa0b0" stroke-width="1.5"/>',
+    tr:'<polygon points="8.5,3 15,14 2,14" fill="none" stroke="#9aa0b0" stroke-width="1.5"/>',
+    st:'<polygon points="8.5,1.6 10.3,6 15,6.3 11.4,9.3 12.6,14 8.5,11.4 4.4,14 5.6,9.3 2,6.3 6.7,6" fill="none" stroke="#9aa0b0" stroke-width="1.4"/>'
+  };
+  document.querySelectorAll('[data-s="stages"] .scard').forEach(c=>{
+    const sh=c.dataset.sh; if(!sh||!G[sh])return;
+    c.insertAdjacentHTML('afterbegin','<svg class="sg" viewBox="0 0 17 17">'+G[sh]+'</svg>');
   });
 })();
 const _h=location.hash.slice(1);

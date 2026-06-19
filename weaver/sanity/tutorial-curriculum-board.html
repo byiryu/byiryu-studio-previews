@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weaver — 교습 6판 커리큘럼 (튜토리얼 레벨 설계)</title>
+<style>
+  :root{
+    --bg:#0C0C11; --panel:#12121A; --srf:#15151D; --srf2:#1C2030; --line:#2A2A36;
+    --t1:#EEEEF2; --t2:#9AA0B0; --t3:#556070;
+    --blue:#4DABF7; --red:#FF6B6B; --yellow:#FFD43B; --purple:#B197FC;
+    --white:#E8E8F0; --prog:#5C7CFA; --ok:#51CF66; --coin:#FFE08A;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Pretendard","Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--t1);font-family:var(--sans);line-height:1.55;
+    background-image:radial-gradient(60% 40% at 50% -5%,rgba(92,124,250,.10),transparent),
+      radial-gradient(40% 30% at 100% 100%,rgba(177,151,252,.06),transparent);
+    background-attachment:fixed;padding:28px 16px 64px}
+  .wrap{max-width:860px;margin:0 auto}
+  .crumb{font-size:12px;color:var(--t3);margin-bottom:18px}
+  .crumb a{color:var(--prog);text-decoration:none}
+
+  /* 헤더 */
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:24px}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--prog);text-transform:uppercase}
+  h1{font-size:27px;font-weight:800;letter-spacing:-.5px;margin:7px 0 4px}
+  h1 .sm{font-size:15px;font-weight:500;color:var(--t2);letter-spacing:0}
+  .sub{font-size:13.5px;color:var(--t2);max-width:640px}
+
+  /* 철학 콜아웃 */
+  .philo{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:linear-gradient(100deg,rgba(92,124,250,.12),rgba(21,21,29,.6));
+    border:1px solid rgba(92,124,250,.3);font-size:13px}
+  .philo b{color:var(--prog)}
+  .philo .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--prog);border:1px solid rgba(92,124,250,.4);
+    border-radius:99px;padding:2px 9px;margin-right:7px;vertical-align:2px}
+
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;color:var(--t2);
+    margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* 첫실행 플로우 */
+  .flow{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;font-size:12px}
+  .fstep{flex:1;min-width:84px;background:var(--srf);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;position:relative}
+  .fstep .n{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1px}
+  .fstep .l{font-weight:700;font-size:12px;margin-top:2px}
+  .fstep .d{font-size:10px;color:var(--t2);margin-top:1px}
+  .fstep.go{border-color:rgba(81,207,102,.45);background:linear-gradient(180deg,rgba(81,207,102,.1),var(--srf))}
+  .fstep.go .l{color:var(--ok)}
+  .fstep.grad{border-color:rgba(255,224,138,.5);background:linear-gradient(180deg,rgba(255,224,138,.12),var(--srf))}
+  .fstep.grad .l{color:var(--coin)}
+  .farrow{align-self:center;color:var(--t3);font-size:13px}
+
+  /* 6판 래더 */
+  .ladder{display:flex;flex-direction:column;gap:10px}
+  .lvl{display:grid;grid-template-columns:54px 1fr;gap:14px;background:var(--srf);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;position:relative;overflow:hidden}
+  .lvl::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--line))}
+  .lvl .badge{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .lvl .pnum{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:1px}
+  .shape svg{width:38px;height:38px;display:block;filter:drop-shadow(0 0 6px var(--accent-glow,transparent))}
+  .lvl .body .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .lvl .nm{font-size:15px;font-weight:700}
+  .cap{font-family:var(--mono);font-size:10px;color:var(--t2);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+  .cap b{color:var(--t1)}
+  .teach{font-size:13px;color:var(--t1);margin:6px 0 8px}
+  .teach .new{font-weight:700}
+  .meta{display:flex;gap:7px;flex-wrap:wrap;font-size:11px;color:var(--t2);font-family:var(--mono)}
+  .pill{background:var(--srf2);border:1px solid var(--line);border-radius:99px;padding:2px 9px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:0;margin-right:2px;box-shadow:0 0 7px currentColor}
+  .b{color:var(--blue)} .r{color:var(--red)} .y{color:var(--yellow)} .p{color:var(--purple)} .w{color:var(--white)}
+  .lvl.grad{border-color:rgba(255,224,138,.4);background:linear-gradient(110deg,rgba(255,224,138,.07),var(--srf))}
+
+  /* 색 도입 트랙 */
+  .ctrack{display:flex;align-items:center;gap:0;background:var(--srf);border:1px solid var(--line);border-radius:12px;padding:16px 14px;overflow-x:auto}
+  .cnode{flex:1;min-width:62px;text-align:center;position:relative}
+  .cnode .cc{width:30px;height:30px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:#0c0c11;box-shadow:0 0 14px var(--cg)}
+  .cnode .pl{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1px}
+  .cnode .when{font-size:11px;font-weight:700;margin-top:2px}
+  .cnode .ds{font-size:10px;color:var(--t2);margin-top:1px}
+  .cnode:not(:last-child)::after{content:"→";position:absolute;right:-6px;top:8px;color:var(--t3);font-size:13px}
+
+  /* 2단 그리드 */
+  .two{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:620px){.two{grid-template-columns:1fr 1fr}}
+  .card{background:var(--srf);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+  .card h3{font-size:13.5px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+  .card ul{list-style:none;font-size:12.5px;color:var(--t2)}
+  .card li{padding:4px 0 4px 16px;position:relative}
+  .card li::before{content:"";position:absolute;left:2px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--prog)}
+  .card li b{color:var(--t1)}
+  .scaf li::before{background:var(--ok)}
+  .safe li::before{background:var(--red)}
+
+  /* 규칙 스트립 */
+  .rules{display:flex;gap:7px;flex-wrap:wrap}
+  .rule{font-family:var(--mono);font-size:11px;background:var(--srf);border:1px solid var(--line);border-radius:8px;padding:7px 11px;color:var(--t2)}
+  .rule b{color:var(--t1)}
+
+  /* 졸업 */
+  .gradbox{background:linear-gradient(120deg,rgba(255,224,138,.13),rgba(92,124,250,.08));border:1px solid rgba(255,224,138,.4);
+    border-radius:14px;padding:18px;text-align:center}
+  .gradbox .gt{font-size:16px;font-weight:800;color:var(--coin)}
+  .gradbox .gd{font-size:12.5px;color:var(--t2);margin-top:5px}
+  .gradbox .un{display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .gradbox .un span{font-family:var(--mono);font-size:11px;background:rgba(12,12,17,.5);border:1px solid rgba(255,224,138,.3);
+    border-radius:99px;padding:4px 11px;color:var(--coin)}
+  .gradbox .ref{font-size:10.5px;color:var(--t3);margin-top:11px;font-family:var(--mono)}
+
+  footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--t3);line-height:1.7}
+  footer b{color:var(--t2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="../index.html">weaver</a> / sanity / 교습 6판 커리큘럼</div>
+
+  <header>
+    <div class="kick">Tutorial Level Design · spec §7.3 / §9</div>
+    <h1>교습 6판 커리큘럼 <span class="sm">— 어떻게 가르치고, 어떻게 넘어가는가</span></h1>
+    <p class="sub">weaver는 <b>별도의 핸드홀딩 튜토리얼이 없다.</b> 첫 실행 = 동의 → 플레이 직행. <b>교습 6판이 곧 튜토리얼</b>이며, 가르침은 화면 위 지시문이 아니라 <b>레벨 설계 자체</b>에 녹아 있다.</p>
+    <div class="philo">
+      <span class="tag">퍼즐 학습</span>"이 몬스터엔 🔵 쓰세요" 같은 <b>직접 지시·툴팁 없음</b>. 몬스터 <b>생김새(색·실루엣·거동)</b>가 일관된 비주얼 언어 → 플레이어가 <b>배워서 읽는다</b>. 안전망(충돌 예산·반복 등장·일관 언어)이 실수해도 안 죽게 받쳐, 가르침이 곧 게임이 된다.
+    </div>
+  </header>
+
+  <h2>첫 실행 → 졸업 플로우</h2>
+  <div class="flow">
+    <div class="fstep"><div class="n">FIRST RUN</div><div class="l">동의</div><div class="d">UMP / 로그인</div></div>
+    <span class="farrow">→</span>
+    <div class="fstep go"><div class="n">NO TUTORIAL</div><div class="l">플레이 직행</div><div class="d">판 1 시작</div></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><div class="n">판 1–5</div><div class="l">점진 학습</div><div class="d">색 1개씩 도입</div></div>
+    <span class="farrow">→</span>
+    <div class="fstep grad"><div class="n">판 6</div><div class="l">졸업 게이트</div><div class="d">변주 + 토글 개방</div></div>
+  </div>
+
+  <h2>6판 래더 — 판마다 동사 하나씩</h2>
+  <div class="ladder">
+
+    <div class="lvl" style="--accent:var(--white);--accent-glow:rgba(232,232,240,.4)">
+      <div class="badge">
+        <div class="pnum">판 1</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><rect x="8" y="8" width="24" height="24" rx="3" fill="none" stroke="#E8E8F0" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">기본 회피</span><span class="cap">무기 cap <b>0</b></span></div>
+        <div class="teach"><span class="new w">⚪ 몸 조작 각인</span> — 점프·슬라이드·낙하 타이밍. 무기 없이 "내 몸으로 피한다"를 먼저.</div>
+        <div class="meta"><span class="pill">형태 정사각</span><span class="pill">장애물 ×5 혼합</span><span class="pill">트랙 ~15s</span></div>
+      </div>
+    </div>
+
+    <div class="lvl" style="--accent:var(--white);--accent-glow:rgba(232,232,240,.3)">
+      <div class="badge">
+        <div class="pnum">판 2</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><rect x="9" y="9" width="22" height="22" rx="3" transform="rotate(45 20 20)" fill="none" stroke="#E8E8F0" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">코너 &amp; 볼트</span><span class="cap">무기 cap <b>0</b></span></div>
+        <div class="teach"><span class="new w">형태 = 게임 문법</span> — 급코너(≥90°) = 자동 볼트, 코너에선 입력 안 먹힘. 형태가 바뀌어도 같은 룰.</div>
+        <div class="meta"><span class="pill">형태 마름모</span><span class="pill">볼트 ×4 (무료)</span><span class="pill">가벼운 장애물 ×3</span><span class="pill">트랙 ~18s</span></div>
+      </div>
+    </div>
+
+    <div class="lvl" style="--accent:var(--blue);--accent-glow:rgba(77,171,247,.5)">
+      <div class="badge">
+        <div class="pnum">판 3</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><polygon points="20,6 33,16 28,32 12,32 7,16" fill="none" stroke="#4DABF7" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">🔵 사격 입문</span><span class="cap">무기 cap <b>1</b></span></div>
+        <div class="teach"><span class="new b"><span class="dot b"></span>원거리 첫 노출</span> — 첫 무기-드론 해금(#14). 단일 표적 → 연속 러시로 "쏴서 처리한다" 각인.</div>
+        <div class="meta"><span class="pill">형태 오각</span><span class="pill"><span class="dot b"></span>단색 단일정답</span><span class="pill">위협 ×3</span><span class="pill">트랙 ~20s</span></div>
+      </div>
+    </div>
+
+    <div class="lvl" style="--accent:var(--red);--accent-glow:rgba(255,107,107,.5)">
+      <div class="badge">
+        <div class="pnum">판 4</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><polygon points="20,7 34,33 6,33" fill="none" stroke="#FF6B6B" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">🔴 스왑 &amp; 장갑</span><span class="cap">무기 cap <b>2</b></span></div>
+        <div class="teach"><span class="new r"><span class="dot r"></span>근접 + 스왑 연습</span> — 🔵🔴 번갈아 등장. 장갑 몬스터(2히트·굵은 텔레그래프) = 드론 형태를 바꿔야 함을 가르침.</div>
+        <div class="meta"><span class="pill"><span class="dot b"></span><span class="dot r"></span>번갈아 ×4</span><span class="pill">형태 삼각</span><span class="pill">트랙 ~22s</span></div>
+      </div>
+    </div>
+
+    <div class="lvl" style="--accent:var(--yellow);--accent-glow:rgba(255,212,59,.5)">
+      <div class="badge">
+        <div class="pnum">판 5</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><rect x="8" y="8" width="24" height="24" rx="3" fill="none" stroke="#FFD43B" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">🟡 대공·요격</span><span class="cap">무기 cap <b>3</b></span></div>
+        <div class="teach"><span class="new y"><span class="dot y"></span>공중 요격 도입</span> — 천장 낙하물·공중 전용 위협. "위로 쏘는 무기"의 존재와 타이밍.</div>
+        <div class="meta"><span class="pill"><span class="dot y"></span>낙하 요격 + 지상 혼합</span><span class="pill">형태 정사각</span><span class="pill">위협 ×3</span><span class="pill">트랙 ~25s</span></div>
+      </div>
+    </div>
+
+    <div class="lvl grad" style="--accent:var(--coin);--accent-glow:rgba(255,224,138,.5)">
+      <div class="badge">
+        <div class="pnum">판 6</div>
+        <span class="shape"><svg viewBox="0 0 40 40"><polygon points="20,5 24,15 35,15 26,22 29,33 20,26 11,33 14,22 5,15 16,15" fill="none" stroke="#FFE08A" stroke-width="2"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="top"><span class="nm">졸업</span><span class="cap">무기 cap <b>4</b></span><span class="pill" style="color:var(--coin);border-color:rgba(255,224,138,.4)">졸업 게이트</span></div>
+        <div class="teach"><span class="new" style="color:var(--coin)">🔵🔴🟡 혼합 종합</span> — 배운 세 색을 한 판에서 빠르게 갈아끼우는 종합 시험. 복수정답 위협으로 워밍다운.</div>
+        <div class="meta"><span class="pill">형태 별</span><span class="pill"><span class="dot b"></span><span class="dot r"></span><span class="dot y"></span>혼합 ×4</span><span class="pill">통과 = 변주 개방</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>색 도입 트랙 — 한 번에 새 색 1개</h2>
+  <div class="ctrack">
+    <div class="cnode"><div class="cc" style="background:#E8E8F0;--cg:rgba(232,232,240,.4)">⚪</div><div class="pl">P0</div><div class="when">몸 회피</div><div class="ds">판 1–2</div></div>
+    <div class="cnode"><div class="cc" style="background:#4DABF7;--cg:rgba(77,171,247,.6)">🔵</div><div class="pl">P1</div><div class="when">원거리</div><div class="ds">판 3</div></div>
+    <div class="cnode"><div class="cc" style="background:#FF6B6B;--cg:rgba(255,107,107,.6)">🔴</div><div class="pl">P2</div><div class="when">근접</div><div class="ds">판 4</div></div>
+    <div class="cnode"><div class="cc" style="background:#FFD43B;--cg:rgba(255,212,59,.6)">🟡</div><div class="pl">P3</div><div class="when">대공</div><div class="ds">판 5</div></div>
+    <div class="cnode"><div class="cc" style="background:#B197FC;--cg:rgba(177,151,252,.6)">🟣</div><div class="pl">P4</div><div class="when">특수</div><div class="ds">변주서 첫 등장</div></div>
+  </div>
+
+  <h2>설계 원리 · 안전망</h2>
+  <div class="two">
+    <div class="card">
+      <h3>🪜 스캐폴딩</h3>
+      <ul class="scaf">
+        <li><b>한 번에 새 색 1개</b> — 인지 부하 분산 (P0→P4)</li>
+        <li><b>단색 단일정답(각인) → 복수정답(워밍다운)</b> — 처음엔 "이 색 = 이 무기" 1:1로 굳히고, 뒤로 갈수록 여러 무기로 풀리는 위협</li>
+        <li><b>5–8 위협/판</b> — 충분한 반복으로 손에 익힘 (구 1동사 12판 = 판마다 온보딩 벽 → 폐기)</li>
+        <li><b>전 슬롯 잠금 예고</b> — 다가올 무기를 숨기지 않고 잠금으로 보여줌</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🛟 안전망 (anti-rage)</h3>
+      <ul class="safe">
+        <li><b>충돌 예산</b> — 못 잡아도 즉사 X (하트 N, 교습 = 넉넉)</li>
+        <li><b>반복 등장</b> — 같은 위협이 여러 번 → 틀려도 다음 기회</li>
+        <li><b>일관 비주얼 언어</b> — 한 번 익힌 생김새 규칙이 끝까지 동일</li>
+        <li><b>1.0x 고정 · 티켓 면제</b> — 속도/비용 압박 0, 진행 막힘 0</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>진행 규칙</h2>
+  <div class="rules">
+    <span class="rule"><b>순서 강제</b> prereqStageId</span>
+    <span class="rule"><b>직전 클리어</b> → 다음 1판 오픈</span>
+    <span class="rule"><b>별 없음</b> · 관대</span>
+    <span class="rule"><b>티켓 면제</b></span>
+    <span class="rule"><b>1.0x 고정</b> (토글 숨김)</span>
+    <span class="rule"><b>트랙 축소</b> ~15–28s</span>
+    <span class="rule">한 번 통과 = <b>끝</b></span>
+  </div>
+
+  <h2>졸업 = 넘어가는 순간</h2>
+  <div class="gradbox">
+    <div class="gt">변주 스테이지 개방!</div>
+    <div class="gd">판 6 통과 직후 = 풀스크린 해금 모먼트 (#14 ④). 글로우 + 속도 레버 모티프.</div>
+    <div class="un">
+      <span>변주 풀 개방</span><span>무기 3·4</span><span>데일리 런</span><span>속도 토글 1.0–2.0×</span>
+    </div>
+    <div class="ref">→ #14 해금 모먼트 ④ · 이후 #4 변주 구획 (13→14→15 순차)</div>
+  </div>
+
+  <footer>
+    <b>SoT</b> = spec §7.3 (교습 6판 통합, 2026-06-19 확정·기기 검증 — 구 "12판 1동사" supersede) · §9 (첫 실행 = 튜토리얼 없음, 교습 6판이 곧 튜토리얼) · §7.5 densityTag.<br>
+    <b>분담</b> = 커리큘럼 내용·노브 = spec(리드/기획) / 본 보드 = 진행·스캐폴딩 시각화(디자인) · 졸업 모먼트 = #14 템플릿 ④ · authored 6판 콘텐츠 = M3 plat.<br>
+    <b>주의</b> = 본 보드는 <b>레벨 설계·진행 구조</b> 시각화지 인게임 최종 아트가 아님(형태 글리프 = 토큰 모노라인). 위협 실물 = 몬스터 트랙 / 트랙 월드 = 공전 코어 트랙.
+  </footer>
+</div>
+</body>
+</html>
