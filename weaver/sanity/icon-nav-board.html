@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>weaver — icon_nav + 공통 UI 아이콘 모노라인 세트</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C0C11; --panel:#12121A; --surface:#15151D; --surface-a:#1C2030; --border:#2A2A36;
+  --text:#EEEEF2; --text2:#9AA0B0; --faint:#556070;
+  --c-blue:#4DABF7; --c-red:#FF6B6B; --c-yellow:#FFD43B; --c-purple:#B197FC;
+  --prog:#5C7CFA; --coin:#FFE08A; --ok:#51CF66;
+}
+*{margin:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -10%,#13131d,#0C0C11 60%);color:var(--text);
+  font-family:Pretendard,system-ui,sans-serif;padding:34px 30px 80px;-webkit-font-smoothing:antialiased}
+.h{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--c-blue);text-transform:uppercase}
+h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+.lede{color:var(--text2);font-size:13px;line-height:1.65;max-width:780px}
+.lede code{color:var(--c-yellow);font-size:12px}.lede b{color:var(--text)}
+
+h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-yellow);margin:42px 0 18px}
+
+/* spec strap */
+.strap{display:inline-flex;gap:16px;margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 15px;font-size:11px;color:var(--text2)}
+.strap b{color:var(--text)}
+.strap .sw{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:11px;height:11px;border-radius:3px;background:#9AA0B0}
+
+/* nav big cards */
+.navrow{display:flex;gap:26px;flex-wrap:wrap}
+.icard{width:150px;background:linear-gradient(180deg,#14141d,#101017);border:1px solid var(--border);border-radius:16px;padding:22px 16px 16px;text-align:center;position:relative}
+.icard .glyph{height:64px;display:grid;place-items:center}
+.icard svg{stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icard .nm{font-size:13px;font-weight:700;margin-top:6px;color:var(--text)}
+.icard .lab{font-size:11px;color:var(--text2);margin-top:2px}
+.icard .role{font-size:10px;color:var(--faint);margin-top:9px;line-height:1.45}
+.icard .dot-noti{position:absolute;top:18px;right:40px;width:7px;height:7px;border-radius:50%;background:var(--prog);box-shadow:0 0 7px var(--prog)}
+.ord{position:absolute;top:10px;left:12px;font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.05em}
+
+/* nav row in context (menu bottom) */
+.ctx-wrap{display:flex;gap:36px;align-items:flex-start;flex-wrap:wrap}
+.phone{width:280px;border-radius:28px;background:linear-gradient(180deg,#0e0e15,#0b0b10);border:1px solid #20202c;padding:10px;box-shadow:0 30px 70px -24px #000}
+.scr{background:radial-gradient(120% 70% at 50% -10%,#15151f,var(--ink) 62%);border-radius:20px;height:420px;display:flex;flex-direction:column;padding:14px;position:relative;overflow:hidden}
+.scr .topchips{display:flex;gap:6px;font-size:9.5px;color:var(--text2)}
+.scr .chip{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px 8px;display:flex;gap:4px;align-items:center}
+.scr .wm{text-align:center;font-size:9px;letter-spacing:.4em;color:var(--faint);margin-top:14px}
+.scr .stage{flex:1;display:grid;place-items:center;margin:10px 0;border-radius:14px;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.015) 0 12px,transparent 12px 24px),radial-gradient(80% 60% at 50% 30%,#171722,#0e0e15);
+  border:1px solid #1a1a26;position:relative}
+.scr .hero2{width:22px;height:30px;border-radius:6px;background:linear-gradient(180deg,#dfe6f5,#aeb8d0);box-shadow:0 0 12px rgba(180,200,255,.4)}
+.scr .play{background:var(--text);color:var(--ink);text-align:center;font-weight:800;font-size:13px;padding:11px;border-radius:24px}
+/* the nav row itself */
+.navbar{display:flex;justify-content:space-around;margin-top:13px;padding-top:4px}
+.nitem{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;width:54px}
+.nitem svg{stroke:var(--text2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nitem span{font-size:9.5px;color:var(--text2);font-weight:500}
+.nitem .nd{position:absolute;top:-1px;right:11px;width:6px;height:6px;border-radius:50%;background:var(--prog);box-shadow:0 0 6px var(--prog)}
+.ctx-note{font-size:12px;color:var(--text2);line-height:1.6;max-width:330px}
+.ctx-note b{color:var(--text)}.ctx-note code{color:var(--c-yellow);font-size:11px}
+
+/* common icon grid */
+.grid{display:flex;gap:16px;flex-wrap:wrap}
+.gcell{width:104px;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px 10px 11px;text-align:center}
+.gcell .gl{height:42px;display:grid;place-items:center}
+.gcell svg{stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gcell .gn{font-size:11px;font-weight:700;color:var(--text);margin-top:5px}
+.gcell .gu{font-size:9.5px;color:var(--faint);margin-top:2px}
+
+/* alt row */
+.altrow{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.altc{width:130px;background:var(--surface);border:1px dashed var(--border);border-radius:13px;padding:16px 12px 12px;text-align:center}
+.altc .gl{height:54px;display:grid;place-items:center}
+.altc svg{stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.altc .gn{font-size:11px;font-weight:700;margin-top:6px}
+.altc .gu{font-size:10px;color:var(--faint);margin-top:3px;line-height:1.4}
+.altc.pick{border-style:solid;border-color:var(--ok)}
+.altc .pickt{font-size:9px;font-weight:700;color:var(--ok);margin-top:5px}
+
+.notes{margin-top:46px;max-width:880px;border-top:1px solid var(--border);padding-top:26px}
+.notes ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.notes li{font-size:12.5px;line-height:1.6;color:var(--text2);padding-left:18px;position:relative}
+.notes li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--c-blue)}
+.notes li b{color:var(--text)}.notes code{color:var(--c-yellow);font-size:11.5px}
+</style></head>
+<body>
+<div class="h">weaver · 디자인 세션 · UI 아이콘</div>
+<h1>icon_nav + 공통 UI 아이콘 — 모노라인 세트</h1>
+<p class="lede">
+  design-system <code>icon_nav</code> 사양 정합 — <b>모노라인 SVG, stroke <code>color_9AA0B0</code>, 초소형 라벨 동반(단독 아님), 컬러 이모지 금지</b>(렌더 편차·톤 파괴).
+  순서 = <b>무기고 · 데일리런 · 랭킹</b>(②B 결정 — 무기고 좌측 = 메타 BM 진열 paranoia #1). wireframes 전반의 이모지 placeholder(←·⚙️·⏸·🚫·🔒)도 같은 패밀리로 정리.
+</p>
+<div class="strap">
+  <span class="sw"><span class="swatch"></span> stroke <b>#9AA0B0</b></span>
+  <span>stroke-width <b>1.8</b> · round cap</span>
+  <span>nav <b>22pt</b> · 라벨 regular_11</span>
+  <span>알림 도트 <b>#5C7CFA</b></span>
+</div>
+
+<h2>1 · 메뉴 내비 3 (icon_nav)</h2>
+<div class="navrow">
+  <div class="icard">
+    <span class="ord">01</span>
+    <div class="glyph">
+      <svg width="40" height="40" viewBox="0 0 24 24">
+        <!-- crossed weapon-drones (교차검) -->
+        <line x1="5" y1="19" x2="17" y2="7"/><line x1="19" y1="19" x2="7" y2="7"/>
+        <path d="M17 7l2.4-2.4M7 7L4.6 4.6"/>
+        <path d="M5 16l3 3M19 16l-3 3"/>
+      </svg>
+    </div>
+    <div class="nm">무기고</div><div class="lab">Armory</div>
+    <div class="role">교차검 — 메타 BM 진열(좌측 첫 시선)</div>
+  </div>
+  <div class="icard">
+    <span class="ord">02</span>
+    <div class="dot-noti"></div>
+    <div class="glyph">
+      <svg width="40" height="40" viewBox="0 0 24 24">
+        <!-- infinity -->
+        <path d="M8.2 12c0 1.9-1.4 3.3-3.1 3.3S2 13.9 2 12s1.4-3.3 3.1-3.3c3.4 0 4.4 6.6 7.8 6.6 1.7 0 3.1-1.4 3.1-3.3s-1.4-3.3-3.1-3.3c-3.4 0-4.4 6.6-7.8 6.6"/>
+      </svg>
+    </div>
+    <div class="nm">데일리 런</div><div class="lab">Daily Run</div>
+    <div class="role">∞ 무한+데일리 · 미참가 = 알림 도트</div>
+  </div>
+  <div class="icard">
+    <span class="ord">03</span>
+    <div class="glyph">
+      <svg width="40" height="40" viewBox="0 0 24 24">
+        <!-- trophy -->
+        <path d="M8 4h8v4.5a4 4 0 0 1-8 0V4z"/>
+        <path d="M8 5.2H5.4a1.8 1.8 0 0 0 0 3.6H8.2"/>
+        <path d="M16 5.2h2.6a1.8 1.8 0 0 1 0 3.6H15.8"/>
+        <path d="M12 12.5V16"/>
+        <path d="M9.2 20l.6-2.4h4.4l.6 2.4"/>
+        <path d="M8.6 20h6.8"/>
+      </svg>
+    </div>
+    <div class="nm">랭킹</div><div class="lab">Ranking</div>
+    <div class="role">트로피 — Supabase 일간 보드</div>
+  </div>
+</div>
+
+<h2>2 · 메인 메뉴 하단 컨텍스트 (실제 배치·순서)</h2>
+<div class="ctx-wrap">
+  <div class="phone"><div class="scr">
+    <div class="topchips">
+      <div class="chip">🎫 3 · 12:30</div><div class="chip">🪙 1,240</div><div class="chip">⭐ 23</div>
+      <div class="chip" style="margin-left:auto;padding:4px 6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" style="stroke:#9AA0B0;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>
+      </div>
+    </div>
+    <div class="wm">W E A V E R</div>
+    <div class="stage"><div class="hero2"></div></div>
+    <div class="play">▶ PLAY · 스테이지 14</div>
+    <!-- THE NAV ROW -->
+    <div class="navbar">
+      <div class="nitem">
+        <svg width="22" height="22" viewBox="0 0 24 24"><line x1="5" y1="19" x2="17" y2="7"/><line x1="19" y1="19" x2="7" y2="7"/><path d="M17 7l2.4-2.4M7 7L4.6 4.6"/><path d="M5 16l3 3M19 16l-3 3"/></svg>
+        <span>무기고</span>
+      </div>
+      <div class="nitem">
+        <div class="nd"></div>
+        <svg width="22" height="22" viewBox="0 0 24 24"><path d="M8.2 12c0 1.9-1.4 3.3-3.1 3.3S2 13.9 2 12s1.4-3.3 3.1-3.3c3.4 0 4.4 6.6 7.8 6.6 1.7 0 3.1-1.4 3.1-3.3s-1.4-3.3-3.1-3.3c-3.4 0-4.4 6.6-7.8 6.6"/></svg>
+        <span>데일리런</span>
+      </div>
+      <div class="nitem">
+        <svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 4h8v4.5a4 4 0 0 1-8 0V4z"/><path d="M8 5.2H5.4a1.8 1.8 0 0 0 0 3.6H8.2"/><path d="M16 5.2h2.6a1.8 1.8 0 0 1 0 3.6H15.8"/><path d="M12 12.5V16"/><path d="M9.2 20l.6-2.4h4.4l.6 2.4"/><path d="M8.6 20h6.8"/></svg>
+        <span>랭킹</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="ctx-note">
+    <b>위계</b> — nav 행은 PLAY(주 CTA) 아래에 종속(bg 없음·stroke 보조색). 라벨이 아이콘 아래 동반(①B).<br><br>
+    <b>순서 = 무기고 · 데일리런 · 랭킹</b> — 무기고가 좌측 첫 시선 = 메타 BM(스킨·무기) 진열 동선(paranoia #1). 데일리런 중앙 = 일일 재방문 훅. 랭킹 우측.<br><br>
+    상단 우측 ⚙️ 설정은 같은 모노라인 기어. <code>icon_nav</code> 알림 도트 = 데일리 미참가 시 <code>#5C7CFA</code>.
+  </div>
+</div>
+
+<h2>3 · 공통 UI 아이콘 (back · 설정 · 일시정지 · 닫기 · 광고제거 · 잠금)</h2>
+<div class="grid">
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div><div class="gn">뒤로</div><div class="gu">← 상단 좌</div></div>
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.5 5.5l1.9 1.9M16.6 16.6l1.9 1.9M18.5 5.5l-1.9 1.9M7.4 16.6l-1.9 1.9"/></svg></div><div class="gn">설정</div><div class="gu">⚙️ 톱니</div></div>
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg></div><div class="gn">일시정지</div><div class="gu">⏸ HUD 우</div></div>
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div><div class="gn">닫기</div><div class="gu">× 다이얼로그</div></div>
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="3" y="7.5" width="13" height="9" rx="2"/><path d="M9 11.2v1.6"/><path d="M19.5 4.5l-15 15"/></svg></div><div class="gn">광고 제거</div><div class="gu">🚫 메뉴 사이드</div></div>
+  <div class="gcell"><div class="gl"><svg width="26" height="26" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div class="gn">잠금</div><div class="gu">🔒 미해금</div></div>
+</div>
+
+<h2>4 · 무기고 아이콘 대안 (드론 패밀리 정합 — 결정 항목)</h2>
+<div class="altrow">
+  <div class="altc pick">
+    <div class="gl"><svg width="34" height="34" viewBox="0 0 24 24"><line x1="5" y1="19" x2="17" y2="7"/><line x1="19" y1="19" x2="7" y2="7"/><path d="M17 7l2.4-2.4M7 7L4.6 4.6"/><path d="M5 16l3 3M19 16l-3 3"/></svg></div>
+    <div class="gn">A · 교차검</div><div class="gu">design-system 명세값 · 보편 "무기고" 기호</div>
+    <div class="pickt">✓ 기본 (토큰 정합)</div>
+  </div>
+  <div class="altc">
+    <div class="gl"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 3l7 4v6l-7 4-7-4V7z"/><circle cx="12" cy="10.5" r="2.4"/></svg></div>
+    <div class="gn">B · 드론 코어</div><div class="gu">무기=동반 드론 정합(육각 셸+코어) · 단 "무기고" 인지 ↓</div>
+  </div>
+  <div class="altc">
+    <div class="gl"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M4 13l8-8 3 3-8 8H4z"/><path d="M14.5 5.5l2-2 2 2-2 2z"/><path d="M5 20h14"/></svg></div>
+    <div class="gn">C · 블레이드+거치</div><div class="gu">무기 거치대 은유 · 다소 복잡</div>
+  </div>
+</div>
+
+<div class="notes">
+  <ul>
+    <li><b>무기고 아이콘 = A 교차검 권장(기본)</b> — <code>icon_nav</code> 토큰 명세값이자 "무기고/로드아웃"의 보편 기호. 무기=드론 전환에도 "무기 보관·장착" 메타 의미는 검 아이콘이 가장 즉각. B(드론 코어)는 패밀리 정합엔 좋으나 "무기고"라는 *메뉴*로는 인지가 약함. <b>A/B/C 택1 = 결정 항목.</b></li>
+    <li><b>이모지 전면 교체</b> — wireframes·목업의 🎫🪙⭐ 같은 컬러 이모지도 점진적으로 모노라인 글리프 대체 권장(렌더 편차·톤 파괴 방지, design-system 원칙). 단 본 트랜치 스코프 = 내비·시스템 아이콘(인터랙티브 컨트롤). 통화·재화 칩 글리프는 별도 후속(스코프 가드).</li>
+    <li><b>광고 제거 아이콘</b> — 광고 배너(둥근 사각) + 대각 슬래시 = "광고 없음". 보편 prohibition(원+슬래시)보다 "광고" 맥락이 읽힘. 메뉴 좌측 엣지 사이드 아이콘(보유 시 숨김).</li>
+    <li><b>제작·핸드오프</b> — 전부 inline SVG(24 viewBox·stroke 1.8·round). plat = 이 path를 Unity Vector(또는 SVG 임포터/9-slice 불요)로 회수. <b>색은 코드에서 stroke만 지정</b>(기본 <code>#9AA0B0</code> / 활성 <code>#EEEEF2</code> / 비활성 <code>#556070</code>) — 단일 마스터, 상태별 틴트.</li>
+    <li><b>확정 후</b> = design-system <code>icon_nav</code> 에 SVG path 참조 추가 + 공통 아이콘 토큰(`icon_ui` 신설 검토) + wireframes 이모지 표기를 아이콘 참조로 교정.</li>
+  </ul>
+</div>
+</body></html>

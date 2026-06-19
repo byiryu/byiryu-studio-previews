@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>weaver — 전방 위협 미리보기 스트립 (배치 3안)</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C0C11; --panel:#12121A; --surface:#15151D; --surface-a:#1C2030; --border:#2A2A36;
+  --text:#EEEEF2; --text2:#9AA0B0; --faint:#556070;
+  --c-blue:#4DABF7; --c-red:#FF6B6B; --c-yellow:#FFD43B; --c-purple:#B197FC;
+  --prog:#5C7CFA; --coin:#FFE08A; --ok:#51CF66; --star:#FFFFFF; --white:#E8E8F0;
+}
+*{margin:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -10%,#13131d,#0C0C11 60%);color:var(--text);
+  font-family:Pretendard,system-ui,sans-serif;padding:34px 28px 80px;-webkit-font-smoothing:antialiased}
+.h{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--c-blue);text-transform:uppercase}
+h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+.lede{color:var(--text2);font-size:13px;line-height:1.65;max-width:760px}
+.lede code{color:var(--c-yellow);font-size:12px}
+.lede b{color:var(--text)}
+
+.wrap{display:flex;gap:34px;margin-top:34px;align-items:flex-start;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:13px;width:300px;flex:none}
+.col .cap{font-size:14px;font-weight:800;letter-spacing:-.01em}
+.col .cap .tag{font-size:9.5px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:6px;margin-left:7px;vertical-align:2px}
+.tag-rec{background:rgba(81,207,102,.16);color:var(--ok)}
+.tag-alt{background:rgba(154,160,176,.14);color:var(--text2)}
+.col .sub{font-size:11.5px;color:var(--text2);line-height:1.55;min-height:54px}
+.col .sub b{color:var(--text)}
+
+/* phone */
+.phone{width:300px;border-radius:30px;background:linear-gradient(180deg,#0e0e15,#0b0b10);
+  border:1px solid #20202c;padding:10px;box-shadow:0 30px 70px -24px #000,inset 0 1px 0 rgba(255,255,255,.04)}
+.screen{background:var(--ink);border-radius:22px;height:560px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+/* game area */
+.game{position:relative;flex:1;overflow:hidden;
+  background:radial-gradient(130% 80% at 50% 8%,#161622,#0c0c12 70%)}
+/* orbiting core hint */
+.core{position:absolute;left:50%;top:30%;width:140px;height:140px;transform:translate(-50%,-50%);
+  border-radius:50%;background:radial-gradient(circle at 40% 35%,#2a3350,#141a2c 70%);
+  box-shadow:0 0 50px -8px rgba(77,171,247,.25);opacity:.5}
+/* track floor */
+.floor{position:absolute;left:0;right:0;bottom:0;height:42%;
+  background:linear-gradient(180deg,transparent,#10131e 40%)}
+.floor::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(120,150,220,.55),transparent);
+  box-shadow:0 0 8px rgba(110,140,220,.6)}
+/* hero + drone */
+.hero{position:absolute;left:34%;bottom:42%;width:18px;height:24px;border-radius:5px 5px 4px 4px;
+  background:linear-gradient(180deg,#dfe6f5,#aeb8d0);box-shadow:0 0 10px rgba(180,200,255,.4)}
+.hero::after{content:"";position:absolute;right:-15px;top:-9px;width:11px;height:11px;border-radius:3px;
+  background:radial-gradient(circle,#7fc0ff,#1b3b6b);box-shadow:0 0 9px rgba(77,171,247,.7)}
+/* a real in-game threat already on screen (dot visible) */
+.live-threat{position:absolute;right:24%;bottom:46%;width:22px;height:22px}
+.live-threat .body{width:100%;height:100%;border-radius:7px;background:linear-gradient(180deg,#3a4156,#252a3c);border:1px solid #4a5168}
+.live-threat .dot{position:absolute;left:50%;top:-9px;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;
+  background:var(--c-red);border:1.5px solid #fff;box-shadow:0 0 7px var(--c-red)}
+
+/* HUD */
+.hud{position:absolute;left:0;right:0;top:0;padding:9px 11px;display:flex;align-items:flex-start;gap:7px;z-index:6}
+.pill{background:rgba(12,12,17,.55);border-radius:13px;height:27px;display:flex;align-items:center;gap:6px;padding:0 10px;font-size:10px;color:var(--text2);font-weight:700;backdrop-filter:blur(3px)}
+.pill .st{color:var(--text);letter-spacing:.05em}
+.pbar{width:42px;height:4px;border-radius:2px;background:#1d1d26;overflow:hidden}
+.pbar i{display:block;height:100%;width:58%;background:var(--prog)}
+.pill.lap{font-variant-numeric:tabular-nums}
+.hearts{margin-left:auto;display:flex;gap:3px;background:rgba(12,12,17,.55);border-radius:13px;height:27px;align-items:center;padding:0 9px;backdrop-filter:blur(3px)}
+.hearts .hb{width:11px;height:11px;clip-path:path('M5.5 10C2 7.5 0 5.6 0 3.4 0 1.6 1.3 .5 2.8 .5 3.8 .5 4.8 1 5.5 1.9 6.2 1 7.2 .5 8.2 .5 9.7 .5 11 1.6 11 3.4 11 5.6 9 7.5 5.5 10Z')}
+.hearts .hb.on{background:var(--c-red)} .hearts .hb.off{background:var(--border)}
+.pause{width:27px;height:27px;border-radius:13px;background:rgba(12,12,17,.55);display:grid;place-items:center;backdrop-filter:blur(3px)}
+.pause svg{stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round}
+
+/* === LOOKAHEAD STRIP === */
+.look{display:flex;align-items:stretch;gap:0;position:relative}
+.look .now{font-size:8px;font-weight:800;letter-spacing:.06em;color:var(--faint);writing-mode:vertical-rl;text-orientation:mixed;
+  display:flex;align-items:center;justify-content:center;padding:0 2px}
+.lane{flex:1;position:relative;display:flex;align-items:center;overflow:hidden}
+.lane::before{content:"";position:absolute;left:0;top:50%;width:100%;height:1px;background:linear-gradient(90deg,rgba(120,150,220,.4),rgba(120,150,220,.05))}
+/* threat token in strip */
+.tok{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;display:grid;place-items:center}
+.tok .sil{width:24px;height:24px;border-radius:6px;border:1px solid;display:grid;place-items:center}
+.tok .pd{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;border:1.4px solid #fff}
+.tok .gl{width:10px;height:10px;border-radius:2px;opacity:.85}
+.sil.s-blue{border-color:rgba(77,171,247,.5);background:rgba(77,171,247,.08)}
+.sil.s-red{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
+.sil.s-yellow{border-color:rgba(255,212,59,.5);background:rgba(255,212,59,.08)}
+.sil.s-white{border-color:rgba(232,232,240,.45);background:rgba(232,232,240,.06)}
+.pd.d-blue{background:var(--c-blue);box-shadow:0 0 6px var(--c-blue)}
+.pd.d-red{background:var(--c-red);box-shadow:0 0 6px var(--c-red)}
+.pd.d-yellow{background:var(--c-yellow);box-shadow:0 0 6px var(--c-yellow)}
+.gl.g-blue{background:var(--c-blue)} .gl.g-red{background:var(--c-red)} .gl.g-yellow{background:var(--c-yellow)} .gl.g-white{background:var(--white)}
+
+/* A: top strip */
+.strip-top{position:absolute;left:8px;right:8px;top:42px;height:34px;z-index:5;
+  background:rgba(10,11,18,.62);border:1px solid rgba(120,150,220,.18);border-radius:11px;
+  backdrop-filter:blur(4px);box-shadow:0 4px 14px -6px #000}
+.strip-top .look{height:100%}
+.strip-top .now{color:var(--c-blue)}
+
+/* B: bottom strip docked above slots */
+.strip-bot{height:38px;flex:none;margin:0 9px 5px;
+  background:rgba(10,11,18,.7);border:1px solid rgba(120,150,220,.2);border-radius:11px;
+  box-shadow:0 -2px 12px -6px #000,inset 0 1px 0 rgba(255,255,255,.03);position:relative}
+.strip-bot .look{height:100%}
+.strip-bot .now{color:var(--c-blue);font-size:8.5px}
+/* connector arrows down to slots */
+.conn{position:absolute;bottom:-5px;width:8px;height:8px;background:rgba(10,11,18,.7);
+  border-right:1px solid rgba(120,150,220,.2);border-bottom:1px solid rgba(120,150,220,.2);transform:rotate(45deg)}
+
+/* C: side rail */
+.rail{position:absolute;right:7px;top:46px;bottom:140px;width:34px;z-index:5;
+  background:rgba(10,11,18,.6);border:1px solid rgba(120,150,220,.18);border-radius:11px;
+  backdrop-filter:blur(4px);display:flex;flex-direction:column;padding:6px 0}
+.rail .top-lbl{font-size:7.5px;font-weight:800;color:var(--c-blue);text-align:center;letter-spacing:.04em}
+.rail .vlane{flex:1;position:relative}
+.rail .vlane::before{content:"";position:absolute;left:50%;top:0;width:1px;height:100%;background:linear-gradient(180deg,rgba(120,150,220,.4),rgba(120,150,220,.05))}
+.rvtok{position:absolute;left:50%;transform:translateX(-50%);width:26px;height:26px;display:grid;place-items:center}
+
+/* control panel */
+.panel{flex:none;background:var(--panel);padding:8px 10px 10px;display:flex;flex-direction:column;gap:7px;border-top:1px solid #1a1a24}
+.ctrls{display:flex;align-items:flex-end;justify-content:space-between;height:62px;padding:0 4px}
+.cbtn{width:50px;height:50px;border-radius:50%;background:rgba(21,21,29,.92);border:2px solid var(--border);
+  display:grid;place-items:center;font-size:8px;color:var(--text2);font-weight:700;position:relative}
+.cbtn svg{stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cbtn small{position:absolute;bottom:-13px;font-size:8px;color:var(--faint);white-space:nowrap}
+.skill{width:38px;height:38px;margin-bottom:11px}
+.slots{display:flex;gap:6px}
+.slot{flex:1;height:34px;border-radius:9px;background:var(--surface);border:1.5px solid var(--border);display:grid;place-items:center;position:relative}
+.slot .sd{width:13px;height:13px;border-radius:3px}
+.slot.active{border-color:var(--c-blue);box-shadow:0 0 10px -1px rgba(77,171,247,.5);background:var(--surface-a);transform:translateY(-2px)}
+.slot.lock{opacity:.4}
+.sd-blue{background:var(--c-blue)} .sd-red{background:var(--c-red)} .sd-yellow{background:var(--c-yellow)} .sd-purple{background:var(--c-purple)}
+.slot .lk{position:absolute;font-size:11px;color:var(--faint)}
+/* highlight pulse on slot that strip points to */
+@keyframes slotcue{0%,100%{box-shadow:0 0 6px -1px rgba(255,107,107,.4)}50%{box-shadow:0 0 14px 1px rgba(255,107,107,.8)}}
+.slot.cue{border-color:var(--c-red);animation:slotcue 1.1s ease-in-out infinite}
+
+/* notes */
+.notes{margin-top:46px;max-width:880px;border-top:1px solid var(--border);padding-top:26px}
+.notes h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-yellow);margin-bottom:14px}
+.notes ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.notes li{font-size:12.5px;line-height:1.6;color:var(--text2);padding-left:18px;position:relative}
+.notes li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--c-blue)}
+.notes li b{color:var(--text)}
+.notes code{color:var(--c-yellow);font-size:11.5px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:11px;color:var(--text2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dotk{width:9px;height:9px;border-radius:50%;border:1.4px solid #fff}
+</style></head>
+<body>
+<div class="h">weaver · 디자인 세션 · 인게임 HUD</div>
+<h1>전방 위협 미리보기 스트립 — 배치 3안</h1>
+<p class="lede">
+  <b>목적</b> = SwapWindow 보강(spec §4.7 결정 E). 카메라 단독 전방 시야 = <code>1.3~1.9s</code> &lt; 목표 2.5s →
+  코어 루프가 "반사신경·색맞추기"로 퇴화 위험. 스트립이 화면 진입 <b>전</b> 다가올 위협을 보여 스왑 시간을 벌어준다.<br>
+  <b>표시 = 위협 실루엣 + 머리 위 dot(카테고리 색 단서) + 도착 타이밍.</b> 인게임 dot은 실제 위협에 이미 보이므로(입장 프리뷰만 dot 숨김 — §6.2) 스트립도 dot 표시 = 퍼즐 일관.
+  <b>스트립 에셋 = 입장 프리뷰 재사용(신규 아트 0).</b> 아래 토큰 도형은 레이아웃 placeholder — 실제 = <code>assets/weaver/monster/</code> 스프라이트.
+</p>
+
+<div class="wrap">
+
+  <!-- ===== A: TOP ===== -->
+  <div class="col">
+    <div class="cap">A · 상단 타임라인<span class="tag tag-alt">대안</span></div>
+    <div class="sub"><b>위협이 오는 방향(전방)과 공간적으로 일치.</b> 단 게임 영역 상단을 덮어 위협 가독을 침범할 수 있음(paranoia #5 리스크) + 시선이 액션과 같은 영역.</div>
+    <div class="phone"><div class="screen">
+      <div class="game">
+        <div class="core"></div><div class="floor"></div>
+        <div class="hero"></div>
+        <div class="live-threat"><div class="body"></div><div class="dot"></div></div>
+        <!-- HUD -->
+        <div class="hud">
+          <div class="pill"><span class="st">ST14</span><span class="pbar"><i></i></span></div>
+          <div class="pill lap">1.2/3</div>
+          <div class="hearts"><span class="hb on"></span><span class="hb on"></span><span class="hb off"></span></div>
+          <div class="pause"><svg width="11" height="11" viewBox="0 0 11 11"><line x1="3.5" y1="2" x2="3.5" y2="9"/><line x1="7.5" y1="2" x2="7.5" y2="9"/></svg></div>
+        </div>
+        <!-- strip -->
+        <div class="strip-top">
+          <div class="look">
+            <div class="now">NOW</div>
+            <div class="lane">
+              <div class="tok" style="left:14%"><div class="sil s-red"><div class="gl g-red"></div></div><div class="pd d-red"></div></div>
+              <div class="tok" style="left:44%"><div class="sil s-blue"><div class="gl g-blue"></div></div><div class="pd d-blue"></div></div>
+              <div class="tok" style="left:70%"><div class="sil s-white"><div class="gl g-white"></div></div></div>
+              <div class="tok" style="left:90%;opacity:.5"><div class="sil s-yellow"><div class="gl g-yellow"></div></div><div class="pd d-yellow"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ctrls">
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 7l5 4 5-4"/></svg><small>슬라이드</small></div>
+          <div class="cbtn skill"><svg width="13" height="13" viewBox="0 0 13 13"><path d="M6.5 1l1.5 4 4 .3-3 2.6 1 4-3.5-2.3L4 14l1-4-3-2.6 4-.3z"/></svg></div>
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 9l5-4 5 4"/></svg><small>점프</small></div>
+        </div>
+        <div class="slots">
+          <div class="slot cue"><div class="sd sd-red"></div></div>
+          <div class="slot active"><div class="sd sd-blue"></div></div>
+          <div class="slot"><div class="sd sd-yellow"></div></div>
+          <div class="slot lock"><span class="lk">🔒</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== B: BOTTOM (RECOMMEND) ===== -->
+  <div class="col">
+    <div class="cap">B · 하단 스트립 (슬롯 직상)<span class="tag tag-rec">추천</span></div>
+    <div class="sub"><b>시선→엄지 루프가 가장 짧다</b> — 스트립의 다가오는 🔴 → 바로 아래 🔴 슬롯 탭. 게임 영역 밖이라 위협 가독 침범 0(paranoia #5 충족). 손이 이미 있는 하단 존(#3).</div>
+    <div class="phone"><div class="screen">
+      <div class="game">
+        <div class="core"></div><div class="floor"></div>
+        <div class="hero"></div>
+        <div class="live-threat"><div class="body"></div><div class="dot"></div></div>
+        <div class="hud">
+          <div class="pill"><span class="st">ST14</span><span class="pbar"><i></i></span></div>
+          <div class="pill lap">1.2/3</div>
+          <div class="hearts"><span class="hb on"></span><span class="hb on"></span><span class="hb off"></span></div>
+          <div class="pause"><svg width="11" height="11" viewBox="0 0 11 11"><line x1="3.5" y1="2" x2="3.5" y2="9"/><line x1="7.5" y1="2" x2="7.5" y2="9"/></svg></div>
+        </div>
+      </div>
+      <!-- strip docked above panel -->
+      <div class="strip-bot">
+        <div class="look">
+          <div class="now">SOON</div>
+          <div class="lane">
+            <div class="tok" style="left:13%"><div class="sil s-red"><div class="gl g-red"></div></div><div class="pd d-red"></div></div>
+            <div class="tok" style="left:42%"><div class="sil s-blue"><div class="gl g-blue"></div></div><div class="pd d-blue"></div></div>
+            <div class="tok" style="left:68%"><div class="sil s-white"><div class="gl g-white"></div></div></div>
+            <div class="tok" style="left:90%;opacity:.5"><div class="sil s-yellow"><div class="gl g-yellow"></div></div><div class="pd d-yellow"></div></div>
+          </div>
+        </div>
+        <div class="conn" style="left:18%"></div>
+      </div>
+      <div class="panel">
+        <div class="ctrls">
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 7l5 4 5-4"/></svg><small>슬라이드</small></div>
+          <div class="cbtn skill"><svg width="13" height="13" viewBox="0 0 13 13"><path d="M6.5 1l1.5 4 4 .3-3 2.6 1 4-3.5-2.3L4 14l1-4-3-2.6 4-.3z"/></svg></div>
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 9l5-4 5 4"/></svg><small>점프</small></div>
+        </div>
+        <div class="slots">
+          <div class="slot cue"><div class="sd sd-red"></div></div>
+          <div class="slot active"><div class="sd sd-blue"></div></div>
+          <div class="slot"><div class="sd sd-yellow"></div></div>
+          <div class="slot lock"><span class="lk">🔒</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== C: SIDE RAIL ===== -->
+  <div class="col">
+    <div class="cap">C · 우측 사이드 레일<span class="tag tag-alt">대안</span></div>
+    <div class="sub"><b>세로 = 트랙 진행축과 정렬</b>(아래=곧 도착). 게임폭을 살짝 좁히고 슬롯과 떨어져 시선-엄지 거리가 멂. 가로 스트립 대비 토큰 작아 가독 ↓.</div>
+    <div class="phone"><div class="screen">
+      <div class="game">
+        <div class="core"></div><div class="floor"></div>
+        <div class="hero"></div>
+        <div class="live-threat" style="right:30%"><div class="body"></div><div class="dot"></div></div>
+        <div class="hud">
+          <div class="pill"><span class="st">ST14</span><span class="pbar"><i></i></span></div>
+          <div class="pill lap">1.2/3</div>
+          <div class="hearts"><span class="hb on"></span><span class="hb on"></span><span class="hb off"></span></div>
+          <div class="pause"><svg width="11" height="11" viewBox="0 0 11 11"><line x1="3.5" y1="2" x2="3.5" y2="9"/><line x1="7.5" y1="2" x2="7.5" y2="9"/></svg></div>
+        </div>
+        <!-- side rail -->
+        <div class="rail">
+          <div class="top-lbl">SOON</div>
+          <div class="vlane">
+            <div class="rvtok" style="top:8%;opacity:.5"><div class="sil s-yellow" style="width:20px;height:20px"><div class="gl g-yellow"></div></div><div class="pd d-yellow"></div></div>
+            <div class="rvtok" style="top:38%"><div class="sil s-white" style="width:20px;height:20px"><div class="gl g-white"></div></div></div>
+            <div class="rvtok" style="top:66%"><div class="sil s-blue" style="width:20px;height:20px"><div class="gl g-blue"></div></div><div class="pd d-blue"></div></div>
+            <div class="rvtok" style="top:90%"><div class="sil s-red" style="width:20px;height:20px"><div class="gl g-red"></div></div><div class="pd d-red"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ctrls">
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 7l5 4 5-4"/></svg><small>슬라이드</small></div>
+          <div class="cbtn skill"><svg width="13" height="13" viewBox="0 0 13 13"><path d="M6.5 1l1.5 4 4 .3-3 2.6 1 4-3.5-2.3L4 14l1-4-3-2.6 4-.3z"/></svg></div>
+          <div class="cbtn"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 9l5-4 5 4"/></svg><small>점프</small></div>
+        </div>
+        <div class="slots">
+          <div class="slot cue"><div class="sd sd-red"></div></div>
+          <div class="slot active"><div class="sd sd-blue"></div></div>
+          <div class="slot"><div class="sd sd-yellow"></div></div>
+          <div class="slot lock"><span class="lk">🔒</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <span><span class="dotk" style="background:var(--c-blue);box-shadow:0 0 6px var(--c-blue)"></span> 🔵 원거리</span>
+  <span><span class="dotk" style="background:var(--c-red);box-shadow:0 0 6px var(--c-red)"></span> 🔴 근접</span>
+  <span><span class="dotk" style="background:var(--c-yellow);box-shadow:0 0 6px var(--c-yellow)"></span> 🟡 대공</span>
+  <span><span class="dotk" style="background:var(--white);border-color:rgba(232,232,240,.6)"></span> ⚪ 몸 회피 (dot 없음 = 무기 정답 없음)</span>
+</div>
+
+<div class="notes">
+  <h2>설계 노트 · 결정 항목</h2>
+  <ul>
+    <li><b>왜 dot을 표시하나</b> — §6.2 퍼즐이 "생김새 추측"에서 "dot 색 보고 반응"으로 이동. 인게임 위협엔 dot이 이미 보이므로 스트립도 dot 표시 = 반응창 <b>연장</b>(입장 프리뷰만 dot 숨김 = 로드아웃 결정 유지). 스트립이 dot을 숨기면 거부된 "생김새 추측"을 강요 = 모순.</li>
+    <li><b>읽기 방향</b> — 왼쪽(NOW/SOON, 임박) → 오른쪽(~2.5s 후). 위협이 우→좌로 흐르며 다가옴(캐릭터 기본 우향과 정합). 토큰은 도착에 맞춰 좌측으로 슬라이드.</li>
+    <li><b>퇴화 방지</b> — 스트립은 SwapWindow <b>완화책</b>이지 단순 색맞추기 유발이 아님. 깊이 = 로드아웃(어느 변형 챙길까) + 동시 다수 위협 + 변형 최적화(§6.2)에서 유지. ⚪(몸 회피)는 dot 없음 = "스왑 불요, 점프/슬라이드" 신호.</li>
+    <li><b>추천 = B (하단·슬롯 직상)</b> — ① 시선→엄지 루프 최단(스트립 🔴 → 직하 🔴 슬롯) ② 게임 영역 밖 = 위협 가독 침범 0(paranoia #5) ③ 손이 이미 있는 하단 존(paranoia #3). 트레이드오프 = 시선이 상단(액션)/하단(예고)로 분리되나, "예고 글랜스 → 선스왑 → 액션 주시" 순서로 자연.</li>
+    <li><b>오클루전 가드</b> — A는 게임 영역 상단 오버레이라 HUD 3중 가드(풀폭 금지·캐릭터 클램프·침범 시 페이드)에 합류 필요. B/C는 게임 영역 밖이라 가드 불요(더 안전).</li>
+    <li><b>표시 개수</b> — 동시 ~3개 권장(2.5s 분량). 4번째는 dim(예고만). 밀집 구간(겹침)은 토큰 겹쳐 쌓기 or "+2" 카운트.</li>
+    <li><b>슬롯 cue 연동(선택)</b> — 다가오는 위협 카테고리 슬롯에 미세 펄스(보드 🔴 슬롯). 강하면 자동 플레이감 → <b>약하게(opacity·glow만)</b> 또는 생략. 결정 항목.</li>
+    <li><b>제작 분담</b> — 디자인 = 스트립 토큰·레이아웃·dot 가독 룰(본 보드) / Unity 절차 = 위협 스폰 큐 → 스트립 토큰 인스턴스화·좌측 슬라이드·도착 동기. 스프라이트 = <code>threat_preview</code> 에셋 재사용.</li>
+  </ul>
+</div>
+</body></html>
