@@ -1,0 +1,151 @@
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weaver — 트랙 줄무늬 누적색 팔레트</title>
+<style>
+ :root{
+  --ink:#0C0C11;--panel:#12121A;--surf:#15151D;--border:#2A2A36;--border2:#363646;
+  --tx:#EEEEF2;--tx2:#9AA0B0;--tx3:#556070;--white:#E6EAF2;
+  --cat-blue:#4DABF7;--cat-red:#FF6B6B;--cat-yel:#FFD43B;--cat-pur:#B197FC;
+  --coin:#FFE08A;--crack:#FF5A5A;
+  --good:#51CF66;--warn:#FFD43B;
+  --mono:"SFMono-Regular",ui-monospace,Menlo,monospace;
+  --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,sans-serif;
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:radial-gradient(1000px 600px at 82% -10%,rgba(60,134,206,.06),transparent 60%),var(--ink);
+  color:var(--tx);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+ .wrap{max-width:1140px;margin:0 auto;padding:42px 22px 110px}
+ .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#7f93c4;margin:0 0 14px}
+ h1{font-size:clamp(27px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 14px;line-height:1.05}
+ h1 .dim{color:var(--tx3);font-weight:300}
+ .lede{max-width:790px;color:var(--tx2);font-size:15px;margin:0 0 4px}.lede b{color:var(--tx)}
+ .crumb{font-family:var(--mono);font-size:11px;color:var(--tx3);margin:0 0 26px}.crumb a{color:#7f93c4;text-decoration:none}
+ h2{font-size:13px;font-family:var(--mono);letter-spacing:.18em;text-transform:uppercase;color:#8fa0c0;margin:52px 0 6px;padding-top:24px;border-top:1px solid var(--border)}
+ .h2sub{color:var(--tx2);font-size:13.5px;margin:0 0 22px;max-width:830px}.h2sub b{color:var(--tx)}
+ /* track ribbon */
+ .ribbon-wrap{background:#050507;border:1px solid #1b1b26;border-radius:14px;padding:26px 24px}
+ .ribbon{height:54px;border-radius:6px;position:relative;overflow:hidden;border:1px solid rgba(150,165,195,.12)}
+ .rlabel{font-family:var(--mono);font-size:10.5px;color:var(--tx3);margin:14px 0 6px}
+ .rlabel b{color:var(--tx2)}
+ /* palette grid */
+ .pal{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+ @media(max-width:760px){.pal{grid-template-columns:repeat(2,1fr)}}
+ .sw{background:var(--surf);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+ .sw .strip{height:62px;position:relative}
+ .sw .meta{padding:9px 11px}
+ .sw .nm{font-size:12.5px;font-weight:700}
+ .sw .hx{font-family:var(--mono);font-size:11px;color:var(--tx2);margin-top:2px}
+ .sw .stg{font-family:var(--mono);font-size:9.5px;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase}
+ /* collision test */
+ .ct{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+ @media(max-width:760px){.ct{grid-template-columns:repeat(2,1fr)}}
+ .ctile{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px}
+ .ctrack{height:80px;border-radius:8px;position:relative;overflow:hidden;border:1px solid rgba(150,165,195,.12);display:flex;align-items:center;justify-content:space-around}
+ .dot{width:18px;height:18px;border-radius:50%;position:relative;z-index:2}
+ .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;opacity:.5;filter:blur(3px);background:inherit}
+ .ctile .cap{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:9px;text-align:center}
+ .ctile .cap b{color:var(--good)}
+ .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);margin:14px 0 0}
+ .legend span{display:inline-flex;align-items:center;gap:6px}
+ .chip{width:12px;height:12px;border-radius:3px;display:inline-block}
+ /* category bar */
+ .catbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+ .cc{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--border);border-radius:9px;padding:8px 12px}
+ .cc .d{width:20px;height:20px;border-radius:50%}
+ .cc .t{font-family:var(--mono);font-size:11px;color:var(--tx2)}
+ .note{font-size:12px;color:var(--tx3);font-family:var(--mono);margin-top:10px}
+ .dec{background:linear-gradient(180deg,#14161f,#101018);border:1px solid var(--border2);border-radius:14px;padding:18px 20px;margin-top:16px}
+ .dec .q{font-size:14px;font-weight:700;margin:0 0 4px}.dec .qn{font-family:var(--mono);font-size:10px;color:#4DABF7;letter-spacing:.1em}
+ .dec p{font-size:12.5px;color:var(--tx2);margin:6px 0 0}.dec p b{color:var(--tx)}
+ .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:560px){.g2{grid-template-columns:1fr}}
+ .footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--tx3);font-family:var(--mono)}
+</style>
+<div class="wrap">
+ <div class="kicker">weaver · design session · track_surface 팔레트 절</div>
+ <h1>트랙 줄무늬 <span class="dim">누적색 팔레트</span></h1>
+ <p class="lede">트랙면 rev.3 = <b>흰색 고정 + 누적색(accent) 스테이지별 순환</b>(<code>Accents[idx%N]</code> — 코드 구현됨). 흐름 매핑 = 순환 확정(2026-06-21 인터뷰). <b>남은 건 팔레트 색값·개수</b> — 이 보드가 그 결정판이다. SoT = design-system <code>track_surface</code> 팔레트 절(코드 배열 = 미러).</p>
+ <p class="crumb"><a href="track-surface-board.html">← 트랙면 룩 rev.3</a> · spec §9.3 채도=정보 규율 · paranoia #5/#6 · 핵심 게이트 = <b>카테고리 dot이 트랙 위에서 떠야 함</b></p>
+
+ <h2>기준 — 카테고리 4색 (트랙이 침범하면 안 되는 정보색)</h2>
+ <p class="h2sub">트랙 누적색은 아래 4색의 <b>채도/명도와 구분</b>되는 쿨·중채도여야. 위협 dot·코인이 트랙보다 밝게 떠야 가독 1순위 유지(§9.3).</p>
+ <div class="catbar">
+   <div class="cc"><span class="d" style="background:#4DABF7;box-shadow:0 0 8px #4DABF7"></span><span class="t">🔵 #4DABF7</span></div>
+   <div class="cc"><span class="d" style="background:#FF6B6B;box-shadow:0 0 8px #FF6B6B"></span><span class="t">🔴 #FF6B6B</span></div>
+   <div class="cc"><span class="d" style="background:#FFD43B;box-shadow:0 0 8px #FFD43B"></span><span class="t">🟡 #FFD43B</span></div>
+   <div class="cc"><span class="d" style="background:#B197FC;box-shadow:0 0 8px #B197FC"></span><span class="t">🟣 #B197FC</span></div>
+   <div class="cc"><span class="d" style="background:#FFE08A;box-shadow:0 0 6px #FFE08A"></span><span class="t">🪙 #FFE08A</span></div>
+ </div>
+ <p class="note">→ 누적색 전략 = <b>전부 어둡고 중채도</b>(value↓·sat 중)로 "트랙 = 인프라" 톤. 카테고리는 밝게 떠서 정보로 읽힘.</p>
+
+ <h2>제안 팔레트 — 쿨 8색 순환 (흰색 고정 + accent)</h2>
+ <p class="h2sub">쿨 아크(azure→cobalt→steel-violet→steel-cyan→teal→jade→sky→ocean) 8색. <b>전부 카테고리 4색보다 어둡고 채도↓.</b> 각 = 흰색과 짝지어 줄무늬. 스테이지마다 순환(stage idx % 8).</p>
+ <div class="pal" id="pal"></div>
+ <p class="note">개수 = 8 (스킨 8·변주 다양성 정합 — 9번째 스테이지부터 stage1 색 재순환). 임시 코드값에서 <b>카테고리 근접색 정밀화</b>(periwinkle·violet을 더 어둡게/teal 쪽으로).</p>
+
+ <h2>★ 충돌 테스트 — 트랙 위에서 dot이 뜨는가 (결정 게이트)</h2>
+ <p class="h2sub">가장 위험한 케이스 = 트랙 누적색이 <b>같은 계열 카테고리 dot</b>을 죽이는 것. 각 accent 줄무늬 위에 🔵🔴🟡🟣 dot을 올려 확인 — dot이 더 밝게 떠야 PASS.</p>
+ <div class="ct" id="ct"></div>
+ <div class="legend">
+   <span><span class="chip" style="background:#E6EAF2"></span>흰 고정 줄</span>
+   <span><span class="chip" style="background:#2E78D6"></span>accent 줄(스테이지색)</span>
+   <span style="color:var(--good)">✅ dot이 줄무늬 위로 뜸 = 채도=정보 유지</span>
+ </div>
+
+ <h2>스테이지 순환 미리보기 — stage 1 → 8</h2>
+ <p class="h2sub">진행하며 트랙 누적색이 바뀌어 "다른 스테이지" 신호. 흰색·게임 요소는 불변(가독 앵커).</p>
+ <div id="cycle"></div>
+
+ <h2>결정 · 다음</h2>
+ <div class="g2">
+   <div class="dec"><div class="qn">Q1 · 색값/개수</div><p class="q">쿨 8색 + 정밀화값 이대로 확정?</p><p>개수 8 유지 / 카테고리 근접색(periwinkle·violet) 정밀화 OK? 또는 개수·특정 색 조정.</p></div>
+   <div class="dec"><div class="qn">Q2 · 줄무늬 비율</div><p class="q">흰:accent 비율·줄 굵기 = 이대로?</p><p>현 데모 = 균등 교대(하드 엣지). 흰 우세/accent 우세 선호 있으면 조정(가독엔 흰 우세가 안전).</p></div>
+ </div>
+ <p class="note" style="margin-top:14px">확정 시 → design-system <code>track_surface</code> 팔레트 절(SoT) + 리드 escalate(unity <code>TrackStripePalette.Accents</code> 배열 = 미러 갱신). 매핑·구현은 이미 완료 — 색값만 교체.</p>
+
+ <div class="footer">weaver · 트랙 줄무늬 누적색 팔레트 · SoT = design-system track_surface · 코드 미러 = TrackStripePalette.cs · 흐름 순환 = 2026-06-21 확정</div>
+</div>
+<script>
+// 제안 팔레트 (쿨 아크 8 — 카테고리 4색보다 어둡고 중채도)
+const PAL=[
+ {nm:"Azure",hx:"#2E78D6",note:"앵커(확정 룩 기준)"},
+ {nm:"Cobalt",hx:"#3E63C0",note:"코발트-인디고"},
+ {nm:"Steel-Violet",hx:"#5A5AA8",note:"저채도(🟣 #B197FC 와 명도 분리)"},
+ {nm:"Steel-Cyan",hx:"#2E8CAE",note:"스틸 시안"},
+ {nm:"Teal",hx:"#1F9E96",note:"청록 — 카테고리 미사용 안전 hue"},
+ {nm:"Jade",hx:"#2BA678",note:"제이드-그린틸"},
+ {nm:"Sky",hx:"#3D7EC8",note:"스카이-스틸(🔵 #4DABF7 보다 어둡게)"},
+ {nm:"Ocean",hx:"#2C93B5",note:"오션 시안"},
+];
+const WHITE="#E6EAF2";
+function ribbon(accent,h){
+ // 흰 고정 + accent 교대 하드엣지 줄무늬 (수직 띠 = 주행 시 스쳐가는 속도감)
+ return `background:repeating-linear-gradient(90deg, ${WHITE} 0 14px, ${accent} 14px 30px);`;
+}
+// palette swatches
+document.getElementById("pal").innerHTML=PAL.map((p,i)=>`
+ <div class="sw">
+   <div class="strip" style="${ribbon(p.hx)}"></div>
+   <div class="meta"><div class="stg">stage ${i+1}</div><div class="nm">${p.nm}</div><div class="hx">${p.hx} · 흰 ${WHITE}</div><div class="stg" style="text-transform:none;color:#6b7488;margin-top:3px">${p.note}</div></div>
+ </div>`).join("");
+// collision test — 4 representative accents (가장 위험한 = 파랑/violet 계열) × category dots
+const CATS=[["🔵","#4DABF7"],["🔴","#FF6B6B"],["🟡","#FFD43B"],["🟣","#B197FC"]];
+const RISK=[PAL[0],PAL[2],PAL[3],PAL[6]]; // azure, steel-violet, steel-cyan, sky (블루/퍼플 근접)
+document.getElementById("ct").innerHTML=RISK.map(p=>`
+ <div class="ctile">
+   <div class="ctrack" style="${ribbon(p.hx)}">
+     ${CATS.map(([e,c])=>`<span class="dot" style="background:${c}"></span>`).join("")}
+   </div>
+   <div class="cap">${p.nm} <b style="color:#9AA0B0">${p.hx}</b> 위 · dot <b>PASS</b></div>
+ </div>`).join("");
+// stage cycle preview — track segment with accent, white anchor + a sample dot/character mark
+let cyc="";
+for(let i=0;i<8;i++){
+ cyc+=`<div style="margin-bottom:10px"><div class="rlabel"><b>stage ${i+1}</b> · ${PAL[i].nm} ${PAL[i].hx}</div>
+  <div class="ribbon" style="${ribbon(PAL[i].hx)}">
+    <span style="position:absolute;left:18%;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:#4DABF7;box-shadow:0 0 8px #4DABF7;z-index:2"></span>
+    <span style="position:absolute;left:46%;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:#FF6B6B;box-shadow:0 0 8px #FF6B6B;z-index:2"></span>
+    <span style="position:absolute;left:74%;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:#FFD43B;box-shadow:0 0 8px #FFD43B;z-index:2"></span>
+  </div></div>`;
+}
+document.getElementById("cycle").innerHTML=`<div class="ribbon-wrap">${cyc}<p class="note">흰 고정 줄 + 스테이지별 accent → dot(🔵🔴🟡)은 전 스테이지에서 동일하게 위로 뜸(정보 불변). 트랙색만 진행 신호.</p></div>`;
+</script>
