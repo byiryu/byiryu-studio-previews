@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>IWF 에셋 트래커</title>
+<style>
+  :root{
+    --ground:#14181c;--panel:#1b2228;--panel2:#212a31;--line:#2d383f;
+    --text:#dde4e1;--muted:#8a9691;
+    --have:#6f7d77;--stage:#e8a33d;--missing:#c2565b;--target:#56c2d0;--gold:#d8b768;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:ui-sans-serif,system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--target)}
+  header{border-bottom:1px solid var(--line);padding:34px 0 26px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
+  h1{margin:10px 0 0;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+  .sub{color:var(--muted);font-size:14px;margin-top:10px;max-width:64ch}
+  .updated{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:14px}
+  /* readiness summary */
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:26px 0}
+  .scard{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:13px 15px}
+  .scard .cat{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .scard .ratio{font-size:21px;font-weight:800;margin-top:4px;font-family:var(--mono)}
+  .meter{height:6px;background:var(--panel2);border-radius:3px;margin-top:8px;overflow:hidden;display:flex}
+  .meter i{height:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:8px 0 0}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  /* category sections */
+  section{padding:30px 0;border-bottom:1px solid var(--line)}
+  .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .shead h2{margin:0;font-size:18px;text-transform:uppercase;font-family:var(--mono);letter-spacing:.04em}
+  .shead .note{color:var(--muted);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--panel2);vertical-align:top}
+  tr:hover td{background:var(--panel)}
+  .badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 7px;border-radius:3px;white-space:nowrap;text-transform:uppercase}
+  .b-have{background:rgba(111,125,119,.18);color:var(--have)}
+  .b-stage{background:rgba(232,163,61,.15);color:var(--stage)}
+  .b-missing{background:rgba(194,86,91,.16);color:var(--missing)}
+  .b-target{background:rgba(86,194,208,.14);color:var(--target)}
+  .pri{font-family:var(--mono);font-size:11px;font-weight:700}
+  .p0{color:var(--missing)}.p1{color:var(--stage)}.p2{color:var(--muted)}
+  .cnt{font-family:var(--mono);color:var(--muted);font-size:12px}
+  .src{color:var(--muted);font-size:12px}
+  .ms{font-family:var(--mono);font-size:11px;color:var(--gold)}
+  .flag{background:rgba(194,86,91,.10);border-left:3px solid var(--missing);padding:12px 15px;border-radius:4px;margin-top:16px;font-size:13px;color:var(--muted)}
+  .flag b{color:var(--text)}
+  footer{padding:26px 0 56px;color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+  @media(max-width:680px){table,thead,tbody,th,td,tr{display:block}thead{display:none}td{border:none;padding:3px 0}tr{border-bottom:1px solid var(--line);padding:12px 0;display:block}td::before{content:attr(data-l)" ";font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">infinite warfield · 에셋 트래커</div>
+  <h1>제작 에셋 추적 보드</h1>
+  <p class="sub">필요 에셋 전체 목록과 현 상태를 한눈에. 코드 실측(PM 정밀 감사 2026-06-23) + design staging 기준. SPUM = 폐기 대상, 신규 = Unity 2D Animation 본 + Sprite Library 부위(몸/머리/무기).</p>
+  <div class="updated">갱신 2026-06-23 · 출처 = PM 6에이전트 감사 · 상태 = 코드/디스크 실측</div>
+  <div class="summary">
+    <div class="scard"><div class="cat">유닛 비주얼</div><div class="ratio">17 / 38</div><div class="meter"><i style="width:45%;background:var(--have)"></i><i style="width:55%;background:var(--missing)"></i></div></div>
+    <div class="scard"><div class="cat">VFX (게임필)</div><div class="ratio">0 / 16</div><div class="meter"><i style="width:100%;background:var(--missing)"></i></div></div>
+    <div class="scard"><div class="cat">UI</div><div class="ratio">디버그뿐</div><div class="meter"><i style="width:30%;background:var(--have)"></i><i style="width:70%;background:var(--missing)"></i></div></div>
+    <div class="scard"><div class="cat">배경</div><div class="ratio">0 / 5</div><div class="meter"><i style="width:100%;background:var(--missing)"></i></div></div>
+    <div class="scard"><div class="cat">오디오</div><div class="ratio">0</div><div class="meter"><i style="width:100%;background:var(--missing)"></i></div></div>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--have)"></span>현존(SPUM·교체대상)</span>
+    <span><span class="dot" style="background:var(--stage)"></span>스테이징(미임포트)</span>
+    <span><span class="dot" style="background:var(--missing)"></span>미존재</span>
+    <span><span class="dot" style="background:var(--target)"></span>목표 신규제작</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+  <section>
+    <div class="shead"><h2>유닛 비주얼</h2><span class="note">영웅3 + 일반34 (+dummy 별도). SPUM 폐기 → 부위 분리 본 리그</span></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>개수</th><th>제작 경로</th><th>우선</th><th>M</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">영웅 3종 (전사·흑마법사·소환사)</td><td data-l="상태"><span class="badge b-have">현존 SPUM</span></td><td class="cnt" data-l="개수">3</td><td class="src" data-l="경로">PixelLab 부위 → Unity 2D Anim 리깅</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">일반 100~113 (14체)</td><td data-l="상태"><span class="badge b-have">현존 SPUM</span></td><td class="cnt" data-l="개수">14</td><td class="src" data-l="경로">부위 본 리그 교체</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">일반 114~133 (21체)</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">21</td><td class="src" data-l="경로">Legacy 공용 폴백 중(크래시 X) → 신규 제작</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">부위 세트 (몸·머리·무기 ×37)</td><td data-l="상태"><span class="badge b-target">목표 신규</span></td><td class="cnt" data-l="개수">~114 세트</td><td class="src" data-l="경로">PixelLab 생성 → 리깅(사람+Auto-Bone) → Sprite Library</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">영웅 키아트 후보 (B2+B3)</td><td data-l="상태"><span class="badge b-stage">스테이징</span></td><td class="cnt" data-l="개수">38장</td><td class="src" data-l="경로">PixelLab 매몰자원 — P0 슬라이스서 재활용 검토</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+      </tbody>
+    </table>
+    <div class="flag"><b>P0 슬라이스 선행:</b> 부위스왑 1체 end-to-end(PixelLab 부위 → Unity 2D Animation 리깅 → Sprite Resolver 교체) + 30유닛 성능 검증 통과 후 양산. 매체게이트 = AI 렌더로만 판정.</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>VFX · 게임필</h2><span class="note">★ 엔진 16이펙트 완비·시각 0 = 제품 자체 미구축</span></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>개수</th><th>제작 경로</th><th>우선</th><th>M</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">FUN GATE juice 3종 (히트플래시·소환팝·사망페이드)</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">3</td><td class="src" data-l="경로">plat placeholder 코드 (기존 hook) — 게이트 전</td><td data-l="우선"><span class="pri p0">P0</span></td><td class="ms" data-l="M">FUN GATE</td></tr>
+        <tr><td data-l="항목">스킬 이펙트 VFX (16 SkillEffect)</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">0 / 16</td><td class="src" data-l="경로">디자인 VFX 무드보드 → Shuriken+스프라이트</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">투사체 3종 (Arrow·Orb·Flame)</td><td data-l="상태"><span class="badge b-have">현존 기본</span></td><td class="cnt" data-l="개수">3</td><td class="src" data-l="경로">룩 개선 = M3</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="shead"><h2>UI</h2><span class="note">프로덕션 전투 HUD = DebuggerGUI(에디터 IMGUI)뿐 · 메인씬 미착수</span></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>개수</th><th>제작 경로</th><th>우선</th><th>M</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">메인씬 (영웅 프레즌스·PLAY CTA·진행 티저)</td><td data-l="상태"><span class="badge b-missing">미착수</span></td><td class="cnt" data-l="개수">paranoia#1 3요소</td><td class="src" data-l="경로">와이어프레임 → 디자인 → plat (스토어 스샷 불가 상태)</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">전투 HUD (코스트게이지·덱슬롯·HP바)</td><td data-l="상태"><span class="badge b-missing">디버그뿐</span></td><td class="cnt" data-l="개수">DebuggerGUI 대체</td><td class="src" data-l="경로">와이어(44pt 터치·난전 가독) → plat</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">결과·강화·환생·업적·전투준비 UI</td><td data-l="상태"><span class="badge b-have">현존</span></td><td class="cnt" data-l="개수">프리팹 6+</td><td class="src" data-l="경로">코드 완성 → 스킨 패스만</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">인트로/메인 버튼·아이콘</td><td data-l="상태"><span class="badge b-have">현존 SPUM</span></td><td class="cnt" data-l="개수">10</td><td class="src" data-l="경로">design-system 정식화</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">재화 아이콘 · TMP FontAsset · 앱 아이콘</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">0</td><td class="src" data-l="경로">디자인 → plat / 출시 자료</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3·M4</td></tr>
+        <tr><td data-l="항목">업적 아이콘 (23)</td><td data-l="상태"><span class="badge b-stage">미연결</span></td><td class="cnt" data-l="개수">23</td><td class="src" data-l="경로">연결 확인 → 필요 시 제작</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="shead"><h2>배경</h2><span class="note">타이틀·메인 후보 스테이징 / 전투 5테마 미존재</span></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>개수</th><th>제작 경로</th><th>우선</th><th>M</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">타이틀 배경 후보</td><td data-l="상태"><span class="badge b-stage">스테이징</span></td><td class="cnt" data-l="개수">5</td><td class="src" data-l="경로">선택 → 임포트</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">메인 배경 후보</td><td data-l="상태"><span class="badge b-stage">스테이징</span></td><td class="cnt" data-l="개수">8</td><td class="src" data-l="경로">선택 → 임포트</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M3</td></tr>
+        <tr><td data-l="항목">전투 배경 5테마 (combat·necro·spirit·beast·machine)</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">0 / 5</td><td class="src" data-l="경로">테마별 신규 제작</td><td data-l="우선"><span class="pri p1">P1</span></td><td class="ms" data-l="M">M3</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="shead"><h2>오디오</h2><span class="note">★ AudioSource 코드 레퍼런스 자체 전무 — 첫 음향 트리거</span></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>개수</th><th>제작 경로</th><th>우선</th><th>M</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">SFX (소환·타격·스킬·승패·UI)</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">~20</td><td class="src" data-l="경로">jsfxr·CC0 (비용0) + SoundManager 신설</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M4</td></tr>
+        <tr><td data-l="항목">BGM 5테마 + 메뉴</td><td data-l="상태"><span class="badge b-missing">미존재</span></td><td class="cnt" data-l="개수">0 / 6</td><td class="src" data-l="경로">AI 음악(Suno/Udio 라이선스) 또는 CC0</td><td data-l="우선"><span class="pri p2">P2</span></td><td class="ms" data-l="M">M4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="border-bottom:none">
+    <div class="shead"><h2>폰트 · 기타</h2></div>
+    <table>
+      <thead><tr><th>항목</th><th>상태</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td data-l="항목">NotoSansKR · Tenada</td><td data-l="상태"><span class="badge b-have">현존</span></td><td class="src" data-l="비고">TMP FontAsset 미생성 = M3 변환</td></tr>
+        <tr><td data-l="항목">staging 원본 (19MB)</td><td data-l="상태"><span class="badge b-stage">스테이징</span></td><td class="src" data-l="비고">assets/infinite-warfield/ — 키아트38·리깅포즈10·배경13·코스트UI·json2</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>infinite warfield · 에셋 트래커 · 갱신 시 SoT = design/infinite-warfield/asset-manifest.md · 상태 변경은 본 보드 + manifest 동기</footer>
+</main>
+</body>
+</html>
