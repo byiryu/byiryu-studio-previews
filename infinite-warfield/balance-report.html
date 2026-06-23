@@ -61,6 +61,7 @@
     <div class="flag"><div class="t">구조 결함 1 · critical</div><b>본편(1~50) 난이도 곡선 부재</b> — 250/250 스테이지 <code>statMultiplier=1.0</code> 평탄. 난이도 변수 = 적 수 8→15 단조 증가 단일축뿐. 플레이어는 +145% 무한 강화하는데 적은 base 고정 → 강화 몇 단계면 본편 무저항(성장⊥난이도 디커플).</div>
     <div class="flag"><div class="t">구조 결함 2 · critical</div><b>딜러 코스트-효율 역전</b> — DPS/cost가 cost3(~19) &gt; cost4(~13) &gt; cost5(8.5). <b>저코스트일수록 효율 높음 = cost3 스팸이 수학적 지배전략.</b> 전투경제(1.2초 간격)도 견제 못 함. 플랫 가산 강화로 만렙엔 절대 DPS 340~396 수렴 = 코스트 위계 붕괴.</div>
     <div class="flag"><div class="t">구조 결함 3 · high</div><b>보스 스테이지 무차별</b> — 10/20/30/40/50이 직전 일반 + 영웅 1체 삽입이 전부(statMult 1.0이라 영웅도 미강화). necro·spirit·beast·machine 보스 formation = StandardLine 단일. '보스전' 비트 부재.</div>
+    <div class="flag"><div class="t">구조 결함 4 · critical (★ counter-deck 퍼즐)</div><b>카운터 축 부재 — 미러 풀 + 단일 방어</b> — 적 풀 = 플레이어 풀 100% 미러(unitID {1,2,3,100~133}) + <code>CalculateDamage</code>가 물리/마법 둘 다 단일 <code>baseDef</code> 경감(<code>magicResist</code> 필드 전무). counter/weakness 게임코드 0건. → "이 적엔 이 덱"의 축이 0 = 무슨 덱이든 스탯이면 통과 = 퍼즐 해 유일하지 않음. <b>인터뷰: D3 방어 2축화(armor/magicResist) + D2 위협 아키타입 4종(재배치)으로 교정.</b></div>
     <div class="flag bug"><div class="t">버그 1 · 외부화 전 수정</div><b>일반 유닛 60렙 강화 비용 = 0</b> — <code>GeneralUnitStatEnhanceData.cs</code> UpgradeCosts 배열이 59개(60 아님). <code>GetUpgradeCost(60)</code>이 length 초과로 <code>return 0</code> → 공짜 강화. 외부화로 동결 시 영구화.</div>
     <div class="flag bug"><div class="t">버그 2 · 데이터 결손 의심</div><b>crit 전 37유닛 baseCritRate=0</b> → crit 시스템·<code>critMultiplier 1.5</code> 완전 미가동(죽은 코드?). + <code>MagicalAtkBonus = PhysicalAtkBonus</code> 동일 배열 = 마법딜러 강화 차별화 0.</div>
   </div>
@@ -158,7 +159,8 @@
     <div class="findings">
       <div class="fd"><span class="sev critical">P0</span><b>버그 2건 즉시 수정</b> (UpgradeCosts 59→60 · crit=0 결손/의도 확정) — 외부화 전.</div>
       <div class="fd"><span class="sev high">P0</span><b>밸런싱 노브 외부화</b> — 강화곡선·경제·스테이지 statMult를 <code>data/infinite-warfield/</code> JSON으로 → 빌드 없이 튜닝. <a href="unit-codex.html">코덱스</a>처럼 재생성.</div>
-      <div class="fd"><span class="sev medium">P1</span><b>구조 결함 3건</b> = FUN GATE 입력으로 최소 선반영(cost 곡선·statMult 곡선·보스 차별), 세부 수치는 외부화 후 실데이터 튜닝. <b>정밀 밸런싱은 P0 재미검증 후</b>(MVP-first — 사전검증 비대화 회피).</div>
+      <div class="fd"><span class="sev medium">P1</span><b>구조 결함 1~3</b> = FUN GATE 입력으로 최소 선반영(cost 곡선·statMult 곡선·보스 차별), 세부 수치는 외부화 후 실데이터 튜닝. <b>정밀 밸런싱은 P0 재미검증 후</b>(MVP-first — 사전검증 비대화 회피).</div>
+      <div class="fd"><span class="sev critical">코어</span><b>구조 결함 4 (카운터 축) = counter-deck 퍼즐 성립의 근본</b> — 인터뷰 D1~D4 확정: <b>D1</b> [B] 시너지+위협응수+보스비트 우선(코드≈0)→FUN GATE 후 [A]상성곱 한 테마 / <b>D2</b> 위협 아키타입 4종(재배치·미러 깨기) / <b>D3</b> 방어 2축화(armor/magicResist·공식 분기 1곳) / <b>D4</b> FUN GATE 후 점진(빈슬롯 카운터 시그니처·boss 기믹). 값 착수 = FUN GATE step-slice 통과 후. 상세 = balance-plan 결함④ · spec §7.1.</div>
     </div>
   </section>
 
