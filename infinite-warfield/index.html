@@ -15,13 +15,20 @@
   h1{margin:10px 0 0;font-size:clamp(26px,5vw,40px);font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
   .sub{color:var(--muted);margin-top:12px;font-size:14px}
   .status{font-family:var(--mono);font-size:11px;color:var(--amber);margin-top:8px}
-  .cards{display:grid;gap:14px;margin-top:32px}
-  a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px 22px;color:var(--text);transition:border-color .15s,transform .15s}
+  .section{display:flex;align-items:baseline;gap:10px;margin:36px 0 4px}
+  .section .label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);font-weight:700}
+  .section .hint{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .section .rule{flex:1;height:1px;background:var(--line)}
+  .cards{display:grid;gap:14px;margin-top:14px}
+  a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px 22px;color:var(--text);transition:border-color .15s,transform .15s}
   a.card:hover{border-color:var(--cyan);transform:translateY(-1px)}
   a.card .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
-  a.card h2{margin:6px 0 4px;font-size:19px}
+  a.card h2{margin:6px 0 4px;font-size:18px}
   a.card p{margin:0;color:var(--muted);font-size:13px}
-  .note{margin-top:30px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+  a.card.archived{opacity:.5;background:transparent;border-style:dashed}
+  a.card.archived:hover{opacity:.75;transform:none;border-color:var(--line)}
+  a.card.archived .k{color:var(--muted)}
+  .note{margin-top:34px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 </style>
 </head>
 <body>
@@ -31,51 +38,72 @@
   <p class="sub">좌우 대치 코스트 기반 실시간 유닛 소환 (2D 모바일). 활성 개발 — weaver 홀드.</p>
   <p class="status">● 비공개(unlisted) · 출시 전 · 직접 URL 접근 전용</p>
 
+  <div class="section">
+    <span class="label">디자인 · 확정</span>
+    <span class="rule"></span>
+    <span class="hint">승인 · 현행</span>
+  </div>
   <div class="cards">
-    <a class="card" href="audit/">
-      <div class="k">정밀 감사 보고서</div>
-      <h2>아키텍처 · 유닛 · 시스템 진단 →</h2>
-      <p>PM 6에이전트 감사. 잘됨/잘못/부족 영역별 + 개선 PLAN. "엔진 완성형 / 게임 미완".</p>
-    </a>
-    <a class="card" href="asset-tracker.html">
-      <div class="k">에셋 인벤토리 & 우선순위</div>
-      <h2>필요 에셋 전체 목록 · 우선순위 →</h2>
-      <p>5카테고리 전체 에셋 + 현황(있음/placeholder/0/확정) + <b>우선순위 레인(지금·M3·출시후·프리즈)</b> + 마일스톤 태그 + 프리즈 가드 + 스코프 컷 + CEO Q2~Q6(Q1 ✅ A 확정). 필터 토글. SoT = asset-manifest.md §0 · SPUM 전량 폐기·출시 전 37 전량 정합.</p>
-    </a>
-    <a class="card" href="sanity/juice-board.html">
-      <div class="k">juice 룩 가이드</div>
-      <h2>placeholder VFX 3종 데모 →</h2>
-      <p>히트 플래시 · 소환 팝 · 사망 페이드 룩 톤(색·이징·지속) LIVE 시연. FUN GATE 선행. SoT = juice-look-guide.md.</p>
-    </a>
-    <a class="card" href="sanity/feedback-board.html">
-      <div class="k">전투 피드백 색 3종</div>
-      <h2>효과적!/막힘/치명타! 가독 검증 →</h2>
-      <p>다크 전장 15v15 난전 위 플로팅 텍스트 색·모션 LIVE. 진영색 직교 + 난전 가독(paranoia #5) + 색맹 중복 코딩. SoT = juice-look-guide.md §④.</p>
-    </a>
-    <a class="card" href="sanity/flow-wireframe-board.html">
-      <div class="k">7화면 플로우 와이어프레임 · 가로모드</div>
-      <h2>인트로→메인→편성→전투→결과→강화→환생 →</h2>
-      <p>FUN GATE 통과 후 2순위. <b>가로모드(landscape)</b> 7화면 한 보드 플로우 일관성(전체 개관). ★ 메인 영웅 로스터 전제 폐기 — 최신 메인 흐름(스테이지 선택 중심)은 아래 "흐름 중심 와이어" 보드 참조. 네온 메타+다크 전장 · 아트=placeholder.</p>
-    </a>
     <a class="card" href="sanity/main-hud-wireframe-board.html">
-      <div class="k">흐름 중심 와이어 · 스테이지→편성→전투 · 가로</div>
-      <h2>코어 루프 + 메인(스테이지 선택)·편성(확인/조정)·전투 HUD →</h2>
-      <p><b>흐름 우선</b> 재설계(★ 영웅 프레즌스/배치 A/B/C 전제 폐기). 메인 = <b>스테이지 선택·진행 중심</b>(덱 UI 없음) · 편성 = <b>확인/조정(덱 유지) + 적 위협 응수</b> · 전투 HUD = paranoia #5 난전 가독. 사용자 흐름 확정 반영.</p>
+      <div class="k">흐름 와이어</div>
+      <h2>메인 · 편성 · 전투 HUD →</h2>
+      <p>스테이지 선택 → 편성(확인/조정) → 전투. 흐름·레이아웃 확정. 난전 가독(paranoia #5).</p>
     </a>
     <a class="card" href="sanity/meta-screens-wireframe-board.html">
-      <div class="k">메타 화면 전면 재설계 · 가로</div>
+      <div class="k">메타 화면</div>
       <h2>결과 · 강화 · 환생 · 업적 · 미션 · 상점 →</h2>
-      <p>메인·편성·전투 외 <b>나머지 전 메타 화면 UX-first 재설계</b>(★ 구 "코드 완성=스킨 패스" 폐기·사용자 교정). 미션·상점 = 내용 신규 <b>제안</b>(광고 보상·재화 IAP). 열린 결정 = 미션/상점 MVP 범위.</p>
+      <p>그 외 전 메타 화면 재설계. 미션·상점 MVP 범위 = 리드 결정 대기.</p>
+    </a>
+    <a class="card" href="sanity/juice-board.html">
+      <div class="k">juice 룩</div>
+      <h2>히트 · 소환 · 사망 VFX →</h2>
+      <p>placeholder VFX 3종 룩 톤(색·이징·지속). SoT = juice-look-guide.md.</p>
+    </a>
+    <a class="card" href="sanity/feedback-board.html">
+      <div class="k">전투 피드백 색</div>
+      <h2>효과적 · 막힘 · 치명타 →</h2>
+      <p>난전 위 플로팅 텍스트 색·가독. SoT = juice-look-guide.md §④.</p>
+    </a>
+  </div>
+
+  <div class="section">
+    <span class="label">자료 · 분석</span>
+    <span class="rule"></span>
+    <span class="hint">추적 · 진단</span>
+  </div>
+  <div class="cards">
+    <a class="card" href="asset-tracker.html">
+      <div class="k">에셋 인벤토리</div>
+      <h2>필요 에셋 · 우선순위 →</h2>
+      <p>5카테고리 전체 + 현황 + 우선순위 레인. SoT = asset-manifest.md §0.</p>
     </a>
     <a class="card" href="unit-codex.html">
       <div class="k">유닛 코덱스</div>
-      <h2>유닛 스탯 · 스킬 명세 →</h2>
-      <p>전 37유닛 스탯·스킬 한눈에. 파생 뷰(SoT=SO) — <code>iwf_unit_codex.py</code> 재생성.</p>
+      <h2>유닛 스탯 · 스킬 →</h2>
+      <p>전 37유닛 스탯·스킬. 파생 뷰(SoT=SO).</p>
     </a>
     <a class="card" href="balance-report.html">
       <div class="k">밸런싱 보고서</div>
-      <h2>유닛·스테이지·경제 밸런싱 →</h2>
-      <p>실측 파워버짓·난이도 곡선·경제. 구조 결함 3 + 버그 2. 게임 밸런싱 정조준 분석.</p>
+      <h2>유닛 · 스테이지 · 경제 →</h2>
+      <p>파워버짓·난이도 곡선·경제 분석. 구조 결함 3 + 버그 2.</p>
+    </a>
+    <a class="card" href="audit/">
+      <div class="k">정밀 감사</div>
+      <h2>아키텍처 · 시스템 진단 →</h2>
+      <p>PM 6에이전트 감사. "엔진 완성형 / 게임 미완".</p>
+    </a>
+  </div>
+
+  <div class="section">
+    <span class="label">구버전</span>
+    <span class="rule"></span>
+    <span class="hint">대체됨 · 참고용</span>
+  </div>
+  <div class="cards">
+    <a class="card archived" href="sanity/flow-wireframe-board.html">
+      <div class="k">7화면 플로우 (초안)</div>
+      <h2>인트로→메인→편성→전투→결과→강화→환생 →</h2>
+      <p>메인 영웅 로스터 전제 폐기 → 「흐름 와이어」로 대체. 7화면 개관 참고용.</p>
     </a>
   </div>
 
