@@ -139,7 +139,15 @@
   .slot.filled{border-color:var(--line3);border-style:solid;color:var(--muted);background:rgba(255,255,255,.02)}
   .cost{font-family:var(--mono);font-size:8px;color:var(--muted)}
   .startbtn{font-family:var(--mono);font-size:10px;font-weight:800;color:#06222a;background:var(--cta);
-    border-radius:6px;padding:8px;text-align:center;box-shadow:0 0 16px rgba(255,206,74,.45);letter-spacing:.04em}
+    border-radius:6px;padding:8px;text-align:center;box-shadow:0 0 16px rgba(255,206,74,.45);letter-spacing:.04em;margin-top:auto}
+  .rosterlabel{font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-top:3px}
+  .roster{display:flex;align-items:center;gap:4px;overflow:hidden;padding:3px 0}
+  .roster .nav{font-family:var(--mono);font-size:11px;color:var(--line3);flex:0 0 auto}
+  .runit{width:20px;height:20px;flex:0 0 auto;border:1px dashed var(--line3);border-radius:4px;background:rgba(255,255,255,.025)}
+  .runit.locked{border-color:var(--line2);opacity:.45}
+  .formation{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:center;justify-items:center;padding:6px 4px}
+  .fpos{width:18px;height:18px;border:1px dashed rgba(255,107,107,.5);border-radius:3px}
+  .fpos.front{border-style:solid;border-color:rgba(255,107,107,.7)}
 
   /* battle hud */
   .field{flex:1;display:flex;min-height:0;position:relative}
@@ -208,7 +216,7 @@
   <div class="eyebrow">infinite warfield · 디자인 세션 · <b>흐름 중심 와이어프레임</b></div>
   <h1>스테이지 선택 → 편성 → 전투</h1>
   <p class="sub">"정적 존 배치"가 아니라 <b>플레이어 여정(코어 루프)</b>부터 설계한 가로(landscape) 와이어. 메인 = 스테이지 선택·진행 중심 / 편성 = 확인·조정(덱 유지) + 적 위협 응수 / 전투 HUD = 난전 가독.</p>
-  <div class="updated">갱신 <b>2026-06-25</b> · 사용자 흐름 확정(메인 스테이지 선택 → 편성 / 덱은 메인에 없음 / 확인·조정 모델) · 매체 게이트 #8 = 레이아웃/흐름 = 캔버스 OK(아트 appeal 아님·placeholder)</div>
+  <div class="updated">갱신 <b>2026-06-25</b> · 흐름 확정 + 인터뷰 결정 3건(로스터=편성 하단 스크롤·위협=적 진형 미리보기·스테이지=코버플로우) + 편성 좌우 스왑(좌 덱/우 적) · 매체 게이트 #8 = 레이아웃 = 캔버스 OK</div>
 
   <div class="pivot">
     <h3>↻ 전제 정정 — 왜 이전 보드를 버렸나</h3>
@@ -308,18 +316,7 @@
         </div>
         <div class="prepbody">
           <div class="prepcol">
-            <div class="threatbox">
-              <div class="th">적 편성 프리뷰 · 위협</div>
-              <div class="efm">
-                <div class="eunit"></div><div class="eunit"></div><div class="eunit"></div>
-                <div class="eunit"></div><div class="eunit"></div><div class="eunit"></div>
-              </div>
-              <div class="th" style="color:var(--cta)">⚠ 중장갑(물리방어) · 마법취약</div>
-              <div class="hint">↳ 마법저항 낮음 → 마법딜러 추천<br>　 (물/마 색코딩 = 전투 피드백 색 일치)</div>
-            </div>
-          </div>
-          <div class="prepcol">
-            <div class="decklabel"><span>내 덱 (유지됨)</span><span class="syn">정령 2/4</span></div>
+            <div class="decklabel"><span>내 덱 (유지됨)</span><span>코스트 45/70 · <span class="syn">정령 2/4</span></span></div>
             <div class="slots">
               <div class="slot hero filled">영웅</div>
               <div class="slot filled">U2</div>
@@ -330,22 +327,39 @@
               <div class="slot">＋</div>
               <div class="slot">＋</div>
             </div>
-            <div class="cost">총 코스트 45 / 70　·　탭 = 로스터에서 교체</div>
+            <div class="rosterlabel">보유 유닛 — 좌우 스크롤 · 탭 → 빈 슬롯 추가</div>
+            <div class="roster">
+              <span class="nav">◀</span>
+              <div class="runit"></div><div class="runit"></div><div class="runit"></div><div class="runit"></div>
+              <div class="runit"></div><div class="runit"></div><div class="runit locked"></div><div class="runit locked"></div>
+              <span class="nav">▶</span>
+            </div>
             <div class="startbtn">▶ 전투 시작</div>
+          </div>
+          <div class="prepcol">
+            <div class="threatbox">
+              <div class="th">적 진형 미리보기</div>
+              <div class="formation">
+                <div class="fpos front"></div><div class="fpos front"></div><div class="fpos front"></div>
+                <div class="fpos"></div><div class="fpos"></div><div class="fpos"></div>
+              </div>
+              <div class="th" style="color:var(--cta)">⚠ 중장갑(물리방어) · 마법취약</div>
+              <div class="hint">↳ 마법저항 낮음 → 마법딜러 추천　(물/마 색코딩 = 전투 피드백 색 일치)</div>
+            </div>
           </div>
         </div>
       </div>
-      <p class="scaption">좌 = 적 위협(응수 정보) · 우 = 내 덱(persist) + 코스트/시너지 + 시작 CTA · 첫 슬롯 = 영웅 전용</p>
+      <p class="scaption">좌 = 내 덱(슬롯 + 하단 보유유닛 좌우 스크롤) + 전투 시작 · 우 = 적 진형 미리보기 + 위협 표기 · 전투 좌우(아군 좌·적 우)와 일치</p>
     </div>
     <div class="notes">
       <h4><span class="pin">편성</span> 설계 포인트 — 핵심 화면</h4>
       <ul>
-        <li class="keep"><b>확인/조정 모델</b> <span class="pr">사용자 확정</span> 덱은 지난 전투 그대로 유지 → <b>[전투 시작] 바로 가능</b>. 위협 보고 <b>바꾸고 싶을 때만</b> 조정.</li>
-        <li class="keep"><b>마찰 ≈ 1탭</b> 백지 재구성 강제 X. 방치형 그라인딩 흐름 보호.</li>
-        <li><b>응수 루프</b> 적 위협(중장갑/마법취약 2축) + 응수 hint → 덱 조정. 물/마 <b>색코딩 = 전투 피드백 색과 일치</b>(학습비용 최소).</li>
-        <li><b>덱 슬롯</b> 첫 칸 = 영웅 전용·영웅 1기·중복 금지. 코스트 합/상한 + 시너지 요약 [정령 2/4] 텍스트.</li>
-        <li><b>로스터 교체</b> 슬롯 탭 → 로스터 드로어(보유 유닛). 신규 해금 유닛도 여기서 편입.</li>
-        <li class="warn"><b>위협 = 상시 vs 팝업</b> <span class="pr">CEO Q5</span> 본 와이어 = 좌측 상설 패널. 결정 시 확정.</li>
+        <li class="keep"><b>좌 = 내 덱 / 우 = 적</b> <span class="pr">사용자 확정</span> 전투(아군 좌·적 우)와 좌우 일치 = 공간 멘탈 모델 정합.</li>
+        <li class="keep"><b>확인/조정 모델</b> 덱 유지 → <b>[전투 시작] 바로 가능</b>. 위협 보고 바꿀 때만 조정. 마찰 ≈ 1탭.</li>
+        <li class="keep"><b>로스터 = 덱 슬롯 하단 가로 스크롤</b> <span class="pr">사용자 확정</span> 별도 도감 화면 X. 보유 유닛 좌우 스크롤·탭 → 빈 슬롯 추가(신규 해금 포함).</li>
+        <li class="keep"><b>적 = 진형 미리보기 + 위협 표기</b> <span class="pr">CEO Q5</span> 적 영역에 진형(위치) 프리뷰 + 그 위 위협 라벨(상설·진형형). `EnemyUnitPreviewManager` 골격 활용.</li>
+        <li><b>응수 루프</b> 위협 2축(중장갑/마법취약) + hint. 물/마 색코딩 = 전투 피드백 색 일치.</li>
+        <li><b>덱 슬롯</b> 첫 칸 영웅 전용·영웅 1기·중복 금지. 코스트 합/상한 + 시너지 [정령 2/4].</li>
       </ul>
     </div>
   </div>
@@ -416,13 +430,15 @@
         <li><b>asset-manifest "Main 영웅 프레즌스 = 출시필수"</b> = 허위 요건 → 정정 escalate 필요.</li>
       </ul>
     </div>
-    <div class="card open">
-      <h3>열린 결정 (사용자/CEO)</h3>
+    <div class="card">
+      <h3>✅ 결정 완료 (2026-06-25 인터뷰)</h3>
       <ul>
-        <li><b>이 흐름 보드 OK?</b> 메인(스테이지 중심)·편성(확인/조정)·전투 HUD 레이아웃 검토.</li>
-        <li><b>로스터/도감 진입</b> 메인에 "보유 유닛 보기"(편집 X·열람) 버튼이 필요한가? 현재 = 강화로만.</li>
-        <li><b>위협 텔레그래프</b> 상시 패널 vs 진입 팝업 <span style="font-family:var(--mono);color:var(--neon-m);font-size:11px">CEO Q5</span></li>
-        <li><b>스테이지 선택 형태</b> 코버플로우 vs 세로 리스트 vs 맵 — 코버플로우 권고(여정감).</li>
+        <li><b>✓ 흐름 보드 승인</b> — 메인·편성·전투 HUD OK.</li>
+        <li><b>✓ 로스터 = 편성 하단 가로 스크롤</b> — 별도 도감 버튼 X. 덱 슬롯 아래 보유 유닛 좌우 스크롤·탭→슬롯.</li>
+        <li><b>✓ 위협 = 적 진형 미리보기 + 위협 표기</b> — 적 영역에 진형(위치) 프리뷰 + 그 위 위협 라벨 (CEO Q5 = 상설·진형형).</li>
+        <li><b>✓ 스테이지 = 코버플로우</b> — 여정감·구현 골격 재사용.</li>
+        <li><b>✓ 편성 좌우 = 좌 내 덱 / 우 적</b> — 전투(아군 좌·적 우)와 일치.</li>
+        <li style="color:var(--dim)">잔여(M3·CEO) = Q2 VFX 출시 범위 · Q6 업적 아이콘 출시 포함 (에셋 스코프).</li>
       </ul>
     </div>
   </div>
