@@ -1,0 +1,486 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IWF — Main 허브 + Battle HUD 깊이 와이어 (가로 · paranoia #1/#5)</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+  :root{
+    --bg-0:#0a0d12; --bg-1:#10151d; --bg-2:#161d27; --bg-3:#1d2632;
+    --ink:#e8edf3; --ink-dim:#828f9f; --ink-faint:#56616f; --line:#2a3543; --line-soft:#202a36;
+    --mag:#FF3DA6; --cyan:#3DE3E8; --neon-purple:#A763FF;
+    --sky-1:#f3a9cd; --sky-2:#c08ec6; --sky-3:#6a5d92; --sky-floor:#241f3c;
+    --ally:#4FA3FF; --enemy:#FF5B5B;
+    --fb-eff:#8AE05A; --fb-blk:#9AA7B5; --fb-crit:#FFC23D;
+    --phys:#E8A33D; --mag-axis:#56C2D0;
+    --p1:#FF8A5B; --bcore:#9C8CFF; --freeze:#6FB1FF; --ok:#62d394;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --disp:'Chakra Petch',sans-serif;
+    --display2:'Orbitron',sans-serif;
+    --sans:'Pretendard',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{
+    background:
+      radial-gradient(130% 60% at 12% -5%, #2a1330 0%, transparent 55%),
+      radial-gradient(120% 60% at 92% 0%, #0e2730 0%, transparent 50%),
+      var(--bg-0);
+    color:var(--ink); font-family:var(--sans); line-height:1.6; padding:40px 22px 90px; min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.035;z-index:0;
+    background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+  .wrap{max-width:1180px;margin:0 auto;position:relative;z-index:1}
+
+  header{border-left:3px solid var(--mag);padding-left:16px;margin-bottom:14px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-dim)}
+  h1{font-family:var(--display2);font-weight:900;font-size:clamp(19px,3.6vw,29px);letter-spacing:.01em;margin-top:10px;line-height:1.22;
+    background:linear-gradient(100deg,var(--mag),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{color:var(--ink-dim);font-size:13.5px;margin-top:12px;max-width:920px;line-height:1.7}
+  .sub b{color:#cdd8e4}
+  .sub code{font-family:var(--mono);color:#b6c2d0;background:#1a232f;padding:1px 6px;border-radius:4px;font-size:12px}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 15px;font-size:12px;font-family:var(--mono)}
+  .badge.gate{background:#13202a;border:1px solid #244b52;color:#9fd6dd}
+  .badge.land{background:#231634;border:1px solid #4a2f63;color:#d3b9f0}
+  .badge.pair{background:#101a22;border:1px solid #233c46;color:#9fb9c4}
+  .badge b{color:#fff}
+
+  /* section */
+  .sec{margin-top:46px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-n{font-family:var(--display2);font-weight:900;font-size:15px;color:#0a0d12;background:var(--p1);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .sec-t{font-family:var(--disp);font-weight:700;font-size:20px;letter-spacing:.01em}
+  .sec-tag{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-left:auto}
+  .sec-d{color:var(--ink-dim);font-size:12.5px;margin:8px 0 16px;line-height:1.65}
+  .sec-d b{color:#cdd8e4} .sec-d code{font-family:var(--mono);color:#b6c2d0;background:#1a232f;padding:1px 5px;border-radius:4px;font-size:11.5px}
+
+  /* big landscape frame */
+  .bigframe{position:relative;width:100%;aspect-ratio:2.05/1;background:#000;border:7px solid #050709;border-radius:26px;overflow:hidden;
+    box-shadow:0 22px 50px #000b, inset 0 0 0 1px #ffffff0a}
+  .scr{position:absolute;inset:0;overflow:hidden}
+  .pill-notch{position:absolute;left:7px;top:50%;transform:translateY(-50%);width:10px;height:42px;background:#050709;border-radius:7px;z-index:20}
+
+  .nf{position:relative;display:inline-block;padding:1.5px;border-radius:2px;background:linear-gradient(125deg,var(--mag),var(--cyan));
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);filter:drop-shadow(0 0 4px #ff3da655)}
+  .nf.rev{background:linear-gradient(125deg,var(--cyan),var(--mag));filter:drop-shadow(0 0 4px #3de3e855)}
+  .nf>.in{background:#08070e;color:#eafcff;font-weight:800;display:flex;align-items:center;justify-content:center;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);width:100%;height:100%}
+
+  .sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 32%,var(--sky-3) 56%,var(--sky-floor) 78%,#15122a 100%)}
+  .sky::after{content:"";position:absolute;left:-20%;right:-20%;bottom:0;height:34%;
+    background-image:repeating-linear-gradient(transparent 0 16px,#ffffff33 16px 17px),repeating-linear-gradient(90deg,transparent 0 32px,#ffffff26 32px 33px);
+    transform:perspective(200px) rotateX(64deg);transform-origin:bottom;opacity:.5}
+  .field{position:absolute;inset:0;background:
+      radial-gradient(70% 130% at 50% 130%, #1b2735 0%, transparent 55%),
+      repeating-linear-gradient(90deg,transparent 0 6.5%,#ffffff06 6.5%,#ffffff06 calc(6.5% + 1px)),
+      linear-gradient(180deg,#0c1118,#0a0d12)}
+
+  .art{background:repeating-linear-gradient(45deg,#1a2330 0 7px,#141b26 7px 14px);border:1px dashed #324154;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;color:#5e6e80;font-family:var(--mono);font-size:10px;text-align:center;line-height:1.35;padding:4px}
+  .chip{background:#1a2330;border:1px solid #2c3a4c;border-radius:5px;padding:3px 8px;font-size:10px;color:#aebccb;white-space:nowrap}
+
+  /* zone pins */
+  .pin{position:absolute;width:21px;height:21px;border-radius:50%;background:var(--p1);color:#1a0e07;font-family:var(--display2);
+    font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;z-index:15;box-shadow:0 0 0 3px #0a0d12,0 0 10px #ff8a5b88}
+  .pin.c{background:var(--cyan);box-shadow:0 0 0 3px #0a0d12,0 0 10px #3de3e888}
+  /* dimension tag */
+  .dim{position:absolute;font-family:var(--mono);font-size:9.5px;color:#9fd6dd;background:#0b1a1ecc;border:1px solid #244b52;border-radius:4px;padding:1px 5px;z-index:14;white-space:nowrap}
+  .dim.warn{color:#ffc8a0;background:#1a100acc;border-color:#5a2f1a}
+  /* zone outline */
+  .zo{position:absolute;border:1px dashed #3de3e85e;border-radius:6px;z-index:12;pointer-events:none}
+  .zo.p{border-color:#ff8a5b66}
+  /* dead-zone / thumb arcs */
+  .thumb{position:absolute;border-radius:50%;z-index:11;pointer-events:none;mix-blend-mode:screen;opacity:.5}
+  .thumb.l{background:radial-gradient(circle,#4FA3FF44 0%,transparent 70%)}
+  .thumb.r{background:radial-gradient(circle,#FFC23D44 0%,transparent 70%)}
+
+  /* units (battle stress test) */
+  .u{position:absolute;border-radius:2px;transform:translate(-50%,-50%);z-index:6}
+  .u.a{background:linear-gradient(180deg,#3a5876,#22384e);outline:1px solid #4FA3FF55}
+  .u.e{background:linear-gradient(180deg,#76393a,#4e2222);outline:1px solid #FF5B5B55}
+  .hpb{position:absolute;height:2px;background:#000a;border-radius:2px;transform:translate(-50%,0);z-index:7;overflow:hidden}
+  .hpb i{display:block;height:100%;background:#4ad06a}
+  .hpb.lo i{background:#ff7a4a}
+  .ftxt{position:absolute;font-weight:800;white-space:nowrap;transform:translateX(-50%);z-index:9;text-shadow:0 1px 0 #000c,0 0 7px #000a}
+  .capline{position:absolute;left:0;right:0;border-top:1px dashed #ffc23d55;z-index:8}
+
+  /* callouts */
+  .calls{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#0d1219;border:1px solid var(--line-soft);border-radius:12px;padding:14px;margin-top:16px}
+  @media(max-width:720px){.calls{grid-template-columns:1fr}}
+  .call{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+  .call .tag{flex:0 0 auto;font-family:var(--mono);font-size:8.5px;font-weight:700;border-radius:4px;padding:2px 6px;margin-top:1px;white-space:nowrap}
+  .tag.p{background:#2a160c;color:var(--p1);border:1px solid #5a2f1a}
+  .tag.b{background:#1c1733;color:var(--bcore);border:1px solid #3a3060}
+  .tag.f{background:#0e2030;color:var(--freeze);border:1px solid #1d4259}
+  .tag.ok{background:#142a16;color:var(--fb-eff);border:1px solid #2c5230}
+  .tag.plat{background:#241a0c;color:#e3b56a;border:1px solid #5a431a}
+  .call b{color:#cdd8e4;font-weight:600} .call code{font-family:var(--mono);color:#b6c2d0;font-size:10.5px}
+
+  /* A/B/C options */
+  .abc{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  @media(max-width:820px){.abc{grid-template-columns:1fr}}
+  .opt{background:var(--bg-1);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .opt.rec{border-color:#2c5230;box-shadow:0 0 0 1px #2c523055}
+  .opt-h{display:flex;align-items:center;gap:9px;padding:13px 15px 11px}
+  .opt-k{font-family:var(--display2);font-weight:900;font-size:15px;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--bg-3);color:var(--cyan)}
+  .opt.rec .opt-k{background:var(--fb-eff);color:#0a1a0c}
+  .opt-t{font-family:var(--disp);font-weight:700;font-size:14px}
+  .opt-rec{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--fb-eff);background:#142a16;border:1px solid #2c5230;border-radius:4px;padding:2px 6px}
+  .miniframe{position:relative;margin:0 15px;aspect-ratio:1.7/1;border-radius:14px;overflow:hidden;border:1px solid #2a1f3a}
+  .opt-body{padding:13px 15px 15px;font-size:11.5px;color:var(--ink-dim);line-height:1.55}
+  .pc{display:flex;gap:7px;margin-top:5px;align-items:flex-start}
+  .pc .s{flex:0 0 auto;font-weight:800;font-family:var(--mono);font-size:11px}
+  .pc.pro .s{color:var(--ok)} .pc.con .s{color:#e07d7d}
+  .pc b{color:#cdd8e4}
+
+  /* before/after rejection table */
+  .rej{margin-top:8px;display:flex;flex-direction:column;gap:10px}
+  .rejrow{display:grid;grid-template-columns:34px 1fr 1fr;gap:0;background:var(--bg-1);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  @media(max-width:720px){.rejrow{grid-template-columns:34px 1fr}}
+  .rejrow .rn{background:#2a160c;color:var(--p1);font-family:var(--display2);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line)}
+  .rcell{padding:12px 15px;font-size:12px;line-height:1.55;color:var(--ink-dim)}
+  .rcell.before{border-right:1px solid var(--line);background:#16101099}
+  .rcell .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:5px}
+  .rcell.before .lbl{color:#e07d7d} .rcell.after .lbl{color:var(--ok)}
+  @media(max-width:720px){.rcell.after{grid-column:2;border-top:1px solid var(--line)}}
+  .rcell b{color:#cdd8e4} .rcell code{font-family:var(--mono);color:#b6c2d0;background:#1a232f;padding:1px 5px;border-radius:4px;font-size:10.5px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 4px}
+  .lg{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-dim);background:var(--bg-1);border:1px solid var(--line-soft);border-radius:7px;padding:5px 10px}
+  .lg .d{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+
+  .note{margin-top:42px;background:#0f141c;border:1px solid var(--line);border-radius:13px;padding:21px 23px;font-size:12.5px;color:var(--ink-dim);line-height:1.8}
+  .note h3{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:11px}
+  .note b{color:#cdd8e4} .note code{font-family:var(--mono);color:#b6c2d0;background:#1a232f;padding:1px 5px;border-radius:4px;font-size:11.5px}
+  .note ol{margin:6px 0 0 18px} .note li{margin:5px 0}
+  .next{background:#101c14;border:1px solid #234a32;border-radius:13px;padding:18px 22px;margin-top:16px;font-size:12.5px;color:#a8c6b2;line-height:1.8}
+  .next h3{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ok);margin-bottom:9px}
+  .next b{color:#d6ecdd}
+  .foot{margin-top:24px;font-family:var(--mono);font-size:11px;color:var(--ink-faint);border-top:1px solid var(--line-soft);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">byiryu studio · 미리보기 · 비공개(unlisted)</div>
+  <h1>INFINITE WARFIELD — Main 허브 + Battle HUD 깊이 와이어 · 가로</h1>
+  <p class="sub">
+    1순위 2화면 <b>프로덕션 와이어 깊이 패스</b> — 7화면 플로우 보드의 후속.
+    <b>Main(허브)</b> = paranoia #1 메타 3요소(영웅 프레즌스·주 CTA 위계·진행 티저) 해소 + <b>영웅 배치 A/B/C 3안 병렬</b>(CEO Q3 결정 트리거).
+    <b>Battle HUD</b> = paranoia #5 난전 가독 거부 3건 before/after 해소(15v15 스트레스 테스트로 증명).
+    아트는 placeholder(<code>아트:</code> 해치) — 캐릭터·유닛 appeal = PixelLab 이연(M3·매체게이트 #8).
+  </p>
+  <div class="badges">
+    <span class="badge land">▭ <b>가로</b> 1280×720 레퍼런스 · 2.05:1</span>
+    <span class="badge gate">⬡ <b>매체게이트 #8</b> · 구도/존/HUD=캔버스 OK / 아트=PixelLab</span>
+    <span class="badge pair">↔ 페어 = <b>7화면 플로우 보드</b>(flow-wireframe-board)</span>
+  </div>
+  <div class="legend">
+    <span class="lg"><span class="d" style="background:var(--p1)"></span>paranoia 핀/콜아웃</span>
+    <span class="lg"><span class="d" style="background:var(--cyan)"></span>존 경계 · 치수</span>
+    <span class="lg"><span class="d" style="background:var(--ally)"></span>아군(소환·좌)</span>
+    <span class="lg"><span class="d" style="background:var(--enemy)"></span>적(formation·우)</span>
+    <span class="lg"><span class="d" style="background:var(--fb-eff)"></span>효과적!</span>
+    <span class="lg"><span class="d" style="background:var(--fb-blk)"></span>버팀</span>
+    <span class="lg"><span class="d" style="background:var(--fb-crit)"></span>치명타!</span>
+    <span class="lg"><span class="d" style="background:var(--freeze)"></span>프리즈(아이콘 X)</span>
+  </div>
+</header>
+
+<!-- ====================== SECTION 1 : MAIN HUB ====================== -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-n">1</span><span class="sec-t">Main (허브) — 가로 프로덕션 와이어</span><span class="sec-tag">paranoia #1 · #3 · #2 / wireframes §3</span></div>
+  <p class="sec-d">
+    현 메인 = 버튼 6개 동급 나열 · 영웅 프레즌스 0(<code>heroImage</code> 주석 <code>MainUIManager.cs:57</code>) = 스토어 스크린샷 불가.
+    아래 = <b>메타 3요소 위계</b>를 박은 와이어 — 영웅 프레즌스(中 대형) · ▶전투 시작(지배적 CTA·엄지존 중앙하단) · 진행 티저(STAGE·재화·환생Lv 上). 핀 ①~⑤ = 존 매핑(아래 콜아웃).
+  </p>
+
+  <div class="bigframe"><div class="pill-notch"></div><div class="scr">
+    <div class="sky"></div>
+
+    <!-- 상단 바 (진행 티저) -->
+    <div style="position:absolute;top:9px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;z-index:5">
+      <div class="nf" style="width:24%;height:30px"><div class="in" style="font-size:11px;color:#ffb8e2">Lv.42 · 환생 Lv.3</div></div>
+      <div style="position:relative;width:66px;height:66px;border-radius:50%;border:2px solid var(--cyan);background:#08070e;display:flex;flex-direction:column;align-items:center;justify-content:center;filter:drop-shadow(0 0 8px #3de3e866)">
+        <span style="font-size:8px;color:var(--cyan);letter-spacing:.08em">STAGE</span><span style="font-family:var(--display2);font-weight:900;font-size:21px;color:#fff;line-height:1">12</span>
+      </div>
+      <div class="nf rev" style="width:27%;height:30px"><div class="in" style="font-size:10.5px;color:#b9f4f7">◆125k &nbsp;⬡234 &nbsp;✦7</div></div>
+    </div>
+
+    <!-- 좌 메뉴 스택 -->
+    <div style="position:absolute;left:12px;top:55%;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px;z-index:5">
+      <div class="nf" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">강화</div></div>
+      <div class="nf" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">환생</div></div>
+      <div class="nf" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">업적</div></div>
+    </div>
+
+    <!-- 우 메뉴 스택 -->
+    <div style="position:absolute;right:12px;top:55%;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px;z-index:5">
+      <div class="nf rev" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">덱</div></div>
+      <div class="nf rev" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">상점</div></div>
+      <div class="nf rev" style="width:118px;height:46px"><div class="in" style="font-size:15px;color:#fff">미션</div></div>
+    </div>
+
+    <!-- 중앙: 영웅 프레즌스 + 3슬롯 + CTA (배치 A 기준) -->
+    <div style="position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:36%;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:4">
+      <div class="art" style="width:54%;aspect-ratio:1/1.05;background:radial-gradient(60% 65% at 50% 36%,#3de3e83a,transparent 70%),repeating-linear-gradient(45deg,#ffffff16 0 7px,#ffffff09 7px 14px);border-color:var(--cyan);color:#fff;font-size:10px">출전 영웅<br>(대형 idle)<br><span style="color:var(--cyan);font-size:8px">PixelLab</span></div>
+      <div style="display:flex;gap:9px;align-items:center">
+        <div style="width:42px;height:42px;border-radius:9px;border:2px solid var(--cyan);background:#08070e;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px #3de3e888)"><div class="art" style="width:30px;height:30px;border:none;background:repeating-linear-gradient(45deg,#2a3a4a 0 4px,#1a2330 4px 8px)"></div></div>
+        <div style="width:38px;height:38px;border-radius:9px;border:1px solid #4a4a58;background:#0b0b13;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#828292;gap:1px"><span style="font-size:13px;line-height:1">🔒</span><span style="font-size:7px">업적</span></div>
+        <div style="width:38px;height:38px;border-radius:9px;border:1px solid #4a4a58;background:#0b0b13;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#828292;gap:1px"><span style="font-size:13px;line-height:1">🔒</span><span style="font-size:7px">미션</span></div>
+      </div>
+      <div class="nf rev" style="width:78%;height:44px;filter:drop-shadow(0 0 12px #3de3e8bb)"><div class="in" style="font-family:var(--disp);font-size:17px;color:#fff;letter-spacing:.05em">▶ 전투 시작</div></div>
+    </div>
+
+    <!-- pins -->
+    <span class="pin c" style="left:50%;top:4%;transform:translate(-50%,0)">1</span>
+    <span class="pin" style="left:50%;top:30%;transform:translate(-50%,0)">2</span>
+    <span class="pin" style="left:50%;top:86%;transform:translate(-50%,0)">3</span>
+    <span class="pin c" style="left:3.5%;top:50%">4</span>
+    <span class="pin c" style="right:3.5%;top:50%;left:auto">5</span>
+    <!-- dims -->
+    <span class="dim" style="left:12px;top:43px">상단 바 ~64pt · 진행 티저</span>
+    <span class="dim warn" style="left:50%;bottom:6%;transform:translateX(-50%)">CTA = 화면 최대 위계 · 엄지 중앙하단</span>
+    <span class="dim" style="left:12px;bottom:6%">메뉴 버튼 ≥44pt</span>
+  </div></div>
+
+  <div class="calls">
+    <div class="call"><span class="tag p">핀① 진행 티저</span><span>STAGE 배지(中) + 재화 3종 <code>◆gold ⬡silver ✦crystal</code>(右) + Lv·환생Lv(左). <b>"어디까지 왔나"</b>를 상단 한 줄로. 재화 아이콘 = M3 출시필수.</span></div>
+    <div class="call"><span class="tag p">핀② 영웅 프레즌스</span><span><b>1화면 1주인공</b>(#2) — 출전 영웅 1기를 중앙 최대 크기로. 현 <code>heroImage</code> 주석 갭 해소. <span style="color:var(--freeze)">그림 자체 = PixelLab(M3)</span>, 존만 확정.</span></div>
+    <div class="call"><span class="tag p">핀③ 주 CTA 위계</span><span>▶전투 시작 = <b>화면 지배적 요소</b>(네온 글로우·중앙 하단 엄지존). 시안엔 CTA 부재였음 → 중앙 스테이지 흐름 위에 명시 추가.</span></div>
+    <div class="call"><span class="tag p">핀④⑤ 가로 엄지존</span><span>양손 파지 = 좌우 가장자리 = 엄지 자연 도달. 좌(강화·환생·업적)/우(덱·상점·미션). 모든 버튼 <b>≥44pt</b>(#3).</span></div>
+    <div class="call"><span class="tag ok">시안 정합</span><span>대표 시안(상단 바·좌우 메뉴 스택·중앙 스테이지) 그대로 + 메타3요소 위계만 보강.</span></div>
+    <div class="call"><span class="tag plat">plat 정합</span><span><code>heroImage(:57)</code> 활성화 or <code>playerAvatar(:16)</code> 재사용 = <b>배치 §2 선택 시 동반</b>. M3 step-5(escalate #6).</span></div>
+  </div>
+</div>
+
+<!-- ====================== SECTION 2 : HERO PLACEMENT A/B/C ====================== -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-n" style="background:var(--bcore);color:#fff">2</span><span class="sec-t">중앙 영웅 배치 — A / B / C 3안</span><span class="sec-tag">CEO Q3 · 결정 트리거 / wireframes §3 확정</span></div>
+  <p class="sec-d">
+    핀②(영웅 프레즌스)의 <b>중앙 배치 방식</b> 3안. MVP 영웅 <b>3종 · 최초 1기 해금</b>(나머지 2기 = 업적·미션 해금 🔒). 모든 영웅 해금 가능 = 향후 3종↑ 확장 고려.
+    <b>폰에서 보고 택1 → <code>wireframes.md §3</code> 확정.</b> 캐릭터 박스 = placeholder.
+  </p>
+
+  <div class="abc">
+    <!-- A -->
+    <div class="opt rec">
+      <div class="opt-h"><span class="opt-k">A</span><span class="opt-t">1기 크게 + 하단 3슬롯</span><span class="opt-rec">권고</span></div>
+      <div class="miniframe"><div class="sky" style="filter:saturate(.9)"></div>
+        <div style="position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div class="art" style="width:52px;aspect-ratio:1/1.05;border-color:var(--cyan);color:#fff;font-size:7px;background:radial-gradient(60% 60% at 50% 36%,#3de3e83a,transparent 70%),repeating-linear-gradient(45deg,#ffffff16 0 5px,#ffffff09 5px 10px)">출전<br>영웅</div>
+          <div style="display:flex;gap:5px">
+            <div style="width:22px;height:22px;border-radius:6px;border:2px solid var(--cyan);background:#08070e;filter:drop-shadow(0 0 4px #3de3e8aa)"></div>
+            <div style="width:20px;height:20px;border-radius:6px;border:1px solid #4a4a58;background:#0b0b13;display:flex;align-items:center;justify-content:center;font-size:9px">🔒</div>
+            <div style="width:20px;height:20px;border-radius:6px;border:1px solid #4a4a58;background:#0b0b13;display:flex;align-items:center;justify-content:center;font-size:9px">🔒</div>
+          </div>
+        </div>
+      </div>
+      <div class="opt-body">
+        출전 영웅 1기를 중앙 대형 + 하단 작은 3슬롯(1해금 시안·2잠금).
+        <div class="pc pro"><span class="s">+</span><span><b>1화면 1주인공</b> 최강 · 프레즌스 지배적 · 스토어 스샷 강함</span></div>
+        <div class="pc pro"><span class="s">+</span><span>확장 = 슬롯 행 추가/스크롤로 자연</span></div>
+        <div class="pc con"><span class="s">−</span><span>3종 동시 비교·수집 진열감은 약함</span></div>
+      </div>
+    </div>
+    <!-- B -->
+    <div class="opt">
+      <div class="opt-h"><span class="opt-k">B</span><span class="opt-t">3카드 가로 나열</span></div>
+      <div class="miniframe"><div class="sky" style="filter:saturate(.9)"></div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:8px;align-items:center">
+          <div class="art" style="width:38px;aspect-ratio:1/1.3;border-color:var(--cyan);color:#fff;font-size:6px;background:repeating-linear-gradient(45deg,#ffffff14 0 5px,#ffffff08 5px 10px)">영웅1</div>
+          <div style="width:42px;aspect-ratio:1/1.3;border-radius:7px;border:1px solid #4a4a58;background:#0b0b13;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#828292;gap:2px;font-size:6px"><span style="font-size:11px">🔒</span>업적</div>
+          <div style="width:42px;aspect-ratio:1/1.3;border-radius:7px;border:1px solid #4a4a58;background:#0b0b13;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#828292;gap:2px;font-size:6px"><span style="font-size:11px">🔒</span>미션</div>
+        </div>
+      </div>
+      <div class="opt-body">
+        3종을 동등 카드로 가로 나열(잠금 포함).
+        <div class="pc pro"><span class="s">+</span><span><b>3종 한눈 비교</b> · 수집/진열감 · 선택 직관</span></div>
+        <div class="pc con"><span class="s">−</span><span>1주인공·프레즌스 약함(동등 분산)</span></div>
+        <div class="pc con"><span class="s">−</span><span>3종↑ 확장 시 카드가 좁아짐</span></div>
+      </div>
+    </div>
+    <!-- C -->
+    <div class="opt">
+      <div class="opt-h"><span class="opt-k">C</span><span class="opt-t">캐러셀 (스와이프)</span></div>
+      <div class="miniframe"><div class="sky" style="filter:saturate(.9)"></div>
+        <div style="position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);display:flex;gap:6px;align-items:center">
+          <div class="art" style="width:24px;aspect-ratio:1/1.25;opacity:.4;border-color:#4a4a58;font-size:6px">◂</div>
+          <div class="art" style="width:48px;aspect-ratio:1/1.1;border-color:var(--cyan);color:#fff;font-size:6.5px;background:radial-gradient(60% 60% at 50% 36%,#3de3e83a,transparent 70%),repeating-linear-gradient(45deg,#ffffff16 0 5px,#ffffff09 5px 10px)">출전<br>영웅</div>
+          <div class="art" style="width:24px;aspect-ratio:1/1.25;opacity:.4;border-color:#4a4a58;font-size:6px">▸</div>
+        </div>
+        <div style="position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:4px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--cyan)"></span><span style="width:5px;height:5px;border-radius:50%;background:#3a4350"></span><span style="width:5px;height:5px;border-radius:50%;background:#3a4350"></span>
+        </div>
+      </div>
+      <div class="opt-body">
+        중앙 1기 포커스 + 좌우 다음/이전 살짝 노출 · 스와이프.
+        <div class="pc pro"><span class="s">+</span><span><b>확장 무한</b> · 포커스(프레즌스) + 탐색 양립</span></div>
+        <div class="pc con"><span class="s">−</span><span>선택 = 스와이프 1스텝 추가(즉시성 ↓)</span></div>
+        <div class="pc con"><span class="s">−</span><span>MVP 3종엔 다소 과한 인터랙션</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="calls" style="grid-template-columns:1fr">
+    <div class="call"><span class="tag b">결정 = 인터뷰</span><span><b>권고 = A</b>(프레즌스 #1·#2 정합 최강 + 확장 자연). 단 수집·진열 무게를 더 두면 B, 영웅 풀 확장을 일찍 보면 C. <b>사용자 폰 검토 → 택1 → wireframes §3 확정 → plat 배선 결정(heroImage vs playerAvatar) 동반.</b></span></div>
+  </div>
+</div>
+
+<!-- ====================== SECTION 3 : BATTLE HUD ====================== -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-n">3</span><span class="sec-t">Battle HUD — 가로 · 난전 가독 (15v15 스트레스)</span><span class="sec-tag">paranoia #5 거부 기준 / wireframes §4</span></div>
+  <p class="sec-d">
+    정체성의 핵 = <b>"네온을 화려하게"가 아니라 전장=다크로 눌러 네온이 HP바·코스트·피드백 가독을 안 잡아먹게"</b> 한 규칙(#5).
+    아래 = <b>15v15 최대 난전</b> 위에 HUD 를 얹어 가독을 증명 — 가는 HP바(영웅만 크게) · 피드백 높이 캡 · 시너지HUD 전장중앙 회피 · 키 유닛만 풀HP.
+  </p>
+
+  <div class="bigframe"><div class="pill-notch"></div><div class="scr">
+    <div class="field"></div>
+
+    <!-- thumb reach overlay -->
+    <div class="thumb l" style="left:-8%;bottom:-30%;width:46%;height:90%"></div>
+    <div class="thumb r" style="right:-6%;bottom:-34%;width:34%;height:95%"></div>
+
+    <!-- battlefield crowd (JS populated) -->
+    <div id="crowd"></div>
+
+    <!-- 영웅 (패배조건·키유닛 = 큰 HP바) -->
+    <div class="u a" style="left:9%;top:54%;width:3.4%;aspect-ratio:3/4;outline:2px solid #4FA3FF;box-shadow:0 0 8px #4FA3FF88"></div>
+    <div style="position:absolute;left:9%;top:43%;transform:translateX(-50%);z-index:8;text-align:center">
+      <div style="font-size:8px;color:#cfe6ff;margin-bottom:2px">영웅</div>
+      <div style="width:46px;height:5px;background:#000a;border-radius:3px;overflow:hidden;border:1px solid #4FA3FF44"><i style="display:block;height:100%;width:68%;background:linear-gradient(90deg,#4ad06a,#2fae54)"></i></div>
+    </div>
+
+    <!-- 피드백 캡 라인 + 토스트 (높이 캡) -->
+    <div class="capline" style="top:30%"></div>
+    <span class="dim warn" style="right:12px;top:27.5%">피드백 상승 높이 캡 (MaxLive 8)</span>
+    <div class="ftxt" style="left:40%;top:34%;color:var(--fb-crit);font-size:16px;text-shadow:0 1px 0 #000c,0 0 10px #FFC23D99">치명타!</div>
+    <div class="ftxt" style="left:62%;top:38%;color:var(--fb-eff);font-size:12px">효과적!</div>
+    <div class="ftxt" style="left:30%;top:40%;color:var(--fb-blk);font-size:10px;font-weight:600">버팀</div>
+
+    <!-- 상단 바 -->
+    <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;background:linear-gradient(180deg,#0d1219d9,transparent);z-index:10">
+      <span class="chip">STAGE 12</span>
+      <div style="flex:1;max-width:240px;margin:0 12px">
+        <div style="font-size:8px;color:#8a96a4;margin-bottom:2px;text-align:center">영웅 HP <span style="color:#ff7a4a">패배조건</span></div>
+        <div style="height:6px;background:#000a;border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:68%;background:linear-gradient(90deg,#4ad06a,#2fae54)"></i></div>
+      </div>
+      <!-- 시너지 HUD : 우상단 (전장 중앙 회피) -->
+      <span style="background:#142a16;color:var(--fb-eff);border:1px solid #2c5230;border-radius:5px;padding:3px 9px;font-size:9px;font-weight:600;white-space:nowrap">정령 4 · 탱커 2 &nbsp;<span style="color:#8a96a4">00:43</span></span>
+    </div>
+
+    <!-- 하단 HUD -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:8px 14px 11px;background:linear-gradient(0deg,#0d1219,#0d121900);z-index:10;display:flex;align-items:flex-end;gap:12px">
+      <!-- 좌하 : 코스트 게이지 (데드존 = 정보) -->
+      <div style="flex:1.25;min-width:0">
+        <div style="font-size:8px;color:#8a96a4;margin-bottom:3px">코스트 (회복 +2/s)</div>
+        <div style="height:18px;border-radius:9px;background:#1a2330;border:1px solid #2c3a4c;overflow:hidden;position:relative">
+          <i style="display:block;height:100%;width:60%;background:linear-gradient(90deg,#ffd24a,#ff9d2e)"></i>
+          <b style="position:absolute;right:9px;top:0;font-size:10px;color:#fff;font-weight:800;line-height:18px;text-shadow:0 1px 2px #000">42 / 70</b>
+        </div>
+      </div>
+      <!-- 중하 : 덱슬롯 5칸 (엄지존·탭소환·44pt) -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+        <div style="display:flex;gap:7px">
+          <div class="art" style="width:46px;height:46px;font-size:7px;color:#9fb4c8;border-color:#3a4a5c">덱1<br>c3</div>
+          <div class="art" style="width:46px;height:46px;font-size:7px;color:#9fb4c8;border-color:#3a4a5c">덱2<br>c5</div>
+          <div class="art" style="width:46px;height:46px;font-size:7px;color:#9fb4c8;border-color:#3a4a5c">덱3<br>c4</div>
+          <div class="art" style="width:46px;height:46px;font-size:7px;color:#9fb4c8;border-color:#3a4a5c">덱4<br>c2</div>
+          <div class="art" style="width:46px;height:46px;font-size:7px;color:#9fb4c8;border-color:#3a4a5c">덱5<br>c6</div>
+        </div>
+        <span class="dim" style="position:static">슬롯 ≥44pt · 탭→소환 · 엄지존</span>
+      </div>
+      <!-- 우하 : 스킬 + 뒤로 (오른손 엄지 데드존) -->
+      <div style="flex:1.25;display:flex;justify-content:flex-end;align-items:flex-end;gap:8px">
+        <div style="width:36px;height:36px;border-radius:8px;border:1px solid #2c3a4c;background:#11161e;display:flex;align-items:center;justify-content:center;color:#8a96a4;font-size:14px">←</div>
+        <div style="position:relative;width:56px;height:56px;border-radius:50%;border:2px solid #5a3f1a;background:conic-gradient(#FFC23D 0 65%, #2a2410 65% 100%);display:flex;align-items:center;justify-content:center">
+          <div style="width:42px;height:42px;border-radius:50%;background:#11100a;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FFC23D;font-size:8px;font-weight:700">⚡<span style="font-size:6px;color:#cdb98a">스킬</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- pins / dims -->
+    <span class="pin c" style="left:24%;top:62%">A</span>
+    <span class="dim" style="left:24%;top:70%;transform:translateX(-50%)">소환 클릭영역 (좌)</span>
+    <span class="dim warn" style="left:14px;bottom:54px">코스트=데드존(정보·잦은 탭 X)</span>
+  </div></div>
+
+  <div class="calls">
+    <div class="call"><span class="tag p">#5 난전 가독</span><span>15v15 = <b>좌우 대치 자연</b>(아군 좌·적 우). 일반 유닛 = <b>가는 HP바</b>, 영웅만 큰 바. 피드백 토스트가 코스트·덱·스킬 안 가림(높이 캡).</span></div>
+    <div class="call"><span class="tag p">#3 가로 엄지(데드존)</span><span>좌 엄지 = 소환 클릭 / 우 엄지 = 스킬(우하단·쿨다운 원형). 덱슬롯 = 중앙하단 공용. <b>코스트 게이지 = 좌하 정보영역(잦은 탭 X = 데드존)</b>.</span></div>
+    <div class="call"><span class="tag b">시너지 라벨</span><span>우상단 상시 <b>정령4·탱커2</b> 텍스트(전장 중앙 회피). 발동 시에만 토스트(3초 쿨다운·연쇄 매공격 금지).</span></div>
+    <div class="call"><span class="tag b">피드백 정직화</span><span><b>효과적!/버팀/치명타!</b> 3색 — "막힘"→<b>"버팀"</b>(진짜 block 아님). 물/마 색코딩 = 텔레그래프와 일치.</span></div>
+    <div class="call"><span class="tag f">프리즈</span><span>시너지·위협 <b>아이콘 X</b> = 텍스트+색만(B코어 시스템 코드 굳기 전 동결).</span></div>
+    <div class="call"><span class="tag ok">다크 유지</span><span>전장만 톤 눌러 네온 배경이 신호 안 잡아먹게 — 메타화면(§1·§2)과 의도적 대비.</span></div>
+  </div>
+
+  <!-- 거부 해소 3건 -->
+  <h3 style="font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--p1);margin:24px 0 12px">paranoia #5 거부 해소 — before(세로 유물) → after(가로 재배치) · 3건</h3>
+  <div class="rej">
+    <div class="rejrow">
+      <div class="rn">1</div>
+      <div class="rcell before"><span class="lbl">Before — 충돌</span><b>SynergyHud</b> 가 <code>-96f</code>(상단 중앙)로 가로에서 stageInfo·영웅HP와 겹침 → 전장 중앙 침범.</div>
+      <div class="rcell after"><span class="lbl">After — 해소</span><b>우상단 라벨</b>로 재배치(전장 중앙 금지). plat = <code>SynergyHud.cs:50</code> 위치 재정의.</div>
+    </div>
+    <div class="rejrow">
+      <div class="rn">2</div>
+      <div class="rcell before"><span class="lbl">Before — 충돌</span><b>CombatFeedbackText</b>(MaxLive 8)가 하단까지 상승 → 코스트·덱·스킬 가림.</div>
+      <div class="rcell after"><span class="lbl">After — 해소</span><b>상승 높이 캡</b>(상단 ~30% 라인 위 금지). plat = <code>CombatFeedbackText.cs:19</code>.</div>
+    </div>
+    <div class="rejrow">
+      <div class="rn">3</div>
+      <div class="rcell before"><span class="lbl">Before — 미검증</span><b>덱슬롯 5칸</b> 44pt 미검증(세로 유물 슬롯 폭).</div>
+      <div class="rcell after"><span class="lbl">After — 달성</span>1280×720 기준 슬롯당 <b>~140px ⇒ ≥44pt 달성</b>(중앙하단·탭소환). plat = <code>BattleDeckUIManager.slotParent</code> 가로 재배선.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== NOTES ====================== -->
+<div class="next">
+  <h3>▶ 남은 차례</h3>
+  <b>① 사용자 폰 검토</b> — Main 레이아웃 OK? + <b>영웅 배치 A/B/C 택1</b>(§2) + Battle HUD 난전 가독 OK? → 결정 회수.<br>
+  <b>② wireframes.md §3 확정</b> — 선택된 배치안으로 [결정 대기] 닫기 + plat 배선(<code>heroImage</code> vs <code>playerAvatar</code>) 동반 결정.<br>
+  <b>③ CEO 인터뷰</b> — Q3(영웅 배치·본 보드가 입력) · Q5(위협 텔레그래프 상시/팝업 = BattlePrepare 레이아웃 영향).<br>
+  <b>④ plat M3 step-5 정합</b>(escalate #6 4건) — SynergyHud 위치 · battleFieldArea 가로 재측정 · 덱슬롯 가로 재배선 · (Q6 시) AchievementData.iconSprite.
+</div>
+
+<div class="note">
+  <h3>매체 게이트 & 핸드오프 경계</h3>
+  <b>본 보드 = 가로 구도·존·위계·HUD 레이아웃 SoT</b>(디자인 세션·캔버스 OK). <b>아트 appeal</b>(영웅·유닛·이펙트 실물)은 HTML 도형 판정 금지 → <b>PixelLab(M3·매체게이트 #8)</b> — 영웅 프레즌스 "존"은 박되 영웅 그림 자체는 렌더.
+  캐릭터·유닛 박스 전부 placeholder(해치). UI 구현·토큰 배선 = plat(M3 step-5). 이 와이어는 <b>프리즈 가드 무관</b>(레이아웃·메커니즘 도메인 = 생산 트리거 아님).
+</div>
+
+<div class="foot">
+  infinite warfield · Main 허브 + Battle HUD 깊이 와이어 · 가로 · 비공개(unlisted) · 2026-06-25<br>
+  SoT = design/infinite-warfield/wireframes.md §3·§4 · 페어 = flow-wireframe-board.html(7화면 플로우) · 아트 톤 = brief §0(e)
+</div>
+</div>
+
+<script>
+  // 15v15 난전 스트레스 — 가는 HP바 다수 (영웅·키유닛만 큰 바는 마크업으로 별도)
+  (function(){
+    var crowd=document.getElementById('crowd');
+    // 고정 위치(렌더 결정성) — [x%, y%, hp0-1]
+    var ally=[[16,40,.9],[20,58,.5],[14,70,.75],[24,46,1],[28,64,.35],[22,76,.85],[19,33,.6],[30,52,.95],[26,72,.45],[33,42,.7],[34,66,.8],[18,50,.55],[29,38,.65]];
+    var enemy=[[72,42,.9],[78,58,.6],[84,68,.8],[70,62,.4],[76,46,1],[82,52,.7],[68,52,.85],[80,72,.5],[74,72,.95],[86,46,.6],[71,38,.75],[79,36,.55],[83,60,.7]];
+    function mk(arr,cls){
+      arr.forEach(function(u){
+        var w=2.6, h=w*4/3; // % width, aspect 3/4
+        var el=document.createElement('div');
+        el.className='u '+cls;
+        el.style.left=u[0]+'%'; el.style.top=u[1]+'%';
+        el.style.width=w+'%'; el.style.aspectRatio='3/4';
+        crowd.appendChild(el);
+        var bar=document.createElement('div');
+        bar.className='hpb'+(u[2]<.45?' lo':'');
+        bar.style.left=u[0]+'%';
+        bar.style.top=(u[1]-h*0.62)+'%';
+        bar.style.width=(w*0.95)+'%';
+        var fill=document.createElement('i'); fill.style.width=(u[2]*100)+'%';
+        bar.appendChild(fill); crowd.appendChild(bar);
+      });
+    }
+    mk(ally,'a'); mk(enemy,'e');
+  })();
+</script>
