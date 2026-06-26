@@ -108,6 +108,7 @@
   .fxrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
   .fx{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);border-radius:10px;padding:9px 13px;background:var(--surface-2);}
   .dot{width:11px;height:11px;border-radius:50%;flex:none;}
+  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:middle;box-shadow:0 0 6px currentColor;}
 
   /* ---- axis duel ---- */
   .duel{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
@@ -231,21 +232,21 @@
   <section>
     <div class="wrap">
       <p class="eyebrow">유닛 &amp; 영웅</p>
-      <h2>영웅 3 · 일반 34 · 테마 5 × 역할 3</h2>
-      <p class="sub">유닛은 테마(UnitType)와 역할(UnitRole) 2축으로 분류된다 — 이 교차가 시너지의 기반이다. 영웅 3종은 시작 1종 선택 + 2종을 재화/업적으로 해금.</p>
+      <h2>5 테마 × 3 역할 · 영웅 3</h2>
+      <p class="sub">유닛은 테마(UnitType)와 역할(UnitRole) 2축으로 분류된다 — 이 교차가 시너지의 기반이다. 5 테마는 "피해를 만드는 시간 곡선"이 서로 안 겹쳐(즉발·누적·지속·스파이크·폭발) 위협마다 자연히 갈린다. 영웅 3종은 각 테마의 시너지 앵커 — 시작 1종 선택 + 2종을 재화/업적으로 해금.</p>
       <div class="matrix-scroll">
         <table class="matrix">
-          <thead><tr><th>테마 \ 역할</th><th>Dealer 딜러</th><th>Tank 탱커</th><th>Support 서포터</th></tr></thead>
+          <thead><tr><th>테마</th><th>메커니즘 결</th><th>시간곡선</th><th>대표색</th><th>영웅</th></tr></thead>
           <tbody>
-            <tr><th>Combat</th><td>·</td><td>·</td><td>·</td></tr>
-            <tr><th>Necro</th><td>·</td><td>·</td><td>·</td></tr>
-            <tr><th>Spirit</th><td>정령 공명 ✅</td><td>·</td><td>·</td></tr>
-            <tr><th>Machine</th><td>·</td><td>·</td><td>·</td></tr>
-            <tr><th>Beast</th><td>·</td><td>·</td><td>·</td></tr>
+            <tr><th>Combat</th><td>즉발 물리 + 자가증폭</td><td>선형</td><td style="color:#E03A5C"><span class="sw"></span>마젠타강철</td><td>아르덴</td></tr>
+            <tr><th>Necro</th><td>DoT 침식 + 흡혈 + 소환</td><td>우상향</td><td style="color:#9D3EE8"><span class="sw"></span>보라</td><td>베스라</td></tr>
+            <tr><th>Spirit</th><td>힐 + 받피감 + 마법 추가타</td><td>평탄</td><td style="color:#5DDD7E"><span class="sw"></span>에메랄드</td><td>에이라</td></tr>
+            <tr><th>Machine</th><td>CC(견인·스턴) + 조준</td><td>스파이크</td><td style="color:#00D4FF"><span class="sw"></span>시안</td><td>—</td></tr>
+            <tr><th>Beast</th><td>돌진 + 치명타 + 야성회복</td><td>우하향</td><td style="color:#E06B14"><span class="sw"></span>주황</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="note">스킬 = 16종 이펙트 (Damage·DoT·Heal·Buff·Debuff·Stun·Taunt·Pull·AreaBurst·Summon·Dash …) · 이벤트 구동.</p>
+      <p class="note">역할 3 = Dealer · Tank · Support (테마축과 직교 = 같은 역할 도배 방지). 일반 유닛 = 시그니처 패시브 1개 · 액티브 = 영웅 전용 · attackType 은 테마 안에서 물/마 골고루. 스킬 = 16종 이펙트 이벤트 구동.</p>
     </div>
   </section>
 
@@ -275,13 +276,23 @@
     <div class="wrap">
       <p class="eyebrow">시너지 — 빌드의 핵심</p>
       <h2>8세트 (테마 5 + 역할 3)</h2>
-      <p class="sub">같은 테마/역할 유닛을 임계 수 이상 모으면 세트 보너스가 발동. "+X% 스탯"이 아니라 "추가타 발생" 같은 질적 효과 위주(수치벽 회귀 방지). 환생과 무관 — 출시부터 전량 발동 가능.</p>
-      <div class="chips">
-        <span class="chip"><b>테마</b> Combat · Necro · Spirit · Machine · Beast</span>
-        <span class="chip"><b>역할</b> Dealer · Tank · Support</span>
-        <span class="chip">P0 <b>정령 공명</b> (Spirit 2/4) ✅ 검증 완료</span>
-        <span class="chip">티어 2/4 → 6단은 출시 후</span>
+      <p class="sub">같은 테마/역할 유닛을 임계 수(2/4) 이상 모으면 세트 보너스가 발동. "+X% 스탯"이 아니라 "추가타 발생" 같은 질적 효과 위주(수치벽 회귀 방지). 환생과 무관 — 출시부터 전량 발동 가능.</p>
+      <div class="matrix-scroll">
+        <table class="matrix">
+          <thead><tr><th>세트</th><th>축</th><th>효과 (질적)</th></tr></thead>
+          <tbody>
+            <tr><th>자가증폭</th><td>Combat</td><td>공격할수록 자기 강화 스택 (버틸수록↑)</td></tr>
+            <tr><th>부패전이</th><td>Necro</td><td>부패 DoT 누적 + 흡혈 (시간이 내 편)</td></tr>
+            <tr><th>정령 공명 ✅</th><td>Spirit</td><td>공격 시 마법 추가타 — P0 검증 완료</td></tr>
+            <tr><th>조준 동기화</th><td>Machine</td><td>확률 스턴 (CC)</td></tr>
+            <tr><th>야성 가속</th><td>Beast</td><td>공격 시 흡혈 (속전속결)</td></tr>
+            <tr><th>협공</th><td>Dealer</td><td>다단 연타 (MultiHit)</td></tr>
+            <tr><th>철벽 전선</th><td>Tank</td><td>도발 어그로 + 전군 받피감</td></tr>
+            <tr><th>군세 결집</th><td>Support</td><td>공속 버프 + 전군 정화 (Cleanse)</td></tr>
+          </tbody>
+        </table>
       </div>
+      <p class="note">티어 2/4 → 6단은 출시 후. 정령 공명 외 7세트 = 엔진 일반화(S-COMMON) 게이트 후 양산. 영웅 = 각 테마 세트의 화신(아르덴=자가증폭 · 베스라=부패전이 · 에이라=정령 공명).</p>
     </div>
   </section>
 
@@ -363,21 +374,18 @@
         <div class="open">
           <h3>곧 정해야</h3>
           <ul>
-            <li>영웅 3종 정체성 <span>— 각 코맨더 컨셉·고유 스킬</span></li>
-            <li>시너지 7세트 효과 <span>— 정령 외 나머지</span></li>
-            <li>위협 아키타입 5종 구체 <span>— 진형·위협 정체</span></li>
-            <li>미션 항목 · 영웅 해금 조건 · 온보딩 흐름</li>
-            <li>별점 목표 풀 최종 확정</li>
+            <li>메타 화면 wireframe 깊이 <span>— 코맨더 선택·미션·상점·결과 별점·강화 일괄 (디자인 세션)</span></li>
+            <li>M3 P0 부위 1체 검증 <span>— 아트 양산 게이트 (통과 후 37체 전량)</span></li>
+            <li>앱 이름 · 오디오 방향</li>
           </ul>
         </div>
         <div class="open">
           <h3>이연 / 진행 중</h3>
           <ul>
-            <li><span>출시 후:</span> 밸런스 수치 전반 · 엔드게임 백로그 선별 · BM 1.x</li>
-            <li><span>디자인:</span> 메타 화면 wireframe · 폰 검토 · 위협 텔레그래프</li>
-            <li><span>plat:</span> 표시버그(+10→+20) · 데이터버그 수정</li>
-            <li><span>M3:</span> 영웅 staging 재활용</li>
-            <li><span>행정:</span> 앱 이름 · 오디오 방향</li>
+            <li><span>출시 후:</span> 밸런스 수치 전반(배율·%·N·T·곡선) · 엔드게임 백로그 선별 · BM 1.x</li>
+            <li><span>plat(M2):</span> S-COMMON 엔진 → 시너지 7세트 양산 · D3 약점축 비대칭 데이터 · 영웅 해금 게이트 · 환생 골격 · 별점</li>
+            <li><span>plat 버그:</span> 표시버그(+10→+20) · 데이터버그 수정</li>
+            <li><span>M3:</span> 부위 재생산(5테마 색·attackType rework) · 시너지 아이콘 8(시스템 굳은 후) · 영웅 staging 재활용</li>
           </ul>
         </div>
       </div>
@@ -388,7 +396,7 @@
 <footer>
   <div class="wrap">
     <span>INFINITE WARFIELD · 게임 개요 스냅샷</span>
-    <span>2026-06-25 · 상세 SoT = spec / balance-plan / roadmap / PLAN</span>
+    <span>2026-06-26 · 상세 SoT = spec / balance-plan / roadmap / PLAN</span>
   </div>
 </footer>
 
