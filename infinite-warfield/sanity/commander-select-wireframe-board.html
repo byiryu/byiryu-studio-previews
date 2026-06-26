@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>IWF — 온보딩 코맨더 선택 화면</title>
+<title>IWF — 온보딩 영웅 선택 화면</title>
 <style>
 :root{
   /* 네온 메타 팔레트 (brief §0(e)) */
@@ -84,7 +84,7 @@ h1 span{color:var(--neon-mag)}
 .sc-title{font-size:24px;font-weight:800;letter-spacing:-.01em;color:#f0f5fb;text-shadow:0 0 30px color-mix(in srgb,var(--neon-mag) 35%,transparent)}
 .sc-sub{font-size:12px;color:var(--muted);margin-top:4px}
 
-/* 코맨더 카드 행 */
+/* 영웅 카드 행 */
 .cmd-row{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:center;padding:20px 4px 0;min-height:0}
 .cmd-card{
   position:relative;
@@ -105,15 +105,6 @@ h1 span{color:var(--neon-mag)}
   transform:translateY(-6px);
 }
 .cmd-card.dim{opacity:.82}
-
-/* 추천 배지 */
-.rec-badge{
-  position:absolute;top:-9px;left:50%;transform:translateX(-50%);
-  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;
-  background:linear-gradient(90deg,var(--cta),#69b8ff);color:#06121f;
-  padding:3px 11px;border-radius:20px;white-space:nowrap;
-  box-shadow:0 2px 12px color-mix(in srgb,var(--cta) 50%,transparent);
-}
 
 /* 영웅 아트 placeholder (★ 매체게이트 #8 — appeal 판정 X · PixelLab M3) */
 .hero-art{
@@ -235,7 +226,7 @@ h1 span{color:var(--neon-mag)}
 
 <!-- 헤더 -->
 <div class="eyebrow">byiryu studio · infinite warfield · 디자인 디렉션</div>
-<h1>온보딩 <span>코맨더 선택</span> 화면</h1>
+<h1>온보딩 <span>영웅 선택</span> 화면</h1>
 <p class="lede">첫 진입 1회 · 영웅 3종 제시 → 1종 선택해 시작 · 나머지 2종 = 진행 보상 해금. SoT = spec §6.B② / §8 + wireframes §7.6</p>
 <div class="meta-row">
   <span class="badge">가로 1280×720 · 첫 진입 플로우</span>
@@ -245,29 +236,28 @@ h1 span{color:var(--neon-mag)}
 </div>
 
 <!-- ═══════════════════════════════════════════
-     섹션 1: 코맨더 선택 화면 목업 (가로)
+     섹션 1: 영웅 선택 화면 목업 (가로)
 ═══════════════════════════════════════════ -->
 <div class="sec-head">
-  <span class="sec-label">코맨더 선택 화면</span>
+  <span class="sec-label">영웅 선택 화면</span>
   <div class="sec-rule"></div>
-  <span class="sec-note">아르덴 선택 상태 · paranoia #1 메타3요소</span>
+  <span class="sec-note">예시: 아르덴 선택 상태 · paranoia #1 메타3요소</span>
 </div>
 
 <div class="screen">
   <div class="screen-inner">
     <!-- 상단 타이틀 -->
     <div class="sc-top">
-      <div class="sc-kicker">First Command · 첫 출정</div>
-      <div class="sc-title">당신의 코맨더를 선택하세요</div>
-      <div class="sc-sub">한 명으로 시작합니다 · 나머지는 진행하며 해금돼요 (강제 아님)</div>
+      <div class="sc-kicker">Choose Your Hero · 첫 출정</div>
+      <div class="sc-title">당신의 영웅을 선택하세요</div>
+      <div class="sc-sub">한 명으로 시작합니다 · 나머지는 진행하며 해금돼요 (추천·강제 없음)</div>
     </div>
 
-    <!-- 3 코맨더 카드 -->
+    <!-- 3 영웅 카드 -->
     <div class="cmd-row">
 
-      <!-- ① 아르덴 (Combat) — 선택됨 + 입문 추천 -->
+      <!-- ① 아르덴 (Combat) — 선택 예시 (추천 아님) -->
       <div class="cmd-card selected" style="--tc:var(--theme-combat)">
-        <div class="rec-badge">★ 입문 추천</div>
         <div class="hero-art">
           <span class="silhouette">⚔️</span>
           <span class="ph-tag">PixelLab M3 · 투구+검</span>
@@ -349,7 +339,7 @@ h1 span{color:var(--neon-mag)}
     <!-- 하단 CTA -->
     <div class="sc-bottom">
       <div class="cta-start">⚔️ 아르덴으로 시작</div>
-      <div class="cta-note">선택한 코맨더가 <b>0번 덱 슬롯 영웅</b>으로 고정 · 영웅 사망 = 패배</div>
+      <div class="cta-note">선택한 영웅이 <b>0번 덱 슬롯 영웅</b>으로 고정 · 영웅 사망 = 패배</div>
     </div>
   </div>
 </div>
@@ -367,14 +357,14 @@ h1 span{color:var(--neon-mag)}
     <div class="pin-s">나머지 2장 dim 처리 → 시선이 선택지 1장에 집중</div>
   </div>
   <div class="pin" style="--c:var(--theme-spirit)">
-    <div class="pin-n">신규 보호 · 입문 추천</div>
-    <div class="pin-t">아르덴 = "입문 추천" 배지만</div>
-    <div class="pin-s">강제 X (spec §6.B②). 정공법 선형 곡선 = 가장 읽기 쉬운 첫 경험</div>
+    <div class="pin-n">추천 없음 · 동등 제시</div>
+    <div class="pin-t">3종 = 동등 제시 (추천·강제 X)</div>
+    <div class="pin-s">선택 근거 = 카드의 정체성·시간곡선·counter 강/약 (플레이어 판단)</div>
   </div>
   <div class="pin" style="--c:var(--theme-necro)">
     <div class="pin-n">2층 결정 · 영웅 ≠ 테마 잠금</div>
     <div class="pin-t">P1 테마 + P2 전역 = 2층</div>
-    <div class="pin-s">코맨더 선택은 시작 테마 방향이지 덱이 그 테마에 갇히지 않음(attackType 골고루)</div>
+    <div class="pin-s">영웅 선택은 시작 테마 방향이지 덱이 그 테마에 갇히지 않음(attackType 골고루)</div>
   </div>
 </div>
 
@@ -396,7 +386,7 @@ h1 span{color:var(--neon-mag)}
       <div class="case-tag">아르덴 · Combat</div>
     </div>
     <div class="case-body">
-      <p style="font-size:11px;color:var(--muted);margin-bottom:12px">코맨더 선택 시, 편성 화면 좌측(내 덱) 테두리가 그 테마색으로 글로우 = "이게 네 군대" 즉각 피드백. 전투 = 아군 좌/적 우 공간 모델 일치.</p>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:12px">영웅 선택 시, 편성 화면 좌측(내 덱) 테두리가 그 테마색으로 글로우 = "이게 네 군대" 즉각 피드백. 전투 = 아군 좌/적 우 공간 모델 일치.</p>
       <div class="deck-prev" style="--tc:var(--theme-combat)">
         <div class="deck-side player">
           <span class="ds-label tc">내 덱 (좌)</span>
@@ -405,7 +395,7 @@ h1 span{color:var(--neon-mag)}
             <div class="slot">①</div><div class="slot">②</div>
             <div class="slot">③</div><div class="slot">④</div>
           </div>
-          <span style="font-family:var(--mono);font-size:8px;color:var(--muted2);margin-top:auto">0번 = 코맨더 고정</span>
+          <span style="font-family:var(--mono);font-size:8px;color:var(--muted2);margin-top:auto">0번 = 영웅 고정</span>
         </div>
         <div class="deck-side">
           <span class="ds-label">적 (우)</span>
@@ -466,7 +456,7 @@ h1 span{color:var(--neon-mag)}
   </div>
   <div class="kf-col">
     <div class="kf-slot">PASSIVE 1 — 테마 시너지 앵커</div>
-    <div class="kf-desc">영웅 테마의 시너지 효과를 본인이 보유 = <b>그 테마 세트의 화신</b>. 코맨더 선택 = 시작 테마 방향.</div>
+    <div class="kf-desc">영웅 테마의 시너지 효과를 본인이 보유 = <b>그 테마 세트의 화신</b>. 영웅 선택 = 시작 테마 방향.</div>
     <div class="kf-eg">아르덴 <span>자가증폭</span> · 베스라 <span>부패전이</span> · 에이라 <span>정령 공명 ✅</span></div>
   </div>
   <div class="kf-col">
@@ -488,7 +478,7 @@ h1 span{color:var(--neon-mag)}
 <div class="para">
   <div class="para-row">
     <span class="para-tag" style="color:var(--theme-spirit)">#1 메타3요소</span>
-    <span class="para-txt">✅ 첫 진입 = "주 CTA(시작) 위계 + 선택 프레즌스". 진행 티저(재화/스테이지)는 코맨더 선택 *이후* Main에서 (첫 화면은 선택에만 집중 — 정보 과부하 회피).</span>
+    <span class="para-txt">✅ 첫 진입 = "주 CTA(시작) 위계 + 선택 프레즌스". 진행 티저(재화/스테이지)는 영웅 선택 *이후* Main에서 (첫 화면은 선택에만 집중 — 정보 과부하 회피).</span>
   </div>
   <div class="para-row">
     <span class="para-tag" style="color:var(--theme-spirit)">#2 1화면 1주인공</span>
@@ -503,14 +493,14 @@ h1 span{color:var(--neon-mag)}
     <span class="para-txt">⚠️ 영웅 아트 = <b>placeholder(점선 박스 + 이모지 + 테마 아우라)</b>. appeal 판정 X = PixelLab M3 생성(투구+검/해골+낫/정령관+지팡이 부위·전용 아우라). 본 보드 = 카드 위계·존·CTA·글로우 = 레이아웃 도메인만.</span>
   </div>
   <div class="para-row">
-    <span class="para-tag" style="color:var(--cta)">신규 보호</span>
-    <span class="para-txt">✅ "입문 추천"만 = 강제 X. counter 강/약을 카드에 노출 → 첫 선택부터 "내 영웅이 무엇에 강/약한가" 멘탈 모델 형성(counter-deck 학습 시작점).</span>
+    <span class="para-tag" style="color:var(--cta)">정보 기반 선택</span>
+    <span class="para-txt">✅ 추천·강제 없음 = 3종 동등 제시. 대신 counter 강/약을 카드에 노출 → 첫 선택부터 "내 영웅이 무엇에 강/약한가" 멘탈 모델 형성(counter-deck 학습 시작점).</span>
   </div>
 </div>
 
 <div class="foot">
-  2026-06-26 · 온보딩 코맨더 선택 화면 와이어 · SoT = spec §6.B② / §8 + wireframes §7.6 · 영웅 3종 = 아르덴(Combat)/베스라(Necro)/에이라(Spirit)<br>
-  plat = M2 step-7 해금 게이트 로직(`GameManager.cs:72` 랜덤 해금 → 코맨더 선택 + 2종 게이트) · M3 step-5 UI 구현 · 영웅 아트 = M3 PixelLab(프리즈 가드) · 이 보드 = 레이아웃/UX 도메인
+  2026-06-26 · 온보딩 영웅 선택 화면 와이어 · SoT = spec §6.B² / §8 + wireframes §7.6 · 영웅 3종 = 아르덴(Combat)/베스라(Necro)/에이라(Spirit)<br>
+  plat = M2 step-7 해금 게이트 로직(`GameManager.cs:72` 랜덤 해금 → 영웅 선택 + 2종 게이트) · M3 step-5 UI 구현 · 영웅 아트 = M3 PixelLab(프리즈 가드) · kit 스킬명/효과 = 유닛 재설계 확정 후 갱신 · 이 보드 = 레이아웃/UX 도메인
 </div>
 
 </div><!-- /page -->
