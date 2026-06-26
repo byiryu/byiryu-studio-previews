@@ -39,6 +39,13 @@
   --fb-blk:#9AA7B5;
   --fb-crit:#FFC23D;
 
+  /* 5테마 색 토큰 (design-system 정식·트리오 흡수 2026-06-26) */
+  --theme-combat:#E03A5C;   /* 마젠타 강철 · 아르덴 앵커 */
+  --theme-necro:#9D3EE8;    /* 보라 · 베스라 앵커 (림라이트 강제) */
+  --theme-spirit:#5DDD7E;   /* 에메랄드 · 에이라 앵커 (인게임 VFX = #4EC879) */
+  --theme-machine:#00D4FF;  /* 시안 · standalone (각형 분리) */
+  --theme-beast:#E06B14;    /* 주황 · standalone */
+
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
@@ -147,13 +154,20 @@ h1 span{color:var(--swarm)}
 /* 카운터 테마 태그 */
 .counter-row{display:flex;flex-wrap:wrap;gap:5px}
 .counter-tag{
-  font-family:var(--mono);font-size:10px;
+  font-family:var(--mono);font-size:10px;font-weight:700;
   padding:3px 8px;border-radius:3px;
-  background:var(--panel2);border:1px solid var(--border);
-  color:var(--text);
+  background:color-mix(in srgb,var(--tc,#fff) 8%,var(--panel2));
+  border:1px solid var(--border);
+  border-left:3px solid var(--tc,var(--border));
+  color:var(--tc,var(--text));
+  display:inline-flex;align-items:center;gap:5px;
 }
-.counter-tag.good{border-color:var(--fb-eff);color:var(--fb-eff)}
-.counter-tag.bad{border-color:#ff6b6b;color:#ff6b6b}
+/* ▲ 유효 카운터 = 테마색 선명 · ▼ 비효율 = 흐리게(opacity)·테마 정체성은 유지 */
+.counter-tag.good{}
+.counter-tag.bad{opacity:.42}
+.counter-tag .vm{font-size:11px}
+.counter-tag.good .vm{color:var(--fb-eff)}
+.counter-tag.bad .vm{color:#ff6b6b}
 
 /* 별점 매핑 박스 */
 .star-box{
@@ -320,8 +334,18 @@ h1 span{color:var(--swarm)}
 <div class="meta-row">
   <span class="badge">BattlePrepare · ShowFormation 확장</span>
   <span class="badge hi">M2 step-Xc 가동 중</span>
-  <span class="badge">unlisted · 2026-06-26</span>
+  <span class="badge">unlisted · 2026-06-26 (트리오 흡수 정합)</span>
   <span class="badge">레이아웃/UX 도메인 · 매체게이트 #8 무관</span>
+</div>
+
+<!-- 5테마 ↔ 앵커 영웅 범례 (트리오 흡수 — 카운터 테마 색코딩 기준) -->
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:6px;align-items:center">
+  <span style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-right:4px">5테마 색 ↔ 앵커 영웅</span>
+  <span class="counter-tag good" style="--tc:var(--theme-combat)">Combat · 아르덴</span>
+  <span class="counter-tag good" style="--tc:var(--theme-necro)">Necro · 베스라</span>
+  <span class="counter-tag good" style="--tc:var(--theme-spirit)">Spirit · 에이라</span>
+  <span class="counter-tag good" style="--tc:var(--theme-machine)">Machine · standalone</span>
+  <span class="counter-tag good" style="--tc:var(--theme-beast)">Beast · standalone</span>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -349,8 +373,8 @@ h1 span{color:var(--swarm)}
       <!-- 라벨 -->
       <div class="label-row">
         <span class="lbl">철벽</span>
-        <span class="lbl">고방어</span>
-        <span class="lbl dim">avgDef ≥ 40</span>
+        <span class="lbl">중장갑(물리방어)</span>
+        <span class="lbl dim">armor bias 1.4×</span>
       </div>
       <!-- 방어 2축 -->
       <div class="axis-row">
@@ -368,17 +392,18 @@ h1 span{color:var(--swarm)}
       <!-- 힌트 -->
       <div class="hint-box">
         <div class="hint-label">카운터 힌트 (DescribeAxis)</div>
-        <div class="hint-text">물리방어 높음 → 마법 딜러 추천</div>
-        <div class="hint-sub">Spirit 정령 공명 · 마법 추가타 유효</div>
+        <div class="hint-text">마법취약 → 마법축 · 방어무시 딜 추천</div>
+        <div class="hint-sub">Necro 부패(Corrupt=방어무시) · Spirit 마법 추가타 · DEF 디버프</div>
       </div>
       <!-- 카운터 테마 -->
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">카운터 테마</div>
         <div class="counter-row">
-          <span class="counter-tag good">Spirit ▲</span>
-          <span class="counter-tag good">Machine CC ▲</span>
-          <span class="counter-tag bad">Combat 물리 ▼</span>
-          <span class="counter-tag bad">Beast 돌진 ▼</span>
+          <span class="counter-tag good" style="--tc:var(--theme-necro)">Necro 부패(방무) <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-spirit)">Spirit 마법 <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-machine)">Machine CC <span class="vm">▲</span></span>
+          <span class="counter-tag bad" style="--tc:var(--theme-combat)">Combat 물리 <span class="vm">▼</span></span>
+          <span class="counter-tag bad" style="--tc:var(--theme-beast)">Beast 돌진 <span class="vm">▼</span></span>
         </div>
       </div>
       <!-- 별점 매핑 -->
@@ -429,9 +454,9 @@ h1 span{color:var(--swarm)}
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">카운터 테마</div>
         <div class="counter-row">
-          <span class="counter-tag good">Spirit ▲</span>
-          <span class="counter-tag good">Machine CC ▲</span>
-          <span class="counter-tag bad">Necro DoT ▼ (지속딜 낭비)</span>
+          <span class="counter-tag good" style="--tc:var(--theme-spirit)">Spirit 광역 <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-machine)">Machine 견인 <span class="vm">▲</span></span>
+          <span class="counter-tag bad" style="--tc:var(--theme-necro)">Necro DoT <span class="vm">▼</span></span>
         </div>
       </div>
       <div class="star-box">
@@ -458,8 +483,8 @@ h1 span{color:var(--swarm)}
     <div class="card-body">
       <div class="label-row">
         <span class="lbl">원거리</span>
-        <span class="lbl">폭격</span>
-        <span class="lbl dim">dealer×2≥total · ranged×2≥total</span>
+        <span class="lbl">마법저항(물리취약)</span>
+        <span class="lbl dim">ranged 과반 · magicResist bias 1.4×</span>
       </div>
       <div class="axis-row">
         <div class="axis-pill magic">
@@ -475,15 +500,16 @@ h1 span{color:var(--swarm)}
       </div>
       <div class="hint-box">
         <div class="hint-label">카운터 힌트</div>
-        <div class="hint-text">마법저항 높음 → 물리 딜러 추천</div>
-        <div class="hint-sub">Beast 돌진으로 후열 직접 압박</div>
+        <div class="hint-text">물리취약 → 돌진/견인으로 후열 압박</div>
+        <div class="hint-sub">Machine 견인 · Beast 돌진 · Combat 즉발 — 후열 직접 타격</div>
       </div>
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">카운터 테마</div>
         <div class="counter-row">
-          <span class="counter-tag good">Beast 돌진 ▲</span>
-          <span class="counter-tag good">Combat 즉발 ▲</span>
-          <span class="counter-tag bad">Spirit 힐 ▼ (아군 보호에 투자)</span>
+          <span class="counter-tag good" style="--tc:var(--theme-machine)">Machine 견인 <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-beast)">Beast 돌진 <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-combat)">Combat 즉발 <span class="vm">▲</span></span>
+          <span class="counter-tag bad" style="--tc:var(--theme-spirit)">Spirit 힐 <span class="vm">▼</span></span>
         </div>
       </div>
       <div class="star-box">
@@ -527,15 +553,15 @@ h1 span{color:var(--swarm)}
       </div>
       <div class="hint-box">
         <div class="hint-label">카운터 힌트</div>
-        <div class="hint-text">약화 스킬 핵 — Cleanse 유닛 필수</div>
-        <div class="hint-sub">Spirit 받피감 · 군세 시너지 정화</div>
+        <div class="hint-text">약화 누적 — Cleanse + 고HP 장기전</div>
+        <div class="hint-sub">Spirit Cleanse 정화 · 고HP Necro 흡혈로 버팀 · 군세 결집 정화</div>
       </div>
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">카운터 테마</div>
         <div class="counter-row">
-          <span class="counter-tag good">Spirit Cleanse ▲</span>
-          <span class="counter-tag good">군세 시너지 ▲</span>
-          <span class="counter-tag bad">Necro DoT (디버프 중첩 위험) ▼</span>
+          <span class="counter-tag good" style="--tc:var(--theme-spirit)">Spirit Cleanse <span class="vm">▲</span></span>
+          <span class="counter-tag good" style="--tc:var(--theme-necro)">고HP Necro 장기전 <span class="vm">▲</span></span>
+          <span class="counter-tag good">군세 결집 시너지 <span class="vm">▲</span></span>
         </div>
       </div>
       <div class="star-box">
@@ -585,9 +611,9 @@ h1 span{color:var(--swarm)}
       <div>
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px">카운터 테마</div>
         <div class="counter-row">
-          <span class="counter-tag good">Necro 장기전 DoT ▲</span>
-          <span class="counter-tag good">시너지 조합 극대화 ▲</span>
-          <span class="counter-tag bad">단일 테마 특화 ▼ (복합 대응 X)</span>
+          <span class="counter-tag good" style="--tc:var(--theme-necro)">Necro 장기전 DoT <span class="vm">▲</span></span>
+          <span class="counter-tag good">빌드 전환 · 시너지 극대화 <span class="vm">▲</span></span>
+          <span class="counter-tag bad">단일 테마 특화 <span class="vm">▼</span></span>
         </div>
       </div>
       <div class="star-box">
@@ -679,10 +705,10 @@ h1 span{color:var(--swarm)}
     <div style="background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:10px 12px;font-size:12px">
       <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">★ 적 magicResist 비대칭 입력 (D3)</div>
       <div style="color:var(--muted);display:flex;flex-direction:column;gap:4px">
-        <div>적에만 <span style="color:var(--magic-col)">magicResist</span> 데이터 부여 가능</div>
-        <div>→ 물리방어↑ / 마법저항↑ 진형 구분이 데이터로 성립</div>
-        <div>→ <code style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);padding:1px 4px;border-radius:2px">ThreatTelegraph.Analyze()</code> avgMagResist 측정</div>
-        <div style="color:var(--muted2);font-size:11px;margin-top:2px">현 시드: armor==magicResist → Balanced 기본값. D3 입력 시 비대칭 발생.</div>
+        <div>적 stage/formation 에 <code style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);padding:1px 4px;border-radius:2px">defenseAxisBias</code> + <code style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);padding:1px 4px;border-radius:2px">biasMult</code> 부여 (미러풀 불변)</div>
+        <div>→ 철벽 <span style="color:var(--armor-col)">armor bias 1.4×</span> / 원거리 <span style="color:var(--magic-col)">magicResist bias 1.4×</span> / 보스 양축</div>
+        <div>→ <code style="font-family:var(--mono);font-size:10px;color:var(--text);background:var(--panel);padding:1px 4px;border-radius:2px">ThreatTelegraph.Analyze()</code> avgDef/avgMagResist 측정</div>
+        <div style="color:var(--muted2);font-size:11px;margin-top:2px">현 시드: armor==magicResist → Balanced. <strong style="color:var(--text)">biasMult ≥ 1.35</strong>(라벨 읽힐 만큼)·정밀값 = 출시후 sim_trace.</div>
       </div>
     </div>
   </div>
@@ -758,8 +784,8 @@ h1 span{color:var(--swarm)}
             </div>
           </div>
           <div class="tp-hint">
-            <div>물리방어 높음 → 마법 딜러 추천</div>
-            <div class="tp-hint-sub">Spirit · Machine 시너지 유효</div>
+            <div>마법취약 → 방어무시·마법 딜 추천</div>
+            <div class="tp-hint-sub">Necro 부패(방무) · Spirit 마법 추가타 유효</div>
           </div>
         </div>
       </div>
@@ -809,8 +835,8 @@ h1 span{color:var(--swarm)}
             </div>
           </div>
           <div class="tp-hint">
-            <div>마법저항 높음 → 물리 딜러 추천</div>
-            <div class="tp-hint-sub">Beast 돌진 · Combat 즉발기 유효</div>
+            <div>물리취약 → 돌진/견인 물리 딜 추천</div>
+            <div class="tp-hint-sub">Machine 견인 · Beast 돌진 · Combat 즉발 유효</div>
           </div>
         </div>
       </div>
@@ -848,12 +874,12 @@ h1 span{color:var(--swarm)}
         <div class="rt-code">Fortress</div>
       </td>
       <td>
-        <span class="rt-label" style="background:color-mix(in srgb,var(--fortress) 14%,transparent);border:1px solid color-mix(in srgb,var(--fortress) 35%,transparent);color:var(--fortress)">위협: 철벽 · 고방어</span>
+        <span class="rt-label" style="background:color-mix(in srgb,var(--fortress) 14%,transparent);border:1px solid color-mix(in srgb,var(--fortress) 35%,transparent);color:var(--fortress)">위협: 중장갑(물리방어)</span>
       </td>
       <td>
         <span class="axis-tag arm">🔵 물리방어↑</span>
       </td>
-      <td class="rt-hint">물리방어 높음 → 마법 딜러 추천</td>
+      <td class="rt-hint">마법취약 → Necro 방무 · Spirit 마법 · DEF 디버프</td>
       <td class="rt-star">약점축(마법) 딜러 50%+</td>
     </tr>
     <tr>
@@ -883,7 +909,7 @@ h1 span{color:var(--swarm)}
       <td>
         <span class="axis-tag mag">🟣 마법저항↑</span>
       </td>
-      <td class="rt-hint">마법저항 높음 → 물리 딜러 추천</td>
+      <td class="rt-hint">물리취약 → Machine 견인 · Beast 돌진 · Combat 즉발</td>
       <td class="rt-star">아군 피해 최소화</td>
     </tr>
     <tr>
@@ -898,7 +924,7 @@ h1 span{color:var(--swarm)}
       <td>
         <span class="axis-tag bal">⚖ 균형</span>
       </td>
-      <td class="rt-hint">약화 스킬 핵 — Cleanse 유닛 필수</td>
+      <td class="rt-hint">약화 누적 — Spirit Cleanse + 고HP Necro 장기전</td>
       <td class="rt-star">Cleanse/Taunt 유닛 포함</td>
     </tr>
     <tr>
@@ -1101,8 +1127,8 @@ h1 span{color:var(--swarm)}
 
 
 <div class="foot">
-  2026-06-26 · 위협 텔레그래프 시각 디렉션 · SoT = design/infinite-warfield/ + projects/infinite-warfield_unity/ThreatTelegraph.cs<br>
-  plat 구현 = M3 step-5 ShowFormation 확장 · 아이콘 Sprite = M3 PixelLab(프리즈 가드 유지) · 이 보드 = 레이아웃/UX 도메인
+  2026-06-26 · 위협 텔레그래프 시각 디렉션 (트리오 흡수 카운터 매핑 정합) · SoT = spec §7.0b-1 (f) + wireframes §5 + ThreatTelegraph.cs<br>
+  plat 구현 = M3 step-5 ShowFormation 확장 · 아이콘 Sprite = M3 PixelLab(프리즈 가드 유지) · 이 보드 = 레이아웃/UX 도메인 · 카운터 매핑 = 5테마 영웅 정체성(아르덴/베스라/에이라) 정합
 </div>
 
 </div><!-- /page -->
